@@ -24,7 +24,7 @@ import org.hibernate.Session;
  * @since JDK1.7
  * @version 1.0
  */
-@Stateless
+@Stateless(name = "GenericDAOBean")
 public class GenericDAOBean implements GenericDAOBeanLocal {
 
     @PersistenceContext(unitName = "MarinerPU")
@@ -369,7 +369,8 @@ public class GenericDAOBean implements GenericDAOBeanLocal {
     public List<? extends Object> loadAllForEntity(Class clazz, String orderBy) throws MarinerPersistanceException {
         List<? extends Object> objects = null;
         try {
-            Query q = getEntityManager().createQuery("from " + clazz.getName() + (orderBy != null ? " order by " + orderBy : ""));
+            String sql = "from " + clazz.getName() + (orderBy != null ? " order by " + orderBy : "");
+            Query q = getEntityManager().createQuery(sql);
             objects = q.getResultList();
         } catch (Exception e) {
             throw new MarinerPersistanceException(e);
