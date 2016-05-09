@@ -25,13 +25,13 @@ public class MarTiposDocumentosConverter implements Converter {
     final static Logger logger = Logger.getLogger(MarTiposDocumentosConverter.class);
 
     private GenericDAOBeanLocal genericDAOBeanLocal;
-    
-    public MarTiposDocumentosConverter(){
+
+    public MarTiposDocumentosConverter() {
         try {
             InitialContext ic = new InitialContext();
             genericDAOBeanLocal = (GenericDAOBeanLocal) ic.lookup(JDNIUtils.getEJBJDNIName(GenericDAOBean.class, Boolean.TRUE));
         } catch (Exception e) {
-            logger.error("Error inicializando el converter, causado por "+e, e);
+            logger.error("Error inicializando el converter, causado por " + e, e);
         }
     }
 

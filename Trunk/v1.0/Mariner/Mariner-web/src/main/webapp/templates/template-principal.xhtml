@@ -2,17 +2,18 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui">
-    <h:head>
-        <link rel="stylesheet" type="text/css" href="resources/css/core.css" />
-        <link rel="stylesheet" type="text/css" href="resources/css/index.css" />
-        <link rel="stylesheet" type="text/css" href="resources/css/main.css" />
+    <h:head>        
+        <link rel="stylesheet" type="text/css" href="#{resource['css/core.css']}" />
+        <link rel="stylesheet" type="text/css" href="#{resource['css/index.css']}" />
+        <link rel="stylesheet" type="text/css" href="#{resource['css/main.css']}" />
+        <link rel="stylesheet" type="text/css" href="#{resource['css/overwrite-theme.css']}" />        
+        <link rel="shortcut icon" type="image/png" href="#{resource['images/favicon.png']}"/>
         <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'/>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css"/>
-        <title>Plataforma de gestión de impuesto de registro</title> 
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css"/>        
+        <title>.Plataforma de control y gestion Impuestos registro Valle del Cauca.</title> 
     </h:head>
 
     <h:body>
-
         <div id="menuContainer">
             <div id="mainMenu">
                 <div class="navigation">
@@ -20,18 +21,17 @@
                 </div>
             </div>    
         </div>
-
-        <ui:insert name="index"/> 
+        <!-- Facelet con todo el contenido que debe insertar las template clientes -->
+        <ui:insert name="content"/> 
 
         <!-- Generic Dialog for popup notifications -->
         <p:dialog id="modalDialog" header="#{sessionScope.dialog.usaI18N?msg[sessionScope.dialog.title]:sessionScope.dialog.title}" widgetVar="genericDialog" modal="#{sessionScope.dialog.modal}" showEffect="#{sessionScope.dialog.effect}" appendTo="@(body)" closeOnEscape="true" resizable="false">  
-            <div style="font-family: 'Open Sans', sans-serif  !important;">
-                <h:outputText value="#{sessionScope.dialog.usaI18N?msg[sessionScope.dialog.text]:sessionScope.dialog.text}" style="font-size: 12.5px;" escape="false"/>  
+            <div style="font-family: 'Raleway', sans-serif  !important;">
+                <h:outputText value="#{sessionScope.dialog.usaI18N?msg[sessionScope.dialog.text]:sessionScope.dialog.text}" style="font-size: 14px;" escape="false"/>  
             </div>            
             <div align="center" style="margin-top: 16px;margin-bottom: 8px;">
                 <h:form id="frmClosePopup">
-                    <p:commandButton id="closePopupButton" value="Aceptar" update=":modalDialog"  onclick="PF('genericDialog').hide();
-                            PF('loadingDialog').hide();" style="font-size: 12px !important;"/>
+                    <p:commandButton id="closePopupButton" value="Aceptar" update=":modalDialog"  onclick="PF('genericDialog').hide();PF('loadingDialog').hide();" style="font-size: 14px !important;"/>
                 </h:form>
             </div>
         </p:dialog> 
@@ -48,6 +48,5 @@
                 </div> 
             </div>            
         </p:dialog>
-
     </h:body>
 </html>

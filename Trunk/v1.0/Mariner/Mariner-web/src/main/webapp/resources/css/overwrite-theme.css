@@ -1,0 +1,32 @@
+/* 
+    Created on : 09 de Mayo de 2015
+    Author     : Andres Rivera
+*/
+.ui-widget, .ui-widget .ui-widget {
+    font-family: 'Raleway', sans-serif !important;
+    font-size: 14px !important; 
+}
+
+*.ui-dialog-title{
+    font-size: 14px !important; 
+}
+
+*.ui-dialog-titlebar-icon{    
+    margin-top: 0px !important;
+}
+
+*.ui-dialog-titlebar-close{
+    margin-top: 0px !important;
+}
+
+*.ui-selectonemenu-label{
+    text-align: center !important;  
+} 
+
+#modalDialog{
+    top: 180px !important;
+}
+
+#modalRegistro{
+    top: 180px !important;
+}

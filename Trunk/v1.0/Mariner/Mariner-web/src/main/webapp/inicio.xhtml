@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/templates/template-principal.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core" 
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="content">
+
+        <!-- Panel que se muestra cuando el usuario no esta autenticado -->
+        <h:panelGroup rendered="#{sessionScope.auth eq null or sessionScope.auth eq 'N'}">
+            <h:form id="formLogin">
+
+                <div class="pagina">
+                    <div align="center">
+                        <div id="headerDiv">
+                            <div class="imgHeaderLeft" align="left"></div>
+                            <div class="imgHeaderRight" align="right"></div>
+                        </div>
+                        <div id="loginDiv" align="center" >
+                            <div class="headerLoginBorder" />
+                            <div class="headerLoginDiv">
+                                <div>Autenticación</div>
+                            </div>    
+                            <h:panelGrid cellpadding="" columns="1" style="margin: 40px 0;">
+                                <h:outputLabel for="idUsu" value="Usuario: " />
+                                <p:inputText id="idUsu" value="#{indexManagedBean.usuario.usuLogin}" required="true" label="Usuario" size="30"/>
+                                <h:outputLabel for="idCont" value="Contraseña: " />
+                                <p:password id="idCont" value="#{indexManagedBean.usuario.usuPassword}" required="true" label="Password" size="30"/>
+                            </h:panelGrid>
+                            <div align="center">
+                                <p:commandButton value="Entrar" action="#{indexManagedBean.autenticar()}" update="@this :panelHome" ajax="false"/>
+                                <p:commandButton value="Registrarme" action="#{indexManagedBean.activarRegistro()}" oncomplete="PF('dialogRegistro').show()" />
+                                <p:commandButton value="Olvidé la clave" />
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </h:form>
+        </h:panelGroup>        
+
+        <!-- Panel que se muestra cuando el usuario YA esta autenticado -->
+        <h:panelGroup id="panelHome" rendered="#{sessionScope.auth eq 'S'}">
+            <div id="backgroundDiv">
+                <h:form>
+                    <div class="headerMain">
+                        <div class="leftHeaderMain">
+                            <img class="element-animation" style="margin: 10%;cursor: pointer" src="#{resource['/images/icons/menu-icon.png']}"/>                          
+                        </div>
+                        <div class="centerHeaderMain">
+                            <img width="180px" style="display: inline-block;vertical-align: top;float: left" src="#{resource['/images/logoGobernacion.png']}"/>
+                            <p style="display: inline-block">Plataforma de impuestos de Registro Valle del Cauca
+                            </p>
+                            <img style="display: inline-block;vertical-align: top;float: right" width="108px" src="#{resource['/images/logo-turismo-valle.png']}"/>
+                        </div>
+                        <div class="rightHeaderMain">
+                            <img class="element-animation" style="margin: 10%;cursor: pointer" src="#{resource['/images/icons/user-icon.png']}"/>                          
+                            <h:commandLink action="#{indexManagedBean.salir()}" >
+                                <img class="element-animation" style="margin: 10%;cursor: pointer" src="#{resource['/images/icons/logout-icon.png']}"/>
+                            </h:commandLink>
+                        </div>
+                    </div>
+                </h:form>
+                <div class="contentMain" align="center">
+                    <div id="paperMain">
+                        <div class="tituloCont" align="center">
+                            <i class="fa fa-deaf fa-2x" style="color: #439fe0;vertical-align: super" aria-hidden="true"></i>
+                            <div class="" style="display: inline-block">
+                                <h:outputLabel style="font-size: 24px;display: block;color: #439fe0;" value="Radicación de documentos" />
+                                <h:outputLabel style="text-align: left;display: block;font-size: 13px" value="Tomar muestras, aceptar y enviar los documentos"/>
+                            </div>
+                        </div>
+                        <div class="contenidoPrinc" align="center">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <!-- Dialog de solicitud informacion de registro -->        
+        <p:dialog id="modalRegistro" widgetVar="dialogRegistro" closeOnEscape="true" draggable="true" resizable="false" header="Creacion de cuenta de cuenta" modal="true">
+            <div>
+                <h:form id="formRegistro">
+                    <h:panelGrid columns="2" style="margin: 10px;">
+                        <h:outputLabel value="Tipo de documento"/> 
+                        <p:selectOneMenu converter="MarTiposDocumentosConverter" value="#{indexManagedBean.usuario.perId.tdcId}" style="width: 204px">
+                            <f:selectItems value="#{indexManagedBean.tiposDocumento}" var="tdo" itemLabel="#{tdo.tdcNombre}" itemValue="#{tdo}" />
+                        </p:selectOneMenu>
+                        <h:outputLabel value="Núm. de documento"/>
+                        <p:inputText value="#{indexManagedBean.usuario.perId.perDocumento}" required="true" size="30"/>
+                        <h:outputLabel value="Nombres"/>
+                        <p:inputText value="#{indexManagedBean.usuario.perId.perNombres}" required="true" size="30"/>
+                        <h:outputLabel value="Apellidos"/>
+                        <p:inputText value="#{indexManagedBean.usuario.perId.perApellidos}" required="true" size="30"/>
+                        <h:outputLabel value="Correo"/>
+                        <p:inputText value="#{indexManagedBean.usuario.perId.perEmail}" required="true" size="30"/>
+                        <h:outputLabel value="Teléfono"/>
+                        <p:inputText value="#{indexManagedBean.usuario.perId.perTelefono}" size="30"/>
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{indexManagedBean.crearUsuario()}" />
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogRegistro').hide()" />
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
+    </ui:define>
+</ui:composition>

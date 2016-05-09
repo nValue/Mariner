@@ -2,21 +2,17 @@
     Created on : May 5, 2016, 12:11:59 PM
     Author     : fabianagudelo
 */
-.pagina{
-    width: 100%;
-    height: 100%;
-    background-image: url(../images/back2.jpg);
+body{
+    margin: 0;
+    font-family: 'Raleway', sans-serif !important;
+    font-size: 12.5px !important;
+    background-image: url(../../resources/images/background-full.jpg);
     background-repeat: no-repeat;
     background-size: cover;
 }
 
-body{
-    margin: 0;
-    font-family: 'Raleway', sans-serif;
-}
-
 table{
-    font-size: 14px;
+    font-size: 13.5px;
 }
 
 .ui-state-error{

@@ -19,7 +19,7 @@ public class DynamicHTMLMenuGenerator {
     static Logger logger = Logger.getLogger(DynamicHTMLMenuGenerator.class);
 
     private String dynamicHtml = "\n";
-    private List<String> validPaths=new ArrayList<>();
+    private final List<String> validPaths = new ArrayList<>();
     private String contextPath = "";
 
     /**
@@ -29,7 +29,6 @@ public class DynamicHTMLMenuGenerator {
      * @param modulos
      * @param level
      * @param context
-     * @return
      */
     public void buildMenu(MarUsuarios usuario, List<MarModulos> modulos, Integer level, String context) {
         contextPath = context;
@@ -59,10 +58,9 @@ public class DynamicHTMLMenuGenerator {
                 this.dynamicHtml += TextUtils.generateTabs(level) + "<li>\n";
             }
 
-            if(module.getModUrl().equals("#")){
+            if (module.getModUrl().equals("#")) {
                 this.dynamicHtml += TextUtils.generateTabs(level) + "<a>" + module.getModNombre() + "</a>";
-            }
-            else{
+            } else {
                 this.dynamicHtml += TextUtils.generateTabs(level) + "<a href=\"" + contextPath + module.getModUrl() + "\">" + module.getModNombre() + "</a>";
                 this.getValidPaths().add(module.getModUrl());
             }
