@@ -1,5 +1,6 @@
 package co.com.realtech.mariner.controller.jsf.managed_bean.index;
 
+import co.com.realtech.mariner.model.ejb.dao.entity_based.modulo.ModulosDAOBeanLocal;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
@@ -14,6 +15,7 @@ import co.com.realtech.mariner.util.session.AuditSessionUtils;
 import co.com.realtech.mariner.util.session.SessionUtils;
 import co.com.realtech.mariner.util.string.RandomStringGenerator;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -40,6 +42,9 @@ public class IndexManagedBean implements Serializable {
 
     @EJB(beanName = "GenericDAOBean")
     private GenericDAOBeanLocal genericDAOBean;
+    
+    @EJB(beanName = "ModulosDAOBean")
+    private ModulosDAOBeanLocal modulosDAOBean;
 
     private String htmlMenu;
     private String contextPath;
@@ -53,15 +58,9 @@ public class IndexManagedBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        try {
-            setUsuario(new MarUsuarios());
-            contextPath = JSFUtils.getCurrentContext();
-            auditSessionUtils = AuditSessionUtils.create();
-            setTiposDocumento((List<MarTiposDocumentos>) genericDAOBean.loadAllForEntity(MarTiposDocumentos.class, "tdcNombre"));
-        } catch (Exception e) {
-            logger.error("Error inicializando ManagedBean IndexManagedBean, causado por " + e, e);
-        }
-
+        setUsuario(new MarUsuarios());
+        contextPath = JSFUtils.getCurrentContext();
+        auditSessionUtils = AuditSessionUtils.create();
     }
 
     /**
@@ -69,24 +68,35 @@ public class IndexManagedBean implements Serializable {
      */
     public void autenticar() {
         try {
-            if (getUsuario().getUsuLogin().equals("ArtaeL") && getUsuario().getUsuPassword().equals("engineer")) {
-                SessionUtils.asignarValor("marineruser", getUsuario());
-                SessionUtils.asignarValor("marinerpersona", getUsuario().getPerId());
-                SessionUtils.asignarValor("auth", "S");
-                // Cargamos el menu de opciones del usuario.
-                List<MarModulos> modulos = (List<MarModulos>) genericDAOBean.findAllByColumn(MarModulos.class, "usuId", getUsuario());
-                DynamicHTMLMenuGenerator dynaHtml = new DynamicHTMLMenuGenerator();
-                dynaHtml.buildMenu(getUsuario(), modulos, 0, contextPath);
-                setHtmlMenu(dynaHtml.getDynamicHTML());
-                // cargamos a session las URL a las que tiene permiso el usuario
-                SessionUtils.asignarValor("marinerpaths", dynaHtml.getValidPaths());
-                redireccionar(null);
-            } else {
+            boolean logged = false;
+            //Busca el usuario con el Login registrado
+            MarUsuarios usuarioALoguear = (MarUsuarios)genericDAOBean.findByColumn(MarUsuarios.class, "usuLogin", usuario.getUsuLogin());
+            if(usuarioALoguear != null){
+                //Valida si el password coincide
+                String passDec = CryptoUtils.decrypt(usuarioALoguear.getUsuPassword());
+                if (passDec.equals(usuario.getUsuPassword())) {
+                    logged = true;
+                    usuario = usuarioALoguear;
+                    //El usuario es correcto, se cargan las variables de sesión
+                    SessionUtils.asignarValor("marineruser", getUsuario());
+                    SessionUtils.asignarValor("marinerpersona", getUsuario().getPerId());
+                    SessionUtils.asignarValor("auth", "S");
+                    // Cargamos el menu de opciones del usuario.
+                    List<MarModulos> modulos = modulosDAOBean.obtenerModulosDeUsuario(usuario);
+                    DynamicHTMLMenuGenerator dynaHtml = new DynamicHTMLMenuGenerator();
+                    dynaHtml.buildMenu(getUsuario(), modulos, 0, contextPath);
+                    setHtmlMenu(dynaHtml.getDynamicHTML());
+                    // cargamos a session las URL a las que tiene permiso el usuario
+                    SessionUtils.asignarValor("marinerpaths", dynaHtml.getValidPaths());
+                    redireccionar(null);
+                }
+            }
+            if(!logged){
                 SessionUtils.asignarValor("auth", "N");
-                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Notificacion", "El usuario no se encuentra registrado en la base de datos", true, false);
+                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Notificacion", "Usuario o contraseña incorrectos", true, false);
             }
         } catch (Exception e) {
-
+            logger.error("No se puede validar el usuario, causado por: " + e);
         }
     }
 
@@ -95,8 +105,13 @@ public class IndexManagedBean implements Serializable {
      * plataforma.
      */
     public void activarRegistro() {
-        setUsuario(new MarUsuarios());
-        getUsuario().setPerId(new MarPersonas());
+        try {
+            setTiposDocumento((List<MarTiposDocumentos>) genericDAOBean.loadAllForEntity(MarTiposDocumentos.class, "tdcNombre"));
+            setUsuario(new MarUsuarios());
+            getUsuario().setPerId(new MarPersonas());
+        } catch (Exception e) {
+            logger.error("Error activando el registro, causado por " + e, e);
+        }
     }
 
     /**
@@ -109,9 +124,13 @@ public class IndexManagedBean implements Serializable {
             claveTemporal = claveTemporal.substring(0, 5);
             getUsuario().setUsuPassword(CryptoUtils.encrypt(claveTemporal));
             getUsuario().setUsuEstado("A");
-
-            auditSessionUtils.setAuditReflectedValues(getUsuario().getPerId());
-            auditSessionUtils.setAuditReflectedValues(getUsuario());
+            System.out.println("claveTemporal = " + claveTemporal);
+            
+            //Se colocan las auditorías manualmente puesto que el usuario todavía no está en sesión
+            usuario.setAudFecha(new Date());
+            usuario.setAudUsuario("ArtaeL");
+            usuario.getPerId().setAudFecha(new Date());
+            usuario.getPerId().setAudUsuario("ArtaeL");
             genericDAOBean.save(getUsuario().getPerId());
             genericDAOBean.save(getUsuario());
             PrimeFacesPopup.lanzarDialog(Effects.Fold, "Notificacion", "Usuario creado correctamente, en los próximos minutos recibirá un correo con la información de autenticación en la plataforma.", true, false);

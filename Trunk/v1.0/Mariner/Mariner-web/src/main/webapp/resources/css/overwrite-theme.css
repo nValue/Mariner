@@ -30,3 +30,87 @@
 #modalRegistro{
     top: 180px !important;
 }
+
+.ui-selectonemenu-trigger.ui-state-default.ui-corner-right{
+    border-top: none;
+    border-right: none;
+}
+
+
+.ui-dialog-titlebar{
+    font-size: 14px !important;
+    border-top: solid #1f89ce !important;
+    border-top-width: 7px !important;
+    padding: 5px 15px !important;
+}
+
+.ui-dialog-title{
+    font-size: 18px !important;
+}
+
+.ui-selectonemenu .ui-selectonemenu-label{
+    text-align: center;
+}
+
+.ui-selectonemenu-item{
+    font-size: 14px;
+}
+
+.ui-button.ui-state-hover,.ui-button.ui-state-hover,button.ui-button.ui-state-focus,.ui-button.ui-state-focus{
+    border:1px solid #156090;background:#156090 !important;outline:0 none
+}
+
+.ui-button{
+    display: inline-block;
+    position: relative;
+    padding: 0;
+    margin-right: .1em;
+    text-decoration: none!important;
+    cursor: pointer;
+    text-align: center;
+    zoom: 1;
+    overflow: visible;
+    font-size: 14px;
+    text-shadow: none !important;
+}
+
+
+.ui-button, button.ui-button.ui-state-default, .ui-button.ui-state-default {
+    border: 1px solid #1f89ce;
+    color: #fff;
+    background: #2399e5;
+}
+
+.ui-button .ui-button-text {
+    display: block;
+    line-height: normal;
+    font-weight: 300; 
+}
+
+.ui-button-text-only .ui-button-text {
+    padding: .3em 1em;
+}
+
+.ui-inputfield {
+    margin: 0;
+    outline: medium none;
+    padding: 4px;
+    font-weight: normal;
+}
+
+.ui-widget .ui-widget {
+    font-size: 1em;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    border: 1px solid #d6d6d6;
+    background: #fff;
+    font-weight: normal;
+    color: #555;
+}
+
+.ui-state-error{
+    border: 1px solid #ff6464 !important;
+}
+
+

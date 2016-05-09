@@ -32,7 +32,7 @@
                             </h:panelGrid>
                             <div align="center">
                                 <p:commandButton value="Entrar" action="#{indexManagedBean.autenticar()}" update="@this :panelHome" ajax="false"/>
-                                <p:commandButton value="Registrarme" action="#{indexManagedBean.activarRegistro()}" oncomplete="PF('dialogRegistro').show()" />
+                                <p:commandButton value="Registrarme" action="#{indexManagedBean.activarRegistro()}" update=":modalRegistro" oncomplete="PF('dialogRegistro').show()" process="@this" />
                                 <p:commandButton value="Olvidé la clave" />
                             </div>
                         </div> 
@@ -81,7 +81,7 @@
         </h:panelGroup>
 
         <!-- Dialog de solicitud informacion de registro -->        
-        <p:dialog id="modalRegistro" widgetVar="dialogRegistro" closeOnEscape="true" draggable="true" resizable="false" header="Creacion de cuenta de cuenta" modal="true">
+        <p:dialog id="modalRegistro" widgetVar="dialogRegistro" closeOnEscape="true" draggable="true" resizable="false" header="Creación de cuenta" modal="true">
             <div>
                 <h:form id="formRegistro">
                     <h:panelGrid columns="2" style="margin: 10px;">
@@ -102,7 +102,7 @@
                     </h:panelGrid>
                     <div align="center" style="padding-top: 10px">
                         <p:commandButton value="Guardar" action="#{indexManagedBean.crearUsuario()}" />
-                        <p:commandButton value="Cancelar" oncomplete="PF('dialogRegistro').hide()" />
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogRegistro').hide()" process="@this"/>
                     </div>
                 </h:form>
             </div>            
