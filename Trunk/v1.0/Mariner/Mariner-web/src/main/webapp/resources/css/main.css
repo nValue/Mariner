@@ -1,0 +1,83 @@
+/* 
+    Created on : May 6, 2016, 9:25:33 AM
+    Author     : fabianagudelo
+*/
+
+#backgroundDiv{
+    width: 100%;
+    height: 100%;
+    background: #f0f2f5;
+}
+
+.headerMain{
+    width: 100%;
+    height: 60px;
+    text-align: center;
+    font-size: 22px;
+    background: #fff;
+    -webkit-box-shadow: 0px 3px 6px 0px rgba(50, 50, 50, 0.75);
+    -moz-box-shadow:    0px 3px 6px 0px rgba(50, 50, 50, 0.75);
+    box-shadow:         0px 3px 6px 0px rgba(50, 50, 50, 0.75);
+}
+
+.leftHeaderMain{
+    width: 10%;
+    height: 100%;
+    border-right: solid 1px #e0e0e0 ;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.centerHeaderMain{
+    width: 72%;
+    height: 100%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.rightHeaderMain{
+    width: 10%;
+    height: 100%;
+    display: inline-block;
+    vertical-align: top;
+    border-left: solid 1px #e0e0e0 ;
+}
+
+
+.contentMain{
+    width: 100%;
+    height: 700px;
+}
+
+#paperMain{
+    width: 80%;
+    height: 90%;
+    background: #fff;
+    margin-top: 10px;
+    -webkit-box-shadow: 0px 1px 2px 0px rgba(50, 50, 50, 0.75);
+    -moz-box-shadow:    0px 1px 2px 0px rgba(50, 50, 50, 0.75);
+    box-shadow:         0px 1px 2px 0px rgba(50, 50, 50, 0.75);
+}
+
+.tituloCont{
+    width: 100%;
+    height: 48px;
+    margin: 5px 0px;
+    padding: 10px 0px;
+    border: solid 1px #e0e0e0;
+}
+
+.valign{
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.contenidoPrinc{
+    padding: 2%;
+    width: 96%;
+    height: 96%;
+}
+

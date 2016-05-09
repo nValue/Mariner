@@ -1,0 +1,54 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <link rel="stylesheet" type="text/css" href="resources/css/core.css" />
+        <link rel="stylesheet" type="text/css" href="resources/css/index.css" />
+        <link rel="stylesheet" type="text/css" href="resources/css/main.css" />
+        <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css"/>
+        <title>Plataforma de gestión de impuesto de registro</title> 
+    </h:head>
+    
+    <h:body>
+        
+        <div id="menuContainer">
+                <div id="mainMenu">
+                    <div class="navigation">
+                        <h:outputText value="#{indexManagedBean.htmlMenu}" escape="false" />                        
+                    </div>
+                </div>    
+            </div>
+        
+        <ui:insert name="index"/> 
+        
+        <!-- Generic Dialog for popup notifications -->
+        <p:dialog id="modalDialog" header="#{sessionScope.dialog.usaI18N?msg[sessionScope.dialog.title]:sessionScope.dialog.title}" widgetVar="genericDialog" modal="#{sessionScope.dialog.modal}" showEffect="#{sessionScope.dialog.effect}" appendTo="@(body)" closeOnEscape="true" resizable="false">  
+            <div style="font-family: 'Open Sans', sans-serif  !important;">
+                <h:outputText value="#{sessionScope.dialog.usaI18N?msg[sessionScope.dialog.text]:sessionScope.dialog.text}" style="font-size: 12.5px;" escape="false"/>  
+            </div>            
+            <div align="center" style="margin-top: 16px;margin-bottom: 8px;">
+                <h:form id="frmClosePopup">
+                    <p:commandButton id="closePopupButton" value="Aceptar" update=":modalDialog"  onclick="PF('genericDialog').hide();
+                            PF('loadingDialog').hide();" style="font-size: 12px !important;"/>
+                </h:form>
+            </div>
+        </p:dialog> 
+        
+        <!-- Generic Dialog for ajax Loading Actions -->        
+        <p:dialog id="modalLoading" widgetVar="loadingDialog" modal="true" appendTo="@(body)" resizable="false" showHeader="false" styleClass="loadingDialog">  
+            <div>
+                <div align="center">
+                    <img src="#{resource['/images/loading.gif']}"/>
+                </div> 
+                <div align="center">
+                    <h:outputText value="Nuestro sistema se encuentra procesando su petición, espere unos segundos" style="font-size: 18px;color: rgb(82, 82, 82);"/><br/>
+                    <h:outputText value=".! Le recomendamos no cerrar el navegador !." style="font-size: 15px;color: rgb(77, 77, 77);"/><br/>
+                </div> 
+            </div>            
+        </p:dialog>
+
+    </h:body>
+</html>
