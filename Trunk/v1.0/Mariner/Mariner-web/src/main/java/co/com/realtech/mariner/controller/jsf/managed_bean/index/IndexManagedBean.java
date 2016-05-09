@@ -5,8 +5,8 @@
  */
 package co.com.realtech.mariner.controller.jsf.managed_bean.index;
 
-import co.com.realtech.mariner.ctls.util.primefaces.dialogos.Effects;
-import co.com.realtech.mariner.ctls.util.primefaces.dialogos.PrimeFacesPopup;
+import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
+import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
 import co.com.realtech.mariner.model.entity.MarModulos;
 import co.com.realtech.mariner.model.entity.MarPersonas;
