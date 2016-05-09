@@ -1,5 +1,6 @@
 package co.com.realtech.mariner.controller.jsf.converter;
 
+import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBean;
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
 import co.com.realtech.mariner.model.entity.MarTiposDocumentos;
 import co.com.realtech.mariner.util.jdni.JDNIUtils;
@@ -28,9 +29,9 @@ public class MarTiposDocumentosConverter implements Converter {
     public MarTiposDocumentosConverter(){
         try {
             InitialContext ic = new InitialContext();
-            genericDAOBeanLocal = (GenericDAOBeanLocal) ic.lookup(JDNIUtils.getEJBJDNIName("GenericDAOBeanLocal", Boolean.TRUE));
+            genericDAOBeanLocal = (GenericDAOBeanLocal) ic.lookup(JDNIUtils.getEJBJDNIName(GenericDAOBean.class, Boolean.TRUE));
         } catch (Exception e) {
-            logger.error("Error inicializando CtlBancosConverter, causado por "+e, e);
+            logger.error("Error inicializando el converter, causado por "+e, e);
         }
     }
 
@@ -43,7 +44,7 @@ public class MarTiposDocumentosConverter implements Converter {
         try {
             tipo = (MarTiposDocumentos) genericDAOBeanLocal.findByID(MarTiposDocumentos.class, new BigDecimal(value));
         } catch (Exception ex) {
-            logger.error("Error en Conversor CtlBancosConverter, causado por ", ex);
+            logger.error("Error en Conversor, causado por ", ex);
         }
         return tipo;
     }

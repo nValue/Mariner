@@ -1,6 +1,7 @@
 package co.com.realtech.mariner.util.session;
 
 import co.com.realtech.mariner.model.entity.MarUsuarios;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Date;
 import javax.faces.context.FacesContext;
@@ -14,7 +15,7 @@ import org.apache.log4j.Logger;
  * @since JDK1.6
  * @version 1.0
  */
-public class AuditSessionUtils {
+public class AuditSessionUtils implements Serializable{
 
     public static AuditSessionUtils create() {
         return new AuditSessionUtils();

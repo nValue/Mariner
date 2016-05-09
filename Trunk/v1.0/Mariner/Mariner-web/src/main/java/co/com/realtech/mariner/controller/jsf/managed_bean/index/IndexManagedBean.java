@@ -55,7 +55,8 @@ public class IndexManagedBean implements Serializable {
     }
     
     @PostConstruct
-    public void init(){
+    public void init() {
+        System.out.println("Inicializando");
         nombre = "";
         password = "";
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
@@ -112,6 +113,7 @@ public class IndexManagedBean implements Serializable {
      */
     public void obtenerTiposDocumento(){
         try {
+            System.out.println("genericDAOBean = " + genericDAOBean);
             tiposDocumento = (List<MarTiposDocumentos>)genericDAOBean.loadAllForEntity(MarTiposDocumentos.class, "tdcId");
             System.out.println("tiposDocumento = " + tiposDocumento);
         } catch (Exception e) {

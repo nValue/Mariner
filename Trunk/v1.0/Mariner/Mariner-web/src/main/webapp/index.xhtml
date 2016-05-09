@@ -29,7 +29,7 @@
                             </h:panelGrid>
                             <div align="center">
                                 <p:commandButton value="Entrar" action="#{indexManagedBean.autenticar()}" update="@this :panelHome" ajax="false"/>
-                                <p:commandButton value="Registrarme" action="#{indexManagedBean.activarRegistro()}" oncomplete="PF('widRegistro').show()" />
+                                <p:commandButton value="Registrarme" action="#{indexManagedBean.activarRegistro()}" oncomplete="PF('widRegistro').show()" process="@this"/>
                                 <p:commandButton value="Olvidé la clave" />
                             </div>
                         </div> 
@@ -76,13 +76,12 @@
                 </div>
             </div>
         </h:panelGroup>
-
-
-        <p:dialog id="dialogRegistro" widgetVar="widRegistro" width="420" height="250" header="Registro de usuario" modal="true">
+        
+        <p:dialog id="dialogRegistro" widgetVar="widRegistro" width="420" height="270" header="Registro de usuario" modal="true">
             <h:form id="formRegistro">
                 <h:panelGrid columns="2" style="margin: 10px;">
                     <h:outputLabel value="Tipo de documento"/>
-                    <p:selectOneMenu converter="MarTiposDocumentosConverter" value="#{indexManagedBean.usuarioActual.perId}" style="width: 196px">
+                    <p:selectOneMenu converter="MarTiposDocumentosConverter" value="#{indexManagedBean.usuarioActual.perId.tdcId}" style="width: 196px">
                         <f:selectItems value="#{indexManagedBean.tiposDocumento}" var="tdo" itemLabel="#{tdo.tdcNombre}" itemValue="#{tdo}" />
                     </p:selectOneMenu>
                     <h:outputLabel value="Núm. de documento"/>
