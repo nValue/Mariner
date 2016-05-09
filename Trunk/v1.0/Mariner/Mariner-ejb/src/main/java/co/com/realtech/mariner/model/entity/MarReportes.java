@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author fabianagudelo
+ * @author Andres Rivera
  */
 @Entity
 @Table(name = "mar_reportes")
@@ -41,35 +41,34 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarReportes.findByAudUsuario", query = "SELECT m FROM MarReportes m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarReportes.findByAudFecha", query = "SELECT m FROM MarReportes m WHERE m.audFecha = :audFecha")})
 public class MarReportes implements Serializable {
-
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "rep_id")
+    @Column(name = "rep_id", nullable = false, precision = 131089, scale = 0)
     private BigDecimal repId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "rep_codigo")
+    @Column(name = "rep_codigo", nullable = false, length = 50)
     private String repCodigo;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "rep_nombre")
+    @Column(name = "rep_nombre", nullable = false, length = 100)
     private String repNombre;
     @Size(max = 1)
-    @Column(name = "rep_estado")
+    @Column(name = "rep_estado", length = 1)
     private String repEstado;
     @Size(max = 10)
-    @Column(name = "rep_extension")
+    @Column(name = "rep_extension", length = 10)
     private String repExtension;
     @Size(max = 4000)
-    @Column(name = "rep_query")
+    @Column(name = "rep_query", length = 4000)
     private String repQuery;
     @Size(max = 50)
-    @Column(name = "aud_usuario")
+    @Column(name = "aud_usuario", length = 50)
     private String audUsuario;
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)
@@ -77,7 +76,7 @@ public class MarReportes implements Serializable {
     @JoinColumn(name = "arc_id", referencedColumnName = "arc_id")
     @ManyToOne
     private MarArchivos arcId;
-    @JoinColumn(name = "rti_id", referencedColumnName = "rti_id")
+    @JoinColumn(name = "rti_id", referencedColumnName = "rti_id", nullable = false)
     @ManyToOne(optional = false)
     private MarReportesTipos rtiId;
 

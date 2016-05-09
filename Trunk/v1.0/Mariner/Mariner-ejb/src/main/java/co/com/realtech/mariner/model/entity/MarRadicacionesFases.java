@@ -26,59 +26,69 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author fabianagudelo
+ * @author Andres Rivera
  */
 @Entity
 @Table(name = "mar_radicaciones_fases")
 @NamedQueries({
     @NamedQuery(name = "MarRadicacionesFases.findAll", query = "SELECT m FROM MarRadicacionesFases m"),
     @NamedQuery(name = "MarRadicacionesFases.findByRfaId", query = "SELECT m FROM MarRadicacionesFases m WHERE m.rfaId = :rfaId"),
-    @NamedQuery(name = "MarRadicacionesFases.findByRfaFecha", query = "SELECT m FROM MarRadicacionesFases m WHERE m.rfaFecha = :rfaFecha"),
+    @NamedQuery(name = "MarRadicacionesFases.findByRfaFechaInicio", query = "SELECT m FROM MarRadicacionesFases m WHERE m.rfaFechaInicio = :rfaFechaInicio"),
     @NamedQuery(name = "MarRadicacionesFases.findByRfaEstado", query = "SELECT m FROM MarRadicacionesFases m WHERE m.rfaEstado = :rfaEstado"),
     @NamedQuery(name = "MarRadicacionesFases.findByRfaCodigoSap", query = "SELECT m FROM MarRadicacionesFases m WHERE m.rfaCodigoSap = :rfaCodigoSap"),
     @NamedQuery(name = "MarRadicacionesFases.findByRfaObservaciones", query = "SELECT m FROM MarRadicacionesFases m WHERE m.rfaObservaciones = :rfaObservaciones"),
     @NamedQuery(name = "MarRadicacionesFases.findByRfaIp", query = "SELECT m FROM MarRadicacionesFases m WHERE m.rfaIp = :rfaIp"),
     @NamedQuery(name = "MarRadicacionesFases.findByAudUsuario", query = "SELECT m FROM MarRadicacionesFases m WHERE m.audUsuario = :audUsuario"),
-    @NamedQuery(name = "MarRadicacionesFases.findByAudFecha", query = "SELECT m FROM MarRadicacionesFases m WHERE m.audFecha = :audFecha")})
+    @NamedQuery(name = "MarRadicacionesFases.findByAudFecha", query = "SELECT m FROM MarRadicacionesFases m WHERE m.audFecha = :audFecha"),
+    @NamedQuery(name = "MarRadicacionesFases.findByRfaFechaFin", query = "SELECT m FROM MarRadicacionesFases m WHERE m.rfaFechaFin = :rfaFechaFin"),
+    @NamedQuery(name = "MarRadicacionesFases.findByRfaEstadoAprobacion", query = "SELECT m FROM MarRadicacionesFases m WHERE m.rfaEstadoAprobacion = :rfaEstadoAprobacion")})
 public class MarRadicacionesFases implements Serializable {
-
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "rfa_id")
+    @Column(name = "rfa_id", nullable = false, precision = 131089, scale = 0)
     private BigDecimal rfaId;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "rfa_fecha")
+    @Column(name = "rfa_fecha_inicio", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date rfaFecha;
+    private Date rfaFechaInicio;
     @Size(max = 1)
-    @Column(name = "rfa_estado")
+    @Column(name = "rfa_estado", length = 1)
     private String rfaEstado;
     @Size(max = 200)
-    @Column(name = "rfa_codigo_sap")
+    @Column(name = "rfa_codigo_sap", length = 200)
     private String rfaCodigoSap;
     @Size(max = 1000)
-    @Column(name = "rfa_observaciones")
+    @Column(name = "rfa_observaciones", length = 1000)
     private String rfaObservaciones;
     @Size(max = 20)
-    @Column(name = "rfa_ip")
+    @Column(name = "rfa_ip", length = 20)
     private String rfaIp;
     @Size(max = 50)
-    @Column(name = "aud_usuario")
+    @Column(name = "aud_usuario", length = 50)
     private String audUsuario;
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @JoinColumn(name = "fas_id", referencedColumnName = "fas_id")
+    @Column(name = "rfa_fecha_fin")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date rfaFechaFin;
+    @Size(max = 1)
+    @Column(name = "rfa_estado_aprobacion", length = 1)
+    private String rfaEstadoAprobacion;
+    @JoinColumn(name = "fas_id", referencedColumnName = "fas_id", nullable = false)
     @ManyToOne(optional = false)
     private MarFases fasId;
-    @JoinColumn(name = "rad_id", referencedColumnName = "rad_id")
+    @JoinColumn(name = "fes_id", referencedColumnName = "fes_id", nullable = false)
+    @ManyToOne(optional = false)
+    private MarFasesEstados fesId;
+    @JoinColumn(name = "rad_id", referencedColumnName = "rad_id", nullable = false)
     @ManyToOne(optional = false)
     private MarRadicaciones radId;
-    @JoinColumn(name = "usu_id", referencedColumnName = "usu_id")
+    @JoinColumn(name = "usu_id", referencedColumnName = "usu_id", nullable = false)
     @ManyToOne(optional = false)
     private MarUsuarios usuId;
 
@@ -89,9 +99,9 @@ public class MarRadicacionesFases implements Serializable {
         this.rfaId = rfaId;
     }
 
-    public MarRadicacionesFases(BigDecimal rfaId, Date rfaFecha) {
+    public MarRadicacionesFases(BigDecimal rfaId, Date rfaFechaInicio) {
         this.rfaId = rfaId;
-        this.rfaFecha = rfaFecha;
+        this.rfaFechaInicio = rfaFechaInicio;
     }
 
     public BigDecimal getRfaId() {
@@ -102,12 +112,12 @@ public class MarRadicacionesFases implements Serializable {
         this.rfaId = rfaId;
     }
 
-    public Date getRfaFecha() {
-        return rfaFecha;
+    public Date getRfaFechaInicio() {
+        return rfaFechaInicio;
     }
 
-    public void setRfaFecha(Date rfaFecha) {
-        this.rfaFecha = rfaFecha;
+    public void setRfaFechaInicio(Date rfaFechaInicio) {
+        this.rfaFechaInicio = rfaFechaInicio;
     }
 
     public String getRfaEstado() {
@@ -158,12 +168,36 @@ public class MarRadicacionesFases implements Serializable {
         this.audFecha = audFecha;
     }
 
+    public Date getRfaFechaFin() {
+        return rfaFechaFin;
+    }
+
+    public void setRfaFechaFin(Date rfaFechaFin) {
+        this.rfaFechaFin = rfaFechaFin;
+    }
+
+    public String getRfaEstadoAprobacion() {
+        return rfaEstadoAprobacion;
+    }
+
+    public void setRfaEstadoAprobacion(String rfaEstadoAprobacion) {
+        this.rfaEstadoAprobacion = rfaEstadoAprobacion;
+    }
+
     public MarFases getFasId() {
         return fasId;
     }
 
     public void setFasId(MarFases fasId) {
         this.fasId = fasId;
+    }
+
+    public MarFasesEstados getFesId() {
+        return fesId;
+    }
+
+    public void setFesId(MarFasesEstados fesId) {
+        this.fesId = fesId;
     }
 
     public MarRadicaciones getRadId() {

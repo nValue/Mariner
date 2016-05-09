@@ -29,7 +29,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author fabianagudelo
+ * @author Andres Rivera
  */
 @Entity
 @Table(name = "mar_personas")
@@ -44,46 +44,47 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarPersonas.findByAudUsuario", query = "SELECT m FROM MarPersonas m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarPersonas.findByAudFecha", query = "SELECT m FROM MarPersonas m WHERE m.audFecha = :audFecha")})
 public class MarPersonas implements Serializable {
-
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "per_id")
+    @Column(name = "per_id", nullable = false, precision = 131089, scale = 0)
     private BigDecimal perId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 300)
-    @Column(name = "per_nombres")
+    @Column(name = "per_nombres", nullable = false, length = 300)
     private String perNombres;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 300)
-    @Column(name = "per_apellidos")
+    @Column(name = "per_apellidos", nullable = false, length = 300)
     private String perApellidos;
     @Size(max = 50)
-    @Column(name = "per_documento")
+    @Column(name = "per_documento", length = 50)
     private String perDocumento;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
-    @Column(name = "per_email")
+    @Column(name = "per_email", nullable = false, length = 200)
     private String perEmail;
     @Size(max = 20)
-    @Column(name = "per_telefono")
+    @Column(name = "per_telefono", length = 20)
     private String perTelefono;
     @Size(max = 50)
-    @Column(name = "aud_usuario")
+    @Column(name = "aud_usuario", length = 50)
     private String audUsuario;
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @JoinColumn(name = "tdc_id", referencedColumnName = "tdc_id")
+    @JoinColumn(name = "tdc_id", referencedColumnName = "tdc_id", nullable = false)
     @ManyToOne(optional = false)
     private MarTiposDocumentos tdcId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "perId")
     private List<MarUsuarios> marUsuariosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "perId")
+    private List<MarNotificaciones> marNotificacionesList;
 
     public MarPersonas() {
     }
@@ -177,6 +178,14 @@ public class MarPersonas implements Serializable {
 
     public void setMarUsuariosList(List<MarUsuarios> marUsuariosList) {
         this.marUsuariosList = marUsuariosList;
+    }
+
+    public List<MarNotificaciones> getMarNotificacionesList() {
+        return marNotificacionesList;
+    }
+
+    public void setMarNotificacionesList(List<MarNotificaciones> marNotificacionesList) {
+        this.marNotificacionesList = marNotificacionesList;
     }
 
     @Override

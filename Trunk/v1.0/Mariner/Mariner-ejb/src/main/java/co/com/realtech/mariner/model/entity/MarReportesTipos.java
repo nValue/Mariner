@@ -27,7 +27,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author fabianagudelo
+ * @author Andres Rivera
  */
 @Entity
 @Table(name = "mar_reportes_tipos")
@@ -39,24 +39,23 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarReportesTipos.findByAudUsuario", query = "SELECT m FROM MarReportesTipos m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarReportesTipos.findByAudFecha", query = "SELECT m FROM MarReportesTipos m WHERE m.audFecha = :audFecha")})
 public class MarReportesTipos implements Serializable {
-
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "rti_id")
+    @Column(name = "rti_id", nullable = false, precision = 131089, scale = 0)
     private BigDecimal rtiId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
-    @Column(name = "rti_codigo")
+    @Column(name = "rti_codigo", nullable = false, length = 20)
     private String rtiCodigo;
     @Size(max = 200)
-    @Column(name = "rti_nombre")
+    @Column(name = "rti_nombre", length = 200)
     private String rtiNombre;
     @Size(max = 50)
-    @Column(name = "aud_usuario")
+    @Column(name = "aud_usuario", length = 50)
     private String audUsuario;
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)

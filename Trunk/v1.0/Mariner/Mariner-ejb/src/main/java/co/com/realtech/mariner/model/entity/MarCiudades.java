@@ -28,7 +28,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author fabianagudelo
+ * @author Andres Rivera
  */
 @Entity
 @Table(name = "mar_ciudades")
@@ -40,29 +40,28 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarCiudades.findByAudUsuario", query = "SELECT m FROM MarCiudades m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarCiudades.findByAudFecha", query = "SELECT m FROM MarCiudades m WHERE m.audFecha = :audFecha")})
 public class MarCiudades implements Serializable {
-
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "ciu_id")
+    @Column(name = "ciu_id", nullable = false, precision = 131089, scale = 0)
     private BigDecimal ciuId;
     @Size(max = 100)
-    @Column(name = "ciu_nombre")
+    @Column(name = "ciu_nombre", length = 100)
     private String ciuNombre;
     @Size(max = 20)
-    @Column(name = "ciu_codigo_dane")
+    @Column(name = "ciu_codigo_dane", length = 20)
     private String ciuCodigoDane;
     @Size(max = 50)
-    @Column(name = "aud_usuario")
+    @Column(name = "aud_usuario", length = 50)
     private String audUsuario;
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciuId")
     private List<MarNotarias> marNotariasList;
-    @JoinColumn(name = "dep_id", referencedColumnName = "dep_id")
+    @JoinColumn(name = "dep_id", referencedColumnName = "dep_id", nullable = false)
     @ManyToOne(optional = false)
     private MarDepartamentos depId;
 

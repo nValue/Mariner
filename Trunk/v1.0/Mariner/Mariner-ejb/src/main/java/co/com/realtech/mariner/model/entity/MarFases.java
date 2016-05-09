@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author fabianagudelo
+ * @author Andres Rivera
  */
 @Entity
 @Table(name = "mar_fases")
@@ -39,28 +39,29 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarFases.findByAudUsuario", query = "SELECT m FROM MarFases m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarFases.findByAudFecha", query = "SELECT m FROM MarFases m WHERE m.audFecha = :audFecha")})
 public class MarFases implements Serializable {
-
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "fas_id")
+    @Column(name = "fas_id", nullable = false, precision = 131089, scale = 0)
     private BigDecimal fasId;
     @Size(max = 5)
-    @Column(name = "fas_codigo")
+    @Column(name = "fas_codigo", length = 5)
     private String fasCodigo;
     @Size(max = 50)
-    @Column(name = "fas_nombre")
+    @Column(name = "fas_nombre", length = 50)
     private String fasNombre;
     @Column(name = "fas_orden")
     private Short fasOrden;
     @Size(max = 50)
-    @Column(name = "aud_usuario")
+    @Column(name = "aud_usuario", length = 50)
     private String audUsuario;
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fasId")
+    private List<MarFasesEstados> marFasesEstadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fasId")
     private List<MarRadicacionesFases> marRadicacionesFasesList;
 
@@ -117,6 +118,14 @@ public class MarFases implements Serializable {
 
     public void setAudFecha(Date audFecha) {
         this.audFecha = audFecha;
+    }
+
+    public List<MarFasesEstados> getMarFasesEstadosList() {
+        return marFasesEstadosList;
+    }
+
+    public void setMarFasesEstadosList(List<MarFasesEstados> marFasesEstadosList) {
+        this.marFasesEstadosList = marFasesEstadosList;
     }
 
     public List<MarRadicacionesFases> getMarRadicacionesFasesList() {

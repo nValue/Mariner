@@ -29,7 +29,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author fabianagudelo
+ * @author Andres Rivera
  */
 @Entity
 @Table(name = "mar_usuarios")
@@ -40,38 +40,41 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarUsuarios.findByUsuPassword", query = "SELECT m FROM MarUsuarios m WHERE m.usuPassword = :usuPassword"),
     @NamedQuery(name = "MarUsuarios.findByUsuEstado", query = "SELECT m FROM MarUsuarios m WHERE m.usuEstado = :usuEstado"),
     @NamedQuery(name = "MarUsuarios.findByAudUsuario", query = "SELECT m FROM MarUsuarios m WHERE m.audUsuario = :audUsuario"),
-    @NamedQuery(name = "MarUsuarios.findByAudFecha", query = "SELECT m FROM MarUsuarios m WHERE m.audFecha = :audFecha")})
+    @NamedQuery(name = "MarUsuarios.findByAudFecha", query = "SELECT m FROM MarUsuarios m WHERE m.audFecha = :audFecha"),
+    @NamedQuery(name = "MarUsuarios.findByUsuUltimoIngreso", query = "SELECT m FROM MarUsuarios m WHERE m.usuUltimoIngreso = :usuUltimoIngreso")})
 public class MarUsuarios implements Serializable {
-
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "usu_id")
+    @Column(name = "usu_id", nullable = false, precision = 131089, scale = 0)
     private BigDecimal usuId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "usu_login")
+    @Column(name = "usu_login", nullable = false, length = 50)
     private String usuLogin;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 300)
-    @Column(name = "usu_password")
+    @Column(name = "usu_password", nullable = false, length = 300)
     private String usuPassword;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 1)
-    @Column(name = "usu_estado")
+    @Column(name = "usu_estado", nullable = false, length = 1)
     private String usuEstado;
     @Size(max = 50)
-    @Column(name = "aud_usuario")
+    @Column(name = "aud_usuario", length = 50)
     private String audUsuario;
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @JoinColumn(name = "per_id", referencedColumnName = "per_id")
+    @Column(name = "usu_ultimo_ingreso")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date usuUltimoIngreso;
+    @JoinColumn(name = "per_id", referencedColumnName = "per_id", nullable = false)
     @ManyToOne(optional = false)
     private MarPersonas perId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuId")
@@ -139,6 +142,14 @@ public class MarUsuarios implements Serializable {
 
     public void setAudFecha(Date audFecha) {
         this.audFecha = audFecha;
+    }
+
+    public Date getUsuUltimoIngreso() {
+        return usuUltimoIngreso;
+    }
+
+    public void setUsuUltimoIngreso(Date usuUltimoIngreso) {
+        this.usuUltimoIngreso = usuUltimoIngreso;
     }
 
     public MarPersonas getPerId() {

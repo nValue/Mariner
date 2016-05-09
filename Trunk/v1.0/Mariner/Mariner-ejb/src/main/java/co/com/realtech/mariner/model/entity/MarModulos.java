@@ -30,7 +30,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author fabianagudelo
+ * @author Andres Rivera
  */
 @Entity
 @Table(name = "mar_modulos")
@@ -46,37 +46,36 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarModulos.findByAudUsuario", query = "SELECT m FROM MarModulos m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarModulos.findByAudFecha", query = "SELECT m FROM MarModulos m WHERE m.audFecha = :audFecha")})
 public class MarModulos implements Serializable {
-
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "mod_id")
+    @Column(name = "mod_id", nullable = false, precision = 131089, scale = 0)
     private BigDecimal modId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "mod_nombre")
+    @Column(name = "mod_nombre", nullable = false, length = 100)
     private String modNombre;
     @Size(max = 500)
-    @Column(name = "mod_url")
+    @Column(name = "mod_url", length = 500)
     private String modUrl;
     @Size(max = 50)
-    @Column(name = "mod_icono")
+    @Column(name = "mod_icono", length = 50)
     private String modIcono;
     @Size(max = 500)
-    @Column(name = "mod_descripcion")
+    @Column(name = "mod_descripcion", length = 500)
     private String modDescripcion;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 1)
-    @Column(name = "mod_estado")
+    @Column(name = "mod_estado", nullable = false, length = 1)
     private String modEstado;
     @Column(name = "mod_orden")
     private Integer modOrden;
     @Size(max = 50)
-    @Column(name = "aud_usuario")
+    @Column(name = "aud_usuario", length = 50)
     private String audUsuario;
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)
@@ -233,7 +232,5 @@ public class MarModulos implements Serializable {
     public void setModulosMenu(List<MarModulos> modulosMenu) {
         this.modulosMenu = modulosMenu;
     }
-    
-    
     
 }

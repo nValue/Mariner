@@ -30,7 +30,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author fabianagudelo
+ * @author Andres Rivera
  */
 @Entity
 @Table(name = "mar_archivos")
@@ -47,38 +47,37 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarArchivos.findByAudUsuario", query = "SELECT m FROM MarArchivos m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarArchivos.findByAudFecha", query = "SELECT m FROM MarArchivos m WHERE m.audFecha = :audFecha")})
 public class MarArchivos implements Serializable {
-
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "arc_id")
+    @Column(name = "arc_id", nullable = false, precision = 131089, scale = 0)
     private BigDecimal arcId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "arc_nombre")
+    @Column(name = "arc_nombre", nullable = false, length = 50)
     private String arcNombre;
     @Size(max = 10)
-    @Column(name = "arc_extension")
+    @Column(name = "arc_extension", length = 10)
     private String arcExtension;
     @Size(max = 100)
-    @Column(name = "arc_mime_type")
+    @Column(name = "arc_mime_type", length = 100)
     private String arcMimeType;
     @Column(name = "arc_tamano")
     private BigInteger arcTamano;
     @Size(max = 500)
-    @Column(name = "arc_path_interno")
+    @Column(name = "arc_path_interno", length = 500)
     private String arcPathInterno;
     @Size(max = 500)
-    @Column(name = "arc_hash")
+    @Column(name = "arc_hash", length = 500)
     private String arcHash;
     @Size(max = 1)
-    @Column(name = "arc_estado")
+    @Column(name = "arc_estado", length = 1)
     private String arcEstado;
     @Size(max = 50)
-    @Column(name = "aud_usuario")
+    @Column(name = "aud_usuario", length = 50)
     private String audUsuario;
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)
@@ -91,7 +90,7 @@ public class MarArchivos implements Serializable {
     private List<MarReportes> marReportesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "arcId")
     private List<MarEscrituras> marEscriturasList;
-    @JoinColumn(name = "pmo_id", referencedColumnName = "pmo_id")
+    @JoinColumn(name = "pmo_id", referencedColumnName = "pmo_id", nullable = false)
     @ManyToOne(optional = false)
     private MarPuntosMontajes pmoId;
 

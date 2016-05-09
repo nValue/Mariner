@@ -23,7 +23,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author fabianagudelo
+ * @author Andres Rivera
  */
 @Entity
 @Table(name = "nva_seguimiento")
@@ -34,19 +34,18 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "NvaSeguimiento.findBySegMensaje", query = "SELECT n FROM NvaSeguimiento n WHERE n.segMensaje = :segMensaje"),
     @NamedQuery(name = "NvaSeguimiento.findByAudFecha", query = "SELECT n FROM NvaSeguimiento n WHERE n.audFecha = :audFecha")})
 public class NvaSeguimiento implements Serializable {
-
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "seg_id")
+    @Column(name = "seg_id", nullable = false, precision = 131089, scale = 0)
     private BigDecimal segId;
     @Size(max = 100)
-    @Column(name = "seg_clave")
+    @Column(name = "seg_clave", length = 100)
     private String segClave;
     @Size(max = 1000)
-    @Column(name = "seg_mensaje")
+    @Column(name = "seg_mensaje", length = 1000)
     private String segMensaje;
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)
