@@ -35,6 +35,14 @@
     top: 122px !important;
 }
 
+#modalContrasena{
+    top: 122px !important;
+}
+
+#confirmationDialog{
+    top: 100px !important;
+}
+
 .ui-selectonemenu-trigger.ui-state-default.ui-corner-right{
     border-top: none;
     border-right: none;
@@ -62,6 +70,15 @@
 
 .ui-button.ui-state-hover,.ui-button.ui-state-hover,button.ui-button.ui-state-focus,.ui-button.ui-state-focus{
     border:1px solid #156090;background:#156090 !important;outline:0 none
+}
+
+*.ui-datatable-selectable.ui-state-hover{    
+    background-color: rgba(236, 236, 236, 0.75) !important;
+    border-bottom: 2px solid #188AD0 !important;
+}
+
+.ui-datatable tbody td{
+    font-size: 13px !important;
 }
 
 .ui-button{
@@ -121,7 +138,10 @@
 }
 
 .ui-state-error{
-    border: 1px solid #ff6464 !important;
+    border: 1px solid #FFAAAA !important;
+    -webkit-box-shadow: 0px 0px 4px 0px rgba(160, 6, 6, 0.42) !important;
+    -moz-box-shadow:    0px 0px 4px 0px rgba(160, 6, 6, 0.42) !important;    
+    box-shadow: 0px 0px 4px 0px rgba(160, 6, 6, 0.42) !important;
 }
 
 *.ui-dialog-content{
