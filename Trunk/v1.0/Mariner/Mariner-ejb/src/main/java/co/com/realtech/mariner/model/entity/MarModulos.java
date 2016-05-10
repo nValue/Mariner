@@ -13,6 +13,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -80,7 +81,7 @@ public class MarModulos implements Serializable {
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(mappedBy = "modIdPadre")
+    @OneToMany(mappedBy = "modIdPadre",fetch = FetchType.EAGER)
     private List<MarModulos> marModulosList;
     @JoinColumn(name = "mod_id_padre", referencedColumnName = "mod_id")
     @ManyToOne
