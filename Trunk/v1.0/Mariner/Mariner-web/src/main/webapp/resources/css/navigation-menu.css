@@ -115,11 +115,11 @@
 .navigation > ul > li > a {
     border-right: 0.36em solid #529CE8;
     color: #5C5C5C;
-    font-size: 12.5px;
+    font-size: 14px;
 }
 
 .navigation > ul > li > a:hover { 
-    color: #ffffff;                                 
+    color: #ffffff;
     font-weight: 600 !important;
 }
 
@@ -128,16 +128,17 @@
     background: rgb(240, 240, 240);
     border-bottom: 1px solid rgb(218, 218, 218);
     border-top: 1px solid rgb(218, 218, 218);    
-    font-size: 12.5px;
+    font-size: 14px;
     color: rgb(102, 102, 102);
 }
 
 .navigation li { position: relative; }
 
 .navigation ul li.has-sub > a:after {
-    content: '»';
+    content: url('../images/icons/flechaDer.png.vur');
     position: absolute;
-    right: 1em;
+    right: 6px;
+    top: 8px;
 }
 
 .navigation ul ul li.first {
