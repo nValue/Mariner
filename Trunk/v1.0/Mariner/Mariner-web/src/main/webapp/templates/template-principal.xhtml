@@ -6,23 +6,24 @@
         <link rel="stylesheet" type="text/css" href="#{resource['css/core.css']}" />
         <link rel="stylesheet" type="text/css" href="#{resource['css/index.css']}" />
         <link rel="stylesheet" type="text/css" href="#{resource['css/main.css']}" />
-        <link rel="stylesheet" type="text/css" href="#{resource['css/overwrite-theme.css']}" />        
-        <link rel="shortcut icon" type="image/png" href="#{resource['images/favicon.png']}"/>
-        <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'/>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css"/>        
-        <title>.Plataforma de control y gestion Impuestos registro Valle del Cauca.</title> 
+        <link rel="stylesheet" type="text/css" href="#{resource['css/overwrite-theme.css']}" />
+        <link rel="shortcut icon" type="image/png" href="#{resource['images/favicon.png']}" />
+        <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css' />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css" />
+        <title>.Plataforma de control y gestion Impuestos registro Valle del Cauca.</title>
     </h:head>
 
     <h:body>
         <div id="menuContainer">
             <div id="mainMenu">
                 <div class="navigation">
-                    <h:outputText value="#{indexManagedBean.htmlMenu}" escape="false" />                        
+                    <h:outputText value="#{indexManagedBean.htmlMenu}" escape="false" />
                 </div>
-            </div>    
+            </div>
         </div>
-        <!-- Facelet con todo el contenido que debe insertar las template clientes -->
-        <ui:insert name="content"/> 
+        
+        <!---== Facelet con todo el contenido que debe insertar las template clientes ==-->
+        <ui:insert name="content"/>
 
         <!-- Generic Dialog for popup notifications -->
         <p:dialog id="modalDialog" header="#{sessionScope.dialog.usaI18N?msg[sessionScope.dialog.title]:sessionScope.dialog.title}" widgetVar="genericDialog" modal="#{sessionScope.dialog.modal}" showEffect="#{sessionScope.dialog.effect}" appendTo="@(body)" closeOnEscape="true" resizable="false">  
@@ -35,9 +36,9 @@
                             PF('loadingDialog').hide();" style="font-size: 14px !important;"/>
                 </h:form>
             </div>
-        </p:dialog> 
+        </p:dialog>
 
-        <!-- Generic Dialog for ajax Loading Actions -->        
+        <!-- Generic Dialog for ajax Loading Actions -->
         <p:dialog id="modalLoading" widgetVar="loadingDialog" modal="true" appendTo="@(body)" resizable="false" showHeader="false" styleClass="loadingDialog">  
             <div>
                 <div align="center">

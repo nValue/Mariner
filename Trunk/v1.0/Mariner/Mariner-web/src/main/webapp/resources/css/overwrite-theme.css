@@ -74,6 +74,10 @@
     text-shadow: none !important;
 }
 
+.ui-inputfield{
+    text-align: center;
+    font-size: 14px;
+}
 
 .ui-button, button.ui-button.ui-state-default, .ui-button.ui-state-default {
     border: 1px solid #1f89ce;

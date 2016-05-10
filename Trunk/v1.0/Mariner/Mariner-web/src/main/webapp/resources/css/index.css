@@ -9,6 +9,14 @@
     height: 80px;
 }
 
+.pagina{
+    width: 100%;
+    height: 100%;
+    background-image: url(../../resources/images/background-full.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
 .imgHeaderLeft{
     display: inline-block;
     width: 40%;
@@ -26,6 +34,21 @@
     background-size: contain;
     background-position: right;
     background-repeat: no-repeat;
+}
+
+.mainTitle{
+    display: inline-block;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.imgValle{
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-block;
+    float: right
 }
 
 #loginDiv{
@@ -61,7 +84,91 @@
     font-weight: 800;
 }
 
-.ui-inputfield{
-    text-align: center;
-    font-size: 14px;
+
+#usuarioDiv{
+    display: none;
+    z-index: 10;  
+    position: absolute;
+    left: 78%;
+    top: 45px;
+    width: 250px;
+    height: 300px;
+    background: #fff;
+    -moz-box-shadow: 0 1px 2px 0 #000;
+    -webkit-box-shadow: 0 1px 2px 0 #000;
+    box-shadow: 0 1px 2px 0 #000;
+}
+
+#usuarioImg:hover + #usuarioDiv{
+    display: block;
+}
+
+#usuarioDiv:hover{
+    display: block;
+}
+
+#imgUserBig{
+    width: 100%;
+    height: 60%;
+}
+
+#infoUser{
+    width: 100%;
+    height: 39%;
+}
+
+.helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+.titleMain{
+    font-size: 24px;
+    display: block;
+    color: #439fe0;
+}
+
+.subtitleMain{
+    text-align: left;
+    display: block;
+    font-size: 13px;
+}
+
+.titleIcon{
+    color: #439fe0;
+    vertical-align: super;
+    margin: 5px;
+}
+
+#contenedorInicio{
+    width: 80%;
+    height: 90%;
+}
+
+#espacioIzq{
+    width: 60%;
+    height: 100%;
+    background-color: #fff;
+    display: inline-block;
+    margin: 1%;
+    vertical-align: top;
+    box-shadow:0px 1px 1px #2B0000;
+}
+
+#espacioDer{
+    width: 32%;
+    height: 100%;
+    background-color: #fff;
+    display: inline-block;
+    margin: 1%;
+    vertical-align: top;
+    box-shadow:0px 1px 1px #2B0000;
+}
+
+.tituloContenedor{
+    width: 100%;
+    height: 48px;
+    padding: 15px 30px;
+    border-bottom: solid 1px #e0e0e0;
 }

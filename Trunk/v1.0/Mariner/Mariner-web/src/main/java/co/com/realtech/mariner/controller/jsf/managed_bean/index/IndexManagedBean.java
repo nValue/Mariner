@@ -11,6 +11,7 @@ import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.util.crypto.CryptoUtils;
 import co.com.realtech.mariner.util.html.DynamicHTMLMenuGenerator;
 import co.com.realtech.mariner.util.jsf.JSFUtils;
+import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.session.AuditSessionUtils;
 import co.com.realtech.mariner.util.session.SessionUtils;
 import co.com.realtech.mariner.util.string.RandomStringGenerator;
@@ -19,10 +20,12 @@ import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.validator.ValidatorException;
 import org.apache.log4j.Logger;
 
 /**
@@ -48,6 +51,11 @@ public class IndexManagedBean implements Serializable {
 
     private String htmlMenu;
     private String contextPath;
+    
+    private String claveAntigua;
+    private String claveNueva;
+    private String claveNuevaRep;
+    
 
     private MarUsuarios usuario;
     private List<MarTiposDocumentos> tiposDocumento;
@@ -61,6 +69,9 @@ public class IndexManagedBean implements Serializable {
         setUsuario(new MarUsuarios());
         contextPath = JSFUtils.getCurrentContext();
         auditSessionUtils = AuditSessionUtils.create();
+        claveAntigua = "";
+        claveNueva = "c";
+        claveNueva = "d";
     }
 
     /**
@@ -119,7 +130,15 @@ public class IndexManagedBean implements Serializable {
      */
     public void crearUsuario() {
         try {
-            getUsuario().setUsuLogin(getUsuario().getPerId().getTdcId().getTdcSigla() + getUsuario().getPerId().getPerDocumento());
+            String login = getUsuario().getPerId().getTdcId().getTdcSigla() + getUsuario().getPerId().getPerDocumento();
+            
+            //Valida que ese tipo y número de cédula no exista en la base de datos.
+            MarUsuarios usuarioARegistrar = (MarUsuarios)genericDAOBean.findByColumn(MarUsuarios.class, "usuLogin", login);
+            if(usuarioARegistrar != null){
+                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Usuario existente", "El tipo y número de documento ya se encuentra registrado en nuestro sistema, si le pertenece puede comunicarse con su administrador.", true, false);
+                return;
+            }
+            getUsuario().setUsuLogin(login);
             String claveTemporal = RandomStringGenerator.generateRandomString(6, RandomStringGenerator.Mode.ALPHANUMERIC);
             claveTemporal = claveTemporal.substring(0, 5);
             getUsuario().setUsuPassword(CryptoUtils.encrypt(claveTemporal));
@@ -173,6 +192,43 @@ public class IndexManagedBean implements Serializable {
         }
         fc.responseComplete();
     }
+    
+    /**
+     * Verifica que la clave ingresada para cambiar el password sea la misma.
+     * 
+     * @return 
+     */
+    public boolean verificarClaveAntigua(){
+        boolean valido = false;
+        try {
+            String claveActual = CryptoUtils.decrypt(usuario.getUsuPassword());
+            if(claveAntigua.equals(claveActual)){
+                valido = true;
+            }
+        } catch (Exception e) {
+            logger.error("Error validando las claves, causado por: " + e);
+        }
+        return valido;
+    }
+    
+    /**
+     * Cambia la contraseña actual del usuario.
+     */
+    public void cambiarContrasena() throws ValidatorException {
+        try {
+            if (verificarClaveAntigua()) {
+                usuario.setUsuPassword(CryptoUtils.encrypt(claveNueva));
+                auditSessionUtils.setAuditReflectedValues(usuario);
+                genericDAOBean.merge(usuario);
+                PrimeFacesPopup.lanzarDialog(Effects.Clip, "Cambio realizado", "Contraseña cambiada correctamente, debe cerrar su sesión para realizar los cambios", true, false);
+                PrimeFacesContext.execute("PF('dialogContrasena').hide();");
+            } else {
+                PrimeFacesPopup.lanzarDialog(Effects.Bounce, "Clave inválida", "La contraseña antigua no coincide", true, false);
+            }
+        } catch (Exception e) {
+            logger.error("Error cambiado las claves, causado por: " + e);
+        }
+    }
 
     public String getHtmlMenu() {
         return htmlMenu;
@@ -197,5 +253,31 @@ public class IndexManagedBean implements Serializable {
     public void setUsuario(MarUsuarios usuario) {
         this.usuario = usuario;
     }
+
+    public String getClaveAntigua() {
+        return claveAntigua;
+    }
+
+    public void setClaveAntigua(String claveAntigua) {
+        this.claveAntigua = claveAntigua;
+    }
+
+    public String getClaveNueva() {
+        return claveNueva;
+    }
+
+    public void setClaveNueva(String claveNueva) {
+        this.claveNueva = claveNueva;
+    }
+
+    public String getClaveNuevaRep() {
+        return claveNuevaRep;
+    }
+
+    public void setClaveNuevaRep(String claveNuevaRep) {
+        this.claveNuevaRep = claveNuevaRep;
+    }
+    
+    
 
 }
