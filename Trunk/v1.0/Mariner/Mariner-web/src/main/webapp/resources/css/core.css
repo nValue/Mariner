@@ -6,6 +6,7 @@ body{
     margin: 0;
     font-family: 'Raleway', sans-serif !important;
     font-size: 12.5px !important;    
+    background: #f0f2f5;
 }
 
 
@@ -188,4 +189,17 @@ table{
   100% {
     -ms-transform:  rotate(0deg) ;
   }
+}
+
+*.colCenter{
+    text-align: center;
+}
+
+#footer{        
+    padding: 10px;    
+}
+
+#footer>div{
+    text-align: center;
+    font-size: 11.5px;
 }

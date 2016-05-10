@@ -51,13 +51,15 @@
                             <img id="menuicon" class="element-animation" style="margin: 10%;cursor: pointer" src="#{resource['/images/icons/menu-icon.png']}"/>                          
                         </div>
                         <div class="centerHeaderMain">
-                            <img width="180px" style="display: inline-block;vertical-align: top;float: left" src="#{resource['/images/logoGobernacion.png']}"/>
+                            <a href="#{request.contextPath}">
+                                <img width="180px" style="display: inline-block;vertical-align: top;float: left" src="#{resource['/images/logoGobernacion.png']}"/>                                
+                            </a>                            
                             <div class="mainTitle" style="">Plataforma de impuestos de Registro Valle del Cauca</div>
                             <img class="imgValle" width="50px" src="#{resource['/images/valle.png']}"/>
                         </div>
                         <div class="rightHeaderMain">
-                            <img id="usuarioImg" class="element-animation" style="margin: 10%;cursor: pointer" src="#{resource['/images/icons/user-icon.png']}"/>  
-                            
+                            <img id="usuarioImg" class="element-animation" style="margin: 4%;margin-top: 20px;cursor: pointer;width: 24px;" src="#{resource['/images/icons/user-icon.png']}" title="Presione para ver la informacion del usuario"/>  
+
                             <!--div para la información del usuario onHover-->
                             <div id="usuarioDiv" align="center">
                                 <div id="imgUserBig">
@@ -70,17 +72,17 @@
                                     <p:commandButton style="margin: 9%" value="Cambiar contraseña" oncomplete="PF('dialogContrasena').show()" />
                                 </div>
                             </div>
-                            
-                            <h:commandLink action="#{indexManagedBean.salir()}" >
-                                <img class="element-animation" style="margin: 10%;cursor: pointer" src="#{resource['/images/icons/logout-icon.png']}"/>
+
+                            <h:commandLink action="#{indexManagedBean.salir()}" title="Presione aqui para cerrar la sesion de usuario">
+                                <img class="element-animation" style="margin: 4%;cursor: pointer;width: 24px;" src="#{resource['/images/icons/logout-icon.png']}"/>
                             </h:commandLink>
                         </div>
                     </div>
                 </h:form>
                 <div class="contentMain" align="center">
-                    
+
                     <ui:insert name="negocio"/>
-                    
+
                 </div>
             </div>
         </h:panelGroup>
@@ -112,7 +114,7 @@
                 </h:form>
             </div>            
         </p:dialog>
-        
+
         <!-- Dialog para el cambio de contraseña -->
         <p:dialog id="modalContrasena" widgetVar="dialogContrasena" resizable="false" header="Cambio de contraseña" modal="true">
             <div>

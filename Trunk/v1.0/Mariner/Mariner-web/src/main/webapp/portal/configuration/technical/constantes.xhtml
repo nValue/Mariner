@@ -3,23 +3,78 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/templates/template-business.xhtml"
-                xmlns:h="http://xmlns.jcp.org/jsf/html">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="negocio">
+        <!-- Estilos personalizados pagina -->
+        <style type="text/css">
+            #modalConstante{
+                top: 40px !important;
+            }
+        </style>
+
         <div id="paperMain">
             <div class="tituloCont" align="center">
                 <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
                 <div style="display: inline-block">
                     <h:outputLabel styleClass="titleMain" value="Configuración de constantes" />
-                    <h:outputLabel styleClass="subtitleMain" value="Cambiar variables indispensables para la aplicación"/>
+                    <h:outputLabel styleClass="subtitleMain" value="Permite la completa administracion del modulo de contantes y parametros del sistema"/>
                 </div>
             </div>
             <div class="contenidoPrinc" align="center">
-                
-                
-                
+                <h:form id="formConstantes">
+                    <div style="padding: 22px;">
+                        <p:dataTable id="constantes" var="constante" value="#{constantesManagedBean.constantes}" selectionMode="single" selection="#{constantesManagedBean.constante}" rowKey="#{constante.conId}" emptyMessage="No se han encontrado constantes configuradas en el sistema" rowIndexVar="idx" filteredValue="#{constantesManagedBean.constantesFiltro}">
+                            <p:ajax event="rowSelect" oncomplete="PF('dialogConstante').show();" update=":modalConstante"/>                        
+                            <p:column headerText="#" width="40" styleClass="colCenter">
+                                <h:outputText value="#{idx}" />
+                            </p:column>
+                            <p:column headerText="Sigla" width="120" filterBy="#{constante.conSigla}" filterMatchMode="contains" styleClass="colCenter">
+                                <h:outputText value="#{constante.conSigla}" />
+                            </p:column>
+                            <p:column headerText="Nombre" filterBy="#{constante.conNombre}" filterMatchMode="contains">
+                                <h:outputText value="#{constante.conNombre}" />
+                            </p:column>
+                            <p:column headerText="Valor" filterBy="#{constante.conValorGenerico}" filterMatchMode="contains">
+                                <h:outputText value="#{constante.conValorGenerico}" />
+                            </p:column>
+                            <p:column headerText="X" width="20">
+                                <p:commandLink update="constantes" title="Presione para eliminar esta Constante" action="#{constantesManagedBean.eliminarConstante()}">                                    
+                                    <f:setPropertyActionListener target="#{constantesManagedBean.constante}" value="#{constante}" />
+                                    <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                    <p:confirm header="Confirmacion" message="Esta seguro de eliminar la constante seleccionada?" icon="ui-icon-alert" />
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <div align="right" style="padding-top: 4px;">
+                            <p:commandButton value="Agregar" action="#{constantesManagedBean.agregarConstante()}" oncomplete="PF('dialogConstante').show();" update=":modalConstante"/>
+                        </div>
+                    </div>
+                </h:form>                
             </div>
         </div>
+
+        <!-- Dialog de modificacion constante -->        
+        <p:dialog id="modalConstante" widgetVar="dialogConstante" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Constante" modal="true">
+            <div>
+                <h:form id="formModalConstante">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Sigla"/>
+                        <p:inputText value="#{constantesManagedBean.constante.conSigla}" required="true" size="30"/>
+                        <h:outputLabel value="Nombre"/>
+                        <p:inputText value="#{constantesManagedBean.constante.conNombre}" required="true" size="30"/>
+                        <h:outputLabel value="Valor"/>
+                        <p:inputText value="#{constantesManagedBean.constante.conValorGenerico}" required="true" size="90"/>
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{constantesManagedBean.guardarConstante()}" update="@form :formConstantes" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogConstante').hide();" immediate="true"/>
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
     </ui:define>
 
 </ui:composition>
