@@ -8,7 +8,6 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="content">
-
         <!-- Panel que se muestra cuando el usuario no esta autenticado -->
         <h:panelGroup rendered="#{sessionScope.auth eq null or sessionScope.auth eq 'N'}">
             <h:form id="formLogin">
@@ -35,10 +34,27 @@
                                 <p:commandButton value="Registrarme" action="#{indexManagedBean.activarRegistro()}" update=":modalRegistro" oncomplete="PF('dialogRegistro').show()" process="@this" />
                                 <p:commandButton value="Olvidé la clave" />
                             </div>
-                        </div> 
+                            <div id="loginDiv" align="center" >
+                                <div class="headerLoginBorder" />
+                                <div class="headerLoginDiv">
+                                    <div>Autenticación</div>
+                                </div>    
+                                <h:panelGrid cellpadding="" columns="1" style="margin: 40px 0;">
+                                    <h:outputLabel for="idUsu" value="Usuario: " />
+                                    <p:inputText id="idUsu" value="#{indexManagedBean.usuario.usuLogin}" required="true" label="Usuario" size="30"/>
+                                    <h:outputLabel for="idCont" value="Contraseña: " />
+                                    <p:password id="idCont" value="#{indexManagedBean.usuario.usuPassword}" required="true" label="Password" size="30"/>
+                                </h:panelGrid>
+                                <div align="center">
+                                    <p:commandButton value="Entrar" action="#{indexManagedBean.autenticar()}" update="@this :panelHome" ajax="false"/>
+                                    <p:commandButton value="Registrarme" action="#{indexManagedBean.activarRegistro()}" oncomplete="PF('dialogRegistro').show()" />
+                                    <p:commandButton value="Olvidé la clave" />
+                                </div>
+                            </div> 
+                        </div>
                     </div>
-                </div>
-            </h:form>
+                </h:form>
+            </div>            
         </h:panelGroup>        
 
         <!-- Panel que se muestra cuando el usuario YA esta autenticado -->

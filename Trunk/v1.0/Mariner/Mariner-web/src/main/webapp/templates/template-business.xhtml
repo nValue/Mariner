@@ -21,8 +21,45 @@
                 </div>
             </div>    
         </div>
-        <!-- Facelet con todo el contenido que debe insertar las template clientes -->
-        <ui:insert name="content"/> 
+
+        <div>
+            <div id="backgroundDiv">
+                <h:form>
+                    <div class="headerMain">
+                        <div class="leftHeaderMain">
+                            <img class="element-animation" style="margin: 10%;cursor: pointer" src="#{resource['/images/icons/menu-icon.png']}"/>                          
+                        </div>
+                        <div class="centerHeaderMain">
+                            <img width="180px" style="display: inline-block;vertical-align: top;float: left" src="#{resource['/images/logoGobernacion.png']}"/>
+                            <p style="display: inline-block">Plataforma de impuestos de Registro Valle del Cauca
+                            </p>
+                            <img style="display: inline-block;vertical-align: top;float: right" width="108px" src="#{resource['/images/logo-turismo-valle.png']}"/>
+                        </div>
+                        <div class="rightHeaderMain">
+                            <img class="element-animation" style="margin: 10%;cursor: pointer" src="#{resource['/images/icons/user-icon.png']}"/>                          
+                            <h:commandLink action="#{indexManagedBean.salir()}" >
+                                <img class="element-animation" style="margin: 10%;cursor: pointer" src="#{resource['/images/icons/logout-icon.png']}"/>
+                            </h:commandLink>
+                        </div>
+                    </div>
+                </h:form>
+                <div class="contentMain" align="center">
+                    <div id="paperMain">
+                        <div class="tituloCont" align="center">
+                            <i class="fa fa-deaf fa-2x" style="color: #439fe0;vertical-align: super" aria-hidden="true"></i>
+                            <div class="" style="display: inline-block">
+                                <h:outputLabel style="font-size: 24px;display: block;color: #439fe0;" value="Radicación de documentos" />
+                                <h:outputLabel style="text-align: left;display: block;font-size: 13px" value="Tomar muestras, aceptar y enviar los documentos"/>
+                            </div>
+                        </div>
+                        <div class="contenidoPrinc">
+                            <!-- Facelet con todo el contenido que debe insertar las template clientes -->
+                            <ui:insert name="content"/> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>        
 
         <!-- Generic Dialog for popup notifications -->
         <p:dialog id="modalDialog" header="#{sessionScope.dialog.usaI18N?msg[sessionScope.dialog.title]:sessionScope.dialog.title}" widgetVar="genericDialog" modal="#{sessionScope.dialog.modal}" showEffect="#{sessionScope.dialog.effect}" appendTo="@(body)" closeOnEscape="true" resizable="false">  
