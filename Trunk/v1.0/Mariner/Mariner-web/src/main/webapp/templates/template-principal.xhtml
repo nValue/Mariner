@@ -33,7 +33,7 @@
         
         <!-- Generic Dialog for popup notifications -->
         <p:dialog id="modalDialog" header="#{sessionScope.dialog.usaI18N?msg[sessionScope.dialog.title]:sessionScope.dialog.title}" widgetVar="genericDialog" modal="#{sessionScope.dialog.modal}" showEffect="#{sessionScope.dialog.effect}" appendTo="@(body)" closeOnEscape="true" resizable="false">
-            <div style="font-family: 'Raleway', sans-serif  !important;">
+            <div style="font-family: 'Raleway', sans-serif  !important;min-width: 322px;padding-top: 4px;padding-left: 4px;">
                 <h:outputText value="#{sessionScope.dialog.usaI18N?msg[sessionScope.dialog.text]:sessionScope.dialog.text}" style="font-size: 14px;" escape="false"/>  
             </div>            
             <div align="center" style="margin-top: 16px;margin-bottom: 8px;">

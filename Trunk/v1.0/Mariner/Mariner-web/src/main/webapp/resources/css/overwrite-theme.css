@@ -117,4 +117,10 @@
     border: 1px solid #ff6464 !important;
 }
 
+*.ui-dialog-content{
+    padding: 8px !important;
+}
 
+*.ui-dialog-title{
+    font-size: 15px !important;
+}
