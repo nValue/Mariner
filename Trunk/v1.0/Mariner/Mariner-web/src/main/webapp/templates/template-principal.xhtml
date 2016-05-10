@@ -7,26 +7,32 @@
         <link rel="stylesheet" type="text/css" href="#{resource['css/index.css']}" />
         <link rel="stylesheet" type="text/css" href="#{resource['css/main.css']}" />
         <link rel="stylesheet" type="text/css" href="#{resource['css/overwrite-theme.css']}" />
+        <link rel="stylesheet" type="text/css" href="#{resource['css/navigation-menu.css']}" />
         <link rel="shortcut icon" type="image/png" href="#{resource['images/favicon.png']}" />
         <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css' />
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css" />
+        <script type="text/javascript" src="#{resource['js/mariner-jquery-addons.js']}"/>
         <title>.Plataforma de control y gestion Impuestos registro Valle del Cauca.</title>
     </h:head>
-
+    
     <h:body>
         <div id="menuContainer">
             <div id="mainMenu">
+                <div id="contTituloMenu" align="center">
+                    <div id="tituloMenu">Menú Principal</div>
+                </div>
                 <div class="navigation">
                     <h:outputText value="#{indexManagedBean.htmlMenu}" escape="false" />
                 </div>
             </div>
+            <div id="invisMenu" />
         </div>
         
         <!---== Facelet con todo el contenido que debe insertar las template clientes ==-->
         <ui:insert name="content"/>
-
+        
         <!-- Generic Dialog for popup notifications -->
-        <p:dialog id="modalDialog" header="#{sessionScope.dialog.usaI18N?msg[sessionScope.dialog.title]:sessionScope.dialog.title}" widgetVar="genericDialog" modal="#{sessionScope.dialog.modal}" showEffect="#{sessionScope.dialog.effect}" appendTo="@(body)" closeOnEscape="true" resizable="false">  
+        <p:dialog id="modalDialog" header="#{sessionScope.dialog.usaI18N?msg[sessionScope.dialog.title]:sessionScope.dialog.title}" widgetVar="genericDialog" modal="#{sessionScope.dialog.modal}" showEffect="#{sessionScope.dialog.effect}" appendTo="@(body)" closeOnEscape="true" resizable="false">
             <div style="font-family: 'Raleway', sans-serif  !important;">
                 <h:outputText value="#{sessionScope.dialog.usaI18N?msg[sessionScope.dialog.text]:sessionScope.dialog.text}" style="font-size: 14px;" escape="false"/>  
             </div>            
@@ -37,7 +43,7 @@
                 </h:form>
             </div>
         </p:dialog>
-
+        
         <!-- Generic Dialog for ajax Loading Actions -->
         <p:dialog id="modalLoading" widgetVar="loadingDialog" modal="true" appendTo="@(body)" resizable="false" showHeader="false" styleClass="loadingDialog">  
             <div>

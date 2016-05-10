@@ -21,6 +21,52 @@ table{
     font-size: 13.5px;
 }
 
+#menuContainer{
+    background: none;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    box-sizing: border-box;
+    display: none;
+    z-index: 1;
+    box-shadow: 1px 0px 1px 1px rgba(0, 0, 0, 0.1) !important;
+}
+
+#invisMenu{
+    display: inline-block;
+    width: 79%;
+    height: 100%;
+    vertical-align: top;
+}
+
+#mainMenu{
+    display: inline-block;
+    vertical-align: top;
+    top: 0px;
+    width: 20%;
+    left: 0;    
+    height: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px 0 #000;
+    
+}
+
+#contTituloMenu{
+    height: 50px;
+    padding: 2%;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+#tituloMenu{
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 .element-animation:hover{
   animation: animationFrames ease 1s;
   animation-iteration-count: 1;

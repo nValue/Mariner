@@ -51,7 +51,6 @@ public class DynamicHTMLMenuGenerator {
         for (MarModulos module : modulos) {
             boolean valLastDeep;
             valLastDeep = module.getMarModulosList().isEmpty();
-
             if (!valLastDeep) {
                 this.dynamicHtml += TextUtils.generateTabs(level) + "<li class=\"has-sub\"> \n";
             } else {
