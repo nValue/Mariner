@@ -76,7 +76,7 @@ public class MarPuntosMontajes implements Serializable {
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pmoId")
+    @OneToMany(mappedBy = "pmoId")
     private List<MarArchivos> marArchivosList;
 
     public MarPuntosMontajes() {

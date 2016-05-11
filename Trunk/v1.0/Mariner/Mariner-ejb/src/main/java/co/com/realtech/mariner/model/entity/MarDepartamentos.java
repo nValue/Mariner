@@ -61,7 +61,7 @@ public class MarDepartamentos implements Serializable {
     @JoinColumn(name = "pai_id", referencedColumnName = "pai_id", nullable = false)
     @ManyToOne(optional = false)
     private MarPaises paiId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "depId")
+    @OneToMany(mappedBy = "depId")
     private List<MarCiudades> marCiudadesList;
 
     public MarDepartamentos() {

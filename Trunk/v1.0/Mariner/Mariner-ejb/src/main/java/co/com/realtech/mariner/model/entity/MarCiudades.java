@@ -59,7 +59,7 @@ public class MarCiudades implements Serializable {
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciuId")
+    @OneToMany(mappedBy = "ciuId")
     private List<MarNotarias> marNotariasList;
     @JoinColumn(name = "dep_id", referencedColumnName = "dep_id", nullable = false)
     @ManyToOne(optional = false)

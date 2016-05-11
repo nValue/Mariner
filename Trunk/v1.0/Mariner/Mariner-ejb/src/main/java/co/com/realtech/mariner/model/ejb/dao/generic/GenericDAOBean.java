@@ -277,6 +277,36 @@ public class GenericDAOBean implements GenericDAOBeanLocal {
         }
         return obj;
     }
+    /**
+     * Retorna todos los registros asociados a la condicion ingresada y con limite de registros.
+     * @param clazz
+     * @param column
+     * @param object
+     * @param equals
+     * @param order
+     * @param limit
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    public Object findAllByColumn(Class clazz, String column, Object object, boolean equals, String order,int limit) throws MarinerPersistanceException {
+        Object obj = null;
+        try {
+            String queryText = "from " + clazz.getName() + " as p where p." + column + (equals ? "=" : "!=") + ":valorQuery";
+
+            if (order != null && (!order.equals(""))) {
+                queryText += " order by p." + order;
+            }
+            Query q = getEntityManager().createQuery(queryText);
+            q.setParameter("valorQuery", object);
+            q.setMaxResults(limit);
+            obj = q.getResultList();
+        } catch (NoResultException e) {
+            obj = null;
+        } catch (Exception e) {
+            throw new MarinerPersistanceException(e);
+        }
+        return obj;
+    }
 
     /**
      * Retorna los elementos de la entidad asociados a la columna con

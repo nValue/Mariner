@@ -65,7 +65,7 @@ public class MarFasesEstados implements Serializable {
     @JoinColumn(name = "fas_id", referencedColumnName = "fas_id", nullable = false)
     @ManyToOne(optional = false)
     private MarFases fasId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fesId")
+    @OneToMany(mappedBy = "fesId")
     private List<MarRadicacionesFases> marRadicacionesFasesList;
 
     public MarFasesEstados() {

@@ -60,9 +60,9 @@ public class MarFases implements Serializable {
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fasId")
+    @OneToMany(mappedBy = "fasId")
     private List<MarFasesEstados> marFasesEstadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fasId")
+    @OneToMany(mappedBy = "fasId")
     private List<MarRadicacionesFases> marRadicacionesFasesList;
 
     public MarFases() {

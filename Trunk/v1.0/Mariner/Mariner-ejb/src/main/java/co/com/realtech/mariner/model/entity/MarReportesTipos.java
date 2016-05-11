@@ -60,7 +60,7 @@ public class MarReportesTipos implements Serializable {
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "rtiId")
+    @OneToMany(mappedBy = "rtiId")
     private List<MarReportes> marReportesList;
 
     public MarReportesTipos() {

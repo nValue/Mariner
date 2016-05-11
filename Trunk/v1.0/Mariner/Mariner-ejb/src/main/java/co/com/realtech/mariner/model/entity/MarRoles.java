@@ -60,9 +60,9 @@ public class MarRoles implements Serializable {
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "rolId")
+    @OneToMany(mappedBy = "rolId")
     private List<MarRolesUsuarios> marRolesUsuariosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "rolId")
+    @OneToMany(mappedBy = "rolId")
     private List<MarRolesModulos> marRolesModulosList;
 
     public MarRoles() {

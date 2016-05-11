@@ -77,9 +77,9 @@ public class MarUsuarios implements Serializable {
     @JoinColumn(name = "per_id", referencedColumnName = "per_id", nullable = false)
     @ManyToOne(optional = false)
     private MarPersonas perId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuId")
+    @OneToMany(mappedBy = "usuId")
     private List<MarRolesUsuarios> marRolesUsuariosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuId")
+    @OneToMany(mappedBy = "usuId")
     private List<MarRadicacionesFases> marRadicacionesFasesList;
 
     public MarUsuarios() {

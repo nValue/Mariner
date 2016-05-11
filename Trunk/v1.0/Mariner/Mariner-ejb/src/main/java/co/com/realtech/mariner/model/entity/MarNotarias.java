@@ -69,7 +69,7 @@ public class MarNotarias implements Serializable {
     @JoinColumn(name = "ciu_id", referencedColumnName = "ciu_id", nullable = false)
     @ManyToOne(optional = false)
     private MarCiudades ciuId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "notId")
+    @OneToMany(mappedBy = "notId")
     private List<MarRadicaciones> marRadicacionesList;
 
     public MarNotarias() {

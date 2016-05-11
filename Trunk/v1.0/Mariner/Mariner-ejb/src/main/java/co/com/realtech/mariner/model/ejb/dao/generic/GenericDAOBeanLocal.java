@@ -39,6 +39,8 @@ public interface GenericDAOBeanLocal {
     public Object findAllByColumn(Class clazz, String column, Object object) throws MarinerPersistanceException;
 
     public Object findAllByColumn(Class clazz, String column, Object object, boolean equals, String order) throws MarinerPersistanceException;
+    
+    public Object findAllByColumn(Class clazz, String column, Object object, boolean equals, String order,int limit) throws MarinerPersistanceException;
 
     public Object findAllByColumnLike(Class clazz, String column, boolean isLike, String order, String... likes) throws MarinerPersistanceException;
 

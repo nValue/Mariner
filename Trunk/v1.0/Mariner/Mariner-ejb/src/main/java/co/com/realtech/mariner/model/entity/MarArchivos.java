@@ -88,7 +88,7 @@ public class MarArchivos implements Serializable {
     private List<MarRadicaciones> marRadicacionesList1;
     @OneToMany(mappedBy = "arcId")
     private List<MarReportes> marReportesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "arcId")
+    @OneToMany(mappedBy = "arcId")
     private List<MarEscrituras> marEscriturasList;
     @JoinColumn(name = "pmo_id", referencedColumnName = "pmo_id", nullable = false)
     @ManyToOne(optional = false)

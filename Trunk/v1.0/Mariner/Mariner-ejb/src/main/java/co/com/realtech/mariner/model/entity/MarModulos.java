@@ -86,7 +86,7 @@ public class MarModulos implements Serializable {
     @JoinColumn(name = "mod_id_padre", referencedColumnName = "mod_id")
     @ManyToOne
     private MarModulos modIdPadre;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modId")
+    @OneToMany(mappedBy = "modId")
     private List<MarRolesModulos> marRolesModulosList;
     
     @Transient

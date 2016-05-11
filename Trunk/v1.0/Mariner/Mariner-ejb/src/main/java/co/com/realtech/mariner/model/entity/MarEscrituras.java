@@ -63,7 +63,7 @@ public class MarEscrituras implements Serializable {
     @Column(name = "aud_fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "escId")
+    @OneToOne(mappedBy = "escId")
     private MarRadicaciones marRadicaciones;
     @JoinColumn(name = "arc_id", referencedColumnName = "arc_id", nullable = false)
     @ManyToOne(optional = false)
