@@ -2,7 +2,7 @@ package co.com.realtech.mariner.controller.jsf.converter;
 
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBean;
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
-import co.com.realtech.mariner.model.entity.MarTiposDocumentos;
+import co.com.realtech.mariner.model.entity.MarPuntosMontajes;
 import co.com.realtech.mariner.util.jdni.JDNIUtils;
 import java.math.BigDecimal;
 import javax.faces.component.UIComponent;
@@ -13,20 +13,20 @@ import javax.naming.InitialContext;
 import org.apache.log4j.Logger;
 
 /**
- * Conversor JSF entidad MarTiposDocumentosConverter.
+ * Conversor JSF entidad MarPuntosMontajes.
  *
  * @author Andres Rivera
  * @version 1.0
  * @since JDK1.7
  */
-@FacesConverter(value = "MarTiposDocumentosConverter")
-public class MarTiposDocumentosConverter implements Converter {
+@FacesConverter(value = "MarPuntosMontajeConverter")
+public class MarPuntosMontajeConverter implements Converter {
 
-    final static Logger logger = Logger.getLogger(MarTiposDocumentosConverter.class);
+    final static Logger logger = Logger.getLogger(MarPuntosMontajeConverter.class);
 
     private GenericDAOBeanLocal genericDAOBeanLocal;
 
-    public MarTiposDocumentosConverter() {
+    public MarPuntosMontajeConverter() {
         try {
             InitialContext ic = new InitialContext();
             genericDAOBeanLocal = (GenericDAOBeanLocal) ic.lookup(JDNIUtils.getEJBJDNIName(GenericDAOBean.class, Boolean.TRUE));
@@ -40,9 +40,9 @@ public class MarTiposDocumentosConverter implements Converter {
         if (value == null || value.length() == 0) {
             return null;
         }
-        MarTiposDocumentos tipo = null;
+        MarPuntosMontajes tipo = null;
         try {
-            tipo = (MarTiposDocumentos) genericDAOBeanLocal.findByID(MarTiposDocumentos.class, new BigDecimal(value));
+            tipo = (MarPuntosMontajes) genericDAOBeanLocal.findByID(MarPuntosMontajes.class, new BigDecimal(value));
         } catch (Exception ex) {
             logger.error("Error en Conversor, causado por ", ex);
         }
@@ -51,7 +51,7 @@ public class MarTiposDocumentosConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return String.valueOf(((MarTiposDocumentos) value).getTdcId());
+        return String.valueOf(((MarPuntosMontajes) value).getPmoId());
     }
 
 }

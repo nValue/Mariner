@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/template-business.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="negocio">
+        <style type="text/css">
+            #modalPuntoMontaje{
+                top: 80px !important;
+            }
+        </style>
+
+        <div id="paperMain">
+            <div class="tituloCont" align="center">
+                <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                <div style="display: inline-block">
+                    <h:outputLabel styleClass="titleMain" value="CDF" />
+                    <h:outputLabel styleClass="subtitleMain" value="Configuracion de puntos de montaje para almacenamiento de archivos"/>
+                </div>
+            </div>
+            <div class="contenidoPrinc" align="left">
+                <h:form id="formCDF">
+                    <div style="padding: 10px;">
+                        <div>
+                            <h:panelGrid columns="5">
+                                <h:outputLabel value="Punto de Montaje"/> 
+                                <p:selectOneMenu converter="MarPuntosMontajeConverter" value="#{cDFManagedBean.puntoMontaje}" style="width: 222px">
+                                    <p:ajax update="panelArchivos" listener="#{cDFManagedBean.filtrarArchivosPuntoMontaje()}" />
+                                    <f:selectItems value="#{cDFManagedBean.puntosMontaje}" var="puntos" itemLabel="#{puntos.pmoNombre}" itemValue="#{puntos}" />
+                                </p:selectOneMenu>
+                                <p:commandButton value="Editar" oncomplete="PF('dialogPuntoMontaje').show();" update=":modalPuntoMontaje" disabled="#{cDFManagedBean.puntoMontaje eq null}"/>
+                                <p:commandButton value="Borrar" action="#{cDFManagedBean.borrarPuntoMontaje()}" disabled="#{cDFManagedBean.puntoMontaje eq null}" update="@form">
+                                    <p:confirm header="Confirmacion" message="Esta seguro de eliminar el punto de montaje seleccionada" icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:commandButton value="Nuevo Punto" action="#{cDFManagedBean.agregarPuntoMontaje()}" oncomplete="PF('dialogPuntoMontaje').show();" update=":modalPuntoMontaje"/>
+                            </h:panelGrid>
+                        </div>
+                        <hr/>
+                        <h:panelGroup id="panelArchivos">
+                            <p:dataTable id="archivos" var="archivo" value="#{cDFManagedBean.archivos}" selectionMode="single" selection="#{cDFManagedBean.archivo}" rowKey="#{archivo.arcId}" emptyMessage="No se han encontrado archivos vinculados al punto de montaje #{cDFManagedBean.puntoMontaje.pmoNombre}" rowIndexVar="idx" rendered="#{cDFManagedBean.puntoMontaje!=null}" rows="20" paginator="true" paginatorPosition="bottom">
+                                <p:ajax event="rowSelect"/>                        
+                                <p:column headerText="#" width="25" styleClass="colCenter">
+                                    <h:outputText value="#{idx+1}" />
+                                </p:column>
+                                <p:column headerText="Nombre" styleClass="colCenter">
+                                    <div class="ellipsisText">
+                                        <h:outputText value="#{archivo.arcNombre}" />
+                                    </div>                                    
+                                </p:column>
+                                <p:column headerText="Mime" width="70" styleClass="colCenter">
+                                    <h:outputText value="#{archivo.arcMimeType}" />
+                                </p:column>
+                                <p:column headerText="Path" width="110" styleClass="colCenter">
+                                    <h:outputText value="#{archivo.arcPathInterno}" />
+                                </p:column>
+                                <p:column headerText="Tamaño" width="70" styleClass="colCenter">
+                                    <h:outputText value="#{archivo.arcTamano}" />
+                                </p:column>
+                                <p:column headerText="Hash">
+                                    <h:outputText value="#{archivo.arcHash}" />
+                                </p:column>
+                                <p:column headerText=".D." styleClass="colCenter" width="18">
+                                    <a title="Presione aqui para descargar el archivo" target="_new" href="#{request.contextPath}/static/fileDispatcher/#{archivo.arcId}-#{archivo.arcHash}.#{archivo.arcExtension}">
+                                        <img src="#{resource['/images/icons/icon-download.png']}" width="16"/>
+                                    </a>
+                                </p:column>
+                                <p:column headerText="X" styleClass="colCenter" width="18">
+                                    <p:commandLink update="archivos" title="Presione para eliminar este archivo">                                    
+                                        <f:setPropertyActionListener target="#{cDFManagedBean.archivo}" value="#{archivo}" />
+                                        <img src="#{resource['/images/icons/delete-icon.png']}" width="16"/>
+                                        <p:confirm header="Confirmacion" message="Esta seguro de eliminar el archivo seleccionado?" icon="ui-icon-alert" />
+                                    </p:commandLink>
+                                </p:column>
+                            </p:dataTable>
+                            <div align="right" style="padding-top: 4px;">
+                                <p:commandButton value="Agregar Archivo" rendered="#{cDFManagedBean.puntoMontaje!=null}" oncomplete="PF('fileUploadDialog').show();" update=":modalFileUpload"/>
+                            </div>
+                        </h:panelGroup>                        
+                    </div>
+                </h:form>                
+            </div>
+        </div>
+
+        <!-- Dialog de modificacion Punto de Montaje -->        
+        <p:dialog id="modalPuntoMontaje" widgetVar="dialogPuntoMontaje" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Punto de Montaje" modal="true">
+            <div>
+                <h:form id="formModalPuntoMontaje">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Nombre"/>
+                        <p:inputText value="#{cDFManagedBean.puntoMontaje.pmoNombre}" required="true"/>
+                        <h:outputLabel value="Path"/>
+                        <p:inputText value="#{cDFManagedBean.puntoMontaje.pmoPath}" required="true"/>
+                        <h:outputLabel value="Tamaño Max"/>
+                        <p:inputText value="#{cDFManagedBean.puntoMontaje.pmoTamanoMax}"/>
+                        <h:outputLabel value="Sistema Operativo"/>
+                        <p:selectOneMenu value="#{cDFManagedBean.puntoMontaje.pmoOs}">
+                            <f:selectItem itemLabel="Linux" itemValue="L"/>
+                            <f:selectItem itemLabel="Windows" itemValue="W"/>
+                            <f:selectItem itemLabel="Solaris" itemValue="S"/>
+                            <f:selectItem itemLabel="Otro" itemValue="O"/>
+                        </p:selectOneMenu>
+                        <h:outputLabel value="Estado"/>
+                        <p:selectOneMenu value="#{cDFManagedBean.puntoMontaje.pmoEstado}">
+                            <f:selectItem itemLabel="Activo" itemValue="A"/>
+                            <f:selectItem itemLabel="Inactivo" itemValue="I"/>
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 6px">
+                        <p:commandButton value="Guardar" action="#{cDFManagedBean.guardarPuntoMontaje()}" update="@form :formCDF" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogPuntoMontaje').hide();" immediate="true"/>
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
+        
+        <!-- Modal para cargue de archivo al CDF -->
+        <p:dialog id="modalFileUpload" widgetVar="fileUploadDialog" header="Cargar archivo a #{cDFManagedBean.puntoMontaje.pmoNombre}" modal="true" draggable="false" closable="true" resizable="false" appendTo="@(body)" closeOnEscape="true">
+            <div class="minDivPopup" style="width: 522px;">
+                <h:form enctype="multipart/form-data">
+                    <p:fileUpload fileUploadListener="#{cDFManagedBean.handleFileUpload}" mode="advanced" dragDropSupport="true" sizeLimit="2000000000" update=":formCDF"
+                                  auto="true" cancelLabel="Cancelar" invalidFileMessage="Archivo no valido, por favor verifique el formato seleccionado." uploadLabel="Cargar" label="Seleccionar"/>
+                </h:form>
+            </div>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

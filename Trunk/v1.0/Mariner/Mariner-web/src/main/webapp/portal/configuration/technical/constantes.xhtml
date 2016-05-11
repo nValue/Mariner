@@ -29,7 +29,7 @@
                         <p:dataTable id="constantes" var="constante" value="#{constantesManagedBean.constantes}" selectionMode="single" selection="#{constantesManagedBean.constante}" rowKey="#{constante.conId}" emptyMessage="No se han encontrado constantes configuradas en el sistema" rowIndexVar="idx" filteredValue="#{constantesManagedBean.constantesFiltro}">
                             <p:ajax event="rowSelect" oncomplete="PF('dialogConstante').show();" update=":modalConstante"/>                        
                             <p:column headerText="#" width="40" styleClass="colCenter">
-                                <h:outputText value="#{idx}" />
+                                <h:outputText value="#{idx+1}" />
                             </p:column>
                             <p:column headerText="Sigla" width="120" filterBy="#{constante.conSigla}" filterMatchMode="contains" styleClass="colCenter">
                                 <h:outputText value="#{constante.conSigla}" />

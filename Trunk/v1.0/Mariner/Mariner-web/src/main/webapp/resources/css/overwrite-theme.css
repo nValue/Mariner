@@ -39,8 +39,19 @@
     top: 122px !important;
 }
 
+#modalFileUpload{
+    top: 122px !important;
+}
+
 #confirmationDialog{
     top: 100px !important;
+}
+
+*.ellipsisText{
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .ui-selectonemenu-trigger.ui-state-default.ui-corner-right{
@@ -78,7 +89,7 @@
 }
 
 .ui-datatable tbody td{
-    font-size: 13px !important;
+    font-size: 13.5px !important;
 }
 
 .ui-button{
@@ -150,4 +161,19 @@
 
 *.ui-dialog-title{
     font-size: 15px !important;
+}
+
+*.ui-datatable-empty-message{
+    text-align: center !important;
+}
+
+/**
+ Tamaño default componentes
+*/
+input[role='textbox']{
+    width: 280px;
+}
+
+*.ui-selectonemenu{
+    width: 252px;
 }
