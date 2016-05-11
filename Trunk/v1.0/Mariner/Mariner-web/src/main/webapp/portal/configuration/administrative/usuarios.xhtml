@@ -3,9 +3,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/templates/template-business.xhtml"
-                xmlns:h="http://xmlns.jcp.org/jsf/html">
-
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
     <ui:define name="negocio">
+
+        <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
         <div id="paperMain">
             <div class="tituloCont" align="center">
                 <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
@@ -15,11 +18,127 @@
                 </div>
             </div>
             <div class="contenidoPrinc" align="center">
-                
-                
-                
+                <div class="descripcion" align="center">
+                    <div class="descText">
+                        Busque en el filtro principal alguna información que tenga del usuario, ya sea Nombre, Documento, Correo o Login.
+                    </div>
+                </div>
+                <h:form id="formFiltroUsuario">
+                    <h:panelGrid columns="3">
+                        <h:outputLabel value="Filtro de búsqueda: "/>
+                        <p:autoComplete id="autoUsuarios" size="50" value="#{usuariosManagedBean.usuarioSeleccion}" completeMethod="#{usuariosManagedBean.completeUsers}" var="usuarios" itemLabel="#{usuarios.perId.perNombres} #{usuarios.perId.perApellidos}" itemValue="#{usuarios}" converter="MarUsuariosConverter" forceSelection="true" maxResults="52" queryDelay="1200">
+                            <p:ajax event="itemSelect" listener="#{usuariosManagedBean.seleccionarUsuario()}" update=":formUsuario" />
+                        </p:autoComplete>
+                    </h:panelGrid>
+                </h:form>
+
+                <h:form id="formUsuario">
+                    <h:panelGroup rendered="#{usuariosManagedBean.usuarioSel != null}">
+                        <div class="infoTwoCols" align="left">
+                            <div class="headerContainer" align="left">
+                                <div class="centerHeaderContainer">Información General</div>
+                            </div>
+                            <h:panelGrid style="padding: 20px;display: inline-block;vertical-align: top" columns="2" width="50%" columnClasses="">
+                                <h:outputLabel class="labelLittle" value="Tipo Documento"/>
+                                <h:outputLabel class="labelLittle" value="Número de Documento"/>
+                                <p:selectOneMenu converter="MarTiposDocumentosConverter" value="#{usuariosManagedBean.personaSel.tdcId}" style="width: 200px" required="false" >
+                                    <f:selectItems value="#{usuariosManagedBean.tiposDocumentos}" var="tdo" itemLabel="#{tdo.tdcNombre}" itemValue="#{tdo}"/>
+                                </p:selectOneMenu>
+                                <p:inputText value="#{usuariosManagedBean.personaSel.perDocumento}" style="width: 230px"/>
+
+                                <h:outputLabel class="labelLittle" value="Nombres" /> 
+                                <h:outputLabel class="labelLittle" value="Apellidos" />
+                                <p:inputText value="#{usuariosManagedBean.personaSel.perNombres}" style="width: 230px"/>
+                                <p:inputText value="#{usuariosManagedBean.personaSel.perApellidos}" style="width: 230px"/>
+
+                                <h:outputLabel class="labelLittle" value="Usuario"/>
+                                <h:outputLabel class="labelLittle" value="Correo" />
+                                <p:inputText value="#{usuariosManagedBean.usuarioSel.usuLogin}" style="width: 230px"/>
+                                <p:inputText value="#{usuariosManagedBean.personaSel.perEmail}" style="width: 230px"/>
+                                <h:outputLabel class="labelLittle" value="Teléfono" />
+                                <h:outputLabel class="labelLittle" value="Estado" />
+                                <p:inputText value="#{usuariosManagedBean.personaSel.perTelefono}" style="width: 230px"/>
+                                <p:selectOneMenu value="#{usuariosManagedBean.usuarioSel.usuEstado}" style="width: 200px">
+                                    <f:selectItem itemValue="A" itemLabel="Activo"/>
+                                    <f:selectItem itemValue="I" itemLabel="Inactivo" />
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+                            <div id="rightDiv" style="padding: 20px;display: inline-block;width: 40%;vertical-align: top">
+                                <p:dataTable id="tableRolesUsuario" value="#{usuariosManagedBean.rolesUsuarios}" selection="#{usuariosManagedBean.rolUsuarioSel}" var="rUsu">
+                                    <p:column headerText="Roles asignados">
+                                        <h:outputLabel value="#{rUsu.rolId.rolNombre}"/>
+                                    </p:column>
+                                    <p:column headerText="X" width="20">
+                                        <p:commandLink update="tableRolesUsuario" title="Presione para eliminar este rol del usuario" action="#{usuariosManagedBean.eliminarRolDeUsuario()}">                                    
+                                            <f:setPropertyActionListener target="#{usuariosManagedBean.rolUsuarioSel}" value="#{rUsu}" />
+                                            <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                            <p:confirm header="Confirmacion" message="Está seguro de eliminar el rol seleccionado?" icon="ui-icon-alert" />
+                                        </p:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                                <div align="center" style="margin: 20px;">
+                                    <p:commandButton value="Asignar Rol" oncomplete="PF('modalRoles').show()"/>
+                                    <p:commandButton value="Seguridad" oncomplete="PF('modalSeguridad').show()" update=":dialogSeguridad"/>
+                                    <p:commandButton value="Cambiar clave" oncomplete="PF('modalClave').show()" />
+                                </div>
+                            </div>
+                            <div align="center" style="width: 100%;margin: 20px;">
+                                <p:commandButton value="Guardar Cambios" action="#{usuariosManagedBean.guardarUsuario()}" update=":formFiltroUsuario formUsuario tableRolesUsuario" />
+                                <p:commandButton value="Cancelar" action="#{usuariosManagedBean.limpiarUsuario()}" update=":formFiltroUsuario formUsuario" process="@this"/>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                </h:form>
             </div>
         </div>
-    </ui:define>
+        
+        <!-- Modal de asignación de un rol para el usuario -->
+        <p:dialog id="dialogRoles" widgetVar="modalRoles" modal="true" draggable="true" resizable="true" header="Asignar rol al usuario">
+            <h:form id="formRoles">
+                <div style="margin: 20px;">
+                    <p:selectOneMenu value="#{usuariosManagedBean.rolSel}" converter="MarRolesConverter" style='width: 300px'>
+                        <f:selectItems value="#{usuariosManagedBean.roles}" var="rol" itemLabel="#{rol.rolNombre}" itemValue="#{rol}" />
+                    </p:selectOneMenu>
+                </div>
+                <div align="center" style="margin: 20px">
+                    <p:commandButton value="Asignar Rol" action="#{usuariosManagedBean.asignarRol()}" update=":formUsuario :formUsuario:tableRolesUsuario" process="@this"/>
+                    <p:commandButton value="Cancelar" oncomplete="PF('modalRoles').hide()"/>
+                </div>
+            </h:form>
+        </p:dialog>
 
+        <!-- Modal de cambio de clave -->
+        <p:dialog id="dialogClave" widgetVar="modalClave" modal="true" draggable="true" resizable="true" header="Cambiar clave del usuario">
+            <h:form id="formClave">
+                <div style="margin: 20px;">
+                    <h:outputLabel value="Nueva clave" />
+                    <p:password value="#{usuariosManagedBean.claveNueva}" style="width: 230px;margin: 0px 10px"/>
+                </div>
+                <div align="center" style="margin: 20px">
+                    <p:commandButton value="Cambiar clave" action="#{usuariosManagedBean.cambiarClave()}" update=":formUsuario" />
+                    <p:commandButton value="Cancelar" oncomplete="PF('modalClave').hide()"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <!-- Modal de información de auditoría del usuario -->
+        <p:dialog id="dialogSeguridad" widgetVar="modalSeguridad" modal="true" draggable="true" resizable="true" header="Cambiar clave del usuario">
+            <h:form id="formSeg">
+                <div style="margin: 20px;">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Último ingreso" />
+                        <p:inputText value="#{usuariosManagedBean.usuarioSel.usuUltimoIngreso}" style="width: 200px;" readonly="true"/>
+                        <h:outputLabel value="Ultima modificación" />
+                        <p:inputText value="#{usuariosManagedBean.usuarioSel.audFecha}" style="width: 200px;" readonly="true"/>
+                        <h:outputLabel value="Usuario modificador" />
+                        <p:inputText value="#{usuariosManagedBean.usuarioSel.audUsuario}" style="width: 200px" readonly="true"/>
+                    </h:panelGrid> 
+                </div>
+                <div align="center" style="margin: 20px">
+                    <p:commandButton value="Cerrar" oncomplete="PF('modalSeguridad').hide()"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
 </ui:composition>

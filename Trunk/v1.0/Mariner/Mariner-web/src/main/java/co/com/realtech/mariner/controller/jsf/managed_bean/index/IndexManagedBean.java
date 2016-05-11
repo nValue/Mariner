@@ -87,6 +87,9 @@ public class IndexManagedBean implements Serializable {
                 if (passDec.equals(usuario.getUsuPassword())) {
                     logged = true;
                     usuario = usuarioALoguear;
+                    //Se guarda el ingreso a la aplicación
+                    usuario.setUsuUltimoIngreso(new Date());
+                    genericDAOBean.merge(usuario);
                     //El usuario es correcto, se cargan las variables de sesión
                     SessionUtils.asignarValor("marineruser", getUsuario());
                     SessionUtils.asignarValor("marinerpersona", getUsuario().getPerId());

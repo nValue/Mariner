@@ -1,0 +1,60 @@
+/* 
+    Created on : May 10, 2016, 6:37:31 PM
+    Author     : fabianagudelo
+*/
+
+.descripcion{
+    width: 90%;
+    min-height: 15px;
+    background: #d8e1e7;
+    font-size: 12px;
+    display: table;
+    padding: 15px;
+    margin-bottom: 20px;
+    
+    -webkit-border-radius: 19px;
+    -moz-border-radius: 19px;
+    border-radius: 19px;
+    -webkit-box-shadow: #B3B3B3 1px 1px 1px;
+    -moz-box-shadow: #B3B3B3 1px 1px 1px; 
+    box-shadow: #B3B3B3 1px 1px 1px;
+}
+
+.descText{
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#autoUsuarios{
+    width: 50%;
+}
+
+.infoTwoCols{
+    width: 90%;
+    border: solid 1px #e0e0e0;
+    border-radius: 5px;
+}
+
+.headerContainer{
+    width: 100%;
+    height: 30px;
+    background: #439fe0;
+    color: #fff;
+    font-size: 15px;
+    display: table;
+    border-radius: 5px 5px 0px 0px;
+}
+
+.centerHeaderContainer{
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0px 20px;
+}
+
+.clText{
+    width: 80%;
+}
+
+.labelLittle{
+    font-size: 10px;
+}
