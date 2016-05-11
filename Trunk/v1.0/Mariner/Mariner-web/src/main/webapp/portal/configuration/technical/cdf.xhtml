@@ -69,7 +69,7 @@
                                     </a>
                                 </p:column>
                                 <p:column headerText="X" styleClass="colCenter" width="18">
-                                    <p:commandLink update="archivos" title="Presione para eliminar este archivo">                                    
+                                    <p:commandLink update="archivos" title="Presione para eliminar este archivo" action="#{cDFManagedBean.borrarArchivo()}">                                    
                                         <f:setPropertyActionListener target="#{cDFManagedBean.archivo}" value="#{archivo}" />
                                         <img src="#{resource['/images/icons/delete-icon.png']}" width="16"/>
                                         <p:confirm header="Confirmacion" message="Esta seguro de eliminar el archivo seleccionado?" icon="ui-icon-alert" />

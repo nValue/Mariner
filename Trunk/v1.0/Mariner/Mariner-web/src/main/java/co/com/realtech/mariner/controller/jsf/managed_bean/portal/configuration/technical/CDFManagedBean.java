@@ -52,7 +52,7 @@ public class CDFManagedBean implements Serializable {
     @PostConstruct
     public void init() {
         try {
-            auditSessionUtils=AuditSessionUtils.create();
+            auditSessionUtils = AuditSessionUtils.create();
             setPuntosMontaje((List<MarPuntosMontajes>) genericDAOBean.loadAllForEntity(MarPuntosMontajes.class, "pmoNombre asc"));
             if (!getPuntosMontaje().isEmpty()) {
                 setPuntoMontaje(getPuntosMontaje().get(0));
@@ -116,7 +116,21 @@ public class CDFManagedBean implements Serializable {
             logger.error("Error guardando punto de montaje, causado por " + e);
         }
     }
-    
+
+    /**
+     * Borrar archivo.
+     */
+    public void borrarArchivo() {
+        try {
+            genericDAOBean.delete(getArchivo(), getArchivo().getArcId());
+            filtrarArchivosPuntoMontaje();
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Archivo eliminado correctamente de la base de datos.", true, false);
+        } catch (Exception e) {
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero no se pudo borrar el Archivo, por favor intente nuevamente", true, false);
+            logger.error("Error borrando Archivo, causado por " + e);
+        }
+    }
+
     /**
      * Cargue de archivo al punto de montaje.
      *
@@ -128,11 +142,11 @@ public class CDFManagedBean implements Serializable {
             String fileName = event.getFile().getFileName();
             System.out.println("fileName = " + fileName);
             byte[] content = IOUtils.toByteArray(event.getFile().getInputstream());
-            
+
             Long size = event.getFile().getSize();
             String mimeType = event.getFile().getContentType();
             String usuario = ((MarUsuarios) SessionUtils.obtenerValorGeneric("marineruser")).getUsuLogin();
-            boolean visibleCDN = true;   
+            boolean visibleCDN = true;
             fileUploader.saveFile(getPuntoMontaje(), fileName, content, size, mimeType, usuario, visibleCDN);
 
             PrimeFacesContext.execute("PF('fileUploadDialog').hide();");
@@ -140,7 +154,7 @@ public class CDFManagedBean implements Serializable {
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Archivo <b>" + event.getFile().getFileName() + "</b> cargado correctamente dentro del Punto de Montaje", true, false);
         } catch (IOException ex) {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error Upload.!", "No se pudo cargar el archivo seleccionado, erro interno: " + ex, true, false);
-            logger.error("Error cargando archivo a punto de montaje " + getPuntoMontaje().getPmoNombre()+ ", causado por " + ex, ex);
+            logger.error("Error cargando archivo a punto de montaje " + getPuntoMontaje().getPmoNombre() + ", causado por " + ex, ex);
         } catch (Exception ex) {
             logger.error("Error cargando archivo a punto de montaje " + getPuntoMontaje().getPmoNombre() + ", causado por " + ex, ex);
         }

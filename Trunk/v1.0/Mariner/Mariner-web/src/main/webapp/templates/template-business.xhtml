@@ -93,7 +93,7 @@
                 <h:form id="formRegistro">
                     <h:panelGrid columns="2" style="margin: 10px;">
                         <h:outputLabel value="Tipo de documento"/> 
-                        <p:selectOneMenu converter="MarTiposDocumentosConverter" value="#{indexManagedBean.usuario.perId.tdcId}" style="width: 204px">
+                        <p:selectOneMenu converter="MarTiposDocumentosConverter" value="#{indexManagedBean.usuario.perId.tdcId}">
                             <f:selectItems value="#{indexManagedBean.tiposDocumento}" var="tdo" itemLabel="#{tdo.tdcNombre}" itemValue="#{tdo}" />
                         </p:selectOneMenu>
                         <h:outputLabel value="Núm. de documento"/>
@@ -108,7 +108,7 @@
                         <p:inputText value="#{indexManagedBean.usuario.perId.perTelefono}" size="30"/>
                     </h:panelGrid>
                     <div align="center" style="padding-top: 10px">
-                        <p:commandButton value="Guardar" action="#{indexManagedBean.crearUsuario()}" />
+                        <p:commandButton value="Guardar" action="#{indexManagedBean.crearUsuario()}" update="@form" />
                         <p:commandButton value="Cancelar" oncomplete="PF('dialogRegistro').hide()" process="@this"/>
                     </div>
                 </h:form>
