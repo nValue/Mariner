@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -43,6 +42,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarUsuarios.findByAudFecha", query = "SELECT m FROM MarUsuarios m WHERE m.audFecha = :audFecha"),
     @NamedQuery(name = "MarUsuarios.findByUsuUltimoIngreso", query = "SELECT m FROM MarUsuarios m WHERE m.usuUltimoIngreso = :usuUltimoIngreso")})
 public class MarUsuarios implements Serializable {
+
+    @OneToMany(mappedBy = "usuId")
+    private List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -199,6 +201,14 @@ public class MarUsuarios implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarUsuarios[ usuId=" + usuId + " ]";
+    }
+
+    public List<MarRadicacionesFasesEstados> getMarRadicacionesFasesEstadosList() {
+        return marRadicacionesFasesEstadosList;
+    }
+
+    public void setMarRadicacionesFasesEstadosList(List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList) {
+        this.marRadicacionesFasesEstadosList = marRadicacionesFasesEstadosList;
     }
     
 }
