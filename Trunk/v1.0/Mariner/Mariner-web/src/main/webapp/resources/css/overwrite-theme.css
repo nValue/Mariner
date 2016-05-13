@@ -177,3 +177,7 @@ input[role='textbox']{
 *.ui-selectonemenu{
     width: 252px;
 }
+
+.ui-fileupload{
+    border: 1px solid #dddddd;
+}

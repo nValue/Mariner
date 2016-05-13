@@ -6,15 +6,15 @@
 .descripcion{
     width: 90%;
     min-height: 15px;
-    background: #d8e1e7;
+    background: #F5F5F5;
     font-size: 12px;
     display: table;
-    padding: 15px;
+    padding: 10px;
     margin-bottom: 20px;
     
-    -webkit-border-radius: 19px;
-    -moz-border-radius: 19px;
-    border-radius: 19px;
+    -webkit-border-radius: 16px 0px 16px 0px;
+    -moz-border-radius: 16px 0px 16px 0px;
+    border-radius: 16px 0px 16px 0px;
     -webkit-box-shadow: #B3B3B3 1px 1px 1px;
     -moz-box-shadow: #B3B3B3 1px 1px 1px; 
     box-shadow: #B3B3B3 1px 1px 1px;
