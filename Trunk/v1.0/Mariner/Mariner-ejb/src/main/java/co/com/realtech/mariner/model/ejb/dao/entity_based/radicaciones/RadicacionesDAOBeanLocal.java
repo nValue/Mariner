@@ -6,6 +6,7 @@
 package co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones;
 
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
+import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
 import java.util.List;
 import javax.ejb.Local;
@@ -18,5 +19,9 @@ import javax.ejb.Local;
 public interface RadicacionesDAOBeanLocal {
     
     public List<MarRadicaciones> obtenerRadicacionesPorFiltro(String filtro) throws MarinerPersistanceException;
+    
+    public List<MarRadicaciones> obtenerRadicacionesPorUltimaFase(String fase) throws MarinerPersistanceException;
+    
+    public List<MarRadicaciones> obtenerRadicacionesPorUsuarioYFase(MarUsuarios usuario, String fase) throws MarinerPersistanceException;
     
 }
