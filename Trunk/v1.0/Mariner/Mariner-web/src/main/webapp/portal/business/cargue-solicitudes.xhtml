@@ -26,7 +26,7 @@
                 <h:form id="formFiltroRadicaciones">
                     <h:panelGrid columns="2" style="margin: 20px;">
                         <h:outputLabel value="Filtro de búsqueda: " />
-                        <p:autoComplete id="autoRadicaciones" size="50" value="#{cargueSolicitudesManagedBean.radicacionSeleccion}" completeMethod="#{cargueSolicitudesManagedBean.completeRadicaciones}" var="rad" itemLabel="#{rad.radNumero.concat(' || Acto:')} #{rad.radCodigoActo.concat(' || Escritura:')} #{rad.escId.escNumero}" itemValue="#{rad}" converter="MarRadicacionesConverter" forceSelection="true" maxResults="52" queryDelay="1200">
+                        <p:autoComplete id="autoRadicaciones" size="50" value="#{cargueSolicitudesManagedBean.radicacionSeleccion}" completeMethod="#{cargueSolicitudesManagedBean.completeRadicaciones}" var="rad" itemLabel="#{rad.radNumero.concat(' || Acto:')} #{rad.radCodigoActo.concat(' || Escritura: ')}#{rad.escId.escNumero}" itemValue="#{rad}" converter="MarRadicacionesConverter" forceSelection="true" maxResults="52" queryDelay="1200">
                             <p:ajax event="itemSelect" listener="#{cargueSolicitudesManagedBean.seleccionarRadicacion()}" update="formRadicacion" />
                         </p:autoComplete>
                     </h:panelGrid>

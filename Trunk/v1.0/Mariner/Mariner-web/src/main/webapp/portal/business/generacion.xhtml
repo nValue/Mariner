@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/template-business.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="negocio">
+        <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
+        <div id="paperMain">
+            <div class="tituloCont" align="center">
+                <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                <div style="display: inline-block">
+                    <h:outputLabel styleClass="titleMain" value="Generación de Liquidaciones" />
+                    <h:outputLabel styleClass="subtitleMain" value="Validación y generación de los documentos enviados"/>
+                </div>
+            </div>
+            <div class="contenidoPrinc" align="center">
+                <div class="descripcion" align="center">
+                    <div class="descText">
+                        En la parte izquierda encontrará las liquidaciones que tiene pendiente, si desea obtener una nueva solo pulse el botón "Obtener radicación" y le será asignada automáticamente una radicación,
+                    </div>
+                </div>
+                <h:form id="formTurnos">
+                    <div align="left">
+                        <p:selectOneMenu converter="MarRadicacionesConverter" value="#{generacionManagedBean.radicacionUsuarioSel}">
+                            <f:selectItems value="#{generacionManagedBean.radicacionesUsuario}" var="rads" itemLabel="#{rads.radNumero}" itemValue="#{rads}"/>
+                        </p:selectOneMenu>
+                        <p:commandButton value="Obtener Radicación" action="#{generacionManagedBean.obtenerRadicaciones()}"/>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

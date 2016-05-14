@@ -196,7 +196,6 @@ public class CargueSolicitudesManagedBean implements Serializable{
      */
     public void guardarRadicacion(){
         try {
-            System.out.println("Guardando Radicacion...");
             MarEscrituras escrituraActual = radicacionSel.getEscId();
             if(escrituraActual.getArcId() == null){
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Documento faltante", "Necesita adjuntar la escritura para guardar el proceso", true, false);
@@ -215,7 +214,6 @@ public class CargueSolicitudesManagedBean implements Serializable{
             if(radicacionSel.getRadId() == null){
                 NumeracionesManager nm = new NumeracionesManager();
                 String siguienteNum = nm.loadNextConsecutive("RAD01");
-                System.out.println("siguienteNum = " + siguienteNum);
                 radicacionSel.setRadNumero(siguienteNum);
                 radicacionSel.setRadFecha(new Date());
                 genericDAOBean.save(radicacionSel);
