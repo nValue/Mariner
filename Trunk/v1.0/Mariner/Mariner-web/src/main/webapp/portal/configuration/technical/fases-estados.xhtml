@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/template-business.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="negocio">
+        <!-- Estilos personalizados pagina -->
+        <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
+        <style type="text/css">
+            #modalFase{top: 44px !important;}
+
+            #modalEstadosFases{top: 32px !important;}
+            
+            #modalEstado{top: 44px !important;}
+        </style>
+
+        <div id="paperMain">
+            <div class="tituloCont" align="center">
+                <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                <div style="display: inline-block">
+                    <h:outputLabel styleClass="titleMain" value="Configuración de Fases y Estados" />
+                    <h:outputLabel styleClass="subtitleMain" value="Configuracion de Fases de Flujo de Proceso y Estados vinculados"/>
+                </div>
+            </div>
+            <div class="contenidoPrinc" align="center">
+                <h:form id="formFases">
+                    <div class="descripcion" align="center">
+                        <div class="descText">
+                            Permite la parametrización de las fases y los estados en los que puede estar una radicación de documentos, debe estar seguro de las modificaciones para no alterar el flujo del proceso.
+                        </div>
+                    </div>
+                    <div style="padding: 22px;">
+                        <p:dataTable id="fases" var="fase" value="#{fasesEstadosManagedBean.fases}" selectionMode="single" selection="#{fasesEstadosManagedBean.fase}" rowKey="#{fase.fasId}" emptyMessage="No se han encontrado Fases configuradas en la plataforma" rowIndexVar="idx">
+                            <p:ajax event="rowSelect" oncomplete="PF('dialogFase').show();" update=":modalFase"/>                        
+                            <p:column headerText="#" width="40" styleClass="colCenter">
+                                <h:outputText value="#{idx+1}" />
+                            </p:column>
+                            <p:column headerText="Codigo" width="140" styleClass="colCenter">
+                                <h:outputText value="#{fase.fasCodigo}" />
+                            </p:column>
+                            <p:column headerText="Nombre">
+                                <h:outputText value="#{fase.fasNombre}" />
+                            </p:column>
+                            <p:column headerText="Orden" width="80" styleClass="colCenter">
+                                <h:outputText value="#{fase.fasOrden}" />
+                            </p:column>
+                            <p:column headerText="Estados" width="44" styleClass="colCenter">
+                                <p:commandLink title="Presione para configurar los estados de las Fases" action="#{fasesEstadosManagedBean.filtrarFasesEstados()}" update=":modalEstadosFases" oncomplete="PF('dialogEstadosFases').show();">                                    
+                                    <f:setPropertyActionListener target="#{fasesEstadosManagedBean.fase}" value="#{fase}" />
+                                    <img src="#{resource['/images/icons/constant-icon-table.png']}"/>                                    
+                                </p:commandLink>
+                            </p:column>
+                            <p:column headerText="X" width="20">
+                                <p:commandLink update="fases" title="Presione para eliminar esta Fase" action="#{fasesEstadosManagedBean.eliminarFase()}">                                    
+                                    <f:setPropertyActionListener target="#{fasesEstadosManagedBean.fase}" value="#{fase}" />
+                                    <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                    <p:confirm header="Confirmacion" message="Esta seguro de eliminar la Fase Seleccionada?" icon="ui-icon-alert" />
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <div align="right" style="padding-top: 4px;">
+                            <p:commandButton value="Agregar" action="#{fasesEstadosManagedBean.crearFase()}" oncomplete="PF('dialogFase').show();" update=":modalFase"/>
+                        </div>
+                    </div>
+                </h:form>                
+            </div>
+        </div>
+
+        <!-- Dialog de modificacion Fase -->        
+        <p:dialog id="modalFase" widgetVar="dialogFase" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Fase" modal="true">
+            <div>
+                <h:form id="formModalFase">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Sigla"/>
+                        <p:inputText value="#{fasesEstadosManagedBean.fase.fasCodigo}" required="true" size="30"/>
+                        <h:outputLabel value="Nombre"/>
+                        <p:inputText value="#{fasesEstadosManagedBean.fase.fasNombre}" required="true" size="30"/>
+                        <h:outputLabel value="Orden"/>
+                        <p:inputText value="#{fasesEstadosManagedBean.fase.fasOrden}" required="true" size="30"/>
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{fasesEstadosManagedBean.guardarFase()}" update="@form :formFases"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogFase').hide();" immediate="true"/>
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
+
+        <!-- Dialog de visualizacion estados fases -->        
+        <p:dialog id="modalEstadosFases" widgetVar="dialogEstadosFases" closeOnEscape="true" draggable="true" resizable="false" header="Estados configurados para la Fase #{fasesEstadosManagedBean.fase.fasCodigo}" modal="true">
+            <div>
+                <h:form id="formModalEstadosFases">
+                    <div style="max-width: 680px;">
+                        <p:dataTable id="estados" var="estado" value="#{fasesEstadosManagedBean.estados}" selectionMode="single" selection="#{fasesEstadosManagedBean.estado}" rowKey="#{estado.fesId}" emptyMessage="No se han encontrado Estados vinculados a la Fase #{fasesEstadosManagedBean.fase.fasCodigo}" rowIndexVar="idx">
+                            <p:ajax event="rowSelect" oncomplete="PF('dialogEstado').show();" update=":modalEstado"/>                        
+                            <p:column headerText="#" width="40" styleClass="colCenter">
+                                <h:outputText value="#{idx+1}" />
+                            </p:column>
+                            <p:column headerText="Codigo" width="140" styleClass="colCenter">
+                                <h:outputText value="#{estado.fesCodigo}" />
+                            </p:column>
+                            <p:column headerText="Nombre">
+                                <h:outputText value="#{estado.fesNombre}" />
+                            </p:column>
+                            <p:column headerText="Orden" width="80" styleClass="colCenter">
+                                <h:outputText value="#{estado.fesOrden}" />
+                            </p:column>                            
+                            <p:column headerText="X" width="20">
+                                <p:commandLink update="estados" title="Presione para eliminar este Estado" action="#{fasesEstadosManagedBean.eliminarEstadoFase()}">                                    
+                                    <f:setPropertyActionListener target="#{fasesEstadosManagedBean.estado}" value="#{estado}" />
+                                    <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                    <p:confirm header="Confirmacion" message="Esta seguro de eliminar el Estado Seleccionado?" icon="ui-icon-alert" />
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <div align="right" style="padding-top: 4px;">
+                            <h:panelGrid columns="2">
+                                <p:commandButton value="Agregar" action="#{fasesEstadosManagedBean.crearEstadoFase()}" oncomplete="PF('dialogEstado').show();" update=":modalEstado"/>
+                                <p:commandButton value="Cerrar" oncomplete="PF('dialogEstadosFases').hide();" immediate="true"/>
+                            </h:panelGrid>                            
+                        </div>
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
+
+        <!-- Dialog de modificacion Fase -->        
+        <p:dialog id="modalEstado" widgetVar="dialogEstado" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Estado" modal="true">
+            <div>
+                <h:form id="formModalEstado">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Sigla"/>
+                        <p:inputText value="#{fasesEstadosManagedBean.estado.fesCodigo}" required="true" size="30"/>
+                        <h:outputLabel value="Nombre"/>
+                        <p:inputText value="#{fasesEstadosManagedBean.estado.fesNombre}" required="true" size="30"/>
+                        <h:outputLabel value="Orden"/>
+                        <p:inputText value="#{fasesEstadosManagedBean.estado.fesOrden}" required="true" size="30"/>
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{fasesEstadosManagedBean.guardarEstadoFase()}" update="@form :formModalEstadosFases"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogEstado').hide();" immediate="true"/>
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

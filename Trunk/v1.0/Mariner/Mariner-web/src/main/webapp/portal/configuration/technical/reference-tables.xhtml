@@ -1,0 +1,296 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/template-business.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="negocio">
+        <!-- Estilos personalizados pagina -->
+        <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
+        <style type="text/css">
+            #modalTipoDocumento{top: 40px !important;}
+
+            #modalNumeracion{top: 40px !important;}
+
+            #modalPais{top: 40px !important;}
+
+            #modalDepartamento{top: 40px !important;}
+            
+            #modalCiudad{top: 40px !important;}
+        </style>
+
+        <div id="paperMain">
+            <div class="tituloCont" align="center">
+                <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                <div style="display: inline-block">
+                    <h:outputLabel styleClass="titleMain" value="Configuración de Tablas de Referencia" />
+                    <h:outputLabel styleClass="subtitleMain" value="Completa administracion de tablas de referencia (tipo)"/>
+                </div>
+            </div>
+            <div class="contenidoPrinc" align="center">                
+                <div class="descripcion" align="center">
+                    <div class="descText">
+                        Configuración de tablas de referencia y de parametrización del sistema.
+                    </div>
+                </div>
+                <div>
+                    <p:tabView orientation="left" id="tabContainer">
+                        <p:tab title="Tipos de Documento">
+                            <h:form id="formTipoDocumentos">
+                                <div>
+                                    <div style="padding: 12px;padding-top: 0px !important;">
+                                        <p:dataTable id="documentos" var="documento" value="#{tiposDocumentoManagedBean.tiposDocumentos}" selectionMode="single" selection="#{tiposDocumentoManagedBean.tipoDocumento}" rowKey="#{documento.tdcId}" emptyMessage="No se han encontrado tipos de documentos configurados" rowIndexVar="idx">
+                                            <p:ajax event="rowSelect" oncomplete="PF('dialogTipoDocumento').show();" update=":modalTipoDocumento"/>                        
+                                            <p:column headerText="#" width="40" styleClass="colCenter">
+                                                <h:outputText value="#{idx+1}" />
+                                            </p:column> 
+                                            <p:column headerText="Sigla" width="120" filterBy="#{documento.tdcSigla}" styleClass="colCenter">
+                                                <h:outputText value="#{documento.tdcSigla}" />
+                                            </p:column>
+                                            <p:column headerText="Nombre" filterBy="#{documento.tdcNombre}" filterMatchMode="contains">
+                                                <h:outputText value="#{documento.tdcNombre}" />
+                                            </p:column>                                        
+                                            <p:column headerText="X" width="20">
+                                                <p:commandLink update="documentos" title="Presione para eliminar este tipo de documento" action="#{tiposDocumentoManagedBean.eliminarTipoDocumento()}">                                    
+                                                    <f:setPropertyActionListener target="#{tiposDocumentoManagedBean.tipoDocumento}" value="#{documento}" />
+                                                    <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                                    <p:confirm header="Confirmacion" message="Esta seguro de eliminar el tipo de documento seleccionado?" icon="ui-icon-alert" />
+                                                </p:commandLink>
+                                            </p:column>
+                                        </p:dataTable>
+                                        <div align="right" style="padding-top: 4px;">
+                                            <p:commandButton value="Agregar" action="#{tiposDocumentoManagedBean.agregarTipoDocumento()}" oncomplete="PF('dialogTipoDocumento').show();" update=":modalTipoDocumento"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:form>                            
+                        </p:tab>
+                        <p:tab title="Numeraciones">
+                            <h:form id="formNumeracion">
+                                <div>
+                                    <div style="padding: 12px;padding-top: 0px !important;">
+                                        <p:dataTable id="numeraciones" var="numeracion" value="#{numeracionManagedBean.numeraciones}" selectionMode="single" selection="#{numeracionManagedBean.numeracion}" rowKey="#{numeracion.numId}" emptyMessage="No se han encontrado Numeracion configuradas en la plataforma" rowIndexVar="idx">
+                                            <p:ajax event="rowSelect" oncomplete="PF('dialogNumeracion').show();" update=":modalNumeracion"/>                        
+                                            <p:column headerText="#" width="40" styleClass="colCenter">
+                                                <h:outputText value="#{idx+1}" />
+                                            </p:column> 
+                                            <p:column headerText="Codigo" width="120" styleClass="colCenter">
+                                                <h:outputText value="#{numeracion.numCodigo}" />
+                                            </p:column>
+                                            <p:column headerText="Nombre">
+                                                <h:outputText value="#{numeracion.numNombre}" />
+                                            </p:column>                                        
+                                            <p:column headerText="Prefijo" styleClass="colCenter" width="80">
+                                                <h:outputText value="#{numeracion.numPrefijo}" />
+                                            </p:column>                                        
+                                            <p:column headerText="Numero" styleClass="colCenter" width="80">
+                                                <h:outputText value="#{numeracion.numNumero}" />
+                                            </p:column>
+                                            <p:column headerText="Sufijo" styleClass="colCenter" width="80">
+                                                <h:outputText value="#{numeracion.numSufijo}" />
+                                            </p:column>
+                                            <p:column headerText="X" width="20" styleClass="colCenter">
+                                                <p:commandLink update="numeraciones" title="Presione para eliminar esta Numeracion" action="#{numeracionManagedBean.eliminarNumeracion()}">                                    
+                                                    <f:setPropertyActionListener target="#{numeracionManagedBean.numeracion}" value="#{numeracion}" />
+                                                    <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                                    <p:confirm header="Confirmacion" message="Esta seguro de eliminar la Numeracion seleccionado?" icon="ui-icon-alert" />
+                                                </p:commandLink>
+                                            </p:column>
+                                        </p:dataTable>
+                                        <div align="right" style="padding-top: 4px;">
+                                            <p:commandButton value="Agregar" action="#{numeracionManagedBean.agregarNumeracion()}" oncomplete="PF('dialogNumeracion').show();" update=":modalNumeracion"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:form>                            
+                        </p:tab>
+                        <p:tab title="Pais / Departamento">
+                            <h:form id="formPaises">
+                                <div align="left">
+                                    <div style="padding: 12px;padding-top: 0px !important;">
+                                        <h:panelGrid columns="5">
+                                            <h:outputLabel value="Pais"/>
+                                            <p:selectOneMenu converter="MarPaisesConverter" value="#{paisesManagedBean.pais}" style="width: 222px">
+                                                <p:ajax update="panelDepartamentos" listener="#{paisesManagedBean.filtrarPaises()}" />
+                                                <f:selectItems value="#{paisesManagedBean.paises}" var="pais" itemLabel="#{pais.paiNombre}" itemValue="#{pais}" />
+                                            </p:selectOneMenu>
+                                            <p:commandButton value="Editar" oncomplete="PF('dialogPais').show();" update=":modalPais" disabled="#{paisesManagedBean.pais eq null}"/>
+                                            <p:commandButton value="Borrar" action="#{paisesManagedBean.eliminarPais()}" disabled="#{paisesManagedBean.pais eq null}" update="@form">
+                                                <p:confirm header="Confirmacion" message="Esta seguro de eliminar el Pais seleccionado" icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton value="Nuevo Pais" action="#{paisesManagedBean.crearPais()}" oncomplete="PF('dialogPais').show();" update=":modalPais"/>
+                                        </h:panelGrid>
+                                        <h:panelGroup id="panelDepartamentos">
+                                            <p:dataTable id="departamentos" var="departamento" value="#{paisesManagedBean.departamentos}" selectionMode="single" selection="#{paisesManagedBean.departamento}" rowKey="#{departamento.depId}" emptyMessage="No se han encontrado departamentos vinculados al pais #{paisesManagedBean.pais.paiNombre}" rowIndexVar="idx">
+                                                <p:ajax event="rowSelect"  oncomplete="PF('dialogDepartamento').show();" update=":modalDepartamento"/>                        
+                                                <p:column headerText="#" width="40" styleClass="colCenter">
+                                                    <h:outputText value="#{idx+1}" />
+                                                </p:column>                                                 
+                                                <p:column headerText="Nombre">
+                                                    <h:outputText value="#{departamento.depNombre}" />
+                                                </p:column>                                        
+                                                <p:column headerText="X" width="20">
+                                                    <p:commandLink update="departamentos" title="Presione para eliminar este departamento" action="#{paisesManagedBean.eliminarDepartamento()}">                                    
+                                                        <f:setPropertyActionListener target="#{paisesManagedBean.departamento}" value="#{departamento}" />
+                                                        <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                                        <p:confirm header="Confirmacion" message="Esta seguro de eliminar el Departamento seleccionado?" icon="ui-icon-alert" />
+                                                    </p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                            <div align="right" style="padding-top: 4px;">
+                                                <p:commandButton value="Agregar" action="#{paisesManagedBean.crearDepartamento()}" oncomplete="PF('dialogDepartamento').show();" update=":modalDepartamento"/>
+                                            </div>
+                                        </h:panelGroup>
+                                    </div>
+                                </div>
+                            </h:form>                            
+                        </p:tab>                                            
+                        <p:tab title="Ciudades">
+                            <h:form id="formCiudades">
+                                <div>
+                                    <div style="padding: 12px;padding-top: 0px !important;" align="left">
+                                        <h:panelGrid columns="2">
+                                            <h:outputLabel value="Pais"/>
+                                            <p:selectOneMenu converter="MarPaisesConverter" value="#{ciudadesManagedBean.pais}" style="width: 222px">
+                                                <p:ajax update="panelCiudades listaDepartamentos" listener="#{ciudadesManagedBean.filtrarPaises()}" />
+                                                <f:selectItems value="#{ciudadesManagedBean.paises}" var="pais" itemLabel="#{pais.paiNombre}" itemValue="#{pais}" />
+                                            </p:selectOneMenu>   
+                                            <h:outputLabel value="Departamento"/>
+                                            <p:selectOneMenu id="listaDepartamentos" converter="MarDepartamentosConverter" value="#{ciudadesManagedBean.departamento}" style="width: 222px">
+                                                <p:ajax update="panelCiudades" listener="#{ciudadesManagedBean.filtrarDepartamento()}" />
+                                                <f:selectItems value="#{ciudadesManagedBean.departamentos}" var="depto" itemLabel="#{depto.depNombre}" itemValue="#{depto}" />
+                                            </p:selectOneMenu>                                                
+                                        </h:panelGrid>
+                                        <hr/>
+                                        <h:panelGroup id="panelCiudades">
+                                            <p:dataTable id="ciudades" var="ciudad" value="#{ciudadesManagedBean.ciudades}" selectionMode="single" selection="#{ciudadesManagedBean.ciudad}" rowKey="#{ciudad.ciuId}" emptyMessage="No se han encontrado ciudades vinculadas al departamento #{ciudadesManagedBean.departamento.depNombre}" rowIndexVar="idx">
+                                                <p:ajax event="rowSelect" oncomplete="PF('dialogCiudad').show();" update=":modalCiudad"/>                        
+                                                <p:column headerText="#" width="40" styleClass="colCenter">
+                                                    <h:outputText value="#{idx+1}" />
+                                                </p:column>                                                 
+                                                <p:column headerText="Nombre">
+                                                    <h:outputText value="#{ciudad.ciuNombre}" />
+                                                </p:column>                                        
+                                                <p:column headerText="Codigo DANE">
+                                                    <h:outputText value="#{ciudad.ciuCodigoDane}" />
+                                                </p:column>                                        
+                                                <p:column headerText="X" width="20">
+                                                    <p:commandLink update="ciudades" title="Presione para eliminar esta ciudad" action="#{ciudadesManagedBean.borrarCiudad()}">                                    
+                                                        <f:setPropertyActionListener target="#{ciudadesManagedBean.ciudad}" value="#{ciudad}" />
+                                                        <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                                        <p:confirm header="Confirmacion" message="Esta seguro de eliminar la ciudad seleccionada ?" icon="ui-icon-alert" />
+                                                    </p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                            <div align="right" style="padding-top: 4px;">
+                                                <p:commandButton value="Agregar" action="#{ciudadesManagedBean.crearCiudad()}" oncomplete="PF('dialogCiudad').show();" update=":modalCiudad" disabled="#{ciudadesManagedBean.departamento eq null}"/>
+                                            </div>
+                                        </h:panelGroup>
+                                    </div>
+                                </div>
+                            </h:form>                            
+                        </p:tab>                        
+                    </p:tabView>
+                </div>
+            </div>
+        </div> 
+
+        <!-- Dialog de modificacion tipo de documento -->        
+        <p:dialog id="modalTipoDocumento" widgetVar="dialogTipoDocumento" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Tipo de Documento" modal="true">
+            <div>
+                <h:form id="formModalTipoDocumento">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Sigla"/>
+                        <p:inputText value="#{tiposDocumentoManagedBean.tipoDocumento.tdcSigla}" required="true" size="30"/>
+                        <h:outputLabel value="Nombre"/>
+                        <p:inputText value="#{tiposDocumentoManagedBean.tipoDocumento.tdcNombre}" required="true" size="30"/>                        
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{tiposDocumentoManagedBean.guardarTipoDocumento()}" update="@form :tabContainer:formTipoDocumentos"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogTipoDocumento').hide();" immediate="true"/>
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
+
+        <!-- Dialog de modificacion Numeracion -->        
+        <p:dialog id="modalNumeracion" widgetVar="dialogNumeracion" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Numeracion" modal="true">
+            <div>
+                <h:form id="formModalNumeracion">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Codigo"/>
+                        <p:inputText value="#{numeracionManagedBean.numeracion.numCodigo}" required="true" size="30"/>
+                        <h:outputLabel value="Nombre"/>
+                        <p:inputTextarea value="#{numeracionManagedBean.numeracion.numNombre}" required="true" rows="5" style="width: 280px;text-align: left;"/>
+                        <h:outputLabel value="Pre Fijo"/>
+                        <p:inputText value="#{numeracionManagedBean.numeracion.numPrefijo}" required="fañse" size="30"/>
+                        <h:outputLabel value="Numero"/>
+                        <p:inputText value="#{numeracionManagedBean.numeracion.numNumero}" required="true" size="30"/>
+                        <h:outputLabel value="Sub Fijo"/>
+                        <p:inputText value="#{numeracionManagedBean.numeracion.numSufijo}" required="fañse" size="30"/>
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{numeracionManagedBean.guardarNumeracion()}" update="@form :tabContainer:formNumeracion"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogNumeracion').hide();" immediate="true"/>
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
+
+        <!-- Dialog de modificacion Pais -->        
+        <p:dialog id="modalPais" widgetVar="dialogPais" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Pais" modal="true">
+            <div>
+                <h:form id="formModalPais">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Sigla"/>
+                        <p:inputText value="#{paisesManagedBean.pais.paiSigla}" required="true" size="30"/>
+                        <h:outputLabel value="Nombre"/>
+                        <p:inputText value="#{paisesManagedBean.pais.paiNombre}" required="true" size="30"/>
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{paisesManagedBean.guardarPais()}" update="@form :tabContainer:formPaises"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogPais').hide();" immediate="true"/>
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
+
+        <!-- Dialog de modificacion Departamento -->        
+        <p:dialog id="modalDepartamento" widgetVar="dialogDepartamento" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Departamento" modal="true">
+            <div>
+                <h:form id="formModalDepartamento">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Nombre"/>
+                        <p:inputText value="#{paisesManagedBean.departamento.depNombre}" required="true" size="30"/>                        
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{paisesManagedBean.guardarDepartamento()}" update="@form :tabContainer:formPaises"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogDepartamento').hide();" immediate="true"/>
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
+
+        <!-- Dialog de modificacion Ciudad -->        
+        <p:dialog id="modalCiudad" widgetVar="dialogCiudad" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Ciudad" modal="true">
+            <div>
+                <h:form id="formModalCiudad">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Nombre"/>
+                        <p:inputText value="#{ciudadesManagedBean.ciudad.ciuNombre}" required="true" size="30"/>                        
+                        <h:outputLabel value="Codigo DANE"/>
+                        <p:inputText value="#{ciudadesManagedBean.ciudad.ciuCodigoDane}" required="true" size="30"/>                        
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{ciudadesManagedBean.guardarCiudad()}" update="@form :tabContainer:formCiudades"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogCiudad').hide();" immediate="true"/>
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

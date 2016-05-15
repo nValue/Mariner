@@ -3,23 +3,111 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/templates/template-business.xhtml"
-                xmlns:h="http://xmlns.jcp.org/jsf/html">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="negocio">
+        <!-- Estilos personalizados pagina -->
+        <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
+        <style type="text/css">
+            #modalModulo{top: 44px !important;}
+        </style>
         <div id="paperMain">
             <div class="tituloCont" align="center">
                 <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
                 <div style="display: inline-block">
                     <h:outputLabel styleClass="titleMain" value="Menú - Módulos" />
-                    <h:outputLabel styleClass="subtitleMain" value="Configuración del árbol del menú"/>
+                    <h:outputLabel styleClass="subtitleMain" value="Configuración del árbol del Menú / Modulos"/>
                 </div>
             </div>
             <div class="contenidoPrinc" align="center">
-                
-                
-                
+                <h:form id="formModulos">
+                    <div class="descripcion" align="center">
+                        <div class="descText">
+                            Para configurar un módulo usted deberá presionar sobre el árbol de la parte izquierda y seleccionar el nivel de anidamiento del Menú o Modulo allí podrá realizar toda la configuración correspondiente.
+                        </div>
+                    </div>
+                    <table style="width: 100%;" border="0">
+                        <tr>
+                            <td width="250" valign="top">
+                                <p:tree value="#{modulosManagedBean.root}" var="node" dynamic="true" cache="false"  selectionMode="single"  selection="#{modulosManagedBean.selectedNode}" id="tree" style="min-width: 100%;" >  
+                                    <p:ajax event="select" listener="#{modulosManagedBean.onNodeExpand}" update="tree :formModulos:confModulos" />  
+                                    <p:treeNode>  
+                                        <h:outputText value="#{node.modNombre}"/>  
+                                    </p:treeNode>  
+                                </p:tree> 
+                                <p:contextMenu for="tree">
+                                    <p:menuitem value="Editar" update=":modalModulo" actionListener="#{modulosManagedBean.seleccionarModulo()}" icon="ui-icon-wrench" oncomplete="PF('moduloDialog').show();"/>                                    
+                                    <p:menuitem value="Eliminar" update="tree :formModulos:confModulos" actionListener="#{modulosManagedBean.eliminarModuloContext()}" icon="ui-icon-minus">
+                                        <p:confirm header="Confirmacion" message="Esta seguro de eliminar este Modulo?" icon="ui-icon-alert" />
+                                    </p:menuitem>
+                                </p:contextMenu>
+                                <div align="center" style="padding: 10px;">
+                                    <h:panelGrid columns="2">
+                                        <p:commandButton value="Nuevo Nodo Raiz" action="#{modulosManagedBean.nuevoNodoRaiz()}" oncomplete="PF('moduloDialog').show();" update=":modalModulo" />                                        
+                                    </h:panelGrid> 
+                                </div>
+                            </td>
+                            <td valign="top" style="padding-left: 8px;padding-right: 8px;">
+                                <h:panelGroup id="confModulos">
+                                    <p:dataTable id="modulos" var="modulo" value="#{modulosManagedBean.modulos}" selectionMode="single" selection="#{modulosManagedBean.moduloSeleccion}" rowKey="#{modulo.modId}" emptyMessage="No se han encontrado Modulos asociados">
+                                        <p:ajax event="rowSelect" listener="#{modulosManagedBean.seleccionarModuloTabla()}" oncomplete="PF('moduloDialog').show();" update=":modalModulo"/>
+                                        <p:column headerText="Nombre" width="180" styleClass="colCenter">
+                                            <h:outputText value="#{modulo.modNombre}" />
+                                        </p:column>                                            
+                                        <p:column headerText="Direccion URL">
+                                            <h:outputText value="#{modulo.modUrl}" title="#{modulo.modUrl}" />
+                                        </p:column>
+                                        <p:column headerText=".x." styleClass="colCenter" width="22">
+                                            <p:commandLink update="modulos :formModulos:tree" title="Presione para Eliminar este Modulo" action="#{modulosManagedBean.eliminarModulo()}">                                    
+                                                <f:setPropertyActionListener target="#{modulosManagedBean.moduloSeleccion}" value="#{modulo}" />
+                                                <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                                <p:confirm header="Confirmacion" message="Esta seguro de eliminar este Modulo?" icon="ui-icon-alert" />
+                                            </p:commandLink>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <div align="right" style="padding-top: 8px;">
+                                        <p:commandButton value="Agregar" action="#{modulosManagedBean.nuevoNodo()}" oncomplete="PF('moduloDialog').show();" update=":modalModulo"/>
+                                    </div>
+                                </h:panelGroup>
+                            </td>
+                        </tr>
+                    </table>
+                </h:form>
             </div>
         </div>
+
+        <!-- Popup de edicion de modulos -->
+        <p:dialog id="modalModulo" widgetVar="moduloDialog" header="Configuracion de Modulo" modal="true" draggable="false" closable="true" resizable="false" appendTo="@(body)" closeOnEscape="true">
+            <div class="minDivPopup">
+                <h:form id="formModalModulo">
+                    <h:panelGroup id="confModulo">
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Nombre" styleClass="label" />
+                            <p:inputText value="#{modulosManagedBean.modulo.modNombre}" styleClass="inputModal" required="true" style="width: 280px;" />
+                            <h:outputText value="Icono" styleClass="label" />
+                            <p:inputText value="#{modulosManagedBean.modulo.modIcono}" styleClass="inputModal" style="width: 280px;"/>                            
+                            <h:outputText value="Estado" styleClass="label" />
+                            <p:selectOneMenu styleClass="inputModal" value="#{modulosManagedBean.modulo.modEstado}" style="width: 250px;">
+                                <f:selectItem itemLabel="Activo" itemValue="A" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="I" />
+                            </p:selectOneMenu>
+                            <h:outputText value="Orden" styleClass="label" />
+                            <p:inputText value="#{modulosManagedBean.modulo.modOrden}" styleClass="inputModal" style="width: 280px;"/>                            
+                            <h:outputText value="Descripcion" styleClass="label" />
+                            <p:inputText value="#{modulosManagedBean.modulo.modDescripcion}" styleClass="inputModal" style="width: 480px;" required="true"/>
+                            <h:outputText value="Direccion URL" styleClass="label" />
+                            <p:inputText value="#{modulosManagedBean.modulo.modUrl}" styleClass="inputModal" required="true" style="width: 480px;"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <div align="center" class="commandsPanel" style="margin-top: 20px;">
+                        <p:commandButton value="Guardar"  action="#{modulosManagedBean.guardarModulo()}" update="formModalModulo :formModulos"/>
+                        <p:commandButton value="Cancelar"  oncomplete="PF('moduloDialog').hide();"/>
+                    </div>
+                </h:form>
+            </div>
+        </p:dialog>
     </ui:define>
 
 </ui:composition>

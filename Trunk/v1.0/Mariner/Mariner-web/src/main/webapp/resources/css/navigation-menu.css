@@ -110,7 +110,7 @@
 
 .navigation > ul { width: 100%; }
 
-.navigation ul ul { width: 13em; }
+.navigation ul ul { width: 16em; }
 
 .navigation > ul > li > a {
     border-right: 0.36em solid #529CE8;

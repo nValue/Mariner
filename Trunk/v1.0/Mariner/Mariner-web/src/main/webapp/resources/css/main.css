@@ -78,6 +78,30 @@
     width: 96%;
 }
 
+*.calendarVUR>input{
+    width: 160px !important
+}
+
+*.calendarVUR>button{
+    width: 30px !important;
+    border: 1px solid #DCDCDC !important;
+    background: #F5F5F5 !important;
+    height: 26px !important;
+}
+
+*.calendarVUR>button:hover{
+    background: #D8D8D8 !important;
+}
+
+*.label{
+    font-weight: 600 !important;
+}
+
+*.labelCenter{
+    font-weight: 600 !important;
+    text-align: center;
+}
+    
 /**
  Panel de acceso denegado.
 */

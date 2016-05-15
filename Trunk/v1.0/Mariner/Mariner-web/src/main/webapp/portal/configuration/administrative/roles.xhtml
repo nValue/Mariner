@@ -8,20 +8,107 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="negocio">
+        <style type="text/css">
+            #modalRol{top: 40px !important;}
+            
+            #modalModulos{top: 40px !important;}
+        </style>
         <div id="paperMain">
             <div class="tituloCont" align="center">
                 <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
                 <div style="display: inline-block">
                     <h:outputLabel styleClass="titleMain" value="Configuración de Roles" />
-                    <h:outputLabel styleClass="subtitleMain" value="Crear nuevos roles, modificar información de estos"/>
+                    <h:outputLabel styleClass="subtitleMain" value="Crear nuevos roles, modificar información de estos y vinculo con Modulo Plataforma."/>
                 </div>
             </div>
-            <div class="contenidoPrinc" align="center">
-                
-                
-                
+            <div class="contenidoPrinc" align="left">
+                <p:tabView id="tabContainer">
+                    <p:tab title="Roles">
+                        <div style="padding: 14px;">
+                            <h:form id="formRoles">
+                                <div>   
+                                    <h:panelGrid columns="5">
+                                        <h:outputLabel value="Rol"/>
+                                        <p:selectOneMenu converter="MarRolesConverter" value="#{rolesManagedBean.rol}" style="width: 222px">
+                                            <p:ajax update="panelInformacionRol" listener="#{rolesManagedBean.filtrarRolesModulos()}" />
+                                            <f:selectItems value="#{rolesManagedBean.roles}" var="rol" itemLabel="#{rol.rolNombre}" itemValue="#{rol}" />
+                                        </p:selectOneMenu>
+                                        <p:commandButton value="Editar" oncomplete="PF('dialogRol').show();" update=":modalRol" disabled="#{rolesManagedBean.rol eq null}"/>
+                                        <p:commandButton value="Borrar" action="#{rolesManagedBean.eliminarRol()}" disabled="#{rolesManagedBean.rol eq null}" update="@form">
+                                            <p:confirm header="Confirmacion" message="Esta seguro de eliminar el Rol seleccionado" icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                        <p:commandButton value="Nuevo Rol" action="#{rolesManagedBean.agregarRol()}" oncomplete="PF('dialogRol').show();" update=":modalRol"/>
+                                    </h:panelGrid>
+                                    <hr/>
+                                    <h:panelGroup id="panelInformacionRol">
+                                        <p:dataTable id="rolesModulos" var="rolmodulo" value="#{rolesManagedBean.rolesModulos}" emptyMessage="No se han encontrado modulos configurados al rol" rowIndexVar="idx" rows="12" paginatorPosition="bottom" paginator="true">
+                                            <p:column headerText="#" width="40" styleClass="colCenter">
+                                                <h:outputText value="#{idx+1}" />
+                                            </p:column>                                                 
+                                            <p:column headerText="Modulo">
+                                                <h:outputText value="#{rolmodulo.modId.modNombre}" />
+                                            </p:column>                                        
+                                            <p:column headerText="X" width="20">
+                                                <p:commandLink update="rolesModulos" title="Presione para eliminar el vinculo del Modulo con el Rol" action="#{rolesManagedBean.eliminarRolModulo()}">                                    
+                                                    <f:setPropertyActionListener target="#{rolesManagedBean.rolModulo}" value="#{rolmodulo}" />
+                                                    <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                                    <p:confirm header="Confirmacion" message="Esta seguro de eliminar el vinculo con el Modulo Seleccionado?" icon="ui-icon-alert" />
+                                                </p:commandLink>
+                                            </p:column>
+                                        </p:dataTable>
+                                        <div align="right" style="padding-top: 4px;">
+                                            <p:commandButton value="Vincular Modulo" oncomplete="PF('dialogModulos').show();" update=":modalModulos"/>
+                                        </div>
+                                    </h:panelGroup>
+                                </div>
+                            </h:form>
+                        </div>                        
+                    </p:tab>
+                    <p:tab title="Roles - Reportes">
+                        <h:form id="formRolesReportes">
+                            <div>                                    
+                            </div>
+                        </h:form>
+                    </p:tab>
+                </p:tabView>
             </div>
         </div>
+
+        <!-- Dialog de modificacion Pais -->        
+        <p:dialog id="modalRol" widgetVar="dialogRol" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Rol" modal="true">
+            <div>
+                <h:form id="formModalPais">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Nombre"/>
+                        <p:inputText value="#{rolesManagedBean.rol.rolNombre}" required="true" style="width: 392px;"/>
+                        <h:outputLabel value="Descripcion"/>
+                        <p:inputText value="#{rolesManagedBean.rol.rolDescripcion}" required="true"  style="width: 392px;"/>
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{rolesManagedBean.guardarRol()}" update="@form :tabContainer:formRoles"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogRol').hide();" immediate="true"/>
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
+
+        <!-- Dialog de modificacion Pais -->        
+        <p:dialog id="modalModulos" widgetVar="dialogModulos" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Rol" modal="true">
+            <div>
+                <h:form id="formModalModulos">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Modulo"/>
+                        <p:selectOneMenu converter="MarModulosConverter" value="#{rolesManagedBean.modulo}" style="width: 322px">
+                            <f:selectItems value="#{rolesManagedBean.modulos}" var="modulos" itemLabel="#{modulos.modNombre}" itemValue="#{modulos}" />
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{rolesManagedBean.vincularModulo()}" update="@form :tabContainer:formRoles"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogModulos').hide();" immediate="true"/>
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
     </ui:define>
 
 </ui:composition>

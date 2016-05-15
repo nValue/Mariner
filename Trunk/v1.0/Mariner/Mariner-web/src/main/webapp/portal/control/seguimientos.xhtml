@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/template-business.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="negocio">
+        <!-- Estilos personalizados pagina -->
+        <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
+        <script type="text/javascript" src="#{resource['js/primefaces.spanish.js']}"/>
+        <style type="text/css">
+
+        </style>
+
+        <div id="paperMain">
+            <div class="tituloCont" align="center">
+                <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                <div style="display: inline-block">
+                    <h:outputLabel styleClass="titleMain" value="Seguimientos" />
+                    <h:outputLabel styleClass="subtitleMain" value="Filtrado de los logs o seguimientos registrados en la base de datos"/>
+                </div>
+            </div>
+            <div class="contenidoPrinc" align="left">
+                <h:form id="formSeguimientos">
+                    <div class="descripcion" align="center">
+                        <div class="descText">
+                            Seleccione la fecha Inicial y Final de la cual desea realizar el filtrado de Seguimientos asi como el Valor de la llave de seguimiento
+                        </div>
+                    </div>
+                    <h:panelGrid columns="7">
+                        <h:outputLabel value="Fecha Inicial"/>
+                        <p:calendar styleClass="calendarVUR" value="#{seguimientosManagedBean.fechaInicial}" showOn="button" locale="es" pattern="dd/MM/yyyy" />
+                        <h:outputLabel value="Fecha Final"/>
+                        <p:calendar styleClass="calendarVUR" value="#{seguimientosManagedBean.fechaFinal}" showOn="button" locale="es" pattern="dd/MM/yyyy"/>
+                        <h:outputLabel value="Clave"/>
+                        <p:inputText value="#{seguimientosManagedBean.clave}" required="true" style="width: 250px !important;"/>
+                        <p:commandButton value="Buscar" action="#{seguimientosManagedBean.filtrarSeguimiento()}" update="@form" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();"/>
+                    </h:panelGrid>
+                    <hr/>
+                    <p:dataTable id="seguimientos" var="seguimiento" widgetVar="wvSeguimiento" value="#{seguimientosManagedBean.seguimientos}" selectionMode="single" selection="#{seguimientosManagedBean.seguimiento}" rowKey="#{seguimiento.segId}" emptyMessage="No se han encontrado seguimientos vinculados al filtro ingresado" rowIndexVar="idx" filteredValue="#{seguimientosManagedBean.seguimientosFiltrado}">
+                        <p:column headerText="#" width="40" styleClass="colCenter">
+                            <h:outputText value="#{idx+1}" />
+                        </p:column>
+                        <p:column headerText="Clave" width="140" styleClass="colCenter">
+                            <h:outputText value="#{seguimiento.segClave}" />
+                        </p:column>
+                        <p:column headerText="Valor">
+                            <h:outputText value="#{seguimiento.segMensaje}" />
+                        </p:column>
+                        <p:column headerText="Fecha" width="162" styleClass="colCenter">
+                            <h:outputText value="#{seguimiento.audFecha}" >
+                                <f:convertDateTime timeZone="#{utilManagedBean.timeZone}" pattern="dd/MM/yyyy hh:mm:ss" />
+                            </h:outputText>
+                        </p:column>                            
+                    </p:dataTable>
+                    <div style="padding: 12px;" align="center">
+                        <p:commandButton value="Limpiar" action="#{seguimientosManagedBean.limpiarFiltro()}" update="@form"/>
+                    </div>
+                </h:form>                
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

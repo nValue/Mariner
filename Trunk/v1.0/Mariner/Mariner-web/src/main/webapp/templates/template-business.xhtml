@@ -9,11 +9,9 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="content">
-
         <!-- Panel que se muestra cuando el usuario no esta autenticado -->
         <h:panelGroup rendered="#{sessionScope.auth eq null or sessionScope.auth eq 'N'}">
             <h:form id="formLogin" style="margin-bottom: 0px;">
-
                 <div class="pagina">
                     <div align="center">
                         <div id="headerDiv">
@@ -73,16 +71,15 @@
                                 </div>
                             </div>
 
-                            <h:commandLink action="#{indexManagedBean.salir()}" title="Presione aqui para cerrar la sesion de usuario">
+                            <p:commandLink action="#{indexManagedBean.salir()}" title="Presione aqui para cerrar la sesion de usuario">
                                 <img class="element-animation" style="margin: 4%;cursor: pointer;width: 24px;" src="#{resource['/images/icons/logout-icon.png']}"/>
-                            </h:commandLink>
+                                <p:confirm header="Confirmacion" message="Esta seguro de que desea cerrar su sesion?" icon="ui-icon-alert" />
+                            </p:commandLink>
                         </div>
                     </div>
                 </h:form>
                 <div class="contentMain" align="center">
-
                     <ui:insert name="negocio"/>
-
                 </div>
             </div>
         </h:panelGroup>
@@ -129,8 +126,7 @@
                         <p:password id="contNueva2" value="#{indexManagedBean.claveNuevaRep}" required="true" requiredMessage="Debe repetir la clave nueva" 
                                     label="Repetir Clave Nueva" size="30" />
                     </h:panelGrid>
-                    <div align="center" style="padding-top: 10px">
-                        <p:messages id="messages" autoUpdate="true" />
+                    <div align="center" style="padding-top: 10px">                        
                         <p:commandButton value="Guardar" action="#{indexManagedBean.cambiarContrasena()}" />
                         <p:commandButton value="Cancelar" oncomplete="PF('dialogContrasena').hide()" process="@this"/>
                     </div>

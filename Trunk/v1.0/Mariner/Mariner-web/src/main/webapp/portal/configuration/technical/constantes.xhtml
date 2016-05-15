@@ -9,6 +9,7 @@
 
     <ui:define name="negocio">
         <!-- Estilos personalizados pagina -->
+        <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
         <style type="text/css">
             #modalConstante{
                 top: 40px !important;
@@ -25,6 +26,11 @@
             </div>
             <div class="contenidoPrinc" align="center">
                 <h:form id="formConstantes">
+                    <div class="descripcion" align="center">
+                        <div class="descText">
+                            Pantalla de configuración de constantes y parámetros de la aplicación, antes de realizar este ajuste por favor asegúrese que no afecte el flujo de la aplicación. 
+                        </div>
+                    </div>
                     <div style="padding: 22px;">
                         <p:dataTable id="constantes" var="constante" value="#{constantesManagedBean.constantes}" selectionMode="single" selection="#{constantesManagedBean.constante}" rowKey="#{constante.conId}" emptyMessage="No se han encontrado constantes configuradas en el sistema" rowIndexVar="idx" filteredValue="#{constantesManagedBean.constantesFiltro}">
                             <p:ajax event="rowSelect" oncomplete="PF('dialogConstante').show();" update=":modalConstante"/>                        

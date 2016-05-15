@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package co.com.realtech.mariner.controller.jsf.managed_bean.main;
 
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
@@ -22,7 +17,7 @@ import org.apache.log4j.Logger;
 public abstract class GenericManagedBean implements Serializable{
     
     protected AuditSessionUtils auditSessionUtils = AuditSessionUtils.create();
-    protected Logger logger = Logger.getLogger(GenericManagedBean.class);
+    protected Logger logger = Logger.getLogger(super.getClass());
     protected MarUsuarios usuarioSesion = (MarUsuarios) SessionUtils.obtenerValorGeneric("marineruser");
     
     @EJB(beanName = "GenericDAOBean")

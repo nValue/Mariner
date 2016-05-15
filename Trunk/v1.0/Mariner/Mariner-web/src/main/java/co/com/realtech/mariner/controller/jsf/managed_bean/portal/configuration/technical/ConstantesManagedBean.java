@@ -1,18 +1,14 @@
 package co.com.realtech.mariner.controller.jsf.managed_bean.portal.configuration.technical;
 
-import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
+import co.com.realtech.mariner.controller.jsf.managed_bean.portal.business.GeneracionManagedBean;
 import co.com.realtech.mariner.model.entity.MarConstantes;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
-import co.com.realtech.mariner.util.session.AuditSessionUtils;
 import java.io.Serializable;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import org.apache.log4j.Logger;
 
 /**
  * Constrolador JSF administracion de constantes del sistema
@@ -23,26 +19,18 @@ import org.apache.log4j.Logger;
  */
 @ManagedBean
 @ViewScoped
-public class ConstantesManagedBean implements Serializable {
-    
-    final static Logger logger = Logger.getLogger(ConstantesManagedBean.class);
-    
-    @EJB(beanName = "GenericDAOBean")
-    private GenericDAOBeanLocal genericDAOBean;
-    
+public class ConstantesManagedBean extends GeneracionManagedBean implements Serializable {
+
     private MarConstantes constante;
     private List<MarConstantes> constantes;
     private List<MarConstantes> constantesFiltro;
-    
-    private AuditSessionUtils auditSessionUtils;
-    
+
     public ConstantesManagedBean() {
     }
-    
-    @PostConstruct
+
+    @Override
     public void init() {
         try {
-            auditSessionUtils=AuditSessionUtils.create();
             setConstantes((List<MarConstantes>) genericDAOBean.loadAllForEntity(MarConstantes.class, "conSigla"));
         } catch (Exception e) {
             logger.error("Error inicializando ConstantesManagedBean, causado por " + e);
@@ -80,7 +68,7 @@ public class ConstantesManagedBean implements Serializable {
                 genericDAOBean.save(getConstante());
             } else {
                 genericDAOBean.merge(getConstante());
-            }            
+            }
             init();
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Informacion de constante almacenada correctamente en la base de datos", true, false);
             PrimeFacesContext.execute("PF('dialogConstante').hide();");
@@ -90,27 +78,27 @@ public class ConstantesManagedBean implements Serializable {
             logger.error("Error guardando constante, causado por " + e);
         }
     }
-    
+
     public MarConstantes getConstante() {
         return constante;
     }
-    
+
     public void setConstante(MarConstantes constante) {
         this.constante = constante;
     }
-    
+
     public List<MarConstantes> getConstantes() {
         return constantes;
     }
-    
+
     public void setConstantes(List<MarConstantes> constantes) {
         this.constantes = constantes;
     }
-    
+
     public List<MarConstantes> getConstantesFiltro() {
         return constantesFiltro;
     }
-    
+
     public void setConstantesFiltro(List<MarConstantes> constantesFiltro) {
         this.constantesFiltro = constantesFiltro;
     }

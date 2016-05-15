@@ -7,7 +7,11 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
     <ui:define name="negocio">
-
+        <style type="text/css">
+            #dialogRoles{top: 44px !important;}
+            #dialogClave{top: 44px !important;}
+            #dialogSeguridad{top: 44px !important;}            
+        </style>
         <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
         <div id="paperMain">
             <div class="tituloCont" align="center">
@@ -26,7 +30,7 @@
                 <h:form id="formFiltroUsuario">
                     <h:panelGrid columns="3">
                         <h:outputLabel value="Filtro de búsqueda: "/>
-                        <p:autoComplete id="autoUsuarios" size="50" value="#{usuariosManagedBean.usuarioSeleccion}" completeMethod="#{usuariosManagedBean.completeUsers}" var="usuarios" itemLabel="#{usuarios.perId.perNombres} #{usuarios.perId.perApellidos}" itemValue="#{usuarios}" converter="MarUsuariosConverter" forceSelection="true" maxResults="52" queryDelay="1200">
+                        <p:autoComplete id="autoUsuarios" size="70" value="#{usuariosManagedBean.usuarioSeleccion}" completeMethod="#{usuariosManagedBean.completeUsers}" var="usuarios" itemLabel="#{usuarios.perId.perNombres} #{usuarios.perId.perApellidos}" itemValue="#{usuarios}" converter="MarUsuariosConverter" forceSelection="true" maxResults="52" queryDelay="1200">
                             <p:ajax event="itemSelect" listener="#{usuariosManagedBean.seleccionarUsuario()}" update=":formUsuario" />
                         </p:autoComplete>
                     </h:panelGrid>
@@ -93,7 +97,7 @@
         </div>
         
         <!-- Modal de asignación de un rol para el usuario -->
-        <p:dialog id="dialogRoles" widgetVar="modalRoles" modal="true" draggable="true" resizable="true" header="Asignar rol al usuario">
+        <p:dialog id="dialogRoles" widgetVar="modalRoles" modal="true" draggable="false" resizable="false" header="Asignar rol al usuario">
             <h:form id="formRoles">
                 <div style="margin: 20px;">
                     <p:selectOneMenu value="#{usuariosManagedBean.rolSel}" converter="MarRolesConverter" style='width: 300px'>
@@ -108,7 +112,7 @@
         </p:dialog>
 
         <!-- Modal de cambio de clave -->
-        <p:dialog id="dialogClave" widgetVar="modalClave" modal="true" draggable="true" resizable="true" header="Cambiar clave del usuario">
+        <p:dialog id="dialogClave" widgetVar="modalClave" modal="true" draggable="false" resizable="false" header="Cambiar clave del usuario">
             <h:form id="formClave">
                 <div style="margin: 20px;">
                     <h:outputLabel value="Nueva clave" />
@@ -122,16 +126,16 @@
         </p:dialog>
         
         <!-- Modal de información de auditoría del usuario -->
-        <p:dialog id="dialogSeguridad" widgetVar="modalSeguridad" modal="true" draggable="true" resizable="true" header="Cambiar clave del usuario">
+        <p:dialog id="dialogSeguridad" widgetVar="modalSeguridad" modal="true" draggable="false" resizable="false" header="Cambiar clave del usuario">
             <h:form id="formSeg">
                 <div style="margin: 20px;">
                     <h:panelGrid columns="2">
                         <h:outputLabel value="Último ingreso" />
-                        <p:inputText value="#{usuariosManagedBean.usuarioSel.usuUltimoIngreso}" style="width: 200px;" readonly="true"/>
+                        <h:outputLabel value="#{usuariosManagedBean.usuarioSel.usuUltimoIngreso}" styleClass="labelCenter" />                        
                         <h:outputLabel value="Ultima modificación" />
-                        <p:inputText value="#{usuariosManagedBean.usuarioSel.audFecha}" style="width: 200px;" readonly="true"/>
+                        <h:outputLabel value="#{usuariosManagedBean.usuarioSel.audFecha}" styleClass="labelCenter" />                          
                         <h:outputLabel value="Usuario modificador" />
-                        <p:inputText value="#{usuariosManagedBean.usuarioSel.audUsuario}" style="width: 200px" readonly="true"/>
+                        <h:outputLabel value="#{usuariosManagedBean.usuarioSel.audUsuario}" styleClass="labelCenter" />  
                     </h:panelGrid> 
                 </div>
                 <div align="center" style="margin: 20px">
@@ -139,6 +143,5 @@
                 </div>
             </h:form>
         </p:dialog>
-
     </ui:define>
 </ui:composition>
