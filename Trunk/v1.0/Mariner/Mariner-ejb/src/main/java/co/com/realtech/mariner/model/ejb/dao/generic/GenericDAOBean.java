@@ -288,6 +288,7 @@ public class GenericDAOBean implements GenericDAOBeanLocal {
      * @return
      * @throws MarinerPersistanceException 
      */
+    @Override
     public Object findAllByColumn(Class clazz, String column, Object object, boolean equals, String order,int limit) throws MarinerPersistanceException {
         Object obj = null;
         try {
@@ -445,7 +446,9 @@ public class GenericDAOBean implements GenericDAOBeanLocal {
             }
             sqlFnQuery = sqlFnQuery.substring(0, sqlFnQuery.length() - 1);
 
-            sqlFnQuery += (parameters.length > 0 ? " )" : " ") + " FROM DUAL";
+            //El primero es para Oracle, el segundo para PostgreSQL
+            //sqlFnQuery += (parameters.length > 0 ? " )" : " ") + " FROM dual ";
+            sqlFnQuery += (parameters.length > 0 ? " )" : " ") + " ";
 
             Query q = getEntityManager().createNativeQuery(sqlFnQuery);
 

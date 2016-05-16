@@ -82,10 +82,10 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
     public List<MarRadicaciones> obtenerRadicacionesPorUsuarioYFase(MarUsuarios usuario, String fase) throws MarinerPersistanceException{
         List<MarRadicaciones> radicacionesLibres = new ArrayList<>();
         try {
-            Query q = getEntityManager().createQuery("FROM MarRadicaciones r WHERE r.marRadicacionesFasesEstadosList.usuId = :usuId AND r.marRadicacionesFasesEstadosList.fesId.fasId.fasCodigo = :fase");
+            Query q = getEntityManager().createQuery("SELECT DISTINCT r FROM MarRadicaciones r INNER JOIN r.marRadicacionesFasesEstadosList rfe WHERE rfe.usuId = :usuId AND rfe.fesId.fasId.fasCodigo = :fase");
             q.setParameter("usuId", usuario);
             q.setParameter("fase", fase);
-            radicacionesLibres = q.getResultList();
+            radicacionesLibres = (List<MarRadicaciones>)q.getResultList();
         } catch (Exception e) {
             throw e;
         }
