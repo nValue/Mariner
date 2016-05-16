@@ -71,6 +71,7 @@ public class CargueSolicitudesManagedBean implements Serializable{
         logger = Logger.getLogger(CargueSolicitudesManagedBean.class);
         obtenerNotarias();
         obtenerTiposDocumentos();
+        obtenerFasesEstados();
     }
     
     /**

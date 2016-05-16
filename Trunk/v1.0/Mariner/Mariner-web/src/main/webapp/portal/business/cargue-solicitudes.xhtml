@@ -26,7 +26,7 @@
                 <h:form id="formFiltroRadicaciones">
                     <h:panelGrid columns="2" style="margin: 20px;">
                         <h:outputLabel value="Filtro de búsqueda: " />
-                        <p:autoComplete id="autoRadicaciones" size="50" value="#{cargueSolicitudesManagedBean.radicacionSeleccion}" completeMethod="#{cargueSolicitudesManagedBean.completeRadicaciones}" var="rad" itemLabel="#{rad.radNumero.concat(' || Acto:')} #{rad.radCodigoActo.concat(' || Escritura: ')}#{rad.escId.escNumero}" itemValue="#{rad}" converter="MarRadicacionesConverter" forceSelection="true" maxResults="52" queryDelay="1200">
+                        <p:autoComplete id="autoRadicaciones" size="50" value="#{cargueSolicitudesManagedBean.radicacionSeleccion}" completeMethod="#{cargueSolicitudesManagedBean.completeRadicaciones}" var="rad" itemLabel="#{rad.radNumero.concat(' || Acto:')}#{rad.radCodigoActo.concat(' || Escritura: ')}#{rad.escId.escNumero}" itemValue="#{rad}" converter="MarRadicacionesConverter" forceSelection="true" maxResults="52" queryDelay="1200">
                             <p:ajax event="itemSelect" listener="#{cargueSolicitudesManagedBean.seleccionarRadicacion()}" update="formRadicacion" />
                         </p:autoComplete>
                     </h:panelGrid>
@@ -71,14 +71,13 @@
                             </p:selectOneMenu>
                             <h:outputText value="Observaciones"/>
                             <p:inputTextarea value="#{cargueSolicitudesManagedBean.observacionesProceso}" style="width: 100%"/>
-                            
+                            <p:commandButton value="Cargar Escritura" oncomplete="PF('fileUploadDialog').show()" />
                             <p:commandLink  title="Presione aquí para descargar la escritura" rendered="#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId != null}">
                                 <a title="Presione aqui para descargar el archivo" target="_new" href="#{request.contextPath}/static/fileDispatcher/#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId.arcId}-#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId.arcHash}.#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId.arcExtension}">
-                                    <h:graphicImage value="#{resource['/images/icons/icon-pdf.png']}" width="24" title="Presione para descargar la escritura asociada a esta radicación"/>
+                                    <h:graphicImage value="#{resource['/images/icons/icon-pdf.png']}" title="Presione para descargar la escritura asociada a esta radicación"/>
                                 </a>
                             </p:commandLink>
-                            <p:commandButton value="Cargar Escritura" oncomplete="PF('fileUploadDialog').show()" />
-                            
+
                         </h:panelGrid>
                         </div>
                         <div style="margin: 20px">

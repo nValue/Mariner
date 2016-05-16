@@ -1,12 +1,13 @@
 package co.com.realtech.mariner.controller.jsf.managed_bean.util;
 
+import java.io.Serializable;
 import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
 /**
- * Controlador JSF de utilidades
+ * Controlador de Utilidades Request JSF
  *
  * @author Andres Rivera
  * @version 1.0
@@ -14,9 +15,12 @@ import javax.faces.bean.RequestScoped;
  */
 @ManagedBean
 @RequestScoped
-public class UtilManagedBean {
+public class UtilManagedBean implements Serializable {
 
     private TimeZone timeZone;
+
+    public UtilManagedBean() {
+    }
 
     @PostConstruct
     public void init() {

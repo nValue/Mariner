@@ -60,3 +60,11 @@
 .labelLittle{
     font-size: 10px;
 }
+
+.labelText{
+    border: 1px solid #d6d6d6;
+    width: 200px;
+    display: block;
+    padding: 3px 0px;
+    text-align: center;
+}

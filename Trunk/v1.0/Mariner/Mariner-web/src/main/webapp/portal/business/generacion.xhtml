@@ -20,15 +20,81 @@
             <div class="contenidoPrinc" align="center">
                 <div class="descripcion" align="center">
                     <div class="descText">
-                        En la parte izquierda encontrará las liquidaciones que tiene pendiente, si desea obtener una nueva solo pulse el botón "Obtener radicación" y le será asignada automáticamente una radicación,
+                        En la parte izquierda encontrará las liquidaciones que tiene pendiente, si desea obtener una nueva solo pulse el botón "Obtener radicación" y le será asignada automáticamente una radicación. Si usted considera que la radicación es válida y puede seguir su proceso finalize con el botón "Validar Radicación"
                     </div>
                 </div>
                 <h:form id="formTurnos">
-                    <div align="left">
-                        <p:selectOneMenu converter="MarRadicacionesConverter" value="#{generacionManagedBean.radicacionUsuarioSel}">
+                    <div align="left" style="margin: 0px 5%;">
+                        <h:outputLabel value="Radicaciones Actuales: " />
+                        <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" converter="MarRadicacionesConverter" value="#{generacionManagedBean.radicacionUsuarioSel}">
+                            <p:ajax listener="#{generacionManagedBean.obtenerFasesEstadosDeRadicacion()}" update="formTurnos"/>
                             <f:selectItems value="#{generacionManagedBean.radicacionesUsuario}" var="rads" itemLabel="#{rads.radNumero}" itemValue="#{rads}"/>
                         </p:selectOneMenu>
-                        <p:commandButton value="Obtener Radicación" action="#{generacionManagedBean.obtenerRadicaciones()}"/>
+                        <p:commandButton style="vertical-align: top" value="Obtener Radicación" action="#{generacionManagedBean.asignarNuevaRadicacion()}" update="formTurnos" process="@this"/>
+                    </div>
+
+                    <div align="center" style="padding: 20px;">
+                        <h:panelGroup rendered="#{generacionManagedBean.radicacionUsuarioSel != null}">
+                            <div style="margin: 20px;padding-bottom: 20px;display: inline-block;vertical-align: top; width: 50%;border: solid 1px #e0e0e0;">
+                                <p:commandLink style="display: block"  title="Presione aquí para descargar la escritura" rendered="#{generacionManagedBean.radicacionUsuarioSel.escId.arcId != null}">
+                                    <a title="Presione aqui para descargar el archivo" target="_new" href="#{request.contextPath}/static/fileDispatcher/#{generacionManagedBean.radicacionUsuarioSel.escId.arcId.arcId}-#{generacionManagedBean.radicacionUsuarioSel.escId.arcId.arcHash}.#{generacionManagedBean.radicacionUsuarioSel.escId.arcId.arcExtension}">
+                                        <h:graphicImage value="#{resource['/images/icons/icon-pdf.png']}" title="Presione para descargar la escritura asociada a esta radicación"/>
+                                    </a>
+                                </p:commandLink>
+                                <h:outputLabel class="labelLittle" value="Radicación No" style="display: block"/>
+                                <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radNumero}"/>
+                                <h:panelGrid columns="2" >
+                                    <h:outputLabel class="labelLittle" value="Notaria"/>
+                                    <h:outputText class="labelLittle" value="Es exterior"/>
+                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.notId.notNombre}" />
+                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radEsExterior}" />
+
+                                    <h:outputLabel class="labelLittle" value="Número Escritura" />
+                                    <h:outputLabel class="labelLittle" value="Fecha Escritura" />
+                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.escId.escNumero}" />
+                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.escId.escFecha}" >
+                                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"/>
+                                    </p:outputLabel>
+
+                                    <h:outputLabel class="labelLittle" value="Tipo Doc Otorga" />
+                                    <h:outputLabel class="labelLittle" value="Num Doc Otorga" />
+                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.tdcIdOtorgante.tdcSigla}" />
+                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radDocOtorgante}" />
+
+                                    <h:outputLabel class="labelLittle" value="Tipo Doc Recibe" />
+                                    <h:outputLabel class="labelLittle" value="Num Doc Recibe" />
+                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.tdcIdReceptor.tdcSigla}" />
+                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radDocReceptor}" />
+
+                                    <h:outputLabel class="labelLittle" value="Código Acto" />
+                                    <h:outputLabel class="labelLittle" value="Cuantia" />
+                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radCodigoActo}" />
+                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radCuantia}" />
+
+                                </h:panelGrid>
+                                <h:outputLabel style="display: block" class="labelLittle" value="Observaciones" />
+                                <p:inputTextarea value="#{generacionManagedBean.observaciones}" rows="2" style="width: 77%;display: block"/>
+                            </div>
+                            <div style="margin: 20px;display: inline-block; vertical-align: top; width: 40%;border: solid 1px #e0e0e0;">
+                                <p:dataTable value="#{generacionManagedBean.radicacionesFasesEstados}" var="rfe">
+                                    <p:column headerText="Fase">
+                                        <h:outputLabel value="#{rfe.fesId.fesNombre}"/>
+                                    </p:column>
+                                    <p:column headerText="Fecha">
+                                        <h:outputText value="#{rfe.rfeFechaInicio}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Comentarios">
+                                        <h:outputText value="#{rfe.rfeObservaciones}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                            <div>
+                                <p:commandButton style="vertical-align: top" value="Validar Radicación" action="#{generacionManagedBean.validarPendienteSAP()}" update="formTurnos" disabled="#{generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-S'}" />
+                                <p:commandButton style="vertical-align: top" value="Rechazar" action="#{generacionManagedBean.rechazarRadicacion()}" update="formTurnos"  disabled="#{generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-S'}" />
+                            </div>
+                        </h:panelGroup>
                     </div>
                 </h:form>
             </div>
