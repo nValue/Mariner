@@ -2,6 +2,7 @@ package co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones;
 
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBean;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
+import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 
 /**
- * Bean de sessión encargado de las transacciones realizadas a las radicaciones
+ * Bean de sessión encargado de las transacciones realizadas a las radicaciones, fases y estados
  * @author fabianagudelo
  */
 @Stateless(name = "RadicacionesDAOBean")
@@ -44,26 +45,35 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
     }
     
     /**
-     * Obtiene las radicaciones cuya ultima fase sea la ingresada
+     * Obtiene las radicaciones cuya ultima fase sea la ingresada y para un usuario específico si se envía
      * @param fase
+     * @param usuario
      * @return
      * @throws MarinerPersistanceException 
      */
     @Override
-    public List<MarRadicaciones> obtenerRadicacionesPorUltimaFase(String fase) throws MarinerPersistanceException{
+    public List<MarRadicaciones> obtenerRadicacionesPorUltimaFase(String fase, MarUsuarios usuario) throws MarinerPersistanceException{
         List<MarRadicaciones> radicacionesLibres = new ArrayList<>();
         try {
             String sql = "WITH maximos AS (\n" +
-                        "	SELECT MAX(rfes.rfe_id), MAX(fe.fes_codigo) AS codigo, rfes.rad_id \n" +
-                        "	FROM mar_radicaciones_fases_estados rfes\n" +
-                        "	INNER JOIN mar_fases_estados fe ON rfes.fes_id = fe.fes_id\n" +
-                        "	GROUP BY rfes.rad_id\n" +
-                        ") SELECT r.* FROM mar_radicaciones r \n" +
-                        "INNER JOIN maximos m ON r.rad_id = m.rad_id\n" +
-                        "AND m.codigo = :fase\n" +
-                        "ORDER BY r.rad_fecha DESC";
-            Query q = getEntityManager().createNativeQuery(sql);
-            q.setParameter("fesCodigo", fase);
+                        "        SELECT MAX(rfes.fes_id) AS fes_id, rfes.rad_id \n" +
+                        "        FROM mar_radicaciones_fases_estados rfes\n" +
+                        "        INNER JOIN mar_fases_estados fe ON rfes.fes_id = fe.fes_id\n" +
+                        "        %WHERE%\n" +
+                        "        GROUP BY rfes.rad_id\n" +
+                        "    ) " +
+                        " SELECT r.* FROM mar_radicaciones r \n" +
+                        " INNER JOIN maximos m ON r.rad_id = m.rad_id\n" +
+                        " INNER JOIN mar_fases_estados fes ON m.fes_id = fes.fes_id\n" +
+                        "   AND fes.fes_codigo = :fase \n" +
+                        " ORDER BY r.rad_fecha";
+            if(usuario == null){
+                sql = sql.replace("%WHERE%", "");
+            }else{
+                sql = sql.replace("%WHERE%", "WHERE rfes.usu_id = " + usuario.getUsuId());
+            }
+            Query q = getEntityManager().createNativeQuery(sql,MarRadicaciones.class);
+            q.setParameter("fase", fase);
             radicacionesLibres = q.getResultList();
         } catch (Exception e) {
             throw e;
@@ -85,6 +95,28 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
             Query q = getEntityManager().createQuery("SELECT DISTINCT r FROM MarRadicaciones r INNER JOIN r.marRadicacionesFasesEstadosList rfe WHERE rfe.usuId = :usuId AND rfe.fesId.fasId.fasCodigo = :fase");
             q.setParameter("usuId", usuario);
             q.setParameter("fase", fase);
+            radicacionesLibres = (List<MarRadicaciones>)q.getResultList();
+        } catch (Exception e) {
+            throw e;
+        }
+        return radicacionesLibres;
+    }
+    
+    
+    /**
+     * Obtiene las radicaciones para el usuario con la Fase-Estado
+     * @param usuario
+     * @param faseEstado
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    @Override
+    public List<MarRadicaciones> obtenerRadicacionesPorUsuarioYFaseEstado(MarUsuarios usuario, String faseEstado) throws MarinerPersistanceException{
+        List<MarRadicaciones> radicacionesLibres = new ArrayList<>();
+        try {
+            Query q = getEntityManager().createQuery("SELECT DISTINCT r FROM MarRadicaciones r INNER JOIN r.marRadicacionesFasesEstadosList rfe WHERE rfe.usuId = :usuId AND rfe.fesId.fesCodigo = :faseEstado");
+            q.setParameter("usuId", usuario);
+            q.setParameter("faseEstado", faseEstado);
             radicacionesLibres = (List<MarRadicaciones>)q.getResultList();
         } catch (Exception e) {
             throw e;

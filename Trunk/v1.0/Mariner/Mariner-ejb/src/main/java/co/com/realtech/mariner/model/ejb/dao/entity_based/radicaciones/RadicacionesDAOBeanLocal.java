@@ -20,8 +20,10 @@ public interface RadicacionesDAOBeanLocal {
     
     public List<MarRadicaciones> obtenerRadicacionesPorFiltro(String filtro) throws MarinerPersistanceException;
     
-    public List<MarRadicaciones> obtenerRadicacionesPorUltimaFase(String fase) throws MarinerPersistanceException;
+    public List<MarRadicaciones> obtenerRadicacionesPorUltimaFase(String fase, MarUsuarios usuario) throws MarinerPersistanceException;
     
     public List<MarRadicaciones> obtenerRadicacionesPorUsuarioYFase(MarUsuarios usuario, String fase) throws MarinerPersistanceException;
+    
+    public List<MarRadicaciones> obtenerRadicacionesPorUsuarioYFaseEstado(MarUsuarios usuario, String faseEstado) throws MarinerPersistanceException;
     
 }
