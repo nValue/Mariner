@@ -153,7 +153,7 @@ public class CargueSolicitudesManagedBean implements Serializable{
             radicacionSel.setTdcIdReceptor(tiposDocumentosRecibe.get(0));
             radicacionSel.setTdcIdOtorgante(tiposDocumentosOtorga.get(0));
             radicacionSel.setRadEstado("Y");
-            System.out.println("radicacionSel = " + radicacionSel);
+            observacionesProceso = "";
         } catch (Exception e) {
             logger.error("Error creando nueva Radicación, causado por " + e, e);
         }

@@ -155,6 +155,7 @@ public class IndexManagedBean implements Serializable {
             genericDAOBean.save(getUsuario().getPerId());
             genericDAOBean.save(getUsuario());
             PrimeFacesPopup.lanzarDialog(Effects.Fold, "Notificacion", "Usuario creado correctamente, en los próximos minutos recibirá un correo con la información de autenticación en la plataforma.", true, false);
+            PrimeFacesContext.execute("PF('dialogRegistro').hide()");
         } catch (Exception e) {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error Registro", "Lo sentimos pero no ha sido posible crear el usuario, por favor intente nuevamente, o contacte al administrador.", true, false);
             logger.error("Error interno creando usuario, causado por " + e);

@@ -1,10 +1,12 @@
 package co.com.realtech.mariner.controller.jsf.managed_bean.portal.business;
 
 import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBean;
+import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFasesEstadosDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicacionesDAOBeanLocal;
 import co.com.realtech.mariner.model.entity.MarFasesEstados;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
+import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import java.math.BigDecimal;
@@ -22,34 +24,59 @@ import javax.faces.bean.ViewScoped;
 @ViewScoped
 public class GeneracionManagedBean extends GenericManagedBean{
     
+    @EJB(beanName = "RadicacionesDAOBean")
+    private RadicacionesDAOBeanLocal radicacionesDAOBean;
+    
+    @EJB(beanName = "RadicFasesEstadosDAOBean")
+    private RadicFasesEstadosDAOBeanLocal radicFasesEstadosDAOBean;
+    
     private List<MarRadicaciones> radicacionesUsuario;
     private MarRadicaciones radicacionUsuarioSel;
     private MarRadicacionesFasesEstados radFaseEstadoActual;
     
-    @EJB(beanName = "RadicacionesDAOBean")
-    private RadicacionesDAOBeanLocal radicacionesDAOBean;
+    private List<MarRadicacionesFasesEstados> radicacionesFasesEstProcesadas;
+    private MarRadicacionesFasesEstados radicacionFaseEstProcesadaSel;
     
     private List<MarRadicacionesFasesEstados> radicacionesFasesEstados;
     
     private String observaciones;
-    
+    private Date fechaFiltroInic;
+    private Date fechaFiltroFin;
+
     @Override
     public void init() {
-        obtenerRadicaciones();
+        fechaFiltroInic = new Date();
+        fechaFiltroFin = new Date();
+        obtenerRadicacionesPendientes();
     }
     
     /**
      * Obtiene las radicaciones asignadas al usuario.
      */
-    public void obtenerRadicaciones(){
+    public void obtenerRadicacionesPendientes(){
         try {
-            radicacionesUsuario = radicacionesDAOBean.obtenerRadicacionesPorUsuarioYFase(usuarioSesion, "GEN");
+            radicacionesUsuario = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("G-P", usuarioSesion);
             if(!radicacionesUsuario.isEmpty()){
                 radicacionUsuarioSel = radicacionesUsuario.get(0);
                 obtenerFasesEstadosDeRadicacion();
             }
         } catch (Exception e) {
             logger.error("Error obteniendo las radicaciones, causado por : " + e, e);
+        }    
+    }
+    
+    /**
+     * Obtiene las radicaciones que ya evaluó el usuario.
+     */
+    public void obtenerRadicacionesProcesadas(){
+        try {
+            radicacionesFasesEstProcesadas = radicFasesEstadosDAOBean.obtenerRadicFasesEstadosPorUsuarioFaseEstadoYFechas(usuarioSesion, "G-S",fechaFiltroInic, fechaFiltroFin);
+            if(!radicacionesFasesEstProcesadas.isEmpty()){
+                radicacionFaseEstProcesadaSel = radicacionesFasesEstProcesadas.get(0);
+            }
+            System.out.println("radicacionesFasesEstProcesadas = " + radicacionesFasesEstProcesadas);
+        } catch (Exception e) {
+            logger.error("Error obteniendo las radicaciones procesadas, causado por : " + e, e);
         }    
     }
     
@@ -93,7 +120,7 @@ public class GeneracionManagedBean extends GenericManagedBean{
                     }
                     break;
             }
-            obtenerRadicaciones();
+            obtenerRadicacionesPendientes();
             radicacionUsuarioSel = radFaseEstadoActual.getRadId();
             obtenerFasesEstadosDeRadicacion();
         } catch (Exception e) {
@@ -117,7 +144,7 @@ public class GeneracionManagedBean extends GenericManagedBean{
             radFaseEstado.setRfeObservaciones(observaciones);
             auditSessionUtils.setAuditReflectedValues(radFaseEstado);
             genericDAOBean.save(radFaseEstado);
-            obtenerRadicaciones();
+            obtenerRadicacionesPendientes();
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación correcta", "Validación realizada correctamente", true, false);
         } catch (Exception e) {
             logger.error("No se puede guardar la aprobación, causado por " + e, e);
@@ -129,6 +156,15 @@ public class GeneracionManagedBean extends GenericManagedBean{
      */
     public void rechazarRadicacion(){
         PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo", "Opps!, rechazo en desarrollo...", true, false);
+    }
+    
+    /**
+     * Muestra el detalle de una radicación vieja en pantalla.
+     */
+    public void verDetalleRadSel(){
+        radicacionUsuarioSel = radicacionFaseEstProcesadaSel.getRadId();
+        obtenerFasesEstadosDeRadicacion();
+        PrimeFacesContext.execute("PF('dialogHistorial').hide()");
     }
     
 
@@ -172,6 +208,39 @@ public class GeneracionManagedBean extends GenericManagedBean{
         this.observaciones = observaciones;
     }
 
+    public List<MarRadicacionesFasesEstados> getRadicacionesFasesEstProcesadas() {
+        return radicacionesFasesEstProcesadas;
+    }
+
+    public void setRadicacionesFasesEstProcesadas(List<MarRadicacionesFasesEstados> radicacionesFasesEstProcesadas) {
+        this.radicacionesFasesEstProcesadas = radicacionesFasesEstProcesadas;
+    }
+
+    public MarRadicacionesFasesEstados getRadicacionFaseEstProcesadaSel() {
+        return radicacionFaseEstProcesadaSel;
+    }
+
+    public void setRadicacionFaseEstProcesadaSel(MarRadicacionesFasesEstados radicacionFaseEstProcesadaSel) {
+        this.radicacionFaseEstProcesadaSel = radicacionFaseEstProcesadaSel;
+    }
+
+    public Date getFechaFiltroInic() {
+        return fechaFiltroInic;
+    }
+
+    public void setFechaFiltroInic(Date fechaFiltroInic) {
+        this.fechaFiltroInic = fechaFiltroInic;
+    }
+
+    public Date getFechaFiltroFin() {
+        return fechaFiltroFin;
+    }
+
+    public void setFechaFiltroFin(Date fechaFiltroFin) {
+        this.fechaFiltroFin = fechaFiltroFin;
+    }
+
+    
     
     
 }

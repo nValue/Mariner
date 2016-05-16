@@ -27,10 +27,11 @@
                     <div align="left" style="margin: 0px 5%;">
                         <h:outputLabel value="Radicaciones Actuales: " />
                         <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" converter="MarRadicacionesConverter" value="#{generacionManagedBean.radicacionUsuarioSel}">
-                            <p:ajax listener="#{generacionManagedBean.obtenerFasesEstadosDeRadicacion()}" update="formTurnos"/>
+                            <p:ajax listener="#{generacionManagedBean.obtenerFasesEstadosDeRadicacion()}" update="formTurnos" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                             <f:selectItems value="#{generacionManagedBean.radicacionesUsuario}" var="rads" itemLabel="#{rads.radNumero}" itemValue="#{rads}"/>
                         </p:selectOneMenu>
                         <p:commandButton style="vertical-align: top" value="Obtener Radicación" action="#{generacionManagedBean.asignarNuevaRadicacion()}" update="formTurnos" process="@this"/>
+                        <p:commandButton style="vertical-align: top" value="Ver Historial" action="#{generacionManagedBean.obtenerRadicacionesProcesadas()}" oncomplete="PF('dialogHistorial').show()" update="modalHistorial" process="@this"/>
                     </div>
 
                     <div align="center" style="padding: 20px;">
@@ -99,6 +100,48 @@
                 </h:form>
             </div>
         </div>
+        
+        <p:dialog id="modalHistorial" widgetVar="dialogHistorial" resizable="false" header="Historial de radicaciones" modal="true" width="800" minHeight="400">
+            <h:form id="formHistorial">
+                <p:focus context="btnDetalle"/>
+                <div align="right" style="margin: 20px;">
+                    <h:outputLabel value="Fecha Desde"/>
+                    <p:calendar styleClass="calendarSmall" id="inputFecha1" value="#{generacionManagedBean.fechaFiltroInic}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
+                        <p:ajax event="dateSelect" listener="#{generacionManagedBean.obtenerRadicacionesProcesadas()}" update="formHistorial" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                    </p:calendar>
+                    <h:outputLabel value="Fecha Hasta"/>
+                    <p:calendar styleClass="calendarSmall" id="inputFecha2" value="#{generacionManagedBean.fechaFiltroFin}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
+                        <p:ajax event="dateSelect" listener="#{generacionManagedBean.obtenerRadicacionesProcesadas()}" update="formHistorial" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                    </p:calendar>
+                </div>
+                <p:dataTable style="margin: 20px;" value="#{generacionManagedBean.radicacionesFasesEstProcesadas}" 
+                             selection="#{generacionManagedBean.radicacionFaseEstProcesadaSel}" var="radPro" selectionMode="single" rowKey="#{radPro.rfeId}"
+                             >
+                    <p:column headerText="Número" width="80" >
+                        <h:outputLabel value="#{radPro.radId.radNumero}"/>
+                    </p:column>
+                    <p:column headerText="Fecha">
+                        <h:outputLabel value="#{radPro.rfeFechaInicio}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column headerText="Escritura" width="100">
+                        <h:outputLabel value="#{radPro.radId.escId.escNumero}"/>
+                    </p:column>
+                    <p:column headerText="Estado">
+                        <h:outputLabel value="#{radPro.fesId.fesNombre}" />
+                    </p:column>
+                    <p:column headerText="Observaciones">
+                        <h:outputLabel value="#{radPro.rfeObservaciones}" />
+                    </p:column>
+                </p:dataTable>
+                <div align="center" style="margin: 20px;">
+                    <p:commandButton id="btnDetalle" value="Ver Detalle" action="#{generacionManagedBean.verDetalleRadSel()}" update=":formTurnos"/>
+                    <p:commandButton value="Cancelar" oncomplete="PF('dialogHistorial').hide()"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        
     </ui:define>
 
 </ui:composition>

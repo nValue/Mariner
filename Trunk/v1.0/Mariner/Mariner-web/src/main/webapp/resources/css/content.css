@@ -68,3 +68,11 @@
     padding: 3px 0px;
     text-align: center;
 }
+
+.calendarSmall .ui-inputfield{
+    width: 150px !important;
+}
+
+.calendarSmall{
+    margin: 0px 10px 0px 5px;
+}
