@@ -59,14 +59,12 @@ public class ModulosDAOBean extends GenericDAOBean implements ModulosDAOBeanLoca
             q.setParameter("usuId", usuario.getUsuId());
             List<String> paths = (List<String>) q.getResultList();
 
-            for (String path : paths) {
-                String elements[] = path.split("-");
-
+            paths.stream().map((path) -> path.split("-")).forEach((elements) -> {
                 for (String element : elements) {
                     MarModulos singleMod = getEntityManager().find(MarModulos.class, new BigDecimal(element));
                     modelTree.walkArray(modulos, singleMod, 0);
                 }
-            }
+            });
         } catch (Exception e) {
             throw e;
         }
