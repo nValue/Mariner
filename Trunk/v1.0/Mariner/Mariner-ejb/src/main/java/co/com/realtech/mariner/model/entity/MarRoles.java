@@ -9,12 +9,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -30,7 +30,7 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_roles")
+@Table(name = "MAR_ROLES")
 @NamedQueries({
     @NamedQuery(name = "MarRoles.findAll", query = "SELECT m FROM MarRoles m"),
     @NamedQuery(name = "MarRoles.findByRolId", query = "SELECT m FROM MarRoles m WHERE m.rolId = :rolId"),
@@ -42,27 +42,29 @@ public class MarRoles implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_roles")
+    @SequenceGenerator(name = "sq_mar_roles", sequenceName = "sq_mar_roles")
     @Basic(optional = false)
-    @Column(name = "rol_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "ROL_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal rolId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "rol_nombre", nullable = false, length = 100)
+    @Column(name = "ROL_NOMBRE", nullable = false, length = 100)
     private String rolNombre;
     @Size(max = 200)
-    @Column(name = "rol_descripcion", length = 200)
+    @Column(name = "ROL_DESCRIPCION", length = 200)
     private String rolDescripcion;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(mappedBy = "rolId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "rolId")
     private List<MarRolesUsuarios> marRolesUsuariosList;
-    @OneToMany(mappedBy = "rolId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "rolId")
     private List<MarRolesModulos> marRolesModulosList;
 
     public MarRoles() {

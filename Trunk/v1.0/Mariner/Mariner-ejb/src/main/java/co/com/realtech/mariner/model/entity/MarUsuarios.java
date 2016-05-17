@@ -9,11 +9,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -31,7 +32,7 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_usuarios")
+@Table(name = "MAR_USUARIOS")
 @NamedQueries({
     @NamedQuery(name = "MarUsuarios.findAll", query = "SELECT m FROM MarUsuarios m"),
     @NamedQuery(name = "MarUsuarios.findByUsuId", query = "SELECT m FROM MarUsuarios m WHERE m.usuId = :usuId"),
@@ -42,47 +43,46 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarUsuarios.findByAudFecha", query = "SELECT m FROM MarUsuarios m WHERE m.audFecha = :audFecha"),
     @NamedQuery(name = "MarUsuarios.findByUsuUltimoIngreso", query = "SELECT m FROM MarUsuarios m WHERE m.usuUltimoIngreso = :usuUltimoIngreso")})
 public class MarUsuarios implements Serializable {
-
-    @OneToMany(mappedBy = "usuId")
-    private List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_usuarios")
+    @SequenceGenerator(name = "sq_mar_usuarios", sequenceName = "sq_mar_usuarios")
     @Basic(optional = false)
-    @Column(name = "usu_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "USU_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal usuId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "usu_login", nullable = false, length = 50)
+    @Column(name = "USU_LOGIN", nullable = false, length = 50)
     private String usuLogin;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 300)
-    @Column(name = "usu_password", nullable = false, length = 300)
+    @Column(name = "USU_PASSWORD", nullable = false, length = 300)
     private String usuPassword;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 1)
-    @Column(name = "usu_estado", nullable = false, length = 1)
+    @Column(name = "USU_ESTADO", nullable = false, length = 1)
     private String usuEstado;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @Column(name = "usu_ultimo_ingreso")
+    @Column(name = "USU_ULTIMO_INGRESO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date usuUltimoIngreso;
-    @JoinColumn(name = "per_id", referencedColumnName = "per_id", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuId")
+    private List<MarRolesUsuarios> marRolesUsuariosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuId")
+    private List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList;
+    @JoinColumn(name = "PER_ID", referencedColumnName = "PER_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarPersonas perId;
-    @OneToMany(mappedBy = "usuId")
-    private List<MarRolesUsuarios> marRolesUsuariosList;
-    @OneToMany(mappedBy = "usuId")
-    private List<MarRadicacionesFases> marRadicacionesFasesList;
 
     public MarUsuarios() {
     }
@@ -154,14 +154,6 @@ public class MarUsuarios implements Serializable {
         this.usuUltimoIngreso = usuUltimoIngreso;
     }
 
-    public MarPersonas getPerId() {
-        return perId;
-    }
-
-    public void setPerId(MarPersonas perId) {
-        this.perId = perId;
-    }
-
     public List<MarRolesUsuarios> getMarRolesUsuariosList() {
         return marRolesUsuariosList;
     }
@@ -170,12 +162,20 @@ public class MarUsuarios implements Serializable {
         this.marRolesUsuariosList = marRolesUsuariosList;
     }
 
-    public List<MarRadicacionesFases> getMarRadicacionesFasesList() {
-        return marRadicacionesFasesList;
+    public List<MarRadicacionesFasesEstados> getMarRadicacionesFasesEstadosList() {
+        return marRadicacionesFasesEstadosList;
     }
 
-    public void setMarRadicacionesFasesList(List<MarRadicacionesFases> marRadicacionesFasesList) {
-        this.marRadicacionesFasesList = marRadicacionesFasesList;
+    public void setMarRadicacionesFasesEstadosList(List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList) {
+        this.marRadicacionesFasesEstadosList = marRadicacionesFasesEstadosList;
+    }
+
+    public MarPersonas getPerId() {
+        return perId;
+    }
+
+    public void setPerId(MarPersonas perId) {
+        this.perId = perId;
     }
 
     @Override
@@ -201,14 +201,6 @@ public class MarUsuarios implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarUsuarios[ usuId=" + usuId + " ]";
-    }
-
-    public List<MarRadicacionesFasesEstados> getMarRadicacionesFasesEstadosList() {
-        return marRadicacionesFasesEstadosList;
-    }
-
-    public void setMarRadicacionesFasesEstadosList(List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList) {
-        this.marRadicacionesFasesEstadosList = marRadicacionesFasesEstadosList;
     }
     
 }

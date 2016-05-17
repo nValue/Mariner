@@ -9,12 +9,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -32,7 +32,7 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_personas")
+@Table(name = "MAR_PERSONAS")
 @NamedQueries({
     @NamedQuery(name = "MarPersonas.findAll", query = "SELECT m FROM MarPersonas m"),
     @NamedQuery(name = "MarPersonas.findByPerId", query = "SELECT m FROM MarPersonas m WHERE m.perId = :perId"),
@@ -47,44 +47,46 @@ public class MarPersonas implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_personas")
+    @SequenceGenerator(name = "sq_mar_personas", sequenceName = "sq_mar_personas")
     @Basic(optional = false)
-    @Column(name = "per_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "PER_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal perId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 300)
-    @Column(name = "per_nombres", nullable = false, length = 300)
+    @Column(name = "PER_NOMBRES", nullable = false, length = 300)
     private String perNombres;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 300)
-    @Column(name = "per_apellidos", nullable = false, length = 300)
+    @Column(name = "PER_APELLIDOS", nullable = false, length = 300)
     private String perApellidos;
     @Size(max = 50)
-    @Column(name = "per_documento", length = 50)
+    @Column(name = "PER_DOCUMENTO", length = 50)
     private String perDocumento;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
-    @Column(name = "per_email", nullable = false, length = 200)
+    @Column(name = "PER_EMAIL", nullable = false, length = 200)
     private String perEmail;
     @Size(max = 20)
-    @Column(name = "per_telefono", length = 20)
+    @Column(name = "PER_TELEFONO", length = 20)
     private String perTelefono;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @JoinColumn(name = "tdc_id", referencedColumnName = "tdc_id", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "perId")
+    private List<MarNotificaciones> marNotificacionesList;
+    @JoinColumn(name = "TDC_ID", referencedColumnName = "TDC_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarTiposDocumentos tdcId;
-    @OneToMany(mappedBy = "perId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "perId")
     private List<MarUsuarios> marUsuariosList;
-    @OneToMany(mappedBy = "perId")
-    private List<MarNotificaciones> marNotificacionesList;
 
     public MarPersonas() {
     }
@@ -164,6 +166,14 @@ public class MarPersonas implements Serializable {
         this.audFecha = audFecha;
     }
 
+    public List<MarNotificaciones> getMarNotificacionesList() {
+        return marNotificacionesList;
+    }
+
+    public void setMarNotificacionesList(List<MarNotificaciones> marNotificacionesList) {
+        this.marNotificacionesList = marNotificacionesList;
+    }
+
     public MarTiposDocumentos getTdcId() {
         return tdcId;
     }
@@ -178,14 +188,6 @@ public class MarPersonas implements Serializable {
 
     public void setMarUsuariosList(List<MarUsuarios> marUsuariosList) {
         this.marUsuariosList = marUsuariosList;
-    }
-
-    public List<MarNotificaciones> getMarNotificacionesList() {
-        return marNotificacionesList;
-    }
-
-    public void setMarNotificacionesList(List<MarNotificaciones> marNotificacionesList) {
-        this.marNotificacionesList = marNotificacionesList;
     }
 
     @Override

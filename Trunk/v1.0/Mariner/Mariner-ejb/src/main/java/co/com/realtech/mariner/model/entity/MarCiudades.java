@@ -9,12 +9,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -24,6 +24,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -31,7 +32,7 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_ciudades")
+@Table(name = "MAR_CIUDADES")
 @NamedQueries({
     @NamedQuery(name = "MarCiudades.findAll", query = "SELECT m FROM MarCiudades m"),
     @NamedQuery(name = "MarCiudades.findByCiuId", query = "SELECT m FROM MarCiudades m WHERE m.ciuId = :ciuId"),
@@ -43,27 +44,29 @@ public class MarCiudades implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_ciudades")
+    @SequenceGenerator(name = "sq_mar_ciudades", sequenceName = "sq_mar_ciudades")
     @Basic(optional = false)
-    @Column(name = "ciu_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "CIU_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal ciuId;
     @Size(max = 100)
-    @Column(name = "ciu_nombre", length = 100)
+    @Column(name = "CIU_NOMBRE", length = 100)
     private String ciuNombre;
     @Size(max = 20)
-    @Column(name = "ciu_codigo_dane", length = 20)
+    @Column(name = "CIU_CODIGO_DANE", length = 20)
     private String ciuCodigoDane;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(mappedBy = "ciuId")
-    private List<MarNotarias> marNotariasList;
-    @JoinColumn(name = "dep_id", referencedColumnName = "dep_id", nullable = false)
+    @JoinColumn(name = "DEP_ID", referencedColumnName = "DEP_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarDepartamentos depId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciuId")
+    private List<MarNotarias> marNotariasList;
 
     public MarCiudades() {
     }
@@ -112,20 +115,20 @@ public class MarCiudades implements Serializable {
         this.audFecha = audFecha;
     }
 
-    public List<MarNotarias> getMarNotariasList() {
-        return marNotariasList;
-    }
-
-    public void setMarNotariasList(List<MarNotarias> marNotariasList) {
-        this.marNotariasList = marNotariasList;
-    }
-
     public MarDepartamentos getDepId() {
         return depId;
     }
 
     public void setDepId(MarDepartamentos depId) {
         this.depId = depId;
+    }
+
+    public List<MarNotarias> getMarNotariasList() {
+        return marNotariasList;
+    }
+
+    public void setMarNotariasList(List<MarNotarias> marNotariasList) {
+        this.marNotariasList = marNotariasList;
     }
 
     @Override

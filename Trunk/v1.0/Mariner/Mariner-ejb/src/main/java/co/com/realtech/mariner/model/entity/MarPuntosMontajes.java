@@ -10,12 +10,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -31,7 +31,7 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_puntos_montajes")
+@Table(name = "MAR_PUNTOS_MONTAJES")
 @NamedQueries({
     @NamedQuery(name = "MarPuntosMontajes.findAll", query = "SELECT m FROM MarPuntosMontajes m"),
     @NamedQuery(name = "MarPuntosMontajes.findByPmoId", query = "SELECT m FROM MarPuntosMontajes m WHERE m.pmoId = :pmoId"),
@@ -46,37 +46,39 @@ public class MarPuntosMontajes implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_puntos_montajes")
+    @SequenceGenerator(name = "sq_mar_puntos_montajes", sequenceName = "sq_mar_puntos_montajes")
     @Basic(optional = false)
-    @Column(name = "pmo_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "PMO_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal pmoId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "pmo_nombre", nullable = false, length = 50)
+    @Column(name = "PMO_NOMBRE", nullable = false, length = 50)
     private String pmoNombre;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
-    @Column(name = "pmo_os", nullable = false, length = 20)
+    @Column(name = "PMO_OS", nullable = false, length = 20)
     private String pmoOs;
     @Size(max = 100)
-    @Column(name = "pmo_path", length = 100)
+    @Column(name = "PMO_PATH", length = 100)
     private String pmoPath;
-    @Column(name = "pmo_tamano_max")
+    @Column(name = "PMO_TAMANO_MAX")
     private BigInteger pmoTamanoMax;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 1)
-    @Column(name = "pmo_estado", nullable = false, length = 1)
+    @Column(name = "PMO_ESTADO", nullable = false, length = 1)
     private String pmoEstado;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(mappedBy = "pmoId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pmoId")
     private List<MarArchivos> marArchivosList;
 
     public MarPuntosMontajes() {

@@ -9,12 +9,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -22,6 +22,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -29,7 +30,7 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_fases")
+@Table(name = "MAR_FASES")
 @NamedQueries({
     @NamedQuery(name = "MarFases.findAll", query = "SELECT m FROM MarFases m"),
     @NamedQuery(name = "MarFases.findByFasId", query = "SELECT m FROM MarFases m WHERE m.fasId = :fasId"),
@@ -42,28 +43,28 @@ public class MarFases implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_fases")
+    @SequenceGenerator(name = "sq_mar_fases", sequenceName = "sq_mar_fases")
     @Basic(optional = false)
-    @Column(name = "fas_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "FAS_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal fasId;
     @Size(max = 5)
-    @Column(name = "fas_codigo", length = 5)
+    @Column(name = "FAS_CODIGO", length = 5)
     private String fasCodigo;
     @Size(max = 50)
-    @Column(name = "fas_nombre", length = 50)
+    @Column(name = "FAS_NOMBRE", length = 50)
     private String fasNombre;
-    @Column(name = "fas_orden")
+    @Column(name = "FAS_ORDEN")
     private Short fasOrden;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(mappedBy = "fasId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fasId")
     private List<MarFasesEstados> marFasesEstadosList;
-    @OneToMany(mappedBy = "fasId")
-    private List<MarRadicacionesFases> marRadicacionesFasesList;
 
     public MarFases() {
     }
@@ -126,14 +127,6 @@ public class MarFases implements Serializable {
 
     public void setMarFasesEstadosList(List<MarFasesEstados> marFasesEstadosList) {
         this.marFasesEstadosList = marFasesEstadosList;
-    }
-
-    public List<MarRadicacionesFases> getMarRadicacionesFasesList() {
-        return marRadicacionesFasesList;
-    }
-
-    public void setMarRadicacionesFasesList(List<MarRadicacionesFases> marRadicacionesFasesList) {
-        this.marRadicacionesFasesList = marRadicacionesFasesList;
     }
 
     @Override

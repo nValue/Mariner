@@ -8,11 +8,11 @@ package co.com.realtech.mariner.model.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -29,7 +29,7 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_reportes")
+@Table(name = "MAR_REPORTES")
 @NamedQueries({
     @NamedQuery(name = "MarReportes.findAll", query = "SELECT m FROM MarReportes m"),
     @NamedQuery(name = "MarReportes.findByRepId", query = "SELECT m FROM MarReportes m WHERE m.repId = :repId"),
@@ -44,39 +44,41 @@ public class MarReportes implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_reportes")
+    @SequenceGenerator(name = "sq_mar_reportes", sequenceName = "sq_mar_reportes")
     @Basic(optional = false)
-    @Column(name = "rep_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "REP_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal repId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "rep_codigo", nullable = false, length = 50)
+    @Column(name = "REP_CODIGO", nullable = false, length = 50)
     private String repCodigo;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "rep_nombre", nullable = false, length = 100)
+    @Column(name = "REP_NOMBRE", nullable = false, length = 100)
     private String repNombre;
     @Size(max = 1)
-    @Column(name = "rep_estado", length = 1)
+    @Column(name = "REP_ESTADO", length = 1)
     private String repEstado;
     @Size(max = 10)
-    @Column(name = "rep_extension", length = 10)
+    @Column(name = "REP_EXTENSION", length = 10)
     private String repExtension;
     @Size(max = 4000)
-    @Column(name = "rep_query", length = 4000)
+    @Column(name = "REP_QUERY", length = 4000)
     private String repQuery;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @JoinColumn(name = "arc_id", referencedColumnName = "arc_id")
+    @JoinColumn(name = "ARC_ID", referencedColumnName = "ARC_ID")
     @ManyToOne
     private MarArchivos arcId;
-    @JoinColumn(name = "rti_id", referencedColumnName = "rti_id", nullable = false)
+    @JoinColumn(name = "RTI_ID", referencedColumnName = "RTI_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarReportesTipos rtiId;
 

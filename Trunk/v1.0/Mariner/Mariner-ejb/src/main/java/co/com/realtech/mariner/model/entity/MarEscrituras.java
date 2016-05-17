@@ -8,12 +8,12 @@ package co.com.realtech.mariner.model.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -31,7 +31,7 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_escrituras")
+@Table(name = "MAR_ESCRITURAS")
 @NamedQueries({
     @NamedQuery(name = "MarEscrituras.findAll", query = "SELECT m FROM MarEscrituras m"),
     @NamedQuery(name = "MarEscrituras.findByEscId", query = "SELECT m FROM MarEscrituras m WHERE m.escId = :escId"),
@@ -43,29 +43,31 @@ public class MarEscrituras implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_escrituras")
+    @SequenceGenerator(name = "sq_mar_escrituras", sequenceName = "sq_mar_escrituras")
     @Basic(optional = false)
-    @Column(name = "esc_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "ESC_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal escId;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "esc_fecha", nullable = false)
+    @Column(name = "ESC_FECHA", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date escFecha;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "esc_numero", nullable = false, length = 100)
+    @Column(name = "ESC_NUMERO", nullable = false, length = 100)
     private String escNumero;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToOne(mappedBy = "escId")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "escId")
     private MarRadicaciones marRadicaciones;
-    @JoinColumn(name = "arc_id", referencedColumnName = "arc_id", nullable = false)
+    @JoinColumn(name = "ARC_ID", referencedColumnName = "ARC_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarArchivos arcId;
 

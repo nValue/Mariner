@@ -10,11 +10,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -34,8 +35,8 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_radicaciones", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"esc_id"})})
+@Table(name = "MAR_RADICACIONES", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"ESC_ID"})})
 @NamedQueries({
     @NamedQuery(name = "MarRadicaciones.findAll", query = "SELECT m FROM MarRadicaciones m"),
     @NamedQuery(name = "MarRadicaciones.findByRadId", query = "SELECT m FROM MarRadicaciones m WHERE m.radId = :radId"),
@@ -54,80 +55,79 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarRadicaciones.findByRadMedioPagoEstado", query = "SELECT m FROM MarRadicaciones m WHERE m.radMedioPagoEstado = :radMedioPagoEstado"),
     @NamedQuery(name = "MarRadicaciones.findByRadEstado", query = "SELECT m FROM MarRadicaciones m WHERE m.radEstado = :radEstado")})
 public class MarRadicaciones implements Serializable {
-
-    @OneToMany(mappedBy = "radId")
-    private List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_radicaciones")
+    @SequenceGenerator(name = "sq_mar_radicaciones", sequenceName = "sq_mar_radicaciones")
     @Basic(optional = false)
-    @Column(name = "rad_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "RAD_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal radId;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "rad_fecha", nullable = false)
+    @Column(name = "RAD_FECHA", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date radFecha;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "rad_numero", nullable = false, length = 100)
+    @Column(name = "RAD_NUMERO", nullable = false, length = 100)
     private String radNumero;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
     @Size(max = 50)
-    @Column(name = "rad_doc_otorgante", length = 50)
+    @Column(name = "RAD_DOC_OTORGANTE", length = 50)
     private String radDocOtorgante;
     @Size(max = 50)
-    @Column(name = "rad_doc_receptor", length = 50)
+    @Column(name = "RAD_DOC_RECEPTOR", length = 50)
     private String radDocReceptor;
     @Size(max = 200)
-    @Column(name = "rad_codigo_acto", length = 200)
+    @Column(name = "RAD_CODIGO_ACTO", length = 200)
     private String radCodigoActo;
-    @Column(name = "rad_cuantia")
+    @Column(name = "RAD_CUANTIA")
     private BigInteger radCuantia;
-    @Column(name = "rad_valor_liq")
+    @Column(name = "RAD_VALOR_LIQ")
     private BigInteger radValorLiq;
     @Size(max = 1)
-    @Column(name = "rad_es_exterior", length = 1)
+    @Column(name = "RAD_ES_EXTERIOR", length = 1)
     private String radEsExterior;
     @Size(max = 20)
-    @Column(name = "rad_medio_pago", length = 20)
+    @Column(name = "RAD_MEDIO_PAGO", length = 20)
     private String radMedioPago;
     @Size(max = 100)
-    @Column(name = "rad_cus", length = 100)
+    @Column(name = "RAD_CUS", length = 100)
     private String radCus;
     @Size(max = 20)
-    @Column(name = "rad_medio_pago_estado", length = 20)
+    @Column(name = "RAD_MEDIO_PAGO_ESTADO", length = 20)
     private String radMedioPagoEstado;
     @Size(max = 1)
-    @Column(name = "rad_estado", length = 1)
+    @Column(name = "RAD_ESTADO", length = 1)
     private String radEstado;
-    @JoinColumn(name = "arc_id_boleta_fiscal", referencedColumnName = "arc_id")
-    @ManyToOne
-    private MarArchivos arcIdBoletaFiscal;
-    @JoinColumn(name = "arc_id_recibo_pago", referencedColumnName = "arc_id")
+    @JoinColumn(name = "ARC_ID_RECIBO_PAGO", referencedColumnName = "ARC_ID")
     @ManyToOne
     private MarArchivos arcIdReciboPago;
-    @JoinColumn(name = "esc_id", referencedColumnName = "esc_id", nullable = false)
+    @JoinColumn(name = "ARC_ID_BOLETA_FISCAL", referencedColumnName = "ARC_ID")
+    @ManyToOne
+    private MarArchivos arcIdBoletaFiscal;
+    @JoinColumn(name = "ESC_ID", referencedColumnName = "ESC_ID", nullable = false)
     @OneToOne(optional = false)
     private MarEscrituras escId;
-    @JoinColumn(name = "not_id", referencedColumnName = "not_id", nullable = false)
+    @JoinColumn(name = "NOT_ID", referencedColumnName = "NOT_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarNotarias notId;
-    @JoinColumn(name = "tdc_id_otorgante", referencedColumnName = "tdc_id", nullable = false)
+    @JoinColumn(name = "TDC_ID_OTORGANTE", referencedColumnName = "TDC_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarTiposDocumentos tdcIdOtorgante;
-    @JoinColumn(name = "tdc_id_receptor", referencedColumnName = "tdc_id", nullable = false)
+    @JoinColumn(name = "TDC_ID_RECEPTOR", referencedColumnName = "TDC_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarTiposDocumentos tdcIdReceptor;
-    @OneToMany(mappedBy = "radId")
-    private List<MarRadicacionesFases> marRadicacionesFasesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "radId")
+    private List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList;
 
     public MarRadicaciones() {
     }
@@ -262,20 +262,20 @@ public class MarRadicaciones implements Serializable {
         this.radEstado = radEstado;
     }
 
-    public MarArchivos getArcIdBoletaFiscal() {
-        return arcIdBoletaFiscal;
-    }
-
-    public void setArcIdBoletaFiscal(MarArchivos arcIdBoletaFiscal) {
-        this.arcIdBoletaFiscal = arcIdBoletaFiscal;
-    }
-
     public MarArchivos getArcIdReciboPago() {
         return arcIdReciboPago;
     }
 
     public void setArcIdReciboPago(MarArchivos arcIdReciboPago) {
         this.arcIdReciboPago = arcIdReciboPago;
+    }
+
+    public MarArchivos getArcIdBoletaFiscal() {
+        return arcIdBoletaFiscal;
+    }
+
+    public void setArcIdBoletaFiscal(MarArchivos arcIdBoletaFiscal) {
+        this.arcIdBoletaFiscal = arcIdBoletaFiscal;
     }
 
     public MarEscrituras getEscId() {
@@ -310,12 +310,12 @@ public class MarRadicaciones implements Serializable {
         this.tdcIdReceptor = tdcIdReceptor;
     }
 
-    public List<MarRadicacionesFases> getMarRadicacionesFasesList() {
-        return marRadicacionesFasesList;
+    public List<MarRadicacionesFasesEstados> getMarRadicacionesFasesEstadosList() {
+        return marRadicacionesFasesEstadosList;
     }
 
-    public void setMarRadicacionesFasesList(List<MarRadicacionesFases> marRadicacionesFasesList) {
-        this.marRadicacionesFasesList = marRadicacionesFasesList;
+    public void setMarRadicacionesFasesEstadosList(List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList) {
+        this.marRadicacionesFasesEstadosList = marRadicacionesFasesEstadosList;
     }
 
     @Override
@@ -341,14 +341,6 @@ public class MarRadicaciones implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarRadicaciones[ radId=" + radId + " ]";
-    }
-
-    public List<MarRadicacionesFasesEstados> getMarRadicacionesFasesEstadosList() {
-        return marRadicacionesFasesEstadosList;
-    }
-
-    public void setMarRadicacionesFasesEstadosList(List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList) {
-        this.marRadicacionesFasesEstadosList = marRadicacionesFasesEstadosList;
     }
     
 }

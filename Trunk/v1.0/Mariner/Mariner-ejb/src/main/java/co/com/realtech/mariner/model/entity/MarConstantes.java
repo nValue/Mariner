@@ -8,11 +8,11 @@ package co.com.realtech.mariner.model.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -27,7 +27,7 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_constantes")
+@Table(name = "MAR_CONSTANTES")
 @NamedQueries({
     @NamedQuery(name = "MarConstantes.findAll", query = "SELECT m FROM MarConstantes m"),
     @NamedQuery(name = "MarConstantes.findByConId", query = "SELECT m FROM MarConstantes m WHERE m.conId = :conId"),
@@ -41,28 +41,30 @@ public class MarConstantes implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_constantes")
+    @SequenceGenerator(name = "sq_mar_constantes", sequenceName = "sq_mar_constantes")
     @Basic(optional = false)
-    @Column(name = "con_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "CON_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal conId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "con_sigla", nullable = false, length = 50)
+    @Column(name = "CON_SIGLA", nullable = false, length = 50)
     private String conSigla;
     @Size(max = 500)
-    @Column(name = "con_nombre", length = 500)
+    @Column(name = "CON_NOMBRE", length = 500)
     private String conNombre;
     @Size(max = 500)
-    @Column(name = "con_valor_generico", length = 500)
+    @Column(name = "CON_VALOR_GENERICO", length = 500)
     private String conValorGenerico;
     @Size(max = 1)
-    @Column(name = "con_estado", length = 1)
+    @Column(name = "CON_ESTADO", length = 1)
     private String conEstado;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
 

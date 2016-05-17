@@ -9,12 +9,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -30,7 +30,7 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_paises")
+@Table(name = "MAR_PAISES")
 @NamedQueries({
     @NamedQuery(name = "MarPaises.findAll", query = "SELECT m FROM MarPaises m"),
     @NamedQuery(name = "MarPaises.findByPaiId", query = "SELECT m FROM MarPaises m WHERE m.paiId = :paiId"),
@@ -42,25 +42,27 @@ public class MarPaises implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_paises")
+    @SequenceGenerator(name = "sq_mar_paises", sequenceName = "sq_mar_paises")
     @Basic(optional = false)
-    @Column(name = "pai_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "PAI_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal paiId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "pai_nombre", nullable = false, length = 100)
+    @Column(name = "PAI_NOMBRE", nullable = false, length = 100)
     private String paiNombre;
     @Size(max = 5)
-    @Column(name = "pai_sigla", length = 5)
+    @Column(name = "PAI_SIGLA", length = 5)
     private String paiSigla;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(mappedBy = "paiId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "paiId")
     private List<MarDepartamentos> marDepartamentosList;
 
     public MarPaises() {

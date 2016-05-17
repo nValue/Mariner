@@ -10,12 +10,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -33,7 +33,7 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_archivos")
+@Table(name = "MAR_ARCHIVOS")
 @NamedQueries({
     @NamedQuery(name = "MarArchivos.findAll", query = "SELECT m FROM MarArchivos m"),
     @NamedQuery(name = "MarArchivos.findByArcId", query = "SELECT m FROM MarArchivos m WHERE m.arcId = :arcId"),
@@ -50,49 +50,51 @@ public class MarArchivos implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_archivos")
+    @SequenceGenerator(name = "sq_mar_archivos", sequenceName = "sq_mar_archivos")
     @Basic(optional = false)
-    @Column(name = "arc_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "ARC_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal arcId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "arc_nombre", nullable = false, length = 50)
+    @Column(name = "ARC_NOMBRE", nullable = false, length = 50)
     private String arcNombre;
     @Size(max = 10)
-    @Column(name = "arc_extension", length = 10)
+    @Column(name = "ARC_EXTENSION", length = 10)
     private String arcExtension;
     @Size(max = 100)
-    @Column(name = "arc_mime_type", length = 100)
+    @Column(name = "ARC_MIME_TYPE", length = 100)
     private String arcMimeType;
-    @Column(name = "arc_tamano")
+    @Column(name = "ARC_TAMANO")
     private BigInteger arcTamano;
     @Size(max = 500)
-    @Column(name = "arc_path_interno", length = 500)
+    @Column(name = "ARC_PATH_INTERNO", length = 500)
     private String arcPathInterno;
     @Size(max = 500)
-    @Column(name = "arc_hash", length = 500)
+    @Column(name = "ARC_HASH", length = 500)
     private String arcHash;
     @Size(max = 1)
-    @Column(name = "arc_estado", length = 1)
+    @Column(name = "ARC_ESTADO", length = 1)
     private String arcEstado;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(mappedBy = "arcIdBoletaFiscal")
-    private List<MarRadicaciones> marRadicacionesList;
     @OneToMany(mappedBy = "arcIdReciboPago")
+    private List<MarRadicaciones> marRadicacionesList;
+    @OneToMany(mappedBy = "arcIdBoletaFiscal")
     private List<MarRadicaciones> marRadicacionesList1;
-    @OneToMany(mappedBy = "arcId")
-    private List<MarReportes> marReportesList;
-    @OneToMany(mappedBy = "arcId")
-    private List<MarEscrituras> marEscriturasList;
-    @JoinColumn(name = "pmo_id", referencedColumnName = "pmo_id", nullable = false)
+    @JoinColumn(name = "PMO_ID", referencedColumnName = "PMO_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarPuntosMontajes pmoId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "arcId")
+    private List<MarEscrituras> marEscriturasList;
+    @OneToMany(mappedBy = "arcId")
+    private List<MarReportes> marReportesList;
 
     public MarArchivos() {
     }
@@ -202,12 +204,12 @@ public class MarArchivos implements Serializable {
         this.marRadicacionesList1 = marRadicacionesList1;
     }
 
-    public List<MarReportes> getMarReportesList() {
-        return marReportesList;
+    public MarPuntosMontajes getPmoId() {
+        return pmoId;
     }
 
-    public void setMarReportesList(List<MarReportes> marReportesList) {
-        this.marReportesList = marReportesList;
+    public void setPmoId(MarPuntosMontajes pmoId) {
+        this.pmoId = pmoId;
     }
 
     public List<MarEscrituras> getMarEscriturasList() {
@@ -218,12 +220,12 @@ public class MarArchivos implements Serializable {
         this.marEscriturasList = marEscriturasList;
     }
 
-    public MarPuntosMontajes getPmoId() {
-        return pmoId;
+    public List<MarReportes> getMarReportesList() {
+        return marReportesList;
     }
 
-    public void setPmoId(MarPuntosMontajes pmoId) {
-        this.pmoId = pmoId;
+    public void setMarReportesList(List<MarReportes> marReportesList) {
+        this.marReportesList = marReportesList;
     }
 
     @Override

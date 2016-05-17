@@ -9,13 +9,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -34,7 +33,7 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_modulos")
+@Table(name = "MAR_MODULOS")
 @NamedQueries({
     @NamedQuery(name = "MarModulos.findAll", query = "SELECT m FROM MarModulos m"),
     @NamedQuery(name = "MarModulos.findByModId", query = "SELECT m FROM MarModulos m WHERE m.modId = :modId"),
@@ -50,43 +49,45 @@ public class MarModulos implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_modulos")
+    @SequenceGenerator(name = "sq_mar_modulos", sequenceName = "sq_mar_modulos")
     @Basic(optional = false)
-    @Column(name = "mod_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "MOD_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal modId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "mod_nombre", nullable = false, length = 100)
+    @Column(name = "MOD_NOMBRE", nullable = false, length = 100)
     private String modNombre;
     @Size(max = 500)
-    @Column(name = "mod_url", length = 500)
+    @Column(name = "MOD_URL", length = 500)
     private String modUrl;
     @Size(max = 50)
-    @Column(name = "mod_icono", length = 50)
+    @Column(name = "MOD_ICONO", length = 50)
     private String modIcono;
     @Size(max = 500)
-    @Column(name = "mod_descripcion", length = 500)
+    @Column(name = "MOD_DESCRIPCION", length = 500)
     private String modDescripcion;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 1)
-    @Column(name = "mod_estado", nullable = false, length = 1)
+    @Column(name = "MOD_ESTADO", nullable = false, length = 1)
     private String modEstado;
-    @Column(name = "mod_orden")
+    @Column(name = "MOD_ORDEN")
     private Integer modOrden;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(mappedBy = "modIdPadre",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "modIdPadre")
     private List<MarModulos> marModulosList;
-    @JoinColumn(name = "mod_id_padre", referencedColumnName = "mod_id")
+    @JoinColumn(name = "MOD_ID_PADRE", referencedColumnName = "MOD_ID")
     @ManyToOne
     private MarModulos modIdPadre;
-    @OneToMany(mappedBy = "modId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modId")
     private List<MarRolesModulos> marRolesModulosList;
     
     @Transient

@@ -8,11 +8,11 @@ package co.com.realtech.mariner.model.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -21,6 +21,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -28,7 +29,7 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_roles_modulos")
+@Table(name = "MAR_ROLES_MODULOS")
 @NamedQueries({
     @NamedQuery(name = "MarRolesModulos.findAll", query = "SELECT m FROM MarRolesModulos m"),
     @NamedQuery(name = "MarRolesModulos.findByRmoId", query = "SELECT m FROM MarRolesModulos m WHERE m.rmoId = :rmoId"),
@@ -38,20 +39,22 @@ public class MarRolesModulos implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_roles_modulos")
+    @SequenceGenerator(name = "sq_mar_roles_modulos", sequenceName = "sq_mar_roles_modulos")
     @Basic(optional = false)
-    @Column(name = "rmo_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "RMO_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal rmoId;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @JoinColumn(name = "mod_id", referencedColumnName = "mod_id", nullable = false)
+    @JoinColumn(name = "MOD_ID", referencedColumnName = "MOD_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarModulos modId;
-    @JoinColumn(name = "rol_id", referencedColumnName = "rol_id", nullable = false)
+    @JoinColumn(name = "ROL_ID", referencedColumnName = "ROL_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarRoles rolId;
 

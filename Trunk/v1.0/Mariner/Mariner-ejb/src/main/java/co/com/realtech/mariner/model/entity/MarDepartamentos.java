@@ -9,12 +9,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -32,7 +32,7 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_departamentos")
+@Table(name = "MAR_DEPARTAMENTOS")
 @NamedQueries({
     @NamedQuery(name = "MarDepartamentos.findAll", query = "SELECT m FROM MarDepartamentos m"),
     @NamedQuery(name = "MarDepartamentos.findByDepId", query = "SELECT m FROM MarDepartamentos m WHERE m.depId = :depId"),
@@ -43,26 +43,28 @@ public class MarDepartamentos implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_departamentos")
+    @SequenceGenerator(name = "sq_mar_departamentos", sequenceName = "sq_mar_departamentos")
     @Basic(optional = false)
-    @Column(name = "dep_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "DEP_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal depId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "dep_nombre", nullable = false, length = 100)
+    @Column(name = "DEP_NOMBRE", nullable = false, length = 100)
     private String depNombre;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @JoinColumn(name = "pai_id", referencedColumnName = "pai_id", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "depId")
+    private List<MarCiudades> marCiudadesList;
+    @JoinColumn(name = "PAI_ID", referencedColumnName = "PAI_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarPaises paiId;
-    @OneToMany(mappedBy = "depId")
-    private List<MarCiudades> marCiudadesList;
 
     public MarDepartamentos() {
     }
@@ -108,20 +110,20 @@ public class MarDepartamentos implements Serializable {
         this.audFecha = audFecha;
     }
 
-    public MarPaises getPaiId() {
-        return paiId;
-    }
-
-    public void setPaiId(MarPaises paiId) {
-        this.paiId = paiId;
-    }
-
     public List<MarCiudades> getMarCiudadesList() {
         return marCiudadesList;
     }
 
     public void setMarCiudadesList(List<MarCiudades> marCiudadesList) {
         this.marCiudadesList = marCiudadesList;
+    }
+
+    public MarPaises getPaiId() {
+        return paiId;
+    }
+
+    public void setPaiId(MarPaises paiId) {
+        this.paiId = paiId;
     }
 
     @Override

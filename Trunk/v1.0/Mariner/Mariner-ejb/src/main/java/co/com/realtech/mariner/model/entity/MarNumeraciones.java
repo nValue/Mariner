@@ -9,11 +9,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -28,7 +28,7 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_numeraciones")
+@Table(name = "MAR_NUMERACIONES")
 @NamedQueries({
     @NamedQuery(name = "MarNumeraciones.findAll", query = "SELECT m FROM MarNumeraciones m"),
     @NamedQuery(name = "MarNumeraciones.findByNumId", query = "SELECT m FROM MarNumeraciones m WHERE m.numId = :numId"),
@@ -43,30 +43,32 @@ public class MarNumeraciones implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_numeraciones")
+    @SequenceGenerator(name = "sq_mar_numeraciones", sequenceName = "sq_mar_numeraciones")
     @Basic(optional = false)
-    @Column(name = "num_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "NUM_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal numId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "num_codigo", nullable = false, length = 50)
+    @Column(name = "NUM_CODIGO", nullable = false, length = 50)
     private String numCodigo;
     @Size(max = 200)
-    @Column(name = "num_nombre", length = 200)
+    @Column(name = "NUM_NOMBRE", length = 200)
     private String numNombre;
     @Size(max = 10)
-    @Column(name = "num_prefijo", length = 10)
+    @Column(name = "NUM_PREFIJO", length = 10)
     private String numPrefijo;
-    @Column(name = "num_numero")
+    @Column(name = "NUM_NUMERO")
     private BigInteger numNumero;
     @Size(max = 10)
-    @Column(name = "num_sufijo", length = 10)
+    @Column(name = "NUM_SUFIJO", length = 10)
     private String numSufijo;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
 

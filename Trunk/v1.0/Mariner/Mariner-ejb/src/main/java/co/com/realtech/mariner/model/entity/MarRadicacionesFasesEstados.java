@@ -8,11 +8,11 @@ package co.com.realtech.mariner.model.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -26,10 +26,10 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author fabianagudelo
+ * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_radicaciones_fases_estados")
+@Table(name = "MAR_RADICACIONES_FASES_ESTADOS")
 @NamedQueries({
     @NamedQuery(name = "MarRadicacionesFasesEstados.findAll", query = "SELECT m FROM MarRadicacionesFasesEstados m"),
     @NamedQuery(name = "MarRadicacionesFasesEstados.findByRfeId", query = "SELECT m FROM MarRadicacionesFasesEstados m WHERE m.rfeId = :rfeId"),
@@ -43,50 +43,51 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarRadicacionesFasesEstados.findByRfeFechaFin", query = "SELECT m FROM MarRadicacionesFasesEstados m WHERE m.rfeFechaFin = :rfeFechaFin"),
     @NamedQuery(name = "MarRadicacionesFasesEstados.findByRfeEstadoAprobacion", query = "SELECT m FROM MarRadicacionesFasesEstados m WHERE m.rfeEstadoAprobacion = :rfeEstadoAprobacion")})
 public class MarRadicacionesFasesEstados implements Serializable {
-
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_radicaciones_fases_esta")
+    @SequenceGenerator(name = "sq_mar_radicaciones_fases_esta", sequenceName = "sq_mar_radicaciones_fases_esta")
     @Basic(optional = false)
-    @Column(name = "rfe_id")
+    @NotNull
+    @Column(name = "RFE_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal rfeId;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "rfe_fecha_inicio")
+    @Column(name = "RFE_FECHA_INICIO", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date rfeFechaInicio;
     @Size(max = 1)
-    @Column(name = "rfe_estado")
+    @Column(name = "RFE_ESTADO", length = 1)
     private String rfeEstado;
     @Size(max = 200)
-    @Column(name = "rfe_codigo_sap")
+    @Column(name = "RFE_CODIGO_SAP", length = 200)
     private String rfeCodigoSap;
     @Size(max = 1000)
-    @Column(name = "rfe_observaciones")
+    @Column(name = "RFE_OBSERVACIONES", length = 1000)
     private String rfeObservaciones;
     @Size(max = 20)
-    @Column(name = "rfe_ip")
+    @Column(name = "RFE_IP", length = 20)
     private String rfeIp;
     @Size(max = 50)
-    @Column(name = "aud_usuario")
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @Column(name = "rfe_fecha_fin")
+    @Column(name = "RFE_FECHA_FIN")
     @Temporal(TemporalType.TIMESTAMP)
     private Date rfeFechaFin;
     @Size(max = 1)
-    @Column(name = "rfe_estado_aprobacion")
+    @Column(name = "RFE_ESTADO_APROBACION", length = 1)
     private String rfeEstadoAprobacion;
-    @JoinColumn(name = "fes_id", referencedColumnName = "fes_id")
+    @JoinColumn(name = "FES_ID", referencedColumnName = "FES_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarFasesEstados fesId;
-    @JoinColumn(name = "rad_id", referencedColumnName = "rad_id")
+    @JoinColumn(name = "RAD_ID", referencedColumnName = "RAD_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarRadicaciones radId;
-    @JoinColumn(name = "usu_id", referencedColumnName = "usu_id")
+    @JoinColumn(name = "USU_ID", referencedColumnName = "USU_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarUsuarios usuId;
 

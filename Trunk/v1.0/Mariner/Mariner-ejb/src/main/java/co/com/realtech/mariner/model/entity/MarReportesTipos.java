@@ -9,12 +9,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -30,7 +30,7 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "mar_reportes_tipos")
+@Table(name = "MAR_REPORTES_TIPOS")
 @NamedQueries({
     @NamedQuery(name = "MarReportesTipos.findAll", query = "SELECT m FROM MarReportesTipos m"),
     @NamedQuery(name = "MarReportesTipos.findByRtiId", query = "SELECT m FROM MarReportesTipos m WHERE m.rtiId = :rtiId"),
@@ -42,25 +42,27 @@ public class MarReportesTipos implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "sq_mar_reportes_tipos")
+    @SequenceGenerator(name = "sq_mar_reportes_tipos", sequenceName = "sq_mar_reportes_tipos")
     @Basic(optional = false)
-    @Column(name = "rti_id", nullable = false, precision = 131089, scale = 0)
+    @NotNull
+    @Column(name = "RTI_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal rtiId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
-    @Column(name = "rti_codigo", nullable = false, length = 20)
+    @Column(name = "RTI_CODIGO", nullable = false, length = 20)
     private String rtiCodigo;
     @Size(max = 200)
-    @Column(name = "rti_nombre", length = 200)
+    @Column(name = "RTI_NOMBRE", length = 200)
     private String rtiNombre;
     @Size(max = 50)
-    @Column(name = "aud_usuario", length = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @Column(name = "aud_fecha")
+    @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(mappedBy = "rtiId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "rtiId")
     private List<MarReportes> marReportesList;
 
     public MarReportesTipos() {
