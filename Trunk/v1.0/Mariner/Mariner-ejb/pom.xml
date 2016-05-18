@@ -93,6 +93,19 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <targetPath>META-INF</targetPath>
+                <directory>src</directory>
+                <includes>
+                    <include>jax-ws-catalog.xml</include>
+                    <include>wsdl/**</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -138,6 +151,58 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jvnet.jax-ws-commons</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFiles>
+                                <wsdlFile>WS_GetDetail.xml.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <packageName>co.com.realtech.mariner.model.ejb.ws.sap.mappers</packageName>
+                            <wsdlLocation>file:/C:/Users/Andres%20Rivera/Google%20Drive/nValue/Realtech/Proyecto%20VUR%20Valle/Fuentes/WS/SAP/WS_GetDetail.xml</wsdlLocation>
+                            <staleFile>${project.build.directory}/jaxws/stale/WS_GetDetail.xml.stale</staleFile>
+                        </configuration>
+                        <id>wsimport-generate-WS_GetDetail.xml</id>
+                        <phase>generate-sources</phase>
+                    </execution>
+                    <execution>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFiles>
+                                <wsdlFile>WS_GetDetail.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <packageName>co.com.realtech.mariner.model.ejb.ws.sap.mappers</packageName>
+                            <wsdlLocation>file:/C:/Users/Andres%20Rivera/Google%20Drive/nValue/Realtech/Proyecto%20VUR%20Valle/Fuentes/WS/SAP/WS_GetDetail.wsdl</wsdlLocation>
+                            <staleFile>${project.build.directory}/jaxws/stale/WS_GetDetail.stale</staleFile>
+                        </configuration>
+                        <id>wsimport-generate-WS_GetDetail</id>
+                        <phase>generate-sources</phase>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>javax.xml</groupId>
+                        <artifactId>webservices-api</artifactId>
+                        <version>2.0</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <sourceDestDir>${project.build.directory}/generated-sources/jaxws-wsimport</sourceDestDir>
+                    <xnocompile>true</xnocompile>
+                    <verbose>true</verbose>
+                    <extension>true</extension>
+                    <catalog>${basedir}/src/jax-ws-catalog.xml</catalog>
+                    <target>2.0</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

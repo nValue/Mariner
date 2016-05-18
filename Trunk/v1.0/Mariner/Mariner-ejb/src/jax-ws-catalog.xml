@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/C:/Users/Andres%20Rivera/Google%20Drive/nValue/Realtech/Proyecto%20VUR%20Valle/Fuentes/WS/SAP/WS_GetDetail.xml" uri="wsdl/WS_GetDetail.xml.wsdl"/>
+    <system systemId="file:/C:/Users/Andres%20Rivera/Google%20Drive/nValue/Realtech/Proyecto%20VUR%20Valle/Fuentes/WS/SAP/WS_GetDetail.wsdl" uri="wsdl/WS_GetDetail.wsdl"/>
+</catalog>

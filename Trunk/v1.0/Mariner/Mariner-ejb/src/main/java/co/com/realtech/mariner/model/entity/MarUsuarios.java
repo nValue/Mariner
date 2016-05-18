@@ -41,7 +41,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarUsuarios.findByUsuEstado", query = "SELECT m FROM MarUsuarios m WHERE m.usuEstado = :usuEstado"),
     @NamedQuery(name = "MarUsuarios.findByAudUsuario", query = "SELECT m FROM MarUsuarios m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarUsuarios.findByAudFecha", query = "SELECT m FROM MarUsuarios m WHERE m.audFecha = :audFecha"),
-    @NamedQuery(name = "MarUsuarios.findByUsuUltimoIngreso", query = "SELECT m FROM MarUsuarios m WHERE m.usuUltimoIngreso = :usuUltimoIngreso")})
+    @NamedQuery(name = "MarUsuarios.findByUsuUltimoIngreso", query = "SELECT m FROM MarUsuarios m WHERE m.usuUltimoIngreso = :usuUltimoIngreso"),
+    @NamedQuery(name = "MarUsuarios.findByUsuTipo", query = "SELECT m FROM MarUsuarios m WHERE m.usuTipo = :usuTipo")})
 public class MarUsuarios implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -76,10 +77,19 @@ public class MarUsuarios implements Serializable {
     @Column(name = "USU_ULTIMO_INGRESO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date usuUltimoIngreso;
+    @Size(max = 20)
+    @Column(name = "USU_TIPO", length = 20)
+    private String usuTipo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuId")
     private List<MarRolesUsuarios> marRolesUsuariosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuId")
     private List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList;
+    @JoinColumn(name = "NOT_ID", referencedColumnName = "NOT_ID")
+    @ManyToOne
+    private MarNotarias notId;
+    @JoinColumn(name = "MOR_ID", referencedColumnName = "MOR_ID")
+    @ManyToOne
+    private MarOficinasRegistro morId;
     @JoinColumn(name = "PER_ID", referencedColumnName = "PER_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarPersonas perId;
@@ -154,6 +164,14 @@ public class MarUsuarios implements Serializable {
         this.usuUltimoIngreso = usuUltimoIngreso;
     }
 
+    public String getUsuTipo() {
+        return usuTipo;
+    }
+
+    public void setUsuTipo(String usuTipo) {
+        this.usuTipo = usuTipo;
+    }
+
     public List<MarRolesUsuarios> getMarRolesUsuariosList() {
         return marRolesUsuariosList;
     }
@@ -168,6 +186,22 @@ public class MarUsuarios implements Serializable {
 
     public void setMarRadicacionesFasesEstadosList(List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList) {
         this.marRadicacionesFasesEstadosList = marRadicacionesFasesEstadosList;
+    }
+
+    public MarNotarias getNotId() {
+        return notId;
+    }
+
+    public void setNotId(MarNotarias notId) {
+        this.notId = notId;
+    }
+
+    public MarOficinasRegistro getMorId() {
+        return morId;
+    }
+
+    public void setMorId(MarOficinasRegistro morId) {
+        this.morId = morId;
     }
 
     public MarPersonas getPerId() {

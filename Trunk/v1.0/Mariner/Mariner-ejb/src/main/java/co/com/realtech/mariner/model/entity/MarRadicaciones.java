@@ -50,9 +50,6 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarRadicaciones.findByRadCuantia", query = "SELECT m FROM MarRadicaciones m WHERE m.radCuantia = :radCuantia"),
     @NamedQuery(name = "MarRadicaciones.findByRadValorLiq", query = "SELECT m FROM MarRadicaciones m WHERE m.radValorLiq = :radValorLiq"),
     @NamedQuery(name = "MarRadicaciones.findByRadEsExterior", query = "SELECT m FROM MarRadicaciones m WHERE m.radEsExterior = :radEsExterior"),
-    @NamedQuery(name = "MarRadicaciones.findByRadMedioPago", query = "SELECT m FROM MarRadicaciones m WHERE m.radMedioPago = :radMedioPago"),
-    @NamedQuery(name = "MarRadicaciones.findByRadCus", query = "SELECT m FROM MarRadicaciones m WHERE m.radCus = :radCus"),
-    @NamedQuery(name = "MarRadicaciones.findByRadMedioPagoEstado", query = "SELECT m FROM MarRadicaciones m WHERE m.radMedioPagoEstado = :radMedioPagoEstado"),
     @NamedQuery(name = "MarRadicaciones.findByRadEstado", query = "SELECT m FROM MarRadicaciones m WHERE m.radEstado = :radEstado")})
 public class MarRadicaciones implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -96,15 +93,6 @@ public class MarRadicaciones implements Serializable {
     @Size(max = 1)
     @Column(name = "RAD_ES_EXTERIOR", length = 1)
     private String radEsExterior;
-    @Size(max = 20)
-    @Column(name = "RAD_MEDIO_PAGO", length = 20)
-    private String radMedioPago;
-    @Size(max = 100)
-    @Column(name = "RAD_CUS", length = 100)
-    private String radCus;
-    @Size(max = 20)
-    @Column(name = "RAD_MEDIO_PAGO_ESTADO", length = 20)
-    private String radMedioPagoEstado;
     @Size(max = 1)
     @Column(name = "RAD_ESTADO", length = 1)
     private String radEstado;
@@ -128,6 +116,8 @@ public class MarRadicaciones implements Serializable {
     private MarTiposDocumentos tdcIdReceptor;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "radId")
     private List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList;
+    @OneToOne(mappedBy = "radId")
+    private MarTransacciones marTransacciones;
 
     public MarRadicaciones() {
     }
@@ -230,30 +220,6 @@ public class MarRadicaciones implements Serializable {
         this.radEsExterior = radEsExterior;
     }
 
-    public String getRadMedioPago() {
-        return radMedioPago;
-    }
-
-    public void setRadMedioPago(String radMedioPago) {
-        this.radMedioPago = radMedioPago;
-    }
-
-    public String getRadCus() {
-        return radCus;
-    }
-
-    public void setRadCus(String radCus) {
-        this.radCus = radCus;
-    }
-
-    public String getRadMedioPagoEstado() {
-        return radMedioPagoEstado;
-    }
-
-    public void setRadMedioPagoEstado(String radMedioPagoEstado) {
-        this.radMedioPagoEstado = radMedioPagoEstado;
-    }
-
     public String getRadEstado() {
         return radEstado;
     }
@@ -316,6 +282,14 @@ public class MarRadicaciones implements Serializable {
 
     public void setMarRadicacionesFasesEstadosList(List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList) {
         this.marRadicacionesFasesEstadosList = marRadicacionesFasesEstadosList;
+    }
+
+    public MarTransacciones getMarTransacciones() {
+        return marTransacciones;
+    }
+
+    public void setMarTransacciones(MarTransacciones marTransacciones) {
+        this.marTransacciones = marTransacciones;
     }
 
     @Override

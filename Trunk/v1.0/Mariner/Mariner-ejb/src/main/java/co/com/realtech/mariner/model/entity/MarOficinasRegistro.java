@@ -74,6 +74,8 @@ public class MarOficinasRegistro implements Serializable {
     private MarCiudades ciuId;
     @OneToMany(mappedBy = "morId")
     private List<MarNotarias> marNotariasList;
+    @OneToMany(mappedBy = "morId")
+    private List<MarUsuarios> marUsuariosList;
 
     public MarOficinasRegistro() {
     }
@@ -152,6 +154,14 @@ public class MarOficinasRegistro implements Serializable {
 
     public void setMarNotariasList(List<MarNotarias> marNotariasList) {
         this.marNotariasList = marNotariasList;
+    }
+
+    public List<MarUsuarios> getMarUsuariosList() {
+        return marUsuariosList;
+    }
+
+    public void setMarUsuariosList(List<MarUsuarios> marUsuariosList) {
+        this.marUsuariosList = marUsuariosList;
     }
 
     @Override
