@@ -32,10 +32,20 @@ public class NotariasManagedBean extends GenericManagedBean implements Serializa
     @Override
     public void init() {
         try {
-            setOficinasRegistro((List<MarOficinasRegistro>) genericDAOBean.findAllByColumn(MarOficinasRegistro.class, "morEstado", "A", true, "morNombre asc"));
+            
             setNotarias((List<MarNotarias>) genericDAOBean.loadAllForEntity(MarNotarias.class, "notNombre asc"));
         } catch (Exception e) {
             logger.error("Error inicializando NotariasManagedBean, causado por " + e);
+        }
+    }
+    /**
+     * Actualizacion de oficinas de registro.
+     */
+    public void actualizarOficinasRegistro(){
+        try {
+            setOficinasRegistro((List<MarOficinasRegistro>) genericDAOBean.findAllByColumn(MarOficinasRegistro.class, "morEstado", "A", true, "morNombre asc"));
+        } catch (Exception e) {
+            logger.error("Error actualizando lista de oficinas de registro, causado por " + e);
         }
     }
 

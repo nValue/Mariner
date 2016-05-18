@@ -10,6 +10,12 @@
     <ui:define name="negocio">
         <style type="text/css">
             #modalNotaria{top: 44px !important;}
+            
+            #modalOficina{top: 40px !important;}
+            
+            *.autoCiudad>input{
+                width: 380px !important;
+            }
         </style>
         <div id="paperMain">
             <div class="tituloCont" align="center">
@@ -27,20 +33,20 @@
                                 <div>   
                                     <p:dataTable id="notarias" var="notaria" value="#{notariasManagedBean.notarias}" emptyMessage="No se han encontrado Notarias configuradas en la plataforma" rowIndexVar="idx" rows="22" paginatorPosition="bottom" paginator="true"
                                                  selectionMode="single" selection="#{notariasManagedBean.notaria}" rowKey="#{notaria.notId}" filteredValue="#{notariasManagedBean.notariasFiltrado}" widgetVar="notariasWV">
-                                        <p:ajax event="rowSelect" oncomplete="PF('dialogNotaria').show();" update=":modalNotaria"/>                        
+                                        <p:ajax event="rowSelect" oncomplete="PF('dialogNotaria').show();" update=":modalNotaria" listener="#{notariasManagedBean.actualizarOficinasRegistro()}"/>                        
                                         <p:column headerText="#" width="40" styleClass="colCenter">
                                             <h:outputText value="#{idx+1}" />
                                         </p:column>                                                 
-                                        <p:column headerText="Codigo" width="50" styleClass="colCenter" filterBy="#{notaria.notCodigo}" filterMatchMode="contains">
+                                        <p:column headerText="Codigo" width="122" styleClass="colCenter" filterBy="#{notaria.notCodigo}" filterMatchMode="contains">
                                             <h:outputText value="#{notaria.notCodigo}" />
                                         </p:column>       
                                         <p:column headerText="Nombre" filterBy="#{notaria.notNombre}" filterMatchMode="contains">
                                             <h:outputText value="#{notaria.notNombre}" />
                                         </p:column> 
-                                        <p:column headerText="ORIP" filterBy="#{notaria.morId.morNombre}" filterMatchMode="contains">
+                                        <p:column headerText="ORIP" filterBy="#{notaria.morId.morNombre}" filterMatchMode="contains" width="222" styleClass="colCenter">
                                             <h:outputText value="#{notaria.morId.morNombre}"  styleClass="colCenter"/>
                                         </p:column> 
-                                        <p:column headerText="Estado" styleClass="colCenter" width="54" filterBy="#{notaria.notEstado}" filterMatchMode="contains">
+                                        <p:column headerText="Estado" styleClass="colCenter" width="64" filterBy="#{notaria.notEstado}" filterMatchMode="contains">
                                             <h:outputText value="#{notaria.notEstado eq 'A'?'Activo':'Inactivo'}" />
                                         </p:column> 
                                         <p:column headerText="X" width="20">
@@ -59,8 +65,40 @@
                         </div>                        
                     </p:tab>
                     <p:tab title="Oficinas de Registro">
-                        <h:form id="formOficinasRegistro">
-                            <div>                                    
+                        <h:form id="formOficinas">
+                            <div>   
+                                <p:dataTable id="oficinas" var="oficina" value="#{oficinasRegistroManagedBean.oficinas}" emptyMessage="No se han encontrado Oficinas de Registro Configuradas en la plataforma" rowIndexVar="idx" rows="22" paginatorPosition="bottom" paginator="true"
+                                             selectionMode="single" selection="#{oficinasRegistroManagedBean.oficina}" rowKey="#{oficina.morId}" filteredValue="#{oficinasRegistroManagedBean.oficinasFiltrado}" widgetVar="oficinasWV">
+                                    <p:ajax event="rowSelect" oncomplete="PF('dialogOficina').show();" update=":modalOficina"/>                        
+                                    <p:column headerText="#" width="40" styleClass="colCenter">
+                                        <h:outputText value="#{idx+1}" />
+                                    </p:column>                                                 
+                                    <p:column headerText="Codigo" width="50" styleClass="colCenter" filterBy="#{oficina.morCodigo}" filterMatchMode="contains">
+                                        <h:outputText value="#{oficina.morCodigo}" />
+                                    </p:column>       
+                                    <p:column headerText="Nombre" filterBy="#{oficina.morNombre}" filterMatchMode="contains">
+                                        <h:outputText value="#{oficina.morNombre}" />
+                                    </p:column> 
+                                    <p:column headerText="Plataforma" filterBy="#{oficina.morPlataforma}" filterMatchMode="contains">
+                                        <h:outputText value="#{oficina.morPlataforma}"  styleClass="colCenter"/>
+                                    </p:column> 
+                                    <p:column headerText="Ciudad" filterBy="#{oficina.ciuId.ciuNombre}" filterMatchMode="contains">
+                                        <h:outputText value="#{oficina.ciuId.ciuNombre}"  styleClass="colCenter"/>
+                                    </p:column> 
+                                    <p:column headerText="Estado" styleClass="colCenter" width="54" filterBy="#{oficina.morEstado}" filterMatchMode="contains">
+                                        <h:outputText value="#{oficina.morEstado eq 'A'?'Activo':'Inactivo'}" />
+                                    </p:column> 
+                                    <p:column headerText="X" width="20">
+                                        <p:commandLink update="oficinas" title="Presione para eliminar la Oficina de Registro" action="#{oficinasRegistroManagedBean.eliminarOficina()}">                                    
+                                            <f:setPropertyActionListener target="#{oficinasRegistroManagedBean.oficina}" value="#{oficina}" />
+                                            <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                            <p:confirm header="Confirmacion" message="Esta seguro de eliminar la Oficina de Registro Seleccionada?" icon="ui-icon-alert" />
+                                        </p:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                                <div align="right" style="padding-top: 4px;">
+                                    <p:commandButton value="Crear ORIP" action="#{oficinasRegistroManagedBean.agregarOficina()}" oncomplete="PF('dialogOficina').show();" update=":modalOficina"/>
+                                </div>
                             </div>
                         </h:form>
                     </p:tab>
@@ -68,7 +106,7 @@
             </div>
         </div>
 
-        <!-- Dialog de modificacion Pais -->        
+        <!-- Dialog de modificacion Notaria -->        
         <p:dialog id="modalNotaria" widgetVar="dialogNotaria" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Notaria" modal="true">
             <div>
                 <h:form id="formModalNotaria">
@@ -78,7 +116,7 @@
                         <h:outputLabel value="Nombre"/>
                         <p:inputText value="#{notariasManagedBean.notaria.notNombre}" required="true" style="width: 380px;"/>
                         <h:outputLabel value="Oficina de Registro"/>
-                        <p:selectOneMenu styleClass="inputModal" value="#{notariasManagedBean.notaria.morId}" converter="MarOficinasRegistroConverter" style="width: 350px;">
+                        <p:selectOneMenu styleClass="inputModal" value="#{notariasManagedBean.notaria.morId}" converter="MarOficinasRegistroConverter" style="width: 350px;" required="true">
                             <f:selectItems value="#{notariasManagedBean.oficinasRegistro}" var="oficinas" itemValue="#{oficinas}" itemLabel="#{oficinas.morNombre}"/>
                         </p:selectOneMenu>
                         <h:outputLabel value="Estado"/>
@@ -90,6 +128,37 @@
                     <div align="center" style="padding-top: 10px">
                         <p:commandButton value="Guardar" action="#{notariasManagedBean.guardarNotaria()}" update="@form :tabContainer:formNotarias"/>
                         <p:commandButton value="Cancelar" oncomplete="PF('dialogNotaria').hide();" immediate="true"/>
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
+
+        <!-- Dialog de modificacion Oficina de Registro -->        
+        <p:dialog id="modalOficina" widgetVar="dialogOficina" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de ORIP" modal="true">
+            <div>
+                <h:form id="formModalOficinas">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Codigo"/>
+                        <p:inputText value="#{oficinasRegistroManagedBean.oficina.morCodigo}" required="true" style="width: 380px;"/>
+                        <h:outputLabel value="Nombre"/>
+                        <p:inputText value="#{oficinasRegistroManagedBean.oficina.morNombre}" required="true" style="width: 380px;"/>
+                        <h:outputLabel value="Estado"/>
+                        <p:selectOneMenu styleClass="inputModal" value="#{oficinasRegistroManagedBean.oficina.morEstado}" style="width: 350px;">
+                            <f:selectItem itemLabel="Activo" itemValue="A" />
+                            <f:selectItem itemLabel="Inactivo" itemValue="I" />
+                        </p:selectOneMenu>
+                        <h:outputLabel value="Plataforma"/>
+                        <p:selectOneMenu styleClass="inputModal" value="#{oficinasRegistroManagedBean.oficina.morPlataforma}" style="width: 350px;">
+                            <f:selectItem itemLabel="SIR" itemValue="SIR" />
+                            <f:selectItem itemLabel="FOLIO" itemValue="FOLIO" />
+                        </p:selectOneMenu>
+                        <h:outputLabel value="Ciudad"/>
+                        <p:autoComplete styleClass="autoCiudad" value="#{oficinasRegistroManagedBean.oficina.ciuId}" completeMethod="#{oficinasRegistroManagedBean.autoCompleteCiudad}"
+                                        var="ciudad" itemLabel="#{ciudad.ciuNombre}" itemValue="#{ciudad}" converter="MarCiudadesConverter" forceSelection="true" required="true"/>
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{oficinasRegistroManagedBean.guardarOficina()}" update="@form :tabContainer:formOficinas"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogOficina').hide();" immediate="true"/>
                     </div>
                 </h:form>
             </div>            
