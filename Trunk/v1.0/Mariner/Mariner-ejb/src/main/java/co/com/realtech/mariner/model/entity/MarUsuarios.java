@@ -89,7 +89,7 @@ public class MarUsuarios implements Serializable {
     private MarNotarias notId;
     @JoinColumn(name = "MOR_ID", referencedColumnName = "MOR_ID")
     @ManyToOne
-    private MarOficinasRegistro morId;
+    private MarOficinasRegistros morId;
     @JoinColumn(name = "PER_ID", referencedColumnName = "PER_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarPersonas perId;
@@ -196,11 +196,11 @@ public class MarUsuarios implements Serializable {
         this.notId = notId;
     }
 
-    public MarOficinasRegistro getMorId() {
+    public MarOficinasRegistros getMorId() {
         return morId;
     }
 
-    public void setMorId(MarOficinasRegistro morId) {
+    public void setMorId(MarOficinasRegistros morId) {
         this.morId = morId;
     }
 

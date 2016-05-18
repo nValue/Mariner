@@ -74,7 +74,7 @@ public class MarNotarias implements Serializable {
     private List<MarRadicaciones> marRadicacionesList;
     @JoinColumn(name = "MOR_ID", referencedColumnName = "MOR_ID")
     @ManyToOne
-    private MarOficinasRegistro morId;
+    private MarOficinasRegistros morId;
     @OneToMany(mappedBy = "notId")
     private List<MarUsuarios> marUsuariosList;
 
@@ -146,11 +146,11 @@ public class MarNotarias implements Serializable {
         this.marRadicacionesList = marRadicacionesList;
     }
 
-    public MarOficinasRegistro getMorId() {
+    public MarOficinasRegistros getMorId() {
         return morId;
     }
 
-    public void setMorId(MarOficinasRegistro morId) {
+    public void setMorId(MarOficinasRegistros morId) {
         this.morId = morId;
     }
 

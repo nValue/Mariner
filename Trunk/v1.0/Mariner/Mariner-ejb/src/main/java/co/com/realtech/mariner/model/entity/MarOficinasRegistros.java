@@ -31,22 +31,22 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "MAR_OFICINAS_REGISTRO")
+@Table(name = "MAR_OFICINAS_REGISTROS")
 @NamedQueries({
-    @NamedQuery(name = "MarOficinasRegistro.findAll", query = "SELECT m FROM MarOficinasRegistro m"),
-    @NamedQuery(name = "MarOficinasRegistro.findByMorId", query = "SELECT m FROM MarOficinasRegistro m WHERE m.morId = :morId"),
-    @NamedQuery(name = "MarOficinasRegistro.findByMorCodigo", query = "SELECT m FROM MarOficinasRegistro m WHERE m.morCodigo = :morCodigo"),
-    @NamedQuery(name = "MarOficinasRegistro.findByMorNombre", query = "SELECT m FROM MarOficinasRegistro m WHERE m.morNombre = :morNombre"),
-    @NamedQuery(name = "MarOficinasRegistro.findByMorEstado", query = "SELECT m FROM MarOficinasRegistro m WHERE m.morEstado = :morEstado"),
-    @NamedQuery(name = "MarOficinasRegistro.findByMorPlataforma", query = "SELECT m FROM MarOficinasRegistro m WHERE m.morPlataforma = :morPlataforma"),
-    @NamedQuery(name = "MarOficinasRegistro.findByAudFecha", query = "SELECT m FROM MarOficinasRegistro m WHERE m.audFecha = :audFecha"),
-    @NamedQuery(name = "MarOficinasRegistro.findByAudUsuario", query = "SELECT m FROM MarOficinasRegistro m WHERE m.audUsuario = :audUsuario")})
-public class MarOficinasRegistro implements Serializable {
+    @NamedQuery(name = "MarOficinasRegistros.findAll", query = "SELECT m FROM MarOficinasRegistros m"),
+    @NamedQuery(name = "MarOficinasRegistros.findByMorId", query = "SELECT m FROM MarOficinasRegistros m WHERE m.morId = :morId"),
+    @NamedQuery(name = "MarOficinasRegistros.findByMorCodigo", query = "SELECT m FROM MarOficinasRegistros m WHERE m.morCodigo = :morCodigo"),
+    @NamedQuery(name = "MarOficinasRegistros.findByMorNombre", query = "SELECT m FROM MarOficinasRegistros m WHERE m.morNombre = :morNombre"),
+    @NamedQuery(name = "MarOficinasRegistros.findByMorEstado", query = "SELECT m FROM MarOficinasRegistros m WHERE m.morEstado = :morEstado"),
+    @NamedQuery(name = "MarOficinasRegistros.findByMorPlataforma", query = "SELECT m FROM MarOficinasRegistros m WHERE m.morPlataforma = :morPlataforma"),
+    @NamedQuery(name = "MarOficinasRegistros.findByAudFecha", query = "SELECT m FROM MarOficinasRegistros m WHERE m.audFecha = :audFecha"),
+    @NamedQuery(name = "MarOficinasRegistros.findByAudUsuario", query = "SELECT m FROM MarOficinasRegistros m WHERE m.audUsuario = :audUsuario")})
+public class MarOficinasRegistros implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(generator = "sq_mar_oficinas_registro")
-    @SequenceGenerator(name = "sq_mar_oficinas_registro", sequenceName = "sq_mar_oficinas_registro")
+    @GeneratedValue(generator = "sq_mar_oficinas_registros")
+    @SequenceGenerator(name = "sq_mar_oficinas_registros", sequenceName = "sq_mar_oficinas_registros")
     @Basic(optional = false)
     @NotNull
     @Column(name = "MOR_ID", nullable = false, precision = 0, scale = -127)
@@ -69,18 +69,18 @@ public class MarOficinasRegistro implements Serializable {
     @Size(max = 60)
     @Column(name = "AUD_USUARIO", length = 60)
     private String audUsuario;
+    @OneToMany(mappedBy = "morId")
+    private List<MarNotarias> marNotariasList;
     @JoinColumn(name = "CIU_ID", referencedColumnName = "CIU_ID")
     @ManyToOne
     private MarCiudades ciuId;
     @OneToMany(mappedBy = "morId")
-    private List<MarNotarias> marNotariasList;
-    @OneToMany(mappedBy = "morId")
     private List<MarUsuarios> marUsuariosList;
 
-    public MarOficinasRegistro() {
+    public MarOficinasRegistros() {
     }
 
-    public MarOficinasRegistro(BigDecimal morId) {
+    public MarOficinasRegistros(BigDecimal morId) {
         this.morId = morId;
     }
 
@@ -140,20 +140,20 @@ public class MarOficinasRegistro implements Serializable {
         this.audUsuario = audUsuario;
     }
 
-    public MarCiudades getCiuId() {
-        return ciuId;
-    }
-
-    public void setCiuId(MarCiudades ciuId) {
-        this.ciuId = ciuId;
-    }
-
     public List<MarNotarias> getMarNotariasList() {
         return marNotariasList;
     }
 
     public void setMarNotariasList(List<MarNotarias> marNotariasList) {
         this.marNotariasList = marNotariasList;
+    }
+
+    public MarCiudades getCiuId() {
+        return ciuId;
+    }
+
+    public void setCiuId(MarCiudades ciuId) {
+        this.ciuId = ciuId;
     }
 
     public List<MarUsuarios> getMarUsuariosList() {
@@ -174,10 +174,10 @@ public class MarOficinasRegistro implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof MarOficinasRegistro)) {
+        if (!(object instanceof MarOficinasRegistros)) {
             return false;
         }
-        MarOficinasRegistro other = (MarOficinasRegistro) object;
+        MarOficinasRegistros other = (MarOficinasRegistros) object;
         if ((this.morId == null && other.morId != null) || (this.morId != null && !this.morId.equals(other.morId))) {
             return false;
         }
@@ -186,7 +186,7 @@ public class MarOficinasRegistro implements Serializable {
 
     @Override
     public String toString() {
-        return "co.com.realtech.mariner.model.entity.MarOficinasRegistro[ morId=" + morId + " ]";
+        return "co.com.realtech.mariner.model.entity.MarOficinasRegistros[ morId=" + morId + " ]";
     }
     
 }

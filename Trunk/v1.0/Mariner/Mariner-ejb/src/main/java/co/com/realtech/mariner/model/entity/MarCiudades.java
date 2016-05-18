@@ -61,11 +61,11 @@ public class MarCiudades implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(mappedBy = "ciuId")
-    private List<MarOficinasRegistro> marOficinasRegistroList;
     @JoinColumn(name = "DEP_ID", referencedColumnName = "DEP_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarDepartamentos depId;
+    @OneToMany(mappedBy = "ciuId")
+    private List<MarOficinasRegistros> marOficinasRegistrosList;
 
     public MarCiudades() {
     }
@@ -114,20 +114,20 @@ public class MarCiudades implements Serializable {
         this.audFecha = audFecha;
     }
 
-    public List<MarOficinasRegistro> getMarOficinasRegistroList() {
-        return marOficinasRegistroList;
-    }
-
-    public void setMarOficinasRegistroList(List<MarOficinasRegistro> marOficinasRegistroList) {
-        this.marOficinasRegistroList = marOficinasRegistroList;
-    }
-
     public MarDepartamentos getDepId() {
         return depId;
     }
 
     public void setDepId(MarDepartamentos depId) {
         this.depId = depId;
+    }
+
+    public List<MarOficinasRegistros> getMarOficinasRegistrosList() {
+        return marOficinasRegistrosList;
+    }
+
+    public void setMarOficinasRegistrosList(List<MarOficinasRegistros> marOficinasRegistrosList) {
+        this.marOficinasRegistrosList = marOficinasRegistrosList;
     }
 
     @Override
