@@ -103,7 +103,8 @@ public class GeneracionManagedBean extends GenericManagedBean{
     public void asignarNuevaRadicacion() {
         try {
             radFaseEstadoActual = null;
-            Integer salida = (Integer)genericDAOBean.callGenericFunction("fn_asignar_liquidacion", usuarioSesion.getUsuId(), "I-P", "");
+            BigDecimal BDsalida = (BigDecimal)genericDAOBean.callGenericFunction("fn_asignar_liquidacion", usuarioSesion.getUsuId().intValue(), "I-P", "");
+            Integer salida = BDsalida.intValue();
             System.out.println("salida = " + salida);
             if(salida != null) switch (salida) {
                 case -999:

@@ -35,50 +35,44 @@
 
                 <h:form id="formRadicacion">
                     <h:panelGroup rendered="#{cargueSolicitudesManagedBean.radicacionSel != null}" >
-                        <div style="display: inline-block;vertical-align: top">
-                        <h:panelGrid columns="2">
-                            <h:outputLabel value="Radicación No" rendered="#{cargueSolicitudesManagedBean.radicacionSel.radNumero != null}" />
-                            <p:inputText value="#{cargueSolicitudesManagedBean.radicacionSel.radNumero}" rendered="#{cargueSolicitudesManagedBean.radicacionSel.radNumero != null}"/>
-                            
-                            <h:outputLabel value="Notaria"/>
-                            <p:selectOneMenu value="#{cargueSolicitudesManagedBean.radicacionSel.notId}" converter="MarNotariasConverter" >
-                                <f:selectItems value="#{cargueSolicitudesManagedBean.notarias}" var="notar" itemLabel="#{notar.notNombre}" itemValue="#{notar}" />
-                            </p:selectOneMenu>
-                            <h:outputLabel value="Número Escritura" />
-                            <p:inputText value="#{cargueSolicitudesManagedBean.radicacionSel.escId.escNumero}" />
-                            <h:outputLabel value="Fecha Escritura" />
-                            <p:calendar value="#{cargueSolicitudesManagedBean.radicacionSel.escId.escFecha}" pattern="dd-MM-yyyy" locale="es" required="true"/>
-                            <h:outputLabel value="Tipo Doc Otorga" />
-                            <p:selectOneMenu value="#{cargueSolicitudesManagedBean.radicacionSel.tdcIdOtorgante}" converter="MarTiposDocumentosConverter" >
-                                <f:selectItems value="#{cargueSolicitudesManagedBean.tiposDocumentosOtorga}" var="tdcOtor" itemLabel="#{tdcOtor.tdcNombre}" itemValue="#{tdcOtor}"/>
-                            </p:selectOneMenu>
-                            <h:outputLabel value="Num Doc Otorga" />
-                            <p:inputText value="#{cargueSolicitudesManagedBean.radicacionSel.radDocOtorgante}"/>
-                            <h:outputLabel value="Tipo Doc Recibe" />
-                            <p:selectOneMenu value="#{cargueSolicitudesManagedBean.radicacionSel.tdcIdReceptor}" converter="MarTiposDocumentosConverter">
-                                <f:selectItems value="#{cargueSolicitudesManagedBean.tiposDocumentosRecibe}" var="tdcRecib" itemLabel="#{tdcRecib.tdcNombre}" itemValue="#{tdcRecib}"/>
-                            </p:selectOneMenu>
-                            <h:outputLabel value="Num Doc Recibe" />
-                            <p:inputText value="#{cargueSolicitudesManagedBean.radicacionSel.radDocReceptor}"/>
-                            <h:outputLabel value="Código Acto" />
-                            <p:inputText value="#{cargueSolicitudesManagedBean.radicacionSel.radCodigoActo}" />
-                            <h:outputLabel value="Cuantia" />
-                            <p:inputText value="#{cargueSolicitudesManagedBean.radicacionSel.radCuantia}" />
-                            <h:outputText value="Es exterior"/>
-                            <p:selectOneMenu value="#{cargueSolicitudesManagedBean.radicacionSel.radEsExterior}" >
-                                <f:selectItem itemLabel="Si" itemValue="S"/>
-                                <f:selectItem itemLabel="No" itemValue="N"/>
-                            </p:selectOneMenu>
-                            <h:outputText value="Observaciones"/>
-                            <p:inputTextarea value="#{cargueSolicitudesManagedBean.observacionesProceso}" style="width: 100%"/>
-                            <p:commandButton value="Cargar Escritura" oncomplete="PF('fileUploadDialog').show()" />
-                            <p:commandLink  title="Presione aquí para descargar la escritura" rendered="#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId != null}">
-                                <a title="Presione aqui para descargar el archivo" target="_new" href="#{request.contextPath}/static/fileDispatcher/#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId.arcId}-#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId.arcHash}.#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId.arcExtension}">
-                                    <h:graphicImage value="#{resource['/images/icons/icon-pdf.png']}" title="Presione para descargar la escritura asociada a esta radicación"/>
-                                </a>
-                            </p:commandLink>
+                        <div style="margin: 20px;padding-bottom: 20px;display: inline-block;vertical-align: top; width: 50%;border: solid 1px #e0e0e0;">
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Radicación No" rendered="#{cargueSolicitudesManagedBean.radicacionSel.radNumero != null}" />
+                                <p:inputText value="#{cargueSolicitudesManagedBean.radicacionSel.radNumero}" readonly="true" rendered="#{cargueSolicitudesManagedBean.radicacionSel.radNumero != null}"/>
 
-                        </h:panelGrid>
+                                <h:outputLabel value="Notaria"/>
+                                <p:selectOneMenu value="#{cargueSolicitudesManagedBean.radicacionSel.notId}" converter="MarNotariasConverter" >
+                                    <f:selectItems value="#{cargueSolicitudesManagedBean.notarias}" var="notar" itemLabel="#{notar.notNombre}" itemValue="#{notar}" />
+                                </p:selectOneMenu>
+                                <h:outputLabel value="Número Escritura" />
+                                <p:inputText value="#{cargueSolicitudesManagedBean.radicacionSel.escId.escNumero}" />
+                                <h:outputLabel value="Fecha Escritura" />
+                                <p:calendar value="#{cargueSolicitudesManagedBean.radicacionSel.escId.escFecha}" pattern="dd-MM-yyyy" locale="es" required="true"/>
+                                <h:outputText value="Observaciones"/>
+                                <p:inputTextarea value="#{cargueSolicitudesManagedBean.observacionesProceso}" style="width: 100%"/>
+                                <p:commandButton value="Cargar Escritura" oncomplete="PF('fileUploadDialog').show()" />
+                                <p:commandLink  title="Presione aquí para descargar la escritura" rendered="#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId != null}">
+                                    <a title="Presione aqui para descargar el archivo" target="_new" href="#{request.contextPath}/static/fileDispatcher/#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId.arcId}-#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId.arcHash}.#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId.arcExtension}">
+                                        <h:graphicImage value="#{resource['/images/icons/icon-pdf.png']}" title="Presione para descargar la escritura asociada a esta radicación"/>
+                                    </a>
+                                </p:commandLink>
+
+                            </h:panelGrid>
+                        </div>
+                        <div style="margin: 20px;display: inline-block; vertical-align: top; width: 40%;border: solid 1px #e0e0e0;">
+                            <p:dataTable value="#{cargueSolicitudesManagedBean.radicacionesFasesEstados}" var="rfe">
+                                <p:column headerText="Fase">
+                                    <h:outputLabel value="#{rfe.fesId.fesNombre}"/>
+                                </p:column>
+                                <p:column headerText="Fecha">
+                                    <h:outputText value="#{rfe.rfeFechaInicio}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Comentarios">
+                                    <h:outputText value="#{rfe.rfeObservaciones}"/>
+                                </p:column>
+                            </p:dataTable>
                         </div>
                         <div style="margin: 20px">
                             <p:commandButton value="Guardar" action="#{cargueSolicitudesManagedBean.guardarRadicacion()}" update="formRadicacion :formFiltroRadicaciones" />
@@ -88,7 +82,7 @@
                 </h:form>
             </div>
         </div>
-        
+
         <!-- Panel cargue de archivos -->
         <p:dialog id="modalFileUpload" widgetVar="fileUploadDialog" header="Cargue de Escritura en formato PDF" modal="true" draggable="false" closable="true" resizable="false" appendTo="@(body)" closeOnEscape="true">
             <div class="minDivPopup" style="width: 450px;">
@@ -98,7 +92,7 @@
                 </h:form>
             </div>
         </p:dialog>
-        
+
     </ui:define>
 
 </ui:composition>

@@ -1,8 +1,8 @@
 package co.com.realtech.mariner.controller.jsf.managed_bean.portal.business;
 
+import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBean;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFasesEstadosDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicacionesDAOBeanLocal;
-import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
 import co.com.realtech.mariner.model.entity.MarArchivos;
 import co.com.realtech.mariner.model.entity.MarEscrituras;
 import co.com.realtech.mariner.model.entity.MarFasesEstados;
@@ -11,25 +11,19 @@ import co.com.realtech.mariner.model.entity.MarPuntosMontajes;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarTiposDocumentos;
-import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.util.cdf.CDFFileUploader;
 import co.com.realtech.mariner.util.consecutives.NumeracionesManager;
 import co.com.realtech.mariner.util.io.file.FileUtilidades;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
-import co.com.realtech.mariner.util.session.AuditSessionUtils;
-import co.com.realtech.mariner.util.session.SessionUtils;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
 
 /**
@@ -38,11 +32,8 @@ import org.primefaces.event.FileUploadEvent;
  */
 @ManagedBean
 @ViewScoped
-public class CargueSolicitudesManagedBean implements Serializable{
+public class CargueSolicitudesManagedBean extends GenericManagedBean{
 
-    @EJB(beanName = "GenericDAOBean")
-    private GenericDAOBeanLocal genericDAOBean;
-    
     @EJB(beanName = "RadicFasesEstadosDAOBean")
     private RadicFasesEstadosDAOBeanLocal radicFasesEstadosDAOBean;
     
@@ -52,7 +43,6 @@ public class CargueSolicitudesManagedBean implements Serializable{
     private List<MarRadicaciones> radicaciones;
     private MarRadicaciones radicacionSel;
     private MarRadicaciones radicacionSeleccion;
-    private MarUsuarios usuarioActual;
     private List<MarNotarias> notarias;
     
     private List<MarTiposDocumentos> tiposDocumentosOtorga;
@@ -61,14 +51,10 @@ public class CargueSolicitudesManagedBean implements Serializable{
     private MarFasesEstados faseEstadoPendiente;
     private String observacionesProceso;
     
-    private AuditSessionUtils auditSessionUtils;
-    private Logger logger;
+    private List<MarRadicacionesFasesEstados> radicacionesFasesEstados;
     
-    @PostConstruct
+    @Override
     public void init(){
-        auditSessionUtils = AuditSessionUtils.create();
-        usuarioActual = (MarUsuarios) SessionUtils.obtenerValorGeneric("marineruser");
-        logger = Logger.getLogger(CargueSolicitudesManagedBean.class);
         obtenerNotarias();
         obtenerTiposDocumentos();
         obtenerFasesEstados();
@@ -101,16 +87,25 @@ public class CargueSolicitudesManagedBean implements Serializable{
     }
     
     /**
+     * Trae todas las fases-estados en los que hay pasado una radicación.
+     */
+    public void obtenerFasesEstadosDeRadicacion(){
+        try {
+            radicacionesFasesEstados = (List<MarRadicacionesFasesEstados>)genericDAOBean.findAllByColumn(MarRadicacionesFasesEstados.class, "radId", radicacionSel, true, "rfeId");
+        } catch (Exception e) {
+            logger.error("Error obteniendo las fases procesos, causado por : " + e, e);
+        }
+    }
+    
+    /**
      * Método de autocomplete para buscar las radicaciones.
      * @param filtro
      * @return 
      */
     public List<MarRadicaciones> completeRadicaciones(String filtro){
         List<MarRadicaciones> radFiltradas = new ArrayList<>();
-        System.out.println("filtro = " + filtro);
         try {
-            radFiltradas = radicacionesDAOBean.obtenerRadicacionesPorFiltro(filtro);
-            System.out.println("radFiltradas = " + radFiltradas);
+            radFiltradas = radicacionesDAOBean.obtenerRadicacionesPorFiltro(filtro, usuarioSesion);
         } catch (Exception e) {
             logger.error("No se puede realizar el filtro de radicaciones, debido a " + e, e);
         }
@@ -123,6 +118,7 @@ public class CargueSolicitudesManagedBean implements Serializable{
     public void seleccionarRadicacion(){
         try {
             radicacionSel = radicacionSeleccion;
+            obtenerFasesEstadosDeRadicacion();
         } catch (Exception e) {
             logger.error("Error seleccionando la radicación, causado por " + e, e);
         }
@@ -184,7 +180,7 @@ public class CargueSolicitudesManagedBean implements Serializable{
                 PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error Upload.!", msj, true, false);
                 throw new Exception(msj);
             }
-            archivo = fileUploader.saveFile(puntoMontaje, fileName, bytes, size, mimeType, usuarioActual.getUsuLogin(), visibleCDN);
+            archivo = fileUploader.saveFile(puntoMontaje, fileName, bytes, size, mimeType, usuarioSesion.getUsuLogin(), visibleCDN);
             radicacionSel.getEscId().setArcId(archivo);
             PrimeFacesContext.execute("PF('fileUploadDialog').hide();");
         } catch (Exception e) {
@@ -230,7 +226,7 @@ public class CargueSolicitudesManagedBean implements Serializable{
             rfes.setFesId(faseEstadoPendiente);
             rfes.setRadId(radicacionSel);
             rfes.setRfeEstado("A");
-            rfes.setUsuId(usuarioActual);
+            rfes.setUsuId(usuarioSesion);
             rfes.setRfeEstadoAprobacion("A");
             rfes.setRfeFechaInicio(new Date());
             rfes.setRfeObservaciones(observacionesProceso);
@@ -240,6 +236,7 @@ public class CargueSolicitudesManagedBean implements Serializable{
             }else{
                 genericDAOBean.merge(rfes);
             }
+            obtenerFasesEstadosDeRadicacion();
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso realizado", "Radicación guardada exitosamente", true, false);
         } catch (Exception e) {
             logger.error("Error guardando la radicación, causado por " + e, e);
@@ -310,6 +307,14 @@ public class CargueSolicitudesManagedBean implements Serializable{
 
     public void setObservacionesProceso(String observacionesProceso) {
         this.observacionesProceso = observacionesProceso;
+    }
+
+    public List<MarRadicacionesFasesEstados> getRadicacionesFasesEstados() {
+        return radicacionesFasesEstados;
+    }
+
+    public void setRadicacionesFasesEstados(List<MarRadicacionesFasesEstados> radicacionesFasesEstados) {
+        this.radicacionesFasesEstados = radicacionesFasesEstados;
     }
     
     
