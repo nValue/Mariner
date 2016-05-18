@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/template-business.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="negocio">
+        <style type="text/css">
+            #modalNotaria{top: 44px !important;}
+        </style>
+        <div id="paperMain">
+            <div class="tituloCont" align="center">
+                <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                <div style="display: inline-block">
+                    <h:outputLabel styleClass="titleMain" value="Configuración de Notarias y Oficinas de Registro" />
+                    <h:outputLabel styleClass="subtitleMain" value="Administracion de informacion parametrica de oficinas de registro y notarias."/>
+                </div>
+            </div>
+            <div class="contenidoPrinc" align="left">
+                <p:tabView id="tabContainer">
+                    <p:tab title="Notarias">
+                        <div style="padding: 14px;">
+                            <h:form id="formNotarias">
+                                <div>   
+                                    <p:dataTable id="notarias" var="notaria" value="#{notariasManagedBean.notarias}" emptyMessage="No se han encontrado Notarias configuradas en la plataforma" rowIndexVar="idx" rows="22" paginatorPosition="bottom" paginator="true"
+                                                 selectionMode="single" selection="#{notariasManagedBean.notaria}" rowKey="#{notaria.notId}" filteredValue="#{notariasManagedBean.notariasFiltrado}" widgetVar="notariasWV">
+                                        <p:ajax event="rowSelect" oncomplete="PF('dialogNotaria').show();" update=":modalNotaria"/>                        
+                                        <p:column headerText="#" width="40" styleClass="colCenter">
+                                            <h:outputText value="#{idx+1}" />
+                                        </p:column>                                                 
+                                        <p:column headerText="Codigo" width="50" styleClass="colCenter" filterBy="#{notaria.notCodigo}" filterMatchMode="contains">
+                                            <h:outputText value="#{notaria.notCodigo}" />
+                                        </p:column>       
+                                        <p:column headerText="Nombre" filterBy="#{notaria.notNombre}" filterMatchMode="contains">
+                                            <h:outputText value="#{notaria.notNombre}" />
+                                        </p:column> 
+                                        <p:column headerText="ORIP" filterBy="#{notaria.morId.morNombre}" filterMatchMode="contains">
+                                            <h:outputText value="#{notaria.morId.morNombre}"  styleClass="colCenter"/>
+                                        </p:column> 
+                                        <p:column headerText="Estado" styleClass="colCenter" width="54" filterBy="#{notaria.notEstado}" filterMatchMode="contains">
+                                            <h:outputText value="#{notaria.notEstado eq 'A'?'Activo':'Inactivo'}" />
+                                        </p:column> 
+                                        <p:column headerText="X" width="20">
+                                            <p:commandLink update="notarias" title="Presione para eliminar la Notaria Seleccionada" action="#{notariasManagedBean.eliminarNotaria()}">                                    
+                                                <f:setPropertyActionListener target="#{notariasManagedBean.notaria}" value="#{notaria}" />
+                                                <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                                <p:confirm header="Confirmacion" message="Esta seguro de eliminar la Notaria Seleccionado?" icon="ui-icon-alert" />
+                                            </p:commandLink>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <div align="right" style="padding-top: 4px;">
+                                        <p:commandButton value="Crear Notaria" action="#{notariasManagedBean.agregarNotaria()}" oncomplete="PF('dialogNotaria').show();" update=":modalNotaria"/>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </div>                        
+                    </p:tab>
+                    <p:tab title="Oficinas de Registro">
+                        <h:form id="formOficinasRegistro">
+                            <div>                                    
+                            </div>
+                        </h:form>
+                    </p:tab>
+                </p:tabView>
+            </div>
+        </div>
+
+        <!-- Dialog de modificacion Pais -->        
+        <p:dialog id="modalNotaria" widgetVar="dialogNotaria" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Notaria" modal="true">
+            <div>
+                <h:form id="formModalNotaria">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Codigo"/>
+                        <p:inputText value="#{notariasManagedBean.notaria.notCodigo}" required="true" style="width: 380px;"/>
+                        <h:outputLabel value="Nombre"/>
+                        <p:inputText value="#{notariasManagedBean.notaria.notNombre}" required="true" style="width: 380px;"/>
+                        <h:outputLabel value="Oficina de Registro"/>
+                        <p:selectOneMenu styleClass="inputModal" value="#{notariasManagedBean.notaria.morId}" converter="MarOficinasRegistroConverter" style="width: 350px;">
+                            <f:selectItems value="#{notariasManagedBean.oficinasRegistro}" var="oficinas" itemValue="#{oficinas}" itemLabel="#{oficinas.morNombre}"/>
+                        </p:selectOneMenu>
+                        <h:outputLabel value="Estado"/>
+                        <p:selectOneMenu styleClass="inputModal" value="#{notariasManagedBean.notaria.notEstado}" style="width: 350px;">
+                            <f:selectItem itemLabel="Activo" itemValue="A" />
+                            <f:selectItem itemLabel="Inactivo" itemValue="I" />
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{notariasManagedBean.guardarNotaria()}" update="@form :tabContainer:formNotarias"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogNotaria').hide();" immediate="true"/>
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

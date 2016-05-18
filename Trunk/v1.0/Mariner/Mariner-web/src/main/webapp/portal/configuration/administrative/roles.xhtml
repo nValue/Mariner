@@ -22,7 +22,7 @@
                 </div>
             </div>
             <div class="contenidoPrinc" align="left">
-                <p:tabView id="tabContainer">
+                <p:tabView id="tabContainerRoles">
                     <p:tab title="Roles">
                         <div style="padding: 14px;">
                             <h:form id="formRoles">
@@ -85,7 +85,7 @@
                         <p:inputText value="#{rolesManagedBean.rol.rolDescripcion}" required="true"  style="width: 392px;"/>
                     </h:panelGrid>
                     <div align="center" style="padding-top: 10px">
-                        <p:commandButton value="Guardar" action="#{rolesManagedBean.guardarRol()}" update="@form :tabContainer:formRoles"/>
+                        <p:commandButton value="Guardar" action="#{rolesManagedBean.guardarRol()}" update="@form :tabContainerRoles:formRoles"/>
                         <p:commandButton value="Cancelar" oncomplete="PF('dialogRol').hide();" immediate="true"/>
                     </div>
                 </h:form>
@@ -103,7 +103,7 @@
                         </p:selectOneMenu>
                     </h:panelGrid>
                     <div align="center" style="padding-top: 10px">
-                        <p:commandButton value="Guardar" action="#{rolesManagedBean.vincularModulo()}" update="@form :tabContainer:formRoles"/>
+                        <p:commandButton value="Guardar" action="#{rolesManagedBean.vincularModulo()}" update="@form :tabContainerRoles:formRoles"/>
                         <p:commandButton value="Cancelar" oncomplete="PF('dialogModulos').hide();" immediate="true"/>
                     </div>
                 </h:form>

@@ -183,7 +183,7 @@ input[role='textbox']{
 }
 
 *.ui-tabs-nav{
-    width: 20% !important;
+    //width: 20% !important;
 }
 
 li[aria-selected="true"]{
@@ -200,10 +200,6 @@ li[aria-selected="false"]>a{
     color: black !important;
 }
 
-.ui-tabs-left > .ui-tabs-panels{
-    width: 79% !important;
-}
-
 .ui-tabs .ui-tabs-panel{
-   padding: 0px !important; 
+    padding: 0px !important; 
 }

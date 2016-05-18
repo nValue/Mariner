@@ -18,7 +18,7 @@
             #modalPais{top: 40px !important;}
 
             #modalDepartamento{top: 40px !important;}
-            
+
             #modalCiudad{top: 40px !important;}
         </style>
 
@@ -40,30 +40,28 @@
                     <p:tabView orientation="left" id="tabContainer">
                         <p:tab title="Tipos de Documento">
                             <h:form id="formTipoDocumentos">
-                                <div>
-                                    <div style="padding: 12px;padding-top: 0px !important;">
-                                        <p:dataTable id="documentos" var="documento" value="#{tiposDocumentoManagedBean.tiposDocumentos}" selectionMode="single" selection="#{tiposDocumentoManagedBean.tipoDocumento}" rowKey="#{documento.tdcId}" emptyMessage="No se han encontrado tipos de documentos configurados" rowIndexVar="idx">
-                                            <p:ajax event="rowSelect" oncomplete="PF('dialogTipoDocumento').show();" update=":modalTipoDocumento"/>                        
-                                            <p:column headerText="#" width="40" styleClass="colCenter">
-                                                <h:outputText value="#{idx+1}" />
-                                            </p:column> 
-                                            <p:column headerText="Sigla" width="120" filterBy="#{documento.tdcSigla}" styleClass="colCenter">
-                                                <h:outputText value="#{documento.tdcSigla}" />
-                                            </p:column>
-                                            <p:column headerText="Nombre" filterBy="#{documento.tdcNombre}" filterMatchMode="contains">
-                                                <h:outputText value="#{documento.tdcNombre}" />
-                                            </p:column>                                        
-                                            <p:column headerText="X" width="20">
-                                                <p:commandLink update="documentos" title="Presione para eliminar este tipo de documento" action="#{tiposDocumentoManagedBean.eliminarTipoDocumento()}">                                    
-                                                    <f:setPropertyActionListener target="#{tiposDocumentoManagedBean.tipoDocumento}" value="#{documento}" />
-                                                    <img src="#{resource['/images/icons/delete-icon.png']}"/>
-                                                    <p:confirm header="Confirmacion" message="Esta seguro de eliminar el tipo de documento seleccionado?" icon="ui-icon-alert" />
-                                                </p:commandLink>
-                                            </p:column>
-                                        </p:dataTable>
-                                        <div align="right" style="padding-top: 4px;">
-                                            <p:commandButton value="Agregar" action="#{tiposDocumentoManagedBean.agregarTipoDocumento()}" oncomplete="PF('dialogTipoDocumento').show();" update=":modalTipoDocumento"/>
-                                        </div>
+                                <div style="padding: 12px;padding-top: 0px !important;">
+                                    <p:dataTable id="documentos" var="documento" value="#{tiposDocumentoManagedBean.tiposDocumentos}" selectionMode="single" selection="#{tiposDocumentoManagedBean.tipoDocumento}" rowKey="#{documento.tdcId}" emptyMessage="No se han encontrado tipos de documentos configurados" rowIndexVar="idx">
+                                        <p:ajax event="rowSelect" oncomplete="PF('dialogTipoDocumento').show();" update=":modalTipoDocumento"/>                        
+                                        <p:column headerText="#" width="40" styleClass="colCenter">
+                                            <h:outputText value="#{idx+1}" />
+                                        </p:column> 
+                                        <p:column headerText="Sigla" width="120" filterBy="#{documento.tdcSigla}" styleClass="colCenter">
+                                            <h:outputText value="#{documento.tdcSigla}" />
+                                        </p:column>
+                                        <p:column headerText="Nombre" filterBy="#{documento.tdcNombre}" filterMatchMode="contains">
+                                            <h:outputText value="#{documento.tdcNombre}" />
+                                        </p:column>                                        
+                                        <p:column headerText="X" width="20">
+                                            <p:commandLink update="documentos" title="Presione para eliminar este tipo de documento" action="#{tiposDocumentoManagedBean.eliminarTipoDocumento()}">                                    
+                                                <f:setPropertyActionListener target="#{tiposDocumentoManagedBean.tipoDocumento}" value="#{documento}" />
+                                                <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                                <p:confirm header="Confirmacion" message="Esta seguro de eliminar el tipo de documento seleccionado?" icon="ui-icon-alert" />
+                                            </p:commandLink>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <div align="right" style="padding-top: 4px;">
+                                        <p:commandButton value="Agregar" action="#{tiposDocumentoManagedBean.agregarTipoDocumento()}" oncomplete="PF('dialogTipoDocumento').show();" update=":modalTipoDocumento"/>
                                     </div>
                                 </div>
                             </h:form>                            
