@@ -1,4 +1,4 @@
-package co.com.realtech.mariner.ws;
+package co.com.realtech.mariner.ws.servicios_vur;
 
 import co.com.realtech.mariner.model.sdo.estandar.EntidadLiquidacionResultado;
 import co.com.realtech.mariner.model.sdo.logs.EntidadLog;
