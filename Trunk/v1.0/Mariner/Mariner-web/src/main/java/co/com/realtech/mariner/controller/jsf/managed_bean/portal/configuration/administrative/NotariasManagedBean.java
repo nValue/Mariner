@@ -1,10 +1,8 @@
 package co.com.realtech.mariner.controller.jsf.managed_bean.portal.configuration.administrative;
 
 import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBean;
-import co.com.realtech.mariner.model.entity.MarCiudades;
 import co.com.realtech.mariner.model.entity.MarNotarias;
-import co.com.realtech.mariner.model.entity.MarOficinasRegistro;
-import co.com.realtech.mariner.model.entity.MarPaises;
+import co.com.realtech.mariner.model.entity.MarOficinasRegistros;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
@@ -26,7 +24,7 @@ public class NotariasManagedBean extends GenericManagedBean implements Serializa
 
     private MarNotarias notaria;
     private List<MarNotarias> notarias;
-    private List<MarOficinasRegistro> oficinasRegistro;
+    private List<MarOficinasRegistros> oficinasRegistro;
     private List<MarNotarias> notariasFiltrado;
 
     @Override
@@ -43,7 +41,7 @@ public class NotariasManagedBean extends GenericManagedBean implements Serializa
      */
     public void actualizarOficinasRegistro(){
         try {
-            setOficinasRegistro((List<MarOficinasRegistro>) genericDAOBean.findAllByColumn(MarOficinasRegistro.class, "morEstado", "A", true, "morNombre asc"));
+            setOficinasRegistro((List<MarOficinasRegistros>) genericDAOBean.findAllByColumn(MarOficinasRegistros.class, "morEstado", "A", true, "morNombre asc"));
         } catch (Exception e) {
             logger.error("Error actualizando lista de oficinas de registro, causado por " + e);
         }
@@ -117,11 +115,11 @@ public class NotariasManagedBean extends GenericManagedBean implements Serializa
         this.notariasFiltrado = notariasFiltrado;
     }
 
-    public List<MarOficinasRegistro> getOficinasRegistro() {
+    public List<MarOficinasRegistros> getOficinasRegistro() {
         return oficinasRegistro;
     }
 
-    public void setOficinasRegistro(List<MarOficinasRegistro> oficinasRegistro) {
+    public void setOficinasRegistro(List<MarOficinasRegistros> oficinasRegistro) {
         this.oficinasRegistro = oficinasRegistro;
     }
 

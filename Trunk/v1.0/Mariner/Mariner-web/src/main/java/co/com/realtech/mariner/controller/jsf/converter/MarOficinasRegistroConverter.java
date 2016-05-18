@@ -2,7 +2,7 @@ package co.com.realtech.mariner.controller.jsf.converter;
 
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBean;
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
-import co.com.realtech.mariner.model.entity.MarOficinasRegistro;
+import co.com.realtech.mariner.model.entity.MarOficinasRegistros;
 import co.com.realtech.mariner.util.jdni.JDNIUtils;
 import java.math.BigDecimal;
 import javax.faces.component.UIComponent;
@@ -39,9 +39,9 @@ public class MarOficinasRegistroConverter implements Converter {
         if (value == null || value.length() == 0) {
             return null;
         }
-        MarOficinasRegistro tipo = null;
+        MarOficinasRegistros tipo = null;
         try {
-            tipo = (MarOficinasRegistro) genericDAOBeanLocal.findByID(MarOficinasRegistro.class, new BigDecimal(value));
+            tipo = (MarOficinasRegistros) genericDAOBeanLocal.findByID(MarOficinasRegistros.class, new BigDecimal(value));
         } catch (Exception ex) {
             logger.error("Error en Conversor MarOficinasRegistroConverter, causado por ", ex);
         }
@@ -50,7 +50,7 @@ public class MarOficinasRegistroConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return String.valueOf(((MarOficinasRegistro) value).getMorId());
+        return String.valueOf(((MarOficinasRegistros) value).getMorId());
     }
 
 }

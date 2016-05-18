@@ -21,7 +21,7 @@
                     <h:outputLabel styleClass="subtitleMain" value="Cambiar claves, asignar permisos, configurar usuario"/>
                 </div>
             </div>
-            <div class="contenidoPrinc" align="center">
+            <div class="contenidoPrinc" align="left">
                 <div class="descripcion" align="center">
                     <div class="descText">
                         Busque en el filtro principal alguna información que tenga del usuario, ya sea Nombre, Documento, Correo o Login.
@@ -33,6 +33,7 @@
                         <p:autoComplete id="autoUsuarios" size="70" value="#{usuariosManagedBean.usuarioSeleccion}" completeMethod="#{usuariosManagedBean.completeUsers}" var="usuarios" itemLabel="#{usuarios.perId.perNombres} #{usuarios.perId.perApellidos}" itemValue="#{usuarios}" converter="MarUsuariosConverter" forceSelection="true" maxResults="52" queryDelay="1200">
                             <p:ajax event="itemSelect" listener="#{usuariosManagedBean.seleccionarUsuario()}" update=":formUsuario" />
                         </p:autoComplete>
+                        <p:commandButton value="Crear Usuario" title="Presione para crear un nuevo usuario" action="#{usuariosManagedBean.crearUsuario()}" update="formUsuario formFiltroUsuario"/>
                     </h:panelGrid>
                 </h:form>
 
@@ -48,7 +49,7 @@
                                 <p:selectOneMenu converter="MarTiposDocumentosConverter" value="#{usuariosManagedBean.personaSel.tdcId}" style="width: 200px" required="false" >
                                     <f:selectItems value="#{usuariosManagedBean.tiposDocumentos}" var="tdo" itemLabel="#{tdo.tdcNombre}" itemValue="#{tdo}"/>
                                 </p:selectOneMenu>
-                                <p:inputText value="#{usuariosManagedBean.personaSel.perDocumento}" style="width: 230px"/>
+                                <p:inputText value="#{usuariosManagedBean.personaSel.perDocumento}" style="width: 230px" required="true"/>
 
                                 <h:outputLabel class="labelLittle" value="Nombres" /> 
                                 <h:outputLabel class="labelLittle" value="Apellidos" />
@@ -58,7 +59,7 @@
                                 <h:outputLabel class="labelLittle" value="Usuario"/>
                                 <h:outputLabel class="labelLittle" value="Correo" />
                                 <p:inputText value="#{usuariosManagedBean.usuarioSel.usuLogin}" style="width: 230px"/>
-                                <p:inputText value="#{usuariosManagedBean.personaSel.perEmail}" style="width: 230px"/>
+                                <p:inputText value="#{usuariosManagedBean.personaSel.perEmail}" style="width: 230px" validator="EmailValidator"/>
                                 <h:outputLabel class="labelLittle" value="Teléfono" />
                                 <h:outputLabel class="labelLittle" value="Estado" />
                                 <p:inputText value="#{usuariosManagedBean.personaSel.perTelefono}" style="width: 230px"/>
@@ -68,7 +69,7 @@
                                 </p:selectOneMenu>
                             </h:panelGrid>
                             <div id="rightDiv" style="padding: 20px;display: inline-block;width: 40%;vertical-align: top">
-                                <p:dataTable id="tableRolesUsuario" value="#{usuariosManagedBean.rolesUsuarios}" selection="#{usuariosManagedBean.rolUsuarioSel}" var="rUsu">
+                                <p:dataTable id="tableRolesUsuario" value="#{usuariosManagedBean.rolesUsuarios}" selection="#{usuariosManagedBean.rolUsuarioSel}" var="rUsu" emptyMessage="No se han encontrado Roles">
                                     <p:column headerText="Roles asignados">
                                         <h:outputLabel value="#{rUsu.rolId.rolNombre}"/>
                                     </p:column>
@@ -81,9 +82,9 @@
                                     </p:column>
                                 </p:dataTable>
                                 <div align="center" style="margin: 20px;">
-                                    <p:commandButton value="Asignar Rol" oncomplete="PF('modalRoles').show()"/>
-                                    <p:commandButton value="Seguridad" oncomplete="PF('modalSeguridad').show()" update=":dialogSeguridad"/>
-                                    <p:commandButton value="Cambiar clave" oncomplete="PF('modalClave').show()" />
+                                    <p:commandButton value="Asignar Rol" oncomplete="PF('modalRoles').show()" disabled="#{usuariosManagedBean.usuarioSel.usuId==null}"/>
+                                    <p:commandButton value="Seguridad" oncomplete="PF('modalSeguridad').show()" update=":dialogSeguridad" disabled="#{usuariosManagedBean.usuarioSel.usuId==null}"/>
+                                    <p:commandButton value="Cambiar clave" oncomplete="PF('modalClave').show()"/>
                                 </div>
                             </div>
                             <div align="center" style="width: 100%;margin: 20px;">
@@ -95,7 +96,7 @@
                 </h:form>
             </div>
         </div>
-        
+
         <!-- Modal de asignación de un rol para el usuario -->
         <p:dialog id="dialogRoles" widgetVar="modalRoles" modal="true" draggable="false" resizable="false" header="Asignar rol al usuario">
             <h:form id="formRoles">
@@ -115,7 +116,7 @@
         <p:dialog id="dialogClave" widgetVar="modalClave" modal="true" draggable="false" resizable="false" header="Cambiar clave del usuario">
             <h:form id="formClave">
                 <div style="margin: 20px;">
-                    <h:outputLabel value="Nueva clave" />
+                    <h:outputLabel value="Ingrese la Clave" />
                     <p:password value="#{usuariosManagedBean.claveNueva}" style="width: 230px;margin: 0px 10px"/>
                 </div>
                 <div align="center" style="margin: 20px">
@@ -124,7 +125,7 @@
                 </div>
             </h:form>
         </p:dialog>
-        
+
         <!-- Modal de información de auditoría del usuario -->
         <p:dialog id="dialogSeguridad" widgetVar="modalSeguridad" modal="true" draggable="false" resizable="false" header="Cambiar clave del usuario">
             <h:form id="formSeg">

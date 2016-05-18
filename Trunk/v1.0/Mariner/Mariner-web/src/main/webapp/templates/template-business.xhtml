@@ -31,7 +31,7 @@
                             </h:panelGrid>
                             <div align="center">
                                 <p:commandButton value="Entrar" action="#{indexManagedBean.autenticar()}" update="@this :panelHome" ajax="false"/>
-                                <p:commandButton value="Registrarme" action="#{indexManagedBean.activarRegistro()}" update=":modalRegistro" oncomplete="PF('dialogRegistro').show()" process="@this" />
+                                <p:commandButton value="Registrarme" action="#{indexManagedBean.activarRegistro()}" update=":modalRegistro" oncomplete="PF('dialogRegistro').show()" process="@this" rendered="false" />
                                 <p:commandButton value="Olvidé la clave" />
                             </div>
                         </div> 

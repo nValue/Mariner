@@ -2,8 +2,7 @@ package co.com.realtech.mariner.controller.jsf.managed_bean.portal.configuration
 
 import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBean;
 import co.com.realtech.mariner.model.entity.MarCiudades;
-import co.com.realtech.mariner.model.entity.MarNotarias;
-import co.com.realtech.mariner.model.entity.MarOficinasRegistro;
+import co.com.realtech.mariner.model.entity.MarOficinasRegistros;
 import co.com.realtech.mariner.model.entity.MarPaises;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
@@ -26,9 +25,9 @@ import javax.faces.bean.ViewScoped;
 public class OficinasRegistroManagedBean extends GenericManagedBean implements Serializable {
 
     private List<MarCiudades> ciudades;
-    private MarOficinasRegistro oficina;
-    private List<MarOficinasRegistro> oficinas;
-    private List<MarOficinasRegistro> oficinasFiltrado;
+    private MarOficinasRegistros oficina;
+    private List<MarOficinasRegistros> oficinas;
+    private List<MarOficinasRegistros> oficinasFiltrado;
 
     @Override
     public void init() {
@@ -36,7 +35,7 @@ public class OficinasRegistroManagedBean extends GenericManagedBean implements S
             // Ciudades
             MarPaises paisCol = (MarPaises) genericDAOBean.findByColumn(MarPaises.class, "paiSigla", "CO");
             setCiudades((List<MarCiudades>) genericDAOBean.findAllByColumn(MarCiudades.class, "depId.paiId", paisCol, true, "ciuNombre asc"));
-            setOficinas((List<MarOficinasRegistro>) genericDAOBean.loadAllForEntity(MarOficinasRegistro.class, "morNombre asc"));
+            setOficinas((List<MarOficinasRegistros>) genericDAOBean.loadAllForEntity(MarOficinasRegistros.class, "morNombre asc"));
         } catch (Exception e) {
             logger.error("Error inicializando OficinasRegistroManagedBean, causado por:" + e);
         }
@@ -46,7 +45,7 @@ public class OficinasRegistroManagedBean extends GenericManagedBean implements S
      * Creacion de nuevo rol
      */
     public void agregarOficina() {
-        setOficina(new MarOficinasRegistro());
+        setOficina(new MarOficinasRegistros());
     }
 
     /**
@@ -110,27 +109,27 @@ public class OficinasRegistroManagedBean extends GenericManagedBean implements S
         this.ciudades = ciudades;
     }
 
-    public MarOficinasRegistro getOficina() {
+    public MarOficinasRegistros getOficina() {
         return oficina;
     }
 
-    public void setOficina(MarOficinasRegistro oficina) {
+    public void setOficina(MarOficinasRegistros oficina) {
         this.oficina = oficina;
     }
 
-    public List<MarOficinasRegistro> getOficinas() {
+    public List<MarOficinasRegistros> getOficinas() {
         return oficinas;
     }
 
-    public void setOficinas(List<MarOficinasRegistro> oficinas) {
+    public void setOficinas(List<MarOficinasRegistros> oficinas) {
         this.oficinas = oficinas;
     }
 
-    public List<MarOficinasRegistro> getOficinasFiltrado() {
+    public List<MarOficinasRegistros> getOficinasFiltrado() {
         return oficinasFiltrado;
     }
 
-    public void setOficinasFiltrado(List<MarOficinasRegistro> oficinasFiltrado) {
+    public void setOficinasFiltrado(List<MarOficinasRegistros> oficinasFiltrado) {
         this.oficinasFiltrado = oficinasFiltrado;
     }
 
