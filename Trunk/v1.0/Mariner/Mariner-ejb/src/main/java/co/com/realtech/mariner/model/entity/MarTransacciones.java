@@ -35,15 +35,15 @@ import javax.validation.constraints.Size;
     @UniqueConstraint(columnNames = {"RAD_ID"})})
 @NamedQueries({
     @NamedQuery(name = "MarTransacciones.findAll", query = "SELECT m FROM MarTransacciones m"),
-    @NamedQuery(name = "MarTransacciones.findByMrtId", query = "SELECT m FROM MarTransacciones m WHERE m.mrtId = :mrtId"),
-    @NamedQuery(name = "MarTransacciones.findByMrtCuantia", query = "SELECT m FROM MarTransacciones m WHERE m.mrtCuantia = :mrtCuantia"),
-    @NamedQuery(name = "MarTransacciones.findByMrtValor", query = "SELECT m FROM MarTransacciones m WHERE m.mrtValor = :mrtValor"),
-    @NamedQuery(name = "MarTransacciones.findByMrtFechaInicio", query = "SELECT m FROM MarTransacciones m WHERE m.mrtFechaInicio = :mrtFechaInicio"),
-    @NamedQuery(name = "MarTransacciones.findByMrtFechaFinalizacion", query = "SELECT m FROM MarTransacciones m WHERE m.mrtFechaFinalizacion = :mrtFechaFinalizacion"),
-    @NamedQuery(name = "MarTransacciones.findByMrtCus", query = "SELECT m FROM MarTransacciones m WHERE m.mrtCus = :mrtCus"),
-    @NamedQuery(name = "MarTransacciones.findByMrtTipoPago", query = "SELECT m FROM MarTransacciones m WHERE m.mrtTipoPago = :mrtTipoPago"),
-    @NamedQuery(name = "MarTransacciones.findByMrtEstado", query = "SELECT m FROM MarTransacciones m WHERE m.mrtEstado = :mrtEstado"),
-    @NamedQuery(name = "MarTransacciones.findByMrtNotaMedioPago", query = "SELECT m FROM MarTransacciones m WHERE m.mrtNotaMedioPago = :mrtNotaMedioPago"),
+    @NamedQuery(name = "MarTransacciones.findByTraId", query = "SELECT m FROM MarTransacciones m WHERE m.traId = :traId"),
+    @NamedQuery(name = "MarTransacciones.findByTraCuantia", query = "SELECT m FROM MarTransacciones m WHERE m.traCuantia = :traCuantia"),
+    @NamedQuery(name = "MarTransacciones.findByTraValor", query = "SELECT m FROM MarTransacciones m WHERE m.traValor = :traValor"),
+    @NamedQuery(name = "MarTransacciones.findByTraFechaInicio", query = "SELECT m FROM MarTransacciones m WHERE m.traFechaInicio = :traFechaInicio"),
+    @NamedQuery(name = "MarTransacciones.findByTraFechaFinalizacion", query = "SELECT m FROM MarTransacciones m WHERE m.traFechaFinalizacion = :traFechaFinalizacion"),
+    @NamedQuery(name = "MarTransacciones.findByTraCus", query = "SELECT m FROM MarTransacciones m WHERE m.traCus = :traCus"),
+    @NamedQuery(name = "MarTransacciones.findByTraTipoPago", query = "SELECT m FROM MarTransacciones m WHERE m.traTipoPago = :traTipoPago"),
+    @NamedQuery(name = "MarTransacciones.findByTraEstado", query = "SELECT m FROM MarTransacciones m WHERE m.traEstado = :traEstado"),
+    @NamedQuery(name = "MarTransacciones.findByTraMedioPagoNota", query = "SELECT m FROM MarTransacciones m WHERE m.traMedioPagoNota = :traMedioPagoNota"),
     @NamedQuery(name = "MarTransacciones.findByAudFecha", query = "SELECT m FROM MarTransacciones m WHERE m.audFecha = :audFecha"),
     @NamedQuery(name = "MarTransacciones.findByAudUsuario", query = "SELECT m FROM MarTransacciones m WHERE m.audUsuario = :audUsuario")})
 public class MarTransacciones implements Serializable {
@@ -54,30 +54,30 @@ public class MarTransacciones implements Serializable {
     @SequenceGenerator(name = "sq_mar_transacciones", sequenceName = "sq_mar_transacciones")
     @Basic(optional = false)
     @NotNull
-    @Column(name = "MRT_ID", nullable = false, precision = 0, scale = -127)
-    private BigDecimal mrtId;
-    @Column(name = "MRT_CUANTIA")
-    private BigInteger mrtCuantia;
-    @Column(name = "MRT_VALOR")
-    private BigInteger mrtValor;
-    @Column(name = "MRT_FECHA_INICIO")
+    @Column(name = "TRA_ID", nullable = false, precision = 0, scale = -127)
+    private BigDecimal traId;
+    @Column(name = "TRA_CUANTIA")
+    private BigInteger traCuantia;
+    @Column(name = "TRA_VALOR")
+    private BigInteger traValor;
+    @Column(name = "TRA_FECHA_INICIO")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date mrtFechaInicio;
-    @Column(name = "MRT_FECHA_FINALIZACION")
+    private Date traFechaInicio;
+    @Column(name = "TRA_FECHA_FINALIZACION")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date mrtFechaFinalizacion;
+    private Date traFechaFinalizacion;
     @Size(max = 30)
-    @Column(name = "MRT_CUS", length = 30)
-    private String mrtCus;
+    @Column(name = "TRA_CUS", length = 30)
+    private String traCus;
     @Size(max = 20)
-    @Column(name = "MRT_TIPO_PAGO", length = 20)
-    private String mrtTipoPago;
+    @Column(name = "TRA_TIPO_PAGO", length = 20)
+    private String traTipoPago;
     @Size(max = 2)
-    @Column(name = "MRT_ESTADO", length = 2)
-    private String mrtEstado;
+    @Column(name = "TRA_ESTADO", length = 2)
+    private String traEstado;
     @Size(max = 2000)
-    @Column(name = "MRT_NOTA_MEDIO_PAGO", length = 2000)
-    private String mrtNotaMedioPago;
+    @Column(name = "TRA_MEDIO_PAGO_NOTA", length = 2000)
+    private String traMedioPagoNota;
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
@@ -91,80 +91,80 @@ public class MarTransacciones implements Serializable {
     public MarTransacciones() {
     }
 
-    public MarTransacciones(BigDecimal mrtId) {
-        this.mrtId = mrtId;
+    public MarTransacciones(BigDecimal traId) {
+        this.traId = traId;
     }
 
-    public BigDecimal getMrtId() {
-        return mrtId;
+    public BigDecimal getTraId() {
+        return traId;
     }
 
-    public void setMrtId(BigDecimal mrtId) {
-        this.mrtId = mrtId;
+    public void setTraId(BigDecimal traId) {
+        this.traId = traId;
     }
 
-    public BigInteger getMrtCuantia() {
-        return mrtCuantia;
+    public BigInteger getTraCuantia() {
+        return traCuantia;
     }
 
-    public void setMrtCuantia(BigInteger mrtCuantia) {
-        this.mrtCuantia = mrtCuantia;
+    public void setTraCuantia(BigInteger traCuantia) {
+        this.traCuantia = traCuantia;
     }
 
-    public BigInteger getMrtValor() {
-        return mrtValor;
+    public BigInteger getTraValor() {
+        return traValor;
     }
 
-    public void setMrtValor(BigInteger mrtValor) {
-        this.mrtValor = mrtValor;
+    public void setTraValor(BigInteger traValor) {
+        this.traValor = traValor;
     }
 
-    public Date getMrtFechaInicio() {
-        return mrtFechaInicio;
+    public Date getTraFechaInicio() {
+        return traFechaInicio;
     }
 
-    public void setMrtFechaInicio(Date mrtFechaInicio) {
-        this.mrtFechaInicio = mrtFechaInicio;
+    public void setTraFechaInicio(Date traFechaInicio) {
+        this.traFechaInicio = traFechaInicio;
     }
 
-    public Date getMrtFechaFinalizacion() {
-        return mrtFechaFinalizacion;
+    public Date getTraFechaFinalizacion() {
+        return traFechaFinalizacion;
     }
 
-    public void setMrtFechaFinalizacion(Date mrtFechaFinalizacion) {
-        this.mrtFechaFinalizacion = mrtFechaFinalizacion;
+    public void setTraFechaFinalizacion(Date traFechaFinalizacion) {
+        this.traFechaFinalizacion = traFechaFinalizacion;
     }
 
-    public String getMrtCus() {
-        return mrtCus;
+    public String getTraCus() {
+        return traCus;
     }
 
-    public void setMrtCus(String mrtCus) {
-        this.mrtCus = mrtCus;
+    public void setTraCus(String traCus) {
+        this.traCus = traCus;
     }
 
-    public String getMrtTipoPago() {
-        return mrtTipoPago;
+    public String getTraTipoPago() {
+        return traTipoPago;
     }
 
-    public void setMrtTipoPago(String mrtTipoPago) {
-        this.mrtTipoPago = mrtTipoPago;
+    public void setTraTipoPago(String traTipoPago) {
+        this.traTipoPago = traTipoPago;
     }
 
-    public String getMrtEstado() {
-        return mrtEstado;
+    public String getTraEstado() {
+        return traEstado;
     }
 
-    public void setMrtEstado(String mrtEstado) {
-        this.mrtEstado = mrtEstado;
+    public void setTraEstado(String traEstado) {
+        this.traEstado = traEstado;
     }
 
-    public String getMrtNotaMedioPago() {
-        return mrtNotaMedioPago;
+    public String getTraMedioPagoNota() {
+        return traMedioPagoNota;
     }
 
-    public void setMrtNotaMedioPago(String mrtNotaMedioPago) {
-        this.mrtNotaMedioPago = mrtNotaMedioPago;
+    public void setTraMedioPagoNota(String traMedioPagoNota) {
+        this.traMedioPagoNota = traMedioPagoNota;
     }
 
     public Date getAudFecha() {
@@ -194,7 +194,7 @@ public class MarTransacciones implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (mrtId != null ? mrtId.hashCode() : 0);
+        hash += (traId != null ? traId.hashCode() : 0);
         return hash;
     }
 
@@ -205,7 +205,7 @@ public class MarTransacciones implements Serializable {
             return false;
         }
         MarTransacciones other = (MarTransacciones) object;
-        if ((this.mrtId == null && other.mrtId != null) || (this.mrtId != null && !this.mrtId.equals(other.mrtId))) {
+        if ((this.traId == null && other.traId != null) || (this.traId != null && !this.traId.equals(other.traId))) {
             return false;
         }
         return true;
@@ -213,7 +213,7 @@ public class MarTransacciones implements Serializable {
 
     @Override
     public String toString() {
-        return "co.com.realtech.mariner.model.entity.MarTransacciones[ mrtId=" + mrtId + " ]";
+        return "co.com.realtech.mariner.model.entity.MarTransacciones[ traId=" + traId + " ]";
     }
     
 }
