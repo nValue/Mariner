@@ -65,11 +65,11 @@ public class MarFasesEstados implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fesId")
-    private List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList;
     @JoinColumn(name = "FAS_ID", referencedColumnName = "FAS_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarFases fasId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fesId")
+    private List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList;
 
     public MarFasesEstados() {
     }
@@ -126,20 +126,20 @@ public class MarFasesEstados implements Serializable {
         this.audFecha = audFecha;
     }
 
-    public List<MarRadicacionesFasesEstados> getMarRadicacionesFasesEstadosList() {
-        return marRadicacionesFasesEstadosList;
-    }
-
-    public void setMarRadicacionesFasesEstadosList(List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList) {
-        this.marRadicacionesFasesEstadosList = marRadicacionesFasesEstadosList;
-    }
-
     public MarFases getFasId() {
         return fasId;
     }
 
     public void setFasId(MarFases fasId) {
         this.fasId = fasId;
+    }
+
+    public List<MarRadicacionesFasesEstados> getMarRadicacionesFasesEstadosList() {
+        return marRadicacionesFasesEstadosList;
+    }
+
+    public void setMarRadicacionesFasesEstadosList(List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList) {
+        this.marRadicacionesFasesEstadosList = marRadicacionesFasesEstadosList;
     }
 
     @Override

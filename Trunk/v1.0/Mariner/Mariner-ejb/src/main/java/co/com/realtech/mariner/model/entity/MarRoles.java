@@ -63,9 +63,9 @@ public class MarRoles implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rolId")
-    private List<MarRolesUsuarios> marRolesUsuariosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "rolId")
     private List<MarRolesModulos> marRolesModulosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "rolId")
+    private List<MarRolesUsuarios> marRolesUsuariosList;
 
     public MarRoles() {
     }
@@ -119,20 +119,20 @@ public class MarRoles implements Serializable {
         this.audFecha = audFecha;
     }
 
-    public List<MarRolesUsuarios> getMarRolesUsuariosList() {
-        return marRolesUsuariosList;
-    }
-
-    public void setMarRolesUsuariosList(List<MarRolesUsuarios> marRolesUsuariosList) {
-        this.marRolesUsuariosList = marRolesUsuariosList;
-    }
-
     public List<MarRolesModulos> getMarRolesModulosList() {
         return marRolesModulosList;
     }
 
     public void setMarRolesModulosList(List<MarRolesModulos> marRolesModulosList) {
         this.marRolesModulosList = marRolesModulosList;
+    }
+
+    public List<MarRolesUsuarios> getMarRolesUsuariosList() {
+        return marRolesUsuariosList;
+    }
+
+    public void setMarRolesUsuariosList(List<MarRolesUsuarios> marRolesUsuariosList) {
+        this.marRolesUsuariosList = marRolesUsuariosList;
     }
 
     @Override

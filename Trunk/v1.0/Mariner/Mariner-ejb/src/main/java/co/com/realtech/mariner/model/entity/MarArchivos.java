@@ -91,10 +91,10 @@ public class MarArchivos implements Serializable {
     @JoinColumn(name = "PMO_ID", referencedColumnName = "PMO_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarPuntosMontajes pmoId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "arcId")
-    private List<MarEscrituras> marEscriturasList;
     @OneToMany(mappedBy = "arcId")
     private List<MarReportes> marReportesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "arcId")
+    private List<MarEscrituras> marEscriturasList;
 
     public MarArchivos() {
     }
@@ -212,20 +212,20 @@ public class MarArchivos implements Serializable {
         this.pmoId = pmoId;
     }
 
-    public List<MarEscrituras> getMarEscriturasList() {
-        return marEscriturasList;
-    }
-
-    public void setMarEscriturasList(List<MarEscrituras> marEscriturasList) {
-        this.marEscriturasList = marEscriturasList;
-    }
-
     public List<MarReportes> getMarReportesList() {
         return marReportesList;
     }
 
     public void setMarReportesList(List<MarReportes> marReportesList) {
         this.marReportesList = marReportesList;
+    }
+
+    public List<MarEscrituras> getMarEscriturasList() {
+        return marEscriturasList;
+    }
+
+    public void setMarEscriturasList(List<MarEscrituras> marEscriturasList) {
+        this.marEscriturasList = marEscriturasList;
     }
 
     @Override

@@ -24,6 +24,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -32,7 +33,8 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "MAR_NOTARIAS")
+@Table(name = "MAR_NOTARIAS", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"NOT_CODIGO"})})
 @NamedQueries({
     @NamedQuery(name = "MarNotarias.findAll", query = "SELECT m FROM MarNotarias m"),
     @NamedQuery(name = "MarNotarias.findByNotId", query = "SELECT m FROM MarNotarias m WHERE m.notId = :notId"),
@@ -70,9 +72,9 @@ public class MarNotarias implements Serializable {
     private Date audFecha;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "notId")
     private List<MarRadicaciones> marRadicacionesList;
-    @JoinColumn(name = "CIU_ID", referencedColumnName = "CIU_ID", nullable = false)
-    @ManyToOne(optional = false)
-    private MarCiudades ciuId;
+    @JoinColumn(name = "MOR_ID", referencedColumnName = "MOR_ID")
+    @ManyToOne
+    private MarOficinasRegistro morId;
 
     public MarNotarias() {
     }
@@ -142,12 +144,12 @@ public class MarNotarias implements Serializable {
         this.marRadicacionesList = marRadicacionesList;
     }
 
-    public MarCiudades getCiuId() {
-        return ciuId;
+    public MarOficinasRegistro getMorId() {
+        return morId;
     }
 
-    public void setCiuId(MarCiudades ciuId) {
-        this.ciuId = ciuId;
+    public void setMorId(MarOficinasRegistro morId) {
+        this.morId = morId;
     }
 
     @Override
