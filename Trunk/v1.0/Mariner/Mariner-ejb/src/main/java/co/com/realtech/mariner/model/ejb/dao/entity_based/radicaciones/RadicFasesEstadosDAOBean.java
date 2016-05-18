@@ -68,8 +68,7 @@ public class RadicFasesEstadosDAOBean extends GenericDAOBean implements RadicFas
                     + "INNER JOIN mar_fases_estados fe ON rfe.fes_id = fe.fes_id\n"
                     + "WHERE rfe.usu_id = :usuId \n"
                     + "AND fe.fes_codigo = ':faseEstado'\n"
-                    + "AND DATE_TRUNC('day',rfe.rfe_fecha_inicio) BETWEEN TO_DATE(':fechaIn','dd-MM-yyyy') AND TO_DATE(':fechaFin','dd-MM-yyyy')";
-            //Query q = getEntityManager().createQuery("SELECT DISTINCT rfe FROM MarRadicaciones r INNER JOIN r.marRadicacionesFasesEstadosList rfe WHERE rfe.usuId = :usuId AND rfe.fesId.fesCodigo = :faseEstado");
+                    + "AND TRUNC(rfe.rfe_fecha_inicio) BETWEEN TO_DATE(':fechaIn','dd-MM-yyyy') AND TO_DATE(':fechaFin','dd-MM-yyyy')";
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
             sql = sql.replace(":fechaIn", sdf.format(fechaIn));
             sql = sql.replace(":fechaFin", sdf.format(fechaFin));

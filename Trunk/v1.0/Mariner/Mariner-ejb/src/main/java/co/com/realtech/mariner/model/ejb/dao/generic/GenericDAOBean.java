@@ -447,8 +447,8 @@ public class GenericDAOBean implements GenericDAOBeanLocal {
             sqlFnQuery = sqlFnQuery.substring(0, sqlFnQuery.length() - 1);
 
             //El primero es para Oracle, el segundo para PostgreSQL
-            //sqlFnQuery += (parameters.length > 0 ? " )" : " ") + " FROM dual ";
-            sqlFnQuery += (parameters.length > 0 ? " )" : " ") + " ";
+            sqlFnQuery += (parameters.length > 0 ? " )" : " ") + " FROM dual ";
+            //sqlFnQuery += (parameters.length > 0 ? " )" : " ") + " ";
 
             Query q = getEntityManager().createNativeQuery(sqlFnQuery);
 

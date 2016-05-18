@@ -18,7 +18,7 @@ import javax.ejb.Local;
 @Local
 public interface RadicacionesDAOBeanLocal {
     
-    public List<MarRadicaciones> obtenerRadicacionesPorFiltro(String filtro) throws MarinerPersistanceException;
+    public List<MarRadicaciones> obtenerRadicacionesPorFiltro(String filtro, MarUsuarios usuarioActual) throws MarinerPersistanceException;
     
     public List<MarRadicaciones> obtenerRadicacionesPorUltimaFase(String fase, MarUsuarios usuario) throws MarinerPersistanceException;
     

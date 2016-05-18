@@ -42,7 +42,14 @@ public class NumeracionesManager {
                 throw new Exception("No hay una numeración asociada al código: " + codigoNumeracion);
             }
             numeracion.setNumNumero(numeracion.getNumNumero().add(BigInteger.ONE));
-            consecutive = numeracion.getNumPrefijo() + numeracion.getNumNumero() + numeracion.getNumSufijo();
+            if(numeracion.getNumPrefijo() != null){
+                consecutive = numeracion.getNumPrefijo();
+            }
+            consecutive = consecutive + numeracion.getNumNumero();
+            if(numeracion.getNumSufijo() != null){
+                consecutive = consecutive + numeracion.getNumSufijo();
+            }
+            //consecutive = numeracion.getNumPrefijo() + numeracion.getNumNumero() + numeracion.getNumSufijo();
             genericDAOBean.merge(numeracion); 
         } catch (Exception e) {
             throw e;
