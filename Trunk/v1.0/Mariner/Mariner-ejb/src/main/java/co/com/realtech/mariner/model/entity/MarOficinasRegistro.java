@@ -7,7 +7,6 @@ package co.com.realtech.mariner.model.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.GeneratedValue;
@@ -16,6 +15,8 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -38,7 +39,6 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarOficinasRegistro.findByMorNombre", query = "SELECT m FROM MarOficinasRegistro m WHERE m.morNombre = :morNombre"),
     @NamedQuery(name = "MarOficinasRegistro.findByMorEstado", query = "SELECT m FROM MarOficinasRegistro m WHERE m.morEstado = :morEstado"),
     @NamedQuery(name = "MarOficinasRegistro.findByMorPlataforma", query = "SELECT m FROM MarOficinasRegistro m WHERE m.morPlataforma = :morPlataforma"),
-    @NamedQuery(name = "MarOficinasRegistro.findByCiuId", query = "SELECT m FROM MarOficinasRegistro m WHERE m.ciuId = :ciuId"),
     @NamedQuery(name = "MarOficinasRegistro.findByAudFecha", query = "SELECT m FROM MarOficinasRegistro m WHERE m.audFecha = :audFecha"),
     @NamedQuery(name = "MarOficinasRegistro.findByAudUsuario", query = "SELECT m FROM MarOficinasRegistro m WHERE m.audUsuario = :audUsuario")})
 public class MarOficinasRegistro implements Serializable {
@@ -63,14 +63,15 @@ public class MarOficinasRegistro implements Serializable {
     @Size(max = 20)
     @Column(name = "MOR_PLATAFORMA", length = 20)
     private String morPlataforma;
-    @Column(name = "CIU_ID")
-    private BigInteger ciuId;
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
     @Size(max = 60)
     @Column(name = "AUD_USUARIO", length = 60)
     private String audUsuario;
+    @JoinColumn(name = "CIU_ID", referencedColumnName = "CIU_ID")
+    @ManyToOne
+    private MarCiudades ciuId;
     @OneToMany(mappedBy = "morId")
     private List<MarNotarias> marNotariasList;
 
@@ -121,14 +122,6 @@ public class MarOficinasRegistro implements Serializable {
         this.morPlataforma = morPlataforma;
     }
 
-    public BigInteger getCiuId() {
-        return ciuId;
-    }
-
-    public void setCiuId(BigInteger ciuId) {
-        this.ciuId = ciuId;
-    }
-
     public Date getAudFecha() {
         return audFecha;
     }
@@ -143,6 +136,14 @@ public class MarOficinasRegistro implements Serializable {
 
     public void setAudUsuario(String audUsuario) {
         this.audUsuario = audUsuario;
+    }
+
+    public MarCiudades getCiuId() {
+        return ciuId;
+    }
+
+    public void setCiuId(MarCiudades ciuId) {
+        this.ciuId = ciuId;
     }
 
     public List<MarNotarias> getMarNotariasList() {

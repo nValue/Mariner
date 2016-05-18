@@ -50,7 +50,6 @@ public class ModulosDAOBean extends GenericDAOBean implements ModulosDAOBeanLoca
             paths.stream().map((path) -> path.split("-")).forEach((elements) -> {
                 for (String element : elements) {
                     if (!element.isEmpty()) {
-                        System.out.println("element = " + element);
                         MarModulos singleMod = getEntityManager().find(MarModulos.class, new BigDecimal(element));
                         modelTree.walkArray(modulos, singleMod, 0);
                     }

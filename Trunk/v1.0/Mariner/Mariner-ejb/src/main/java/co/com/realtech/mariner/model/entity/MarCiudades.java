@@ -8,6 +8,7 @@ package co.com.realtech.mariner.model.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.GeneratedValue;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
@@ -18,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -59,6 +61,8 @@ public class MarCiudades implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
+    @OneToMany(mappedBy = "ciuId")
+    private List<MarOficinasRegistro> marOficinasRegistroList;
     @JoinColumn(name = "DEP_ID", referencedColumnName = "DEP_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarDepartamentos depId;
@@ -108,6 +112,14 @@ public class MarCiudades implements Serializable {
 
     public void setAudFecha(Date audFecha) {
         this.audFecha = audFecha;
+    }
+
+    public List<MarOficinasRegistro> getMarOficinasRegistroList() {
+        return marOficinasRegistroList;
+    }
+
+    public void setMarOficinasRegistroList(List<MarOficinasRegistro> marOficinasRegistroList) {
+        this.marOficinasRegistroList = marOficinasRegistroList;
     }
 
     public MarDepartamentos getDepId() {
