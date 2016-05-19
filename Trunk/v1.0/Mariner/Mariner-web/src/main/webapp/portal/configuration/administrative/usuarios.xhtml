@@ -67,10 +67,18 @@
                                     <f:selectItem itemValue="A" itemLabel="Activo"/>
                                     <f:selectItem itemValue="I" itemLabel="Inactivo" />
                                 </p:selectOneMenu>
+                                <h:outputLabel class="labelLittle" value="Notaria" />
+                                <h:outputLabel class="labelLittle" value="Oficina de Registro" />
+                                <p:selectOneMenu value="#{usuariosManagedBean.usuarioSel.notId}" converter="MarNotariasConverter" style="width: 200px">
+                                    <f:selectItems value="#{usuariosManagedBean.notarias}" var="notaria" itemLabel="#{notaria.notNombre eq null?'':notaria.notNombre}" itemValue="#{notaria}" />
+                                </p:selectOneMenu>
+                                <p:selectOneMenu value="#{usuariosManagedBean.usuarioSel.morId}" converter="MarOficinasRegistroConverter" style="width: 200px">
+                                    <f:selectItems value="#{usuariosManagedBean.oficinas}" var="oficina" itemLabel="#{oficina.morNombre eq null ?'':oficina.morNombre}" itemValue="#{oficina}" />
+                                </p:selectOneMenu>
                             </h:panelGrid>
                             <div id="rightDiv" style="padding: 20px;display: inline-block;width: 40%;vertical-align: top">
                                 <p:dataTable id="tableRolesUsuario" value="#{usuariosManagedBean.rolesUsuarios}" selection="#{usuariosManagedBean.rolUsuarioSel}" var="rUsu" emptyMessage="No se han encontrado Roles">
-                                    <p:column headerText="Roles asignados">
+                                    <p:column headerText="Roles asignados" styleClass="colCenter">
                                         <h:outputLabel value="#{rUsu.rolId.rolNombre}"/>
                                     </p:column>
                                     <p:column headerText="X" width="20">
@@ -87,9 +95,14 @@
                                     <p:commandButton value="Cambiar clave" oncomplete="PF('modalClave').show()"/>
                                 </div>
                             </div>
-                            <div align="center" style="width: 100%;margin: 20px;">
-                                <p:commandButton value="Guardar Cambios" action="#{usuariosManagedBean.guardarUsuario()}" update=":formFiltroUsuario formUsuario tableRolesUsuario" />
-                                <p:commandButton value="Cancelar" action="#{usuariosManagedBean.limpiarUsuario()}" update=":formFiltroUsuario formUsuario" process="@this"/>
+                            <div align="center" style="margin-bottom: 8px;">
+                                <h:panelGrid columns="3">
+                                    <p:commandButton value="Guardar Cambios" action="#{usuariosManagedBean.guardarUsuario()}" update=":formFiltroUsuario formUsuario tableRolesUsuario" />
+                                    <p:commandButton value="Eliminar" action="#{usuariosManagedBean.eliminarUsuario()}" update=":formFiltroUsuario formUsuario tableRolesUsuario" disabled="#{usuariosManagedBean.usuarioSel.usuId eq null}">
+                                        <p:confirm header="Confirmacion" message="Esta seguro de eliminar el usuario seleccionado?" icon="ui-icon-alert" />
+                                    </p:commandButton>
+                                    <p:commandButton value="Cancelar" action="#{usuariosManagedBean.limpiarUsuario()}" update=":formFiltroUsuario formUsuario" process="@this"/>
+                                </h:panelGrid>                                
                             </div>
                         </div>
                     </h:panelGroup>

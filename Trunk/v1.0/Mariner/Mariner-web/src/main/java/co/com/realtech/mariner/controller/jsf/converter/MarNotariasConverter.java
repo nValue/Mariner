@@ -44,14 +44,18 @@ public class MarNotariasConverter implements Converter {
         try {
             tipo = (MarNotarias) genericDAOBeanLocal.findByID(MarNotarias.class, new BigDecimal(value));
         } catch (Exception ex) {
-            logger.error("Error en Conversor, causado por ", ex);
+            tipo=null;
         }
         return tipo;
     }
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return String.valueOf(((MarNotarias) value).getNotId());
+        try {
+            return String.valueOf(((MarNotarias) value).getNotId());
+        } catch (Exception e) {
+            return null;
+        }        
     }
 
 }

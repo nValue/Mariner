@@ -43,14 +43,18 @@ public class MarOficinasRegistroConverter implements Converter {
         try {
             tipo = (MarOficinasRegistros) genericDAOBeanLocal.findByID(MarOficinasRegistros.class, new BigDecimal(value));
         } catch (Exception ex) {
-            logger.error("Error en Conversor MarOficinasRegistroConverter, causado por ", ex);
+            tipo=null;
         }
         return tipo;
     }
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return String.valueOf(((MarOficinasRegistros) value).getMorId());
+        try {
+            return String.valueOf(((MarOficinasRegistros) value).getMorId());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }
