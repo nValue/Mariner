@@ -28,7 +28,13 @@
                     </div>
                 </div>
                 <div>
-                    Contenido
+                    <div id="notificaciones-principal">
+                        <ui:repeat value="#{notificacionesManagedBean.notificaciones}" var="notificacion">
+                            <div class="componente-notificacion-#{notificacion.ntfEstado}" title="#{notificacion.nftFecha}">
+                                #{notificacion.ntfMensaje}
+                            </div>
+                        </ui:repeat>
+                    </div>
                 </div>
             </div>
         </div>        

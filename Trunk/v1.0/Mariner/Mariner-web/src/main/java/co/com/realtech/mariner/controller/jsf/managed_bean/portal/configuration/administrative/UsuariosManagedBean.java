@@ -10,11 +10,14 @@ import co.com.realtech.mariner.model.entity.MarRolesUsuarios;
 import co.com.realtech.mariner.model.entity.MarTiposDocumentos;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.util.crypto.CryptoUtils;
+import co.com.realtech.mariner.util.mail.MailSender;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Predicate;
 import javax.ejb.EJB;
@@ -282,7 +285,7 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
         personaSel = new MarPersonas();
         PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Por favor ingrese la informacion del nuevo usuario", true, false);
     }
-
+    
     public List<MarUsuarios> getUsuarios() {
         return usuarios;
     }

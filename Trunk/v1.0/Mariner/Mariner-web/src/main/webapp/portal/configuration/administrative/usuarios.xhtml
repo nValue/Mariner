@@ -101,7 +101,7 @@
                                     <p:commandButton value="Eliminar" action="#{usuariosManagedBean.eliminarUsuario()}" update=":formFiltroUsuario formUsuario tableRolesUsuario" disabled="#{usuariosManagedBean.usuarioSel.usuId eq null}">
                                         <p:confirm header="Confirmacion" message="Esta seguro de eliminar el usuario seleccionado?" icon="ui-icon-alert" />
                                     </p:commandButton>
-                                    <p:commandButton value="Cancelar" action="#{usuariosManagedBean.limpiarUsuario()}" update=":formFiltroUsuario formUsuario" process="@this"/>
+                                    <p:commandButton value="Cancelar" action="#{usuariosManagedBean.limpiarUsuario()}" update=":formFiltroUsuario formUsuario" process="@this"/>                                    
                                 </h:panelGrid>                                
                             </div>
                         </div>
