@@ -67,6 +67,7 @@
     display: block;
     padding: 3px 0px;
     text-align: center;
+    min-height: 18px;
 }
 
 .calendarSmall .ui-inputfield{
@@ -75,4 +76,8 @@
 
 .calendarSmall{
     margin: 0px 10px 0px 5px;
+}
+
+.modalTop{
+    top: 150px !important;
 }

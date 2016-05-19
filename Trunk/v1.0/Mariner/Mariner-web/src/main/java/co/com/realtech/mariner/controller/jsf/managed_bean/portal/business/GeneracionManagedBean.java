@@ -3,7 +3,6 @@ package co.com.realtech.mariner.controller.jsf.managed_bean.portal.business;
 import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBean;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFasesEstadosDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicacionesDAOBeanLocal;
-import co.com.realtech.mariner.model.entity.MarFasesEstados;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
@@ -55,7 +54,7 @@ public class GeneracionManagedBean extends GenericManagedBean{
      */
     public void obtenerRadicacionesPendientes(){
         try {
-            radicacionesUsuario = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("G-P", usuarioSesion);
+            radicacionesUsuario = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'G-P','G-S'", usuarioSesion);
             if(!radicacionesUsuario.isEmpty()){
                 radicacionUsuarioSel = radicacionesUsuario.get(0);
                 obtenerFasesEstadosDeRadicacion();
@@ -70,7 +69,7 @@ public class GeneracionManagedBean extends GenericManagedBean{
      */
     public void obtenerRadicacionesProcesadas(){
         try {
-            radicacionesFasesEstProcesadas = radicFasesEstadosDAOBean.obtenerRadicFasesEstadosPorUsuarioFaseEstadoYFechas(usuarioSesion, "G-S",fechaFiltroInic, fechaFiltroFin);
+            radicacionesFasesEstProcesadas = radicFasesEstadosDAOBean.obtenerRadicFasesEstadosPorUsuarioFaseEstadoYFechas(usuarioSesion, null,fechaFiltroInic, fechaFiltroFin);
             if(!radicacionesFasesEstProcesadas.isEmpty()){
                 radicacionFaseEstProcesadaSel = radicacionesFasesEstProcesadas.get(0);
             }
@@ -124,6 +123,7 @@ public class GeneracionManagedBean extends GenericManagedBean{
             obtenerRadicacionesPendientes();
             radicacionUsuarioSel = radFaseEstadoActual.getRadId();
             obtenerFasesEstadosDeRadicacion();
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación encontrada", "Se ha asignado una nueva radicación a sus pendientes, puede verificarla en la lista desplegable de radicaciones", true, false);
         } catch (Exception e) {
             logger.error("Error asignando una radicación disponible, causado por: " + e, e);
         }
@@ -132,8 +132,21 @@ public class GeneracionManagedBean extends GenericManagedBean{
     /**
      * Se pasa el proceso a pendiente por subir en el ERP SAP.
      */
-    public void validarPendienteSAP(){
+    public void validarRadicacion(){
         try {
+            MarRadicacionesFasesEstados rfe = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radicacionUsuarioSel);
+            if(!rfe.getRfeId().equals(radicacionesFasesEstados.get(radicacionesFasesEstados.size()-1).getRfeId())){
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación ya procesada", "Lo sentimos pero esta radicación ya ha sido procesada por la siguiente parte del proceso y no puede ser editada.", true, false);
+                return;
+            }
+            BigDecimal BDsalida = (BigDecimal)genericDAOBean.callGenericFunction("fn_ingresar_fase_estado", radicacionUsuarioSel.getRadId(), 
+                    "G-S", "A", usuarioSesion.getUsuId(),observaciones,null);
+            Integer salida = BDsalida.intValue();
+            if(salida == -999){
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
+                return;
+            }
+            /**
             MarRadicacionesFasesEstados radFaseEstado = new MarRadicacionesFasesEstados();
             MarFasesEstados fasEstSAP = (MarFasesEstados)genericDAOBean.findByColumn(MarFasesEstados.class, "fesCodigo", "G-S");
             radFaseEstado.setFesId(fasEstSAP);
@@ -145,6 +158,8 @@ public class GeneracionManagedBean extends GenericManagedBean{
             radFaseEstado.setRfeObservaciones(observaciones);
             auditSessionUtils.setAuditReflectedValues(radFaseEstado);
             genericDAOBean.save(radFaseEstado);
+            **/
+            
             obtenerRadicacionesPendientes();
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación correcta", "Validación realizada correctamente", true, false);
         } catch (Exception e) {
@@ -156,7 +171,36 @@ public class GeneracionManagedBean extends GenericManagedBean{
      * Rechaza la radicación a un estado anterior o la anula según sea el caso.
      */
     public void rechazarRadicacion(){
-        PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo", "Opps!, rechazo en desarrollo...", true, false);
+        try {
+            //Se crea la fase proceso de rechazo (G-R) con las observaciones colocadas.
+            BigDecimal BDsalida = (BigDecimal)genericDAOBean.callGenericFunction("fn_ingresar_fase_estado", radicacionUsuarioSel.getRadId(), 
+                    "G-R", "R", usuarioSesion.getUsuId(),observaciones,null);
+            Integer salida = BDsalida.intValue();
+            if(salida == -999){
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo incorrecto", "No se puede crear el estado rechazo para la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
+                return;
+            }
+            /**
+            //Después se crea la fase proceso de ingreso pendiente (I-P) para ser atendida de nuevo por los notarios.
+            BDsalida = (BigDecimal)genericDAOBean.callGenericFunction("fn_ingresar_fase_estado", radicacionUsuarioSel.getRadId(), 
+                    "I-P", "A", usuarioSesion.getUsuId(),"",null);
+            salida = BDsalida.intValue();
+            if(salida == -999){
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo incorrecto", "No se puede crear el estado ingreso pendiente para la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
+                return;
+            }**/
+            obtenerRadicacionesPendientes();
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo realizado", "Proceso rechazado correctamente", true, false);
+        } catch (Exception e) {
+            logger.error("No se puede rechazar la radicación, debido a " + e, e);
+        }
+    }
+    
+    /**
+     * Obtiene la radicación que se ingresó en SAP con todos sus datos.
+     */
+    public void obtenerSAP(){
+        
     }
     
     /**
@@ -166,6 +210,23 @@ public class GeneracionManagedBean extends GenericManagedBean{
         radicacionUsuarioSel = radicacionFaseEstProcesadaSel.getRadId();
         obtenerFasesEstadosDeRadicacion();
         PrimeFacesContext.execute("PF('dialogHistorial').hide()");
+    }
+    
+    /**
+     * Valida si el último estado todavía hace parte de los estados de generación para editar información
+     * @return 
+     */
+    public boolean validarUltimoEstado(){
+        try {
+            MarRadicacionesFasesEstados rfe = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radicacionUsuarioSel);
+            if(rfe.getFesId().getFasId().getFasCodigo().equals("GEN")){
+                return true;
+            }
+        } catch (Exception e) {
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Validación no completada", "No se puede validar el último estado de la radicación.", true, false);
+            logger.error("No se puede validar el último estado, causado por " + e, e);
+        }
+        return false;
     }
     
 
