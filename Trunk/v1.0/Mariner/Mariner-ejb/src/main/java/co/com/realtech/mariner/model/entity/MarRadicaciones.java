@@ -13,7 +13,6 @@ import java.util.List;
 import javax.persistence.GeneratedValue;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -108,11 +107,11 @@ public class MarRadicaciones implements Serializable {
     @JoinColumn(name = "NOT_ID", referencedColumnName = "NOT_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarNotarias notId;
-    @JoinColumn(name = "TDC_ID_OTORGANTE", referencedColumnName = "TDC_ID", nullable = false)
-    @ManyToOne(optional = false)
+    @JoinColumn(name = "TDC_ID_OTORGANTE", referencedColumnName = "TDC_ID")
+    @ManyToOne(optional = true)
     private MarTiposDocumentos tdcIdOtorgante;
-    @JoinColumn(name = "TDC_ID_RECEPTOR", referencedColumnName = "TDC_ID", nullable = false)
-    @ManyToOne(optional = false)
+    @JoinColumn(name = "TDC_ID_RECEPTOR", referencedColumnName = "TDC_ID")
+    @ManyToOne(optional = true)
     private MarTiposDocumentos tdcIdReceptor;
     @OneToMany(mappedBy = "radId")
     private List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList;

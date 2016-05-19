@@ -67,13 +67,17 @@ public class RadicFasesEstadosDAOBean extends GenericDAOBean implements RadicFas
                     + "INNER JOIN mar_radicaciones_fases_estados rfe ON r.rad_id = rfe.rad_id \n"
                     + "INNER JOIN mar_fases_estados fe ON rfe.fes_id = fe.fes_id\n"
                     + "WHERE rfe.usu_id = :usuId \n"
-                    + "AND fe.fes_codigo = ':faseEstado'\n"
+                    + ":WHEREFASE\n"
                     + "AND TRUNC(rfe.rfe_fecha_inicio) BETWEEN TO_DATE(':fechaIn','dd-MM-yyyy') AND TO_DATE(':fechaFin','dd-MM-yyyy')";
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
             sql = sql.replace(":fechaIn", sdf.format(fechaIn));
             sql = sql.replace(":fechaFin", sdf.format(fechaFin));
             sql = sql.replace((":usuId"), usuario.getUsuId().toString());
-            sql = sql.replace(":faseEstado", faseEstado);
+            if(faseEstado == null){
+                sql = sql.replace(":WHEREFASE", "");
+            }else{
+                sql = sql.replace(":WHEREFASE", "AND fe.fes_codigo = '"+ faseEstado +"'");
+            }
             System.out.println("sql = " + sql);
             Query q = getEntityManager().createNativeQuery(sql, MarRadicacionesFasesEstados.class);
             radicacionesLibres = (List<MarRadicacionesFasesEstados>)q.getResultList();
@@ -81,6 +85,31 @@ public class RadicFasesEstadosDAOBean extends GenericDAOBean implements RadicFas
             throw e;
         }
         return radicacionesLibres;
+    }
+    
+    /**
+     * Obtiene la última fase en la que se encuentra una radicación.
+     * @param radicacion
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    @Override
+    public MarRadicacionesFasesEstados obtenerUltimaFaseDeRadicacion(MarRadicaciones radicacion) throws MarinerPersistanceException{
+        MarRadicacionesFasesEstados radFaseEstado = null;
+        try {
+            String sql = "SELECT * FROM (\n"
+                    + "  SELECT * FROM mar_radicaciones_fases_estados \n"
+                    + "  WHERE rad_id = :radId\n"
+                    + "  ORDER BY rfe_id DESC\n"
+                    + ") WHERE ROWNUM < 2";
+            sql = sql.replace(":radId", radicacion.getRadId().toString());
+            Query q = getEntityManager().createNativeQuery(sql, MarRadicacionesFasesEstados.class);
+            q.setMaxResults(1);
+            radFaseEstado = (MarRadicacionesFasesEstados)q.getSingleResult();
+        } catch (Exception e) {
+            throw e;
+        }
+        return radFaseEstado;
     }
 
 }

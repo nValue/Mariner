@@ -2,7 +2,6 @@ package co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones;
 
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBean;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
-import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
 import java.util.ArrayList;
@@ -33,8 +32,9 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
                         "FROM mar_radicaciones r\n" +
                         "INNER JOIN mar_radicaciones_fases_estados rfe ON r.rad_id = rfe.rad_id\n" +
                         "INNER JOIN mar_escrituras e ON r.esc_id = e.esc_id\n" +
+                        "INNER JOIN mar_transacciones t ON r.rad_id = t.rad_id\n" +
                         "WHERE 1 = 1 AND (r.rad_numero LIKE('%=VALOR=%')\n" +
-                        "OR r.rad_cus LIKE ('%=VALOR=%')\n" +
+                        "OR t.tra_cus LIKE ('%=VALOR=%')\n" +
                         "OR r.rad_codigo_acto LIKE ('%=VALOR=%')\n" +
                         "OR e.esc_numero LIKE ('%=VALOR=%') ) \n";
             if(usuarioActual != null){
@@ -51,7 +51,7 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
     
     /**
      * Obtiene las radicaciones cuya ultima fase sea la ingresada y para un usuario específico si se envía
-     * @param fase
+     * @param fase El código de la fase, si quiere varias fases, escríbalas con coma y entre comillas simples ej: 'I-P','G-P' 
      * @param usuario
      * @return
      * @throws MarinerPersistanceException 
@@ -71,15 +71,15 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
                     + "INNER JOIN maximos m ON r.rad_id = m.rad_id\n"
                     + "INNER JOIN mar_radicaciones_fases_estados rfes ON m.rfe_id = rfes.rfe_id\n"
                     + "INNER JOIN mar_fases_estados fes ON rfes.fes_id = fes.fes_id\n"
-                    + "AND fes.fes_codigo = :fase\n"
+                    + "AND fes.fes_codigo IN (:fase)\n"
                     + "ORDER BY r.rad_fecha";
             if(usuario == null){
                 sql = sql.replace("%WHERE%", "");
             }else{
                 sql = sql.replace("%WHERE%", "WHERE rfes.usu_id = " + usuario.getUsuId());
             }
+            sql = sql.replace(":fase", fase);
             Query q = getEntityManager().createNativeQuery(sql,MarRadicaciones.class);
-            q.setParameter("fase", fase);
             radicacionesLibres = q.getResultList();
         } catch (Exception e) {
             throw e;
