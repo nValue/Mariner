@@ -64,11 +64,11 @@ public class MarTiposDocumentos implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tdcIdOtorgante")
+    @OneToMany(mappedBy = "tdcIdOtorgante")
     private List<MarRadicaciones> marRadicacionesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tdcIdReceptor")
+    @OneToMany(mappedBy = "tdcIdReceptor")
     private List<MarRadicaciones> marRadicacionesList1;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tdcId")
+    @OneToMany(mappedBy = "tdcId")
     private List<MarPersonas> marPersonasList;
 
     public MarTiposDocumentos() {

@@ -80,9 +80,9 @@ public class MarUsuarios implements Serializable {
     @Size(max = 20)
     @Column(name = "USU_TIPO", length = 20)
     private String usuTipo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuId")
+    @OneToMany(mappedBy = "usuId")
     private List<MarRolesUsuarios> marRolesUsuariosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuId")
+    @OneToMany(mappedBy = "usuId")
     private List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList;
     @JoinColumn(name = "NOT_ID", referencedColumnName = "NOT_ID")
     @ManyToOne

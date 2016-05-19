@@ -56,25 +56,31 @@ public class UsuariosDAOBean extends GenericDAOBean implements UsuariosDAOBeanLo
      * @throws Exception
      */
     @Override
-    public boolean validacionCreacionusuario(MarUsuarios usuario, MarPersonas persona) throws Exception {
+    public boolean validacionCreacionUsuario(MarUsuarios usuario, MarPersonas persona) throws Exception {
+        boolean validacion = false;
         try {
-            Query q = getEntityManager().createQuery("from MarUsuarios as u where upper(u.usuLogin)=upper(:usuLogin)");
-            q.setParameter("usuLogin", usuario.getUsuLogin());
+            Query q = getEntityManager().createQuery("from MarUsuarios as u where upper(u.usuLogin)=:usuLogin");
+            System.out.println("USUARIO:" + usuario.getUsuLogin());
+            q.setParameter("usuLogin", usuario.getUsuLogin().toUpperCase().trim());
             List<MarUsuarios> usuarios = (List<MarUsuarios>) q.getResultList();
 
             if (usuarios.isEmpty()) {
-                return true;
-            } else {
-                q = getEntityManager().createQuery("from MarUsuarios as u where (u.perId.tdcId=:tdcId and u.perId.perDocumento=:perDocumento) or upper(u.perId.perEmail)=upper(:perEmail)");
-                q.setParameter("tdcId", persona.getTdcId());
-                q.setParameter("perDocumento", persona.getPerDocumento());
-                q.setParameter("perEmail", persona.getPerEmail());
-                usuarios = (List<MarUsuarios>) q.getResultList();
-                return usuarios.isEmpty();
+                validacion = true;
+            }
+
+            q = getEntityManager().createQuery("from MarUsuarios as u where (u.perId.tdcId=:tdcId and u.perId.perDocumento=:perDocumento) or upper(u.perId.perEmail)=upper(:perEmail)");
+            q.setParameter("tdcId", persona.getTdcId());
+            q.setParameter("perDocumento", persona.getPerDocumento());
+            q.setParameter("perEmail", persona.getPerEmail());
+            usuarios = (List<MarUsuarios>) q.getResultList();
+
+            if (validacion) {
+                validacion = usuarios.isEmpty();
             }
         } catch (Exception e) {
             return false;
         }
+        return validacion;
     }
 
 }

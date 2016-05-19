@@ -16,6 +16,6 @@ public interface UsuariosDAOBeanLocal {
     
     public List<MarUsuarios> loadUserFiltered(String filterValue, MarUsuarios usuarioSession) throws Exception;
     
-    public boolean validacionCreacionusuario(MarUsuarios usuario, MarPersonas persona) throws Exception;
+    public boolean validacionCreacionUsuario(MarUsuarios usuario, MarPersonas persona) throws Exception;
     
 }

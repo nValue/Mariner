@@ -114,7 +114,7 @@ public class MarRadicaciones implements Serializable {
     @JoinColumn(name = "TDC_ID_RECEPTOR", referencedColumnName = "TDC_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarTiposDocumentos tdcIdReceptor;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "radId")
+    @OneToMany(mappedBy = "radId")
     private List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList;
     @OneToOne(mappedBy = "radId")
     private MarTransacciones marTransacciones;

@@ -93,7 +93,7 @@ public class MarArchivos implements Serializable {
     private MarPuntosMontajes pmoId;
     @OneToMany(mappedBy = "arcId")
     private List<MarReportes> marReportesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "arcId")
+    @OneToMany(mappedBy = "arcId")
     private List<MarEscrituras> marEscriturasList;
 
     public MarArchivos() {

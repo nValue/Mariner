@@ -80,12 +80,12 @@ public class MarPersonas implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "perId")
+    @OneToMany(mappedBy = "perId")
     private List<MarNotificaciones> marNotificacionesList;
     @JoinColumn(name = "TDC_ID", referencedColumnName = "TDC_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarTiposDocumentos tdcId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "perId")
+    @OneToMany(mappedBy = "perId")
     private List<MarUsuarios> marUsuariosList;
 
     public MarPersonas() {

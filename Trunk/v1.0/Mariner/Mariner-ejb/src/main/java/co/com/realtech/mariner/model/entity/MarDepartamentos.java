@@ -60,7 +60,7 @@ public class MarDepartamentos implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "depId")
+    @OneToMany(mappedBy = "depId")
     private List<MarCiudades> marCiudadesList;
     @JoinColumn(name = "PAI_ID", referencedColumnName = "PAI_ID", nullable = false)
     @ManyToOne(optional = false)

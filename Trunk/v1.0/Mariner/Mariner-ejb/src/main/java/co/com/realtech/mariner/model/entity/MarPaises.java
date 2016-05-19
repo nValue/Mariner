@@ -62,7 +62,7 @@ public class MarPaises implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "paiId")
+    @OneToMany(mappedBy = "paiId")
     private List<MarDepartamentos> marDepartamentosList;
 
     public MarPaises() {

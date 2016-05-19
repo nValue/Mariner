@@ -70,7 +70,7 @@ public class MarNotarias implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "notId")
+    @OneToMany(mappedBy = "notId")
     private List<MarRadicaciones> marRadicacionesList;
     @JoinColumn(name = "MOR_ID", referencedColumnName = "MOR_ID")
     @ManyToOne
