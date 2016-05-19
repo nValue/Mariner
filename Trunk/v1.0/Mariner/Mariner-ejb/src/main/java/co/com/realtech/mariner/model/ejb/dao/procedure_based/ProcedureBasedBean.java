@@ -23,7 +23,7 @@ public class ProcedureBasedBean extends GenericDAOBean implements ProcedureBased
     public String cargarConstante(String llave) {
         String valor;
         try {
-            valor=callGenericFunction("FN_CONSULTAR_CONSTANTE", llave).toString();
+            valor = callGenericFunction("PKG_VUR_NEGOCIO.FN_CONSULTAR_CONSTANTE", llave).toString();
         } catch (Exception e) {
             valor = "";
         }

@@ -36,7 +36,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarNotificaciones.findByNtfMensaje", query = "SELECT m FROM MarNotificaciones m WHERE m.ntfMensaje = :ntfMensaje"),
     @NamedQuery(name = "MarNotificaciones.findByNftFecha", query = "SELECT m FROM MarNotificaciones m WHERE m.nftFecha = :nftFecha"),
     @NamedQuery(name = "MarNotificaciones.findByAudUsuario", query = "SELECT m FROM MarNotificaciones m WHERE m.audUsuario = :audUsuario"),
-    @NamedQuery(name = "MarNotificaciones.findByAudFecha", query = "SELECT m FROM MarNotificaciones m WHERE m.audFecha = :audFecha")})
+    @NamedQuery(name = "MarNotificaciones.findByAudFecha", query = "SELECT m FROM MarNotificaciones m WHERE m.audFecha = :audFecha"),
+    @NamedQuery(name = "MarNotificaciones.findByNtfEstado", query = "SELECT m FROM MarNotificaciones m WHERE m.ntfEstado = :ntfEstado"),
+    @NamedQuery(name = "MarNotificaciones.findByNtfFechaLectura", query = "SELECT m FROM MarNotificaciones m WHERE m.ntfFechaLectura = :ntfFechaLectura")})
 public class MarNotificaciones implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -59,9 +61,15 @@ public class MarNotificaciones implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @JoinColumn(name = "PER_ID", referencedColumnName = "PER_ID", nullable = false)
-    @ManyToOne(optional = false)
-    private MarPersonas perId;
+    @Size(max = 20)
+    @Column(name = "NTF_ESTADO", length = 20)
+    private String ntfEstado;
+    @Column(name = "NTF_FECHA_LECTURA")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ntfFechaLectura;
+    @JoinColumn(name = "USU_ID", referencedColumnName = "USU_ID")
+    @ManyToOne
+    private MarUsuarios usuId;
 
     public MarNotificaciones() {
     }
@@ -110,12 +118,28 @@ public class MarNotificaciones implements Serializable {
         this.audFecha = audFecha;
     }
 
-    public MarPersonas getPerId() {
-        return perId;
+    public String getNtfEstado() {
+        return ntfEstado;
     }
 
-    public void setPerId(MarPersonas perId) {
-        this.perId = perId;
+    public void setNtfEstado(String ntfEstado) {
+        this.ntfEstado = ntfEstado;
+    }
+
+    public Date getNtfFechaLectura() {
+        return ntfFechaLectura;
+    }
+
+    public void setNtfFechaLectura(Date ntfFechaLectura) {
+        this.ntfFechaLectura = ntfFechaLectura;
+    }
+
+    public MarUsuarios getUsuId() {
+        return usuId;
+    }
+
+    public void setUsuId(MarUsuarios usuId) {
+        this.usuId = usuId;
     }
 
     @Override

@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-    <artifactId>Mariner</artifactId>
-    <groupId>co.com.realtech.mariner</groupId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
+        <artifactId>Mariner</artifactId>
+        <groupId>co.com.realtech.mariner</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
 
     <groupId>co.com.realtech.mariner</groupId>
     <artifactId>Mariner-ejb</artifactId>
@@ -67,7 +67,12 @@
             <artifactId>javassist</artifactId>
             <version>3.18.2-GA</version>
         </dependency>
-        
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.7</version>
+            <type>jar</type>
+        </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
@@ -108,6 +113,19 @@
             </resource>
         </resources>
         -->
+        <resources>
+            <resource>
+                <targetPath>META-INF</targetPath>
+                <directory>src</directory>
+                <includes>
+                    <include>jax-ws-catalog.xml</include>
+                    <include>wsdl/**</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -153,7 +171,8 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>            
+            </plugin>
+            
         </plugins>
     </build>
     <repositories>

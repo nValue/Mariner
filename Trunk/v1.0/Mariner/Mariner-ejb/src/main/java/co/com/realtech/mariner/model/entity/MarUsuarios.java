@@ -81,9 +81,13 @@ public class MarUsuarios implements Serializable {
     @Column(name = "USU_TIPO", length = 20)
     private String usuTipo;
     @OneToMany(mappedBy = "usuId")
+    private List<MarNotificaciones> marNotificacionesList;
+    @OneToMany(mappedBy = "usuId")
     private List<MarRolesUsuarios> marRolesUsuariosList;
     @OneToMany(mappedBy = "usuId")
     private List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList;
+    @OneToMany(mappedBy = "usuId")
+    private List<MarTransacciones> marTransaccionesList;
     @JoinColumn(name = "NOT_ID", referencedColumnName = "NOT_ID")
     @ManyToOne
     private MarNotarias notId;
@@ -172,6 +176,14 @@ public class MarUsuarios implements Serializable {
         this.usuTipo = usuTipo;
     }
 
+    public List<MarNotificaciones> getMarNotificacionesList() {
+        return marNotificacionesList;
+    }
+
+    public void setMarNotificacionesList(List<MarNotificaciones> marNotificacionesList) {
+        this.marNotificacionesList = marNotificacionesList;
+    }
+
     public List<MarRolesUsuarios> getMarRolesUsuariosList() {
         return marRolesUsuariosList;
     }
@@ -186,6 +198,14 @@ public class MarUsuarios implements Serializable {
 
     public void setMarRadicacionesFasesEstadosList(List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList) {
         this.marRadicacionesFasesEstadosList = marRadicacionesFasesEstadosList;
+    }
+
+    public List<MarTransacciones> getMarTransaccionesList() {
+        return marTransaccionesList;
+    }
+
+    public void setMarTransaccionesList(List<MarTransacciones> marTransaccionesList) {
+        this.marTransaccionesList = marTransaccionesList;
     }
 
     public MarNotarias getNotId() {

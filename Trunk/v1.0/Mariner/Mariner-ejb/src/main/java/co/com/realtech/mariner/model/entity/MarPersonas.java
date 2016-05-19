@@ -80,8 +80,6 @@ public class MarPersonas implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(mappedBy = "perId")
-    private List<MarNotificaciones> marNotificacionesList;
     @JoinColumn(name = "TDC_ID", referencedColumnName = "TDC_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarTiposDocumentos tdcId;
@@ -164,14 +162,6 @@ public class MarPersonas implements Serializable {
 
     public void setAudFecha(Date audFecha) {
         this.audFecha = audFecha;
-    }
-
-    public List<MarNotificaciones> getMarNotificacionesList() {
-        return marNotificacionesList;
-    }
-
-    public void setMarNotificacionesList(List<MarNotificaciones> marNotificacionesList) {
-        this.marNotificacionesList = marNotificacionesList;
     }
 
     public MarTiposDocumentos getTdcId() {

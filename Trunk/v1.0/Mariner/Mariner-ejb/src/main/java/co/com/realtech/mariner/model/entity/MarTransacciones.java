@@ -16,6 +16,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
@@ -87,6 +88,9 @@ public class MarTransacciones implements Serializable {
     @JoinColumn(name = "RAD_ID", referencedColumnName = "RAD_ID")
     @OneToOne
     private MarRadicaciones radId;
+    @JoinColumn(name = "USU_ID", referencedColumnName = "USU_ID")
+    @ManyToOne
+    private MarUsuarios usuId;
 
     public MarTransacciones() {
     }
@@ -189,6 +193,14 @@ public class MarTransacciones implements Serializable {
 
     public void setRadId(MarRadicaciones radId) {
         this.radId = radId;
+    }
+
+    public MarUsuarios getUsuId() {
+        return usuId;
+    }
+
+    public void setUsuId(MarUsuarios usuId) {
+        this.usuId = usuId;
     }
 
     @Override

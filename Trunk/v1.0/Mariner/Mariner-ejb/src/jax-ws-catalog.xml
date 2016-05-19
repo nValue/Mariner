@@ -2,4 +2,7 @@
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
     <system systemId="file:/C:/Users/Andres%20Rivera/Google%20Drive/nValue/Realtech/Proyecto%20VUR%20Valle/Fuentes/WS/SAP/WS_GetDetail.xml" uri="wsdl/WS_GetDetail.xml.wsdl"/>
     <system systemId="file:/C:/Users/Andres%20Rivera/Google%20Drive/nValue/Realtech/Proyecto%20VUR%20Valle/Fuentes/WS/SAP/WS_GetDetail.wsdl" uri="wsdl/WS_GetDetail.wsdl"/>
+    <system systemId="http://lamaria.elvalle.com:8000/sap/bc/srt/wsdl/bndg_620EFE55EA91C24BE1000000C0A8C841/wsdl11/allinone/ws_policy/document?sap-client=100" uri="wsdl/lamaria.elvalle.com_8000/sap/bc/srt/wsdl/bndg_620EFE55EA91C24BE1000000C0A8C841/wsdl11/allinone/ws_policy/document.sap-client_100.wsdl"/>
+    <system systemId="http://lamaria.elvalle.com:8000/sap/bc/srt/wsdl/sdef_ZWSVUR_GETLIST/wsdl11/standard/document?sap-client=100" uri="wsdl/lamaria.elvalle.com_8000/sap/bc/srt/wsdl/sdef_ZWSVUR_GETLIST/wsdl11/standard/document.sap-client_100.wsdl"/>
+    <system systemId="http://lamaria.elvalle.com:8000/sap/bc/srt/wsdl/sdef_ZWSVUR_PAYMENT/wsdl11/standard/document?sap-client=100" uri="wsdl/lamaria.elvalle.com_8000/sap/bc/srt/wsdl/sdef_ZWSVUR_PAYMENT/wsdl11/standard/document.sap-client_100.wsdl"/>
 </catalog>
