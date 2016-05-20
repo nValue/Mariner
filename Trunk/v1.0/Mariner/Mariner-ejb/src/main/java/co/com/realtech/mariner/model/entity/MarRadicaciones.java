@@ -36,6 +36,7 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "MAR_RADICACIONES", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"RAD_LIQUIDACION"}),
     @UniqueConstraint(columnNames = {"ESC_ID"})})
 @NamedQueries({
     @NamedQuery(name = "MarRadicaciones.findAll", query = "SELECT m FROM MarRadicaciones m"),
@@ -50,7 +51,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarRadicaciones.findByRadCuantia", query = "SELECT m FROM MarRadicaciones m WHERE m.radCuantia = :radCuantia"),
     @NamedQuery(name = "MarRadicaciones.findByRadValorLiq", query = "SELECT m FROM MarRadicaciones m WHERE m.radValorLiq = :radValorLiq"),
     @NamedQuery(name = "MarRadicaciones.findByRadEsExterior", query = "SELECT m FROM MarRadicaciones m WHERE m.radEsExterior = :radEsExterior"),
-    @NamedQuery(name = "MarRadicaciones.findByRadEstado", query = "SELECT m FROM MarRadicaciones m WHERE m.radEstado = :radEstado")})
+    @NamedQuery(name = "MarRadicaciones.findByRadEstado", query = "SELECT m FROM MarRadicaciones m WHERE m.radEstado = :radEstado"),
+    @NamedQuery(name = "MarRadicaciones.findByRadLiquidacion", query = "SELECT m FROM MarRadicaciones m WHERE m.radLiquidacion = :radLiquidacion")})
 public class MarRadicaciones implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -96,6 +98,9 @@ public class MarRadicaciones implements Serializable {
     @Size(max = 1)
     @Column(name = "RAD_ESTADO", length = 1)
     private String radEstado;
+    @Size(max = 100)
+    @Column(name = "RAD_LIQUIDACION", length = 100)
+    private String radLiquidacion;
     @JoinColumn(name = "ARC_ID_RECIBO_PAGO", referencedColumnName = "ARC_ID")
     @ManyToOne
     private MarArchivos arcIdReciboPago;
@@ -226,6 +231,14 @@ public class MarRadicaciones implements Serializable {
 
     public void setRadEstado(String radEstado) {
         this.radEstado = radEstado;
+    }
+
+    public String getRadLiquidacion() {
+        return radLiquidacion;
+    }
+
+    public void setRadLiquidacion(String radLiquidacion) {
+        this.radLiquidacion = radLiquidacion;
     }
 
     public MarArchivos getArcIdReciboPago() {
