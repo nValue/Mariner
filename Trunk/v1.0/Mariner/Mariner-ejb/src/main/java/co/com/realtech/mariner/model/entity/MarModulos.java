@@ -15,6 +15,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -82,7 +83,7 @@ public class MarModulos implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(mappedBy = "modIdPadre")
+    @OneToMany(mappedBy = "modIdPadre",fetch = FetchType.EAGER)
     private List<MarModulos> marModulosList;
     @JoinColumn(name = "MOD_ID_PADRE", referencedColumnName = "MOD_ID")
     @ManyToOne
