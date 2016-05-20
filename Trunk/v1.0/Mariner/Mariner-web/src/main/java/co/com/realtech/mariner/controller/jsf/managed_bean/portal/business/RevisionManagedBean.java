@@ -54,6 +54,7 @@ public class RevisionManagedBean extends GenericManagedBean{
     public void init() {
         fechaFiltroInic = new Date();
         fechaFiltroFin = new Date();
+        obtenerRadicacionesPendientes();
     }
     
     /**
@@ -61,7 +62,7 @@ public class RevisionManagedBean extends GenericManagedBean{
      */
     public void obtenerRadicacionesPendientes(){
         try {
-            radicacionesPendientes = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'G-A'", usuarioSesion);
+            radicacionesPendientes = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'R-P'", usuarioSesion);
             if(!radicacionesPendientes.isEmpty()){
                 radicacionPendienteSel = radicacionesPendientes.get(0);
                 obtenerFasesEstadosDeRadicacion();
@@ -98,12 +99,14 @@ public class RevisionManagedBean extends GenericManagedBean{
         try {
             //Carga la constante del número máximo de radicaciones que puede tener un validador.
             Integer maxRads = Integer.parseInt(ConstantesUtils.cargarConstante("MAX-VALID-USER"));
-            if(radicacionesPendientes.size() > maxRads){
+            System.out.println("maxRads = " + maxRads);
+            System.out.println("radicacionesPendientes = " + radicacionesPendientes);
+            if(radicacionesPendientes != null && (radicacionesPendientes.size() > maxRads)){
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Máximo encontrado", "El usuario tiene el máximo de radicaciones permitidas para el proceso ( " + maxRads + " )", true, false);
                 return;
             }
             MarRadicacionesFasesEstados radicacionFaseUltimoEstado;
-            BigDecimal BDsalida = (BigDecimal)genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_asignar_liquidacion", usuarioSesion.getUsuId().intValue(), "R-P", "");
+            BigDecimal BDsalida = (BigDecimal)genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_asignar_liquidacion", usuarioSesion.getUsuId().intValue(), "G-A", "");
             Integer salida = BDsalida.intValue();
             switch (salida) {
                 case -999:

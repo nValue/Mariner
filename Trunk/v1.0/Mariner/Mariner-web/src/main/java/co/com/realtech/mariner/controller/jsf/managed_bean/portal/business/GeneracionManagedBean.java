@@ -114,7 +114,7 @@ public class GeneracionManagedBean extends GenericManagedBean{
         try {
             
             Integer maxRads = Integer.parseInt(ConstantesUtils.cargarConstante("MAX-LIQUID-USER"));
-            if(radicacionesUsuario.size() > maxRads){
+            if(radicacionesUsuario != null && (radicacionesUsuario.size() > maxRads)){
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Máximo encontrado", "El usuario tiene el máximo de radicaciones permitidas para el proceso ( " + maxRads + " )", true, false);
                 return;
             }
