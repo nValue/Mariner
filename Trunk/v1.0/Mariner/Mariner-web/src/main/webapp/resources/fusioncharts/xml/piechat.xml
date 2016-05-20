@@ -1,5 +1,0 @@
-<chart caption="Informacion de Espacio" palettecolors="#0075c2,#1aaf5d,#f2c500,#f45b00,#8e0000" bgcolor="#ffffff" showborder="0" use3dlighting="0" showshadow="0" enablesmartlabels="0" startingangle="0" showpercentvalues="0" showpercentintooltip="0" decimals="1" captionfontsize="14" subcaptionfontsize="14" subcaptionfontbold="0" tooltipcolor="#ffffff" tooltipborderthickness="0" tooltipbgcolor="#000000" tooltipbgalpha="80" tooltipborderradius="2" tooltippadding="5" showhovereffect="1" showlegend="1" legendbgcolor="#ffffff" legendborderalpha="0" legendshadow="0" legenditemfontsize="10" legenditemfontcolor="#666666" usedataplotcolorforlabels="1">
-    <set label="Espacio Total" value="1250400" />
-    <set label="Espacio Usado" value="1250400" />
-    <set label="Espacio Disponible" value="1250400" />
-</chart>

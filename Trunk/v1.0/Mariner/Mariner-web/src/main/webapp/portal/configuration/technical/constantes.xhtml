@@ -73,6 +73,11 @@
                         <p:inputText value="#{constantesManagedBean.constante.conNombre}" required="true" size="30"/>
                         <h:outputLabel value="Valor"/>
                         <p:inputText value="#{constantesManagedBean.constante.conValorGenerico}" required="true" size="90"/>
+                        <h:outputLabel value="Estado"/>                        
+                        <p:selectOneMenu styleClass="inputModal" value="#{constantesManagedBean.constante.conEstado}" style="width: 250px;">
+                            <f:selectItem itemLabel="Activo" itemValue="A" />
+                            <f:selectItem itemLabel="Inactivo" itemValue="I" />
+                        </p:selectOneMenu>
                     </h:panelGrid>
                     <div align="center" style="padding-top: 10px">
                         <p:commandButton value="Guardar" action="#{constantesManagedBean.guardarConstante()}" update="@form :formConstantes" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();"/>

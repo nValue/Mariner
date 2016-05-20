@@ -47,7 +47,7 @@ public class VurTransacciones {
                     transaccion.setCodigoTransaccion(codigoTransaccion);
                     transaccion.setCus(transaccionBD.getTraCus());
                     transaccion.setDescripcionTransaccion("Pago de Derechos de Registro Valle del Cauca");
-                    transaccion.setReferencia(codigoTransaccion.toString());
+                    transaccion.setReferencia("");
                     transaccion.setTelefono(transaccionBD.getUsuId().getPerId().getPerTelefono());
                     long valorTransaccion = transaccionBD.getTraValor().longValue();
                     transaccion.setValorTransaccion(valorTransaccion);

@@ -56,25 +56,87 @@
                             <img class="imgValle" width="50px" src="#{resource['/images/valle.png']}"/>
                         </div>
                         <div class="rightHeaderMain">
-                            <img id="usuarioImg" class="element-animation" style="margin: 4%;margin-top: 20px;cursor: pointer;width: 24px;" src="#{resource['/images/icons/user-icon.png']}" title="Presione para ver la informacion del usuario"/>  
-
-                            <!--div para la información del usuario onHover-->
-                            <div id="usuarioDiv" align="center">
-                                <div id="imgUserBig">
-                                    <span class="helper"></span>
-                                    <img style="vertical-align: middle" src="#{resource['/images/user-male-big.png']}"/>
-                                </div>
-                                <div id="infoUser">
-                                    <h:outputLabel style="font-size: 24px;display: block;color: #000;" value="#{indexManagedBean.usuario.usuLogin}" />
-                                    <h:outputLabel style="font-size: 16px;display: block;color: #b5b5b5;" value="#{indexManagedBean.usuario.perId.perNombres} #{indexManagedBean.usuario.perId.perApellidos}" />
-                                    <p:commandButton style="margin: 9%" value="Cambiar contraseña" oncomplete="PF('dialogContrasena').show()" />
-                                </div>
-                            </div>
-
-                            <p:commandLink action="#{indexManagedBean.salir()}" title="Presione aqui para cerrar la sesion de usuario">
-                                <img class="element-animation" style="margin: 4%;cursor: pointer;width: 24px;" src="#{resource['/images/icons/logout-icon.png']}"/>
-                                <p:confirm header="Confirmacion" message="Esta seguro de que desea cerrar su sesion?" icon="ui-icon-alert" />
-                            </p:commandLink>
+                            <table class="notificaciones-panel">
+                                <tr>
+                                    <!-- panel de Notificaciones -->
+                                    <td>
+                                        <div id="usuarioNotificaciones" class="element-animation">
+                                            <h:panelGroup styleClass="notificacionesCounter">
+                                                <div>
+                                                    #{notificacionesManagedBean.cantidadPendientes}
+                                                </div>                                            
+                                            </h:panelGroup>                                                                                       
+                                        </div>
+                                        <div id="usuarioNotificacionesDetalle" align="center">
+                                            <div>
+                                                <h:form id="formNotificacionesFlotante">
+                                                    <h:panelGroup id="panelNotificacionesFlotante">
+                                                        <div id="notificaciones-principal">
+                                                            <script type="text/javascript">
+                                                                function fl_execute_button(idClass, status) {
+                                                                    if (status === 'P') {
+                                                                        var classes = document.getElementsByClassName(idClass);
+                                                                        var buttton = classes[0];
+                                                                        buttton.click();
+                                                                    }
+                                                                }
+                                                            </script>
+                                                            <ui:repeat value="#{notificacionesManagedBean.notificaciones}" var="notificacion" varStatus="status">
+                                                                <p:commandLink styleClass="btnNotificacion_#{notificacion.ntfId}" update="@(.notificacionesCounter) @this" action="#{notificacionesManagedBean.actualizarEstadoLecturaNotificacion(notificacion)}" onmouseover="fl_execute_button('btnNotificacion_#{notificacion.ntfId}', '#{notificacion.ntfEstado}');">
+                                                                    <div class="componente-notificacion-#{notificacion.ntfEstado}" title="#{notificacion.nftFecha}">
+                                                                        <div>
+                                                                            <table style="width: 100%">
+                                                                                <tr>
+                                                                                    <td width="14" valign="middle">
+                                                                                        <div class="componente-notificacion-numero">
+                                                                                            #{status.index+1}-
+                                                                                        </div>
+                                                                                    </td>
+                                                                                    <td valign="top" class="componente-notificacion-texto">
+                                                                                        #{notificacion.ntfMensaje}
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </div>
+                                                                        <div align="right" class="componente-notificacion-fecha">
+                                                                            <h:outputText value="#{notificacion.nftFecha}" >
+                                                                                <f:convertDateTime timeZone="#{utilManagedBean.timeZone}" pattern="dd/MM/yyyy hh:mm:ss" />
+                                                                            </h:outputText>
+                                                                        </div>                                            
+                                                                    </div>
+                                                                </p:commandLink>
+                                                            </ui:repeat>                                
+                                                        </div>
+                                                    </h:panelGroup>
+                                                </h:form>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <!-- panel de usuario -->
+                                    <td>
+                                        <img id="usuarioImg" class="element-animation" style="cursor: pointer;width: 24px;" src="#{resource['/images/icons/user-icon.png']}" title="Presione para ver la informacion del usuario"/>  
+                                        <!--div para la información del usuario onHover-->
+                                        <div id="usuarioDiv" align="center">
+                                            <div id="imgUserBig">
+                                                <span class="helper"></span>
+                                                <img style="vertical-align: middle" src="#{resource['/images/user-male-big.png']}"/>
+                                            </div>
+                                            <div id="infoUser">
+                                                <h:outputLabel style="font-size: 24px;display: block;color: #000;" value="#{indexManagedBean.usuario.usuLogin}" />
+                                                <h:outputLabel style="font-size: 16px;display: block;color: #b5b5b5;" value="#{indexManagedBean.usuario.perId.perNombres} #{indexManagedBean.usuario.perId.perApellidos}" />
+                                                <p:commandButton style="margin: 9%" value="Cambiar contraseña" oncomplete="PF('dialogContrasena').show()" />
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <!-- panel de cerrado de usuario -->
+                                    <td>
+                                        <p:commandLink action="#{indexManagedBean.salir()}" title="Presione aqui para cerrar la sesion de usuario">
+                                            <img class="element-animation" style="cursor: pointer;width: 24px;" src="#{resource['/images/icons/logout-icon.png']}"/>
+                                            <p:confirm header="Confirmacion" message="Esta seguro de que desea cerrar su sesion?" icon="ui-icon-alert" />
+                                        </p:commandLink>
+                                    </td>
+                                </tr>
+                            </table>                            
                         </div>
                     </div>
                 </h:form>

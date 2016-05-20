@@ -1,0 +1,14 @@
+<chart yaxisname="Porcentaje de Avance" numberSuffix="%" palettecolors="#0075c2" bgcolor="#ffffff" showborder="0" showcanvasborder="0" useplotgradientcolor="0" plotborderalpha="10" placevaluesinside="1" valuefontcolor="#ffffff" showaxislines="1" axislinealpha="25" divlinealpha="10" aligncaptionwithcanvas="0" showalternatevgridcolor="0" captionfontsize="14" subcaptionfontsize="14" subcaptionfontbold="0" tooltipcolor="#ffffff" tooltipborderthickness="0" tooltipbgcolor="#000000" tooltipbgalpha="80" tooltipborderradius="2" tooltippadding="5">
+    <set label="Radicacion # 1" value="20" />
+    <set label="Radicacion # 4" value="60" />
+    <set label="Radicacion # 5" value="80" />
+    <set label="Radicacion # 6" value="20" />
+    <set label="Radicacion # 7" value="90" />
+    <set label="Radicacion # 8" value="50" />
+    <set label="Radicacion # 11" value="100" />
+    <set label="Radicacion # 10" value="60" />
+    <set label="Radicacion # 4234" value="10" />
+    <set label="Radicacion # 111" value="100" />
+    <set label="Radicacion # 132" value="60" />
+    <set label="Radicacion # 44" value="10" />
+</chart>

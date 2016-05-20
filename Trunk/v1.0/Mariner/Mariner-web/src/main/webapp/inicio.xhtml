@@ -3,7 +3,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/templates/template-business.xhtml"
-                xmlns:h="http://xmlns.jcp.org/jsf/html">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="negocio">
         <div id="contenedorInicio">
@@ -16,7 +18,28 @@
                     </div>
                 </div>
                 <div>
-                    Contenido XTY
+                    <div>
+                        <div style="padding: 10px;">
+                            El Siguiente es el estado (% Avance) de las 10 ultimas radicaciones cargadas en el sistema
+                        </div>
+                        <script type="text/javascript" src="#{request.contextPath}/resources/fusioncharts/js/fusioncharts.js"/>
+                        <script type="text/javascript" src="#{request.contextPath}/resources/fusioncharts/js/themes/fusioncharts.theme.fint.js"/>
+                        
+                        <script type="text/javascript">
+                            FusionCharts.ready(function () {
+                                var generalReportChart = new FusionCharts({
+                                    type: "bar2d",
+                                    renderAt: "chartContainer",
+                                    width: "97%",
+                                    height: "320"
+                                });
+                                var url = "#{request.contextPath}/resources/fusioncharts/xml/inicio.xml";
+                                        generalReportChart.setXMLUrl(url);
+                                        generalReportChart.render("chartContainer");
+                                    });
+                        </script>
+                        <div id="chartContainer"/>
+                    </div>
                 </div>
             </div>
             <div id="espacioDer">
@@ -28,13 +51,46 @@
                     </div>
                 </div>
                 <div>
-                    <div id="notificaciones-principal">
-                        <ui:repeat value="#{notificacionesManagedBean.notificaciones}" var="notificacion">
-                            <div class="componente-notificacion-#{notificacion.ntfEstado}" title="#{notificacion.nftFecha}">
-                                #{notificacion.ntfMensaje}
+                    <h:form id="formNotificaciones">
+                        <h:panelGroup id="panelNotificaciones">
+                            <div id="notificaciones-principal">
+                                <script type="text/javascript">
+                                    function fl_execute_button_index(idClass, status) {
+                                        if (status === 'P') {
+                                            var classes = document.getElementsByClassName(idClass);
+                                            var buttton = classes[0];
+                                            buttton.click();
+                                        }
+                                    }
+                                </script>
+                                <ui:repeat value="#{notificacionesManagedBean.notificaciones}" var="notificacion" varStatus="status">
+                                    <p:commandLink styleClass="btnNotificacionIndex_#{notificacion.ntfId}" update="@this" action="#{notificacionesManagedBean.actualizarEstadoLecturaNotificacion(notificacion)}" onmouseover="fl_execute_button_index('btnNotificacionIndex_#{notificacion.ntfId}', '#{notificacion.ntfEstado}');">
+                                        <div class="componente-notificacion-#{notificacion.ntfEstado}" title="#{notificacion.nftFecha}">
+                                            <div>
+                                                <table style="width: 100%">
+                                                    <tr>
+                                                        <td width="14" valign="middle">
+                                                            <div class="componente-notificacion-numero">
+                                                                #{status.index+1}-
+                                                            </div>
+                                                        </td>
+                                                        <td valign="top" class="componente-notificacion-texto">
+                                                            #{notificacion.ntfMensaje}
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div align="right" class="componente-notificacion-fecha">
+                                                <h:outputText value="#{notificacion.nftFecha}" >
+                                                    <f:convertDateTime timeZone="#{utilManagedBean.timeZone}" pattern="dd/MM/yyyy hh:mm:ss" />
+                                                </h:outputText>
+                                            </div>                                            
+                                        </div>
+                                    </p:commandLink>
+                                </ui:repeat>                                
                             </div>
-                        </ui:repeat>
-                    </div>
+                        </h:panelGroup>
+                    </h:form>                                        
                 </div>
             </div>
         </div>        
