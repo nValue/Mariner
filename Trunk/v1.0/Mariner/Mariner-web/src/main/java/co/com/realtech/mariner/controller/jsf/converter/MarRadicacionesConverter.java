@@ -51,7 +51,12 @@ public class MarRadicacionesConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return String.valueOf(((MarRadicaciones) value).getRadId());
+        String valor = "";
+        try {
+            valor = String.valueOf(((MarRadicaciones) value).getRadId());
+        } catch (ClassCastException e) {
+        }
+        return valor;
     }
 
 }

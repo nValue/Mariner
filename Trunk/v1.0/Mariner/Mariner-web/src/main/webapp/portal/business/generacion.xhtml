@@ -28,6 +28,7 @@
                         <h:outputLabel value="Radicaciones Actuales: " />
                         <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" converter="MarRadicacionesConverter" value="#{generacionManagedBean.radicacionUsuarioSel}">
                             <p:ajax listener="#{generacionManagedBean.obtenerFasesEstadosDeRadicacion()}" update="formTurnos" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                            <f:selectItem itemLabel=" - " itemValue="" />
                             <f:selectItems value="#{generacionManagedBean.radicacionesUsuario}" var="rads" itemLabel="#{rads.radNumero}" itemValue="#{rads}"/>
                         </p:selectOneMenu>
                         <p:commandButton style="vertical-align: top" value="Obtener Radicación" action="#{generacionManagedBean.asignarNuevaRadicacion()}" update="formTurnos" process="@this"/>
@@ -94,10 +95,10 @@
                                 <p:commandButton style="vertical-align: top" value="Validar Radicación" action="#{generacionManagedBean.validarRadicacion()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-P')}" >
                                     <p:confirm header="Confirmación" message="¿Esta seguro de que desea validar la radicación?" icon="ui-icon-alert" />
                                 </p:commandButton>
-                                <p:commandButton style="vertical-align: top" value="Rechazar" action="#{generacionManagedBean.rechazarRadicacion()}" update="formTurnos"  rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-P')}" >
+                                <p:commandButton style="vertical-align: top" value="Rechazar" action="#{generacionManagedBean.rechazarRadicacion()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-P')}" >
                                     <p:confirm header="Confirmación" message="¿Esta seguro de que desea rechazar esta radicación?" icon="ui-icon-alert" />
                                 </p:commandButton>
-                                <p:commandButton style="vertical-align: top" value="Obtener SAP" action="#{generacionManagedBean.obtenerSAP()}" update="formTurnos"  rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-S')}" />
+                                <p:commandButton style="vertical-align: top" value="Obtener SAP" action="#{generacionManagedBean.obtenerSAP()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-S')}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                             </div>
                         </h:panelGroup>
                     </div>
@@ -105,7 +106,7 @@
             </div>
         </div>
 
-        <p:dialog id="modalHistorial" widgetVar="dialogHistorial" styleClass="modalTop" resizable="false" header="Historial de radicaciones" modal="true" width="800" minHeight="400">
+        <p:dialog id="modalHistorial" widgetVar="dialogHistorial" styleClass="modalTop" resizable="false" header="Historial de radicaciones" modal="true" width="950" minHeight="400">
             <h:form id="formHistorial">
                 <div align="right" style="margin: 20px;">
                     <h:outputLabel value="Fecha Desde"/>
@@ -118,11 +119,13 @@
                     </p:calendar>
                 </div>
                 <p:dataTable style="margin: 20px;" value="#{generacionManagedBean.radicacionesFasesEstProcesadas}" 
-                             selection="#{generacionManagedBean.radicacionFaseEstProcesadaSel}" var="radPro" selectionMode="single" rowKey="#{radPro.rfeId}" >
-                    <p:column headerText="Número" width="80" >
+                             selection="#{generacionManagedBean.radicacionFaseEstProcesadaSel}" var="radPro" selectionMode="single" rowKey="#{radPro.rfeId}" 
+                             paginator="true" rows="7" paginatorPosition="bottom"
+                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" emptyMessage="No hay radicaciones">
+                    <p:column headerText="Número" width="100" >
                         <h:outputLabel value="#{radPro.radId.radNumero}"/>
                     </p:column>
-                    <p:column headerText="Fecha">
+                    <p:column headerText="Fecha" width="120">
                         <h:outputLabel value="#{radPro.rfeFechaInicio}" >
                             <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
                         </h:outputLabel>

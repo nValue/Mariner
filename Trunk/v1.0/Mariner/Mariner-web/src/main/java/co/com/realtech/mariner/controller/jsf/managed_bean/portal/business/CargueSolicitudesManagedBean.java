@@ -18,6 +18,7 @@ import co.com.realtech.mariner.util.io.file.FileUtilidades;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -78,7 +79,7 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean{
      */
     public void obtenerRadicacionesPendientes(){
         try {
-            radicaciones = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'I-P','G-R'", usuarioSesion);
+            radicaciones = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'I-P','I-R'", usuarioSesion);
             if(!radicaciones.isEmpty()){
                 radicacionSel = radicaciones.get(0);
                 List<MarRadicacionesFasesEstados> rfe;
@@ -125,6 +126,15 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean{
     public void obtenerFasesEstadosDeRadicacion(){
         try {
             radicacionesFasesEstados = (List<MarRadicacionesFasesEstados>)genericDAOBean.findAllByColumn(MarRadicacionesFasesEstados.class, "radId", radicacionSel, true, "rfeId");
+            if(!radicacionesFasesEstados.isEmpty()){
+                radicacionFaseEstProcesadaSel = radicacionesFasesEstados.get(radicacionesFasesEstados.size()-1);
+                //Si la radicación fue rechazada no trae las observaciones, asi el notario las puede colocar
+                if(radicacionFaseEstProcesadaSel.getFesId().getFesCodigo().equals("I-R")){
+                    observacionesProceso = "";
+                }else{
+                    observacionesProceso = radicacionFaseEstProcesadaSel.getRfeObservaciones();
+                }
+            }
         } catch (Exception e) {
             logger.error("Error obteniendo las fases procesos, causado por : " + e, e);
         }
@@ -150,7 +160,7 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean{
      */
     public void obtenerRadicacionesProcesadas(){
         try {
-            radicacionesFasesEstProcesadas = radicFasesEstadosDAOBean.obtenerRadicFasesEstadosPorUsuarioFaseEstadoYFechas(usuarioSesion, "I-P",fechaFiltroInic, fechaFiltroFin);
+            radicacionesFasesEstProcesadas = radicFasesEstadosDAOBean.obtenerRadicFasesEstadosPorUsuarioFaseEstadoYFechas(usuarioSesion, null,fechaFiltroInic, fechaFiltroFin);
             if(!radicacionesFasesEstProcesadas.isEmpty()){
                 radicacionFaseEstProcesadaSel = radicacionesFasesEstProcesadas.get(0);
             }
@@ -164,7 +174,6 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean{
      * Muestra el detalle de una radicación vieja en pantalla.
      */
     public void verDetalleRadSel(){
-        radicaciones = null;
         radicacionSel = radicacionFaseEstProcesadaSel.getRadId();
         obtenerFasesEstadosDeRadicacion();
         PrimeFacesContext.execute("PF('dialogHistorial').hide()");
@@ -289,25 +298,31 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean{
                 genericDAOBean.merge(radicacionSel);
             }
             
-            //Por último se crea la fase-estado si no existe, sino se actualiza
-            MarRadicacionesFasesEstados rfes = radicFasesEstadosDAOBean.obtenerRadicFaseEstDeRadyFase(radicacionSel, "I-P");
-            if(rfes == null){
-                rfes = new MarRadicacionesFasesEstados();
-            }
-            rfes.setFesId(faseEstadoPendiente);
-            rfes.setRadId(radicacionSel);
-            rfes.setRfeEstado("A");
-            rfes.setUsuId(usuarioSesion);
-            rfes.setRfeEstadoAprobacion("A");
-            rfes.setRfeFechaInicio(new Date());
-            rfes.setRfeObservaciones(observacionesProceso);
-            auditSessionUtils.setAuditReflectedValues(rfes);
-            if(rfes.getRfeId() == null){
-                genericDAOBean.save(rfes);
+            //Si la fase corresponde a un rechazo anterior o es nueva, crea el estado I-P
+            BigDecimal dbSalida;
+            Integer salida = -999;
+            //Si las fases-estados está vacia, es una nueva radicación y se crea el estado I-P
+            if(radicacionesFasesEstados == null || radicacionesFasesEstados.isEmpty()){
+                dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionSel.getRadId(),
+                        "I-P", "A", usuarioSesion.getUsuId(), observacionesProceso, null);
+                salida = dbSalida.intValue();
             }else{
-                genericDAOBean.merge(rfes);
+                MarRadicacionesFasesEstados rfes = radicacionesFasesEstados.get(radicacionesFasesEstados.size() - 1);
+                //Si la última fase-estado es de rechazo, vuelve a crear el estado I-P
+                if (rfes.getFesId().getFesCodigo().equals("I-R")) {
+                    dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionSel.getRadId(),
+                            "I-P", "A", usuarioSesion.getUsuId(), observacionesProceso, null);
+                    salida = dbSalida.intValue();
+                    //Si la última fase-estado es I-P solo actualiza la información
+                }else if(rfes.getFesId().getFesCodigo().equals("I-P")){
+                    genericDAOBean.merge(rfes);
+                }
             }
-            System.out.println("radicacionSel = " + radicacionSel);
+            if (salida == -999) {
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
+                return;
+            }
+            obtenerRadicacionesPendientes();
             obtenerFasesEstadosDeRadicacion();
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso realizado", "Radicación guardada exitosamente", true, false);
         } catch (Exception e) {

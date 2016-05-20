@@ -23,7 +23,92 @@
                         Puede ver las radicaciones actuales ya sean pendientes o aprobadas por usted.
                     </div>
                 </div>
+                
+                <h:form id="formTurnos">
+                    <div align="left" style="margin: 0px 5%;">
+                        <h:outputLabel value="Radicaciones Actuales: " />
+                        <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" converter="MarRadicacionesConverter" value="#{revisionManagedBean.radicacionPendienteSel}">
+                            <p:ajax listener="#{revisionManagedBean.obtenerFasesEstadosDeRadicacion()}" update="formTurnos" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                            <f:selectItem itemLabel=" - " itemValue="" />
+                            <f:selectItems value="#{revisionManagedBean.radicacionesPendientes}" var="rads" itemLabel="#{rads.radNumero}" itemValue="#{rads}"/>
+                        </p:selectOneMenu>
+                        <p:commandButton style="vertical-align: top" value="Obtener Radicación" action="#{revisionManagedBean.asignarNuevaRadicacion()}" update="formTurnos" process="@this" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                        <p:commandButton style="vertical-align: top" value="Ver Historial" action="#{revisionManagedBean.obtenerHistorialRadicaciones()}" oncomplete="PF('dialogHistorial').show()" update="modalHistorial" process="@this"/>
+                    </div>
+                    
+                    <div align="center" style="padding: 20px;">
+                        <h:panelGroup rendered="#{revisionManagedBean.radicacionPendienteSel != null}">
+                            <div style="margin: 20px;padding: 20px 0px;display: inline-block;vertical-align: top; width: 50%;border: solid 1px #e0e0e0;">
+                                <h:outputLabel class="labelLittle" value="Radicación No" style="display: block"/>
+                                <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.radNumero}"/>
+                                <h:panelGrid columns="2" >
+                                    <h:outputLabel class="labelLittle" value="Notaria"/>
+                                    <h:outputText class="labelLittle" value="Es exterior"/>
+                                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.notId.notNombre}" />
+                                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.radEsExterior}" />
+
+                                    <h:outputLabel class="labelLittle" value="Número Escritura" />
+                                    <h:outputLabel class="labelLittle" value="Fecha Escritura" />
+                                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.escId.escNumero}" />
+                                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.escId.escFecha}" >
+                                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"/>
+                                    </p:outputLabel>
+
+                                    <h:outputLabel class="labelLittle" value="Tipo Doc Otorga" />
+                                    <h:outputLabel class="labelLittle" value="Num Doc Otorga" />
+                                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.tdcIdOtorgante.tdcSigla}" />
+                                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.radDocOtorgante}" />
+
+                                    <h:outputLabel class="labelLittle" value="Tipo Doc Recibe" />
+                                    <h:outputLabel class="labelLittle" value="Num Doc Recibe" />
+                                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.tdcIdReceptor.tdcSigla}" />
+                                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.radDocReceptor}" />
+
+                                    <h:outputLabel class="labelLittle" value="Código Acto" />
+                                    <h:outputLabel class="labelLittle" value="Cuantia" />
+                                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.radCodigoActo}" />
+                                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.radCuantia}" />
+
+                                </h:panelGrid>
+                                <h:outputLabel style="display: block" class="labelLittle" value="Observaciones" />
+                                <p:inputTextarea value="#{revisionManagedBean.observaciones}" rows="2" style="width: 77%;display: block"/>
+                                <p:button style="margin: 10px;" value="Descargar Escritura" target="_new" href="/static/fileDispatcher/#{revisionManagedBean.radicacionPendienteSel.escId.arcId.arcId}-#{revisionManagedBean.radicacionPendienteSel.escId.arcId.arcHash}.#{revisionManagedBean.radicacionPendienteSel.escId.arcId.arcExtension}"
+                                          rendered="#{revisionManagedBean.radicacionPendienteSel.escId.arcId != null}"/>
+                            </div>
+                            <div style="margin: 20px;display: inline-block; vertical-align: top; width: 40%;border: solid 1px #e0e0e0;">
+                                <p:dataTable value="#{revisionManagedBean.radicacionesFasesEstados}" var="rfe" paginator="true" rows="5" paginatorPosition="bottom"
+                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                                    <p:column headerText="Fase">
+                                        <h:outputLabel value="#{rfe.fesId.fesNombre}"/>
+                                    </p:column>
+                                    <p:column headerText="Fecha">
+                                        <h:outputText value="#{rfe.rfeFechaInicio}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Comentarios">
+                                        <h:outputText value="#{rfe.rfeObservaciones}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                            <div>
+                                <p:commandButton style="vertical-align: top" value="Validar Radicación" action="#{revisionManagedBean.validarRadicacion()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-P')}" >
+                                    <p:confirm header="Confirmación" message="¿Esta seguro de que desea validar la radicación?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:commandButton style="vertical-align: top" value="Rechazar" action="#{revisionManagedBean.rechazarRadicacion()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-P')}" >
+                                    <p:confirm header="Confirmación" message="¿Esta seguro de que desea rechazar esta radicación?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                            </div>
+                        </h:panelGroup>
+                    </div>
+                </h:form>
             </div>
         </div>
+
+
+        <p:dialog id="modalHistorial" widgetVar="dialogHistorial" styleClass="modalTop" resizable="false" header="Historial de radicaciones" modal="true" width="950" minHeight="400">
+            <h:form id="formHistorial"></h:form>
+
+        </p:dialog>
     </ui:define>
 </ui:composition>
