@@ -29,19 +29,18 @@ public class RadicFasesEstadosDAOBean extends GenericDAOBean implements RadicFas
      * @throws MarinerPersistanceException 
      */
     @Override
-    public MarRadicacionesFasesEstados obtenerRadicFaseEstDeRadyFase(MarRadicaciones radicacion, String faseEstado) throws MarinerPersistanceException{
-        MarRadicacionesFasesEstados radicacionFaseEstado = null;
+    public List<MarRadicacionesFasesEstados> obtenerRadicFaseEstDeRadyFase(MarRadicaciones radicacion, String faseEstado) throws MarinerPersistanceException{
+        List<MarRadicacionesFasesEstados> radicacionesFasesEstados = null;
         try {
-            Query q = getEntityManager().createQuery("FROM MarRadicacionesFasesEstados rfe WHERE rfe.radId = :radId AND rfe.fesId.fesCodigo = :faseEstado");
+            Query q = getEntityManager().createQuery("FROM MarRadicacionesFasesEstados rfe WHERE rfe.radId = :radId AND rfe.fesId.fesCodigo = :faseEstado ORDER BY rfe.rfeId");
             q.setParameter("radId", radicacion);
             q.setParameter("faseEstado", faseEstado);
-            q.setMaxResults(1);
-            radicacionFaseEstado = (MarRadicacionesFasesEstados)q.getSingleResult();
+            radicacionesFasesEstados = (List<MarRadicacionesFasesEstados>)q.getResultList();
         } catch (NoResultException e){
         } catch (Exception e) {
             throw e;
         }
-        return radicacionFaseEstado;
+        return radicacionesFasesEstados;
     }
     
     
@@ -62,13 +61,17 @@ public class RadicFasesEstadosDAOBean extends GenericDAOBean implements RadicFas
             return radicacionesLibres;
         }
         try {
-            String sql = "SELECT DISTINCT rfe.* \n" +
-                        "FROM mar_radicaciones r \n"
-                    + "INNER JOIN mar_radicaciones_fases_estados rfe ON r.rad_id = rfe.rad_id \n"
-                    + "INNER JOIN mar_fases_estados fe ON rfe.fes_id = fe.fes_id\n"
-                    + "WHERE rfe.usu_id = :usuId \n"
-                    + ":WHEREFASE\n"
-                    + "AND TRUNC(rfe.rfe_fecha_inicio) BETWEEN TO_DATE(':fechaIn','dd-MM-yyyy') AND TO_DATE(':fechaFin','dd-MM-yyyy')";
+            String sql = "WITH ultimasFases AS (\n"
+                    + "  SELECT DISTINCT rfe.rad_id, MAX(rfe.rfe_id) OVER(PARTITION BY rfe.rad_id) AS rfe_id\n"
+                    + "  FROM mar_radicaciones r \n"
+                    + "  INNER JOIN mar_radicaciones_fases_estados rfe ON r.rad_id = rfe.rad_id \n"
+                    + "  INNER JOIN mar_fases_estados fe ON rfe.fes_id = fe.fes_id\n"
+                    + "  WHERE rfe.usu_id = :usuId\n"
+                    + "    :WHEREFASE\n"
+                    + "    AND TRUNC(rfe.rfe_fecha_inicio) BETWEEN TO_DATE(':fechaIn','dd-MM-yyyy') AND TO_DATE(':fechaFin','dd-MM-yyyy')\n"
+                    + ") SELECT rfe.* FROM mar_radicaciones_fases_estados rfe\n"
+                    + "INNER JOIN ultimasFases uf ON rfe.rfe_id = uf.rfe_id\n"
+                    + "ORDER BY rfe.rfe_fecha_inicio DESC";
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
             sql = sql.replace(":fechaIn", sdf.format(fechaIn));
             sql = sql.replace(":fechaFin", sdf.format(fechaFin));
@@ -111,5 +114,5 @@ public class RadicFasesEstadosDAOBean extends GenericDAOBean implements RadicFas
         }
         return radFaseEstado;
     }
-
+    
 }

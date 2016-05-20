@@ -1,7 +1,5 @@
 package co.com.realtech.mariner.util.constantes;
 
-import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBean;
-import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.dao.procedure_based.ProcedureBasedBean;
 import co.com.realtech.mariner.model.ejb.dao.procedure_based.ProcedureBasedBeanLocal;
 import co.com.realtech.mariner.util.jdni.JDNIUtils;
