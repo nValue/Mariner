@@ -70,7 +70,10 @@ public class MarUsuarios implements Serializable {
     private String usuEstado;
     @Size(max = 50)
     @Column(name = "AUD_USUARIO", length = 50)
-    private String audUsuario;
+    private String audUsuario;    
+    @Size(max = 60)
+    @Column(name = "USU_ALIAS_SAP", length = 60)
+    private String usuAliasSap;    
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
@@ -255,6 +258,14 @@ public class MarUsuarios implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarUsuarios[ usuId=" + usuId + " ]";
+    }
+
+    public String getUsuAliasSap() {
+        return usuAliasSap;
+    }
+
+    public void setUsuAliasSap(String usuAliasSap) {
+        this.usuAliasSap = usuAliasSap;
     }
     
 }

@@ -38,7 +38,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarCiudades.findByCiuNombre", query = "SELECT m FROM MarCiudades m WHERE m.ciuNombre = :ciuNombre"),
     @NamedQuery(name = "MarCiudades.findByCiuCodigoDane", query = "SELECT m FROM MarCiudades m WHERE m.ciuCodigoDane = :ciuCodigoDane"),
     @NamedQuery(name = "MarCiudades.findByAudUsuario", query = "SELECT m FROM MarCiudades m WHERE m.audUsuario = :audUsuario"),
-    @NamedQuery(name = "MarCiudades.findByAudFecha", query = "SELECT m FROM MarCiudades m WHERE m.audFecha = :audFecha")})
+    @NamedQuery(name = "MarCiudades.findByAudFecha", query = "SELECT m FROM MarCiudades m WHERE m.audFecha = :audFecha"),
+    @NamedQuery(name = "MarCiudades.findByCiuCodigoNumeracion", query = "SELECT m FROM MarCiudades m WHERE m.ciuCodigoNumeracion = :ciuCodigoNumeracion")})
 public class MarCiudades implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -61,6 +62,9 @@ public class MarCiudades implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
+    @Size(max = 40)
+    @Column(name = "CIU_CODIGO_NUMERACION", length = 40)
+    private String ciuCodigoNumeracion;
     @JoinColumn(name = "DEP_ID", referencedColumnName = "DEP_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarDepartamentos depId;
@@ -112,6 +116,14 @@ public class MarCiudades implements Serializable {
 
     public void setAudFecha(Date audFecha) {
         this.audFecha = audFecha;
+    }
+
+    public String getCiuCodigoNumeracion() {
+        return ciuCodigoNumeracion;
+    }
+
+    public void setCiuCodigoNumeracion(String ciuCodigoNumeracion) {
+        this.ciuCodigoNumeracion = ciuCodigoNumeracion;
     }
 
     public MarDepartamentos getDepId() {

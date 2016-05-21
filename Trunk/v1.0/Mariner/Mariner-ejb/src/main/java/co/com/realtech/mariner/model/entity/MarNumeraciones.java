@@ -38,7 +38,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarNumeraciones.findByNumNumero", query = "SELECT m FROM MarNumeraciones m WHERE m.numNumero = :numNumero"),
     @NamedQuery(name = "MarNumeraciones.findByNumSufijo", query = "SELECT m FROM MarNumeraciones m WHERE m.numSufijo = :numSufijo"),
     @NamedQuery(name = "MarNumeraciones.findByAudUsuario", query = "SELECT m FROM MarNumeraciones m WHERE m.audUsuario = :audUsuario"),
-    @NamedQuery(name = "MarNumeraciones.findByAudFecha", query = "SELECT m FROM MarNumeraciones m WHERE m.audFecha = :audFecha")})
+    @NamedQuery(name = "MarNumeraciones.findByAudFecha", query = "SELECT m FROM MarNumeraciones m WHERE m.audFecha = :audFecha"),
+    @NamedQuery(name = "MarNumeraciones.findByNumUsaNumCiudad", query = "SELECT m FROM MarNumeraciones m WHERE m.numUsaNumCiudad = :numUsaNumCiudad")})
 public class MarNumeraciones implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -71,6 +72,9 @@ public class MarNumeraciones implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
+    @Size(max = 2)
+    @Column(name = "NUM_USA_NUM_CIUDAD", length = 2)
+    private String numUsaNumCiudad;
 
     public MarNumeraciones() {
     }
@@ -146,6 +150,14 @@ public class MarNumeraciones implements Serializable {
 
     public void setAudFecha(Date audFecha) {
         this.audFecha = audFecha;
+    }
+
+    public String getNumUsaNumCiudad() {
+        return numUsaNumCiudad;
+    }
+
+    public void setNumUsaNumCiudad(String numUsaNumCiudad) {
+        this.numUsaNumCiudad = numUsaNumCiudad;
     }
 
     @Override

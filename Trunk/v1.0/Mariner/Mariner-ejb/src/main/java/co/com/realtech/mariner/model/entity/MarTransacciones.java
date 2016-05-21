@@ -33,6 +33,7 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "MAR_TRANSACCIONES", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"TRA_REFERENCIA"}),
     @UniqueConstraint(columnNames = {"RAD_ID"})})
 @NamedQueries({
     @NamedQuery(name = "MarTransacciones.findAll", query = "SELECT m FROM MarTransacciones m"),
@@ -46,7 +47,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarTransacciones.findByTraEstado", query = "SELECT m FROM MarTransacciones m WHERE m.traEstado = :traEstado"),
     @NamedQuery(name = "MarTransacciones.findByTraMedioPagoNota", query = "SELECT m FROM MarTransacciones m WHERE m.traMedioPagoNota = :traMedioPagoNota"),
     @NamedQuery(name = "MarTransacciones.findByAudFecha", query = "SELECT m FROM MarTransacciones m WHERE m.audFecha = :audFecha"),
-    @NamedQuery(name = "MarTransacciones.findByAudUsuario", query = "SELECT m FROM MarTransacciones m WHERE m.audUsuario = :audUsuario")})
+    @NamedQuery(name = "MarTransacciones.findByAudUsuario", query = "SELECT m FROM MarTransacciones m WHERE m.audUsuario = :audUsuario"),
+    @NamedQuery(name = "MarTransacciones.findByTraReferencia", query = "SELECT m FROM MarTransacciones m WHERE m.traReferencia = :traReferencia")})
 public class MarTransacciones implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -85,6 +87,9 @@ public class MarTransacciones implements Serializable {
     @Size(max = 60)
     @Column(name = "AUD_USUARIO", length = 60)
     private String audUsuario;
+    @Size(max = 40)
+    @Column(name = "TRA_REFERENCIA", length = 40)
+    private String traReferencia;
     @JoinColumn(name = "RAD_ID", referencedColumnName = "RAD_ID")
     @OneToOne
     private MarRadicaciones radId;
@@ -185,6 +190,14 @@ public class MarTransacciones implements Serializable {
 
     public void setAudUsuario(String audUsuario) {
         this.audUsuario = audUsuario;
+    }
+
+    public String getTraReferencia() {
+        return traReferencia;
+    }
+
+    public void setTraReferencia(String traReferencia) {
+        this.traReferencia = traReferencia;
     }
 
     public MarRadicaciones getRadId() {

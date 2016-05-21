@@ -21,7 +21,7 @@ public class HibernateUtils {
     public static void main(String... args) {
         System.out.println("Iniciando" + new Date());
         try {
-            String rutaBase = "C:\\VURValle\\fuentes\\Mariner\\Mariner-ejb\\src\\main\\java\\co\\com\\realtech\\mariner\\model\\entity";
+            String rutaBase = "C:\\mariner\\fuentes\\Mariner\\Mariner-ejb\\src\\main\\java\\co\\com\\realtech\\mariner\\model\\entity";
             String anotacion;
 
             File folder = new File(rutaBase);
