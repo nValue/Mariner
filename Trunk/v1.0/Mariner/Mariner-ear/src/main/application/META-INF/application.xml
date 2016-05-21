@@ -7,7 +7,7 @@
     <module>
         <web>
             <web-uri>Mariner-web-1.0-SNAPSHOT.war</web-uri>
-            <context-root>/application</context-root>
+            <context-root>/app</context-root>
         </web>
     </module>
     <library-directory>lib</library-directory>  
