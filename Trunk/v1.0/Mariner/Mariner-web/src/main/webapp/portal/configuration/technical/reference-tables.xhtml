@@ -174,7 +174,10 @@
                                                 </p:column>                                        
                                                 <p:column headerText="Codigo DANE">
                                                     <h:outputText value="#{ciudad.ciuCodigoDane}" />
-                                                </p:column>                                        
+                                                </p:column>   
+                                                <p:column headerText="Codigo Numeracion">
+                                                    <h:outputText value="#{ciudad.ciuCodigoNumeracion}" />
+                                                </p:column>
                                                 <p:column headerText="X" width="20">
                                                     <p:commandLink update="ciudades" title="Presione para eliminar esta ciudad" action="#{ciudadesManagedBean.borrarCiudad()}">                                    
                                                         <f:setPropertyActionListener target="#{ciudadesManagedBean.ciudad}" value="#{ciudad}" />
@@ -228,7 +231,12 @@
                         <h:outputLabel value="Numero"/>
                         <p:inputText value="#{numeracionManagedBean.numeracion.numNumero}" required="true" size="30"/>
                         <h:outputLabel value="Sub Fijo"/>
-                        <p:inputText value="#{numeracionManagedBean.numeracion.numSufijo}" required="fañse" size="30"/>
+                        <p:inputText value="#{numeracionManagedBean.numeracion.numSufijo}" required="false" size="30"/>
+                        <h:outputLabel value="Numeracion con Ciudad"/>                        
+                        <p:selectOneMenu styleClass="inputModal" value="#{numeracionManagedBean.numeracion.numUsaNumCiudad}" style="width: 250px;">
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneMenu>
                     </h:panelGrid>
                     <div align="center" style="padding-top: 10px">
                         <p:commandButton value="Guardar" action="#{numeracionManagedBean.guardarNumeracion()}" update="@form :tabContainer:formNumeracion"/>
@@ -280,7 +288,9 @@
                         <h:outputLabel value="Nombre"/>
                         <p:inputText value="#{ciudadesManagedBean.ciudad.ciuNombre}" required="true" size="30"/>                        
                         <h:outputLabel value="Codigo DANE"/>
-                        <p:inputText value="#{ciudadesManagedBean.ciudad.ciuCodigoDane}" required="true" size="30"/>                        
+                        <p:inputText value="#{ciudadesManagedBean.ciudad.ciuCodigoDane}" required="true" size="30"/>  
+                        <h:outputLabel value="Codigo Numeracion"/>
+                        <p:inputText value="#{ciudadesManagedBean.ciudad.ciuCodigoNumeracion}" required="false" size="30"/> 
                     </h:panelGrid>
                     <div align="center" style="padding-top: 10px">
                         <p:commandButton value="Guardar" action="#{ciudadesManagedBean.guardarCiudad()}" update="@form :tabContainer:formCiudades"/>

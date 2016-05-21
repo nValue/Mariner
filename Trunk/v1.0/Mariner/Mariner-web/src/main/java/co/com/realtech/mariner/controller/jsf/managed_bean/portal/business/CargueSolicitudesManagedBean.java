@@ -30,42 +30,43 @@ import org.primefaces.event.FileUploadEvent;
 
 /**
  * ManagedBean encargado de la pantalla de cargue de solicitudes.
+ *
  * @author fabianagudelo
  */
 @ManagedBean
 @ViewScoped
-public class CargueSolicitudesManagedBean extends GenericManagedBean{
+public class CargueSolicitudesManagedBean extends GenericManagedBean {
 
     @EJB(beanName = "RadicFasesEstadosDAOBean")
     private RadicFasesEstadosDAOBeanLocal radicFasesEstadosDAOBean;
-    
+
     @EJB(beanName = "RadicacionesDAOBean")
     private RadicacionesDAOBeanLocal radicacionesDAOBean;
-    
+
     @EJB(beanName = "NotariasDAOBean")
     private NotariasDAOBeanLocal notariasDAOBean;
-    
+
     private List<MarRadicaciones> radicaciones;
     private MarRadicaciones radicacionSel;
     private MarRadicaciones radicacionSeleccion;
     private List<MarNotarias> notarias;
-    
+
     private List<MarTiposDocumentos> tiposDocumentosOtorga;
     private List<MarTiposDocumentos> tiposDocumentosRecibe;
-    
+
     private List<MarRadicacionesFasesEstados> radicacionesFasesEstProcesadas;
     private MarRadicacionesFasesEstados radicacionFaseEstProcesadaSel;
-    
+
     private MarFasesEstados faseEstadoPendiente;
     private String observacionesProceso;
-    
+
     private Date fechaFiltroInic;
     private Date fechaFiltroFin;
-    
+
     private List<MarRadicacionesFasesEstados> radicacionesFasesEstados;
-    
+
     @Override
-    public void init(){
+    public void init() {
         fechaFiltroInic = new Date();
         fechaFiltroFin = new Date();
         obtenerNotarias();
@@ -73,65 +74,65 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean{
         obtenerFasesEstados();
         obtenerRadicacionesPendientes();
     }
-    
+
     /**
      * Obtiene las radicaciones asignadas al usuario.
      */
-    public void obtenerRadicacionesPendientes(){
+    public void obtenerRadicacionesPendientes() {
         try {
             radicaciones = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'I-P','I-R'", usuarioSesion);
-            if(!radicaciones.isEmpty()){
+            if (!radicaciones.isEmpty()) {
                 radicacionSel = radicaciones.get(0);
                 List<MarRadicacionesFasesEstados> rfe;
                 for (MarRadicaciones radicacion : radicaciones) {
-                    rfe = (List<MarRadicacionesFasesEstados>)genericDAOBean.findAllByColumn(MarRadicacionesFasesEstados.class, "radId", radicacion);
+                    rfe = (List<MarRadicacionesFasesEstados>) genericDAOBean.findAllByColumn(MarRadicacionesFasesEstados.class, "radId", radicacion);
                     radicacion.setMarRadicacionesFasesEstadosList(rfe);
                 }
                 obtenerFasesEstadosDeRadicacion();
             }
         } catch (Exception e) {
             logger.error("Error obteniendo las radicaciones, causado por : " + e, e);
-        }    
+        }
     }
-    
+
     /**
      * Obtiene las fases estados para ser asignada a la radicación.
      */
-    public void obtenerFasesEstados(){
+    public void obtenerFasesEstados() {
         try {
-            faseEstadoPendiente = (MarFasesEstados)genericDAOBean.findByColumn(MarFasesEstados.class, "fesCodigo", "I-P");    
-            if(faseEstadoPendiente == null){
+            faseEstadoPendiente = (MarFasesEstados) genericDAOBean.findByColumn(MarFasesEstados.class, "fesCodigo", "I-P");
+            if (faseEstadoPendiente == null) {
                 throw new Exception("No hay parametrizada una fase-estado con el código I-P");
             }
         } catch (Exception e) {
             logger.error("No se pueden obtener las fases estados, debido a " + e, e);
         }
     }
-    
+
     /**
      * Obtiene los tipos de documento para los involucrados.
      */
-    public void obtenerTiposDocumentos(){
+    public void obtenerTiposDocumentos() {
         try {
-            tiposDocumentosOtorga = (List<MarTiposDocumentos>)genericDAOBean.loadAllForEntity(MarTiposDocumentos.class, "tdcNombre");
-            tiposDocumentosRecibe = (List<MarTiposDocumentos>)genericDAOBean.loadAllForEntity(MarTiposDocumentos.class, "tdcNombre");
+            tiposDocumentosOtorga = (List<MarTiposDocumentos>) genericDAOBean.loadAllForEntity(MarTiposDocumentos.class, "tdcNombre");
+            tiposDocumentosRecibe = (List<MarTiposDocumentos>) genericDAOBean.loadAllForEntity(MarTiposDocumentos.class, "tdcNombre");
         } catch (Exception e) {
-            logger.error("Error obteniendo los tipos de documento, causado por " +e, e);
+            logger.error("Error obteniendo los tipos de documento, causado por " + e, e);
         }
     }
-    
+
     /**
      * Trae todas las fases-estados en los que hay pasado una radicación.
      */
-    public void obtenerFasesEstadosDeRadicacion(){
+    public void obtenerFasesEstadosDeRadicacion() {
         try {
-            radicacionesFasesEstados = (List<MarRadicacionesFasesEstados>)genericDAOBean.findAllByColumn(MarRadicacionesFasesEstados.class, "radId", radicacionSel, true, "rfeId");
-            if(!radicacionesFasesEstados.isEmpty()){
-                radicacionFaseEstProcesadaSel = radicacionesFasesEstados.get(radicacionesFasesEstados.size()-1);
+            radicacionesFasesEstados = (List<MarRadicacionesFasesEstados>) genericDAOBean.findAllByColumn(MarRadicacionesFasesEstados.class, "radId", radicacionSel, true, "rfeId");
+            if (!radicacionesFasesEstados.isEmpty()) {
+                radicacionFaseEstProcesadaSel = radicacionesFasesEstados.get(radicacionesFasesEstados.size() - 1);
                 //Si la radicación fue rechazada no trae las observaciones, asi el notario las puede colocar
-                if(radicacionFaseEstProcesadaSel.getFesId().getFesCodigo().equals("I-R")){
+                if (radicacionFaseEstProcesadaSel.getFesId().getFesCodigo().equals("I-R")) {
                     observacionesProceso = "";
-                }else{
+                } else {
                     observacionesProceso = radicacionFaseEstProcesadaSel.getRfeObservaciones();
                 }
             }
@@ -139,13 +140,14 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean{
             logger.error("Error obteniendo las fases procesos, causado por : " + e, e);
         }
     }
-    
+
     /**
      * Método de autocomplete para buscar las radicaciones.
+     *
      * @param filtro
-     * @return 
+     * @return
      */
-    public List<MarRadicaciones> completeRadicaciones(String filtro){
+    public List<MarRadicaciones> completeRadicaciones(String filtro) {
         List<MarRadicaciones> radFiltradas = new ArrayList<>();
         try {
             radFiltradas = radicacionesDAOBean.obtenerRadicacionesPorFiltro(filtro, usuarioSesion);
@@ -154,60 +156,61 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean{
         }
         return radFiltradas;
     }
-    
+
     /**
      * Obtiene las radicaciones que ya evaluó el usuario.
      */
-    public void obtenerRadicacionesProcesadas(){
+    public void obtenerRadicacionesProcesadas() {
         try {
-            radicacionesFasesEstProcesadas = radicFasesEstadosDAOBean.obtenerRadicFasesEstadosPorUsuarioFaseEstadoYFechas(usuarioSesion, null,fechaFiltroInic, fechaFiltroFin);
-            if(!radicacionesFasesEstProcesadas.isEmpty()){
+            radicacionesFasesEstProcesadas = radicFasesEstadosDAOBean.obtenerRadicFasesEstadosPorUsuarioFaseEstadoYFechas(usuarioSesion, null, fechaFiltroInic, fechaFiltroFin);
+            if (!radicacionesFasesEstProcesadas.isEmpty()) {
                 radicacionFaseEstProcesadaSel = radicacionesFasesEstProcesadas.get(0);
             }
             System.out.println("radicacionesFasesEstProcesadas = " + radicacionesFasesEstProcesadas);
         } catch (Exception e) {
             logger.error("Error obteniendo las radicaciones procesadas, causado por : " + e, e);
-        }    
+        }
     }
-    
+
     /**
      * Muestra el detalle de una radicación vieja en pantalla.
      */
-    public void verDetalleRadSel(){
+    public void verDetalleRadSel() {
         radicacionSel = radicacionFaseEstProcesadaSel.getRadId();
         obtenerFasesEstadosDeRadicacion();
         PrimeFacesContext.execute("PF('dialogHistorial').hide()");
     }
-    
+
     /**
      * Coloca la radicación en la variable radicacionSel para ser actualizada.
      */
-    public void seleccionarRadicacion(){
+    public void seleccionarRadicacion() {
         try {
             obtenerFasesEstadosDeRadicacion();
         } catch (Exception e) {
             logger.error("Error seleccionando la radicación, causado por " + e, e);
         }
     }
-    
+
     /**
      * Obtiene todas las notarias parametrizadas para seleccionar la adecuada.
      */
-    public void obtenerNotarias(){
+    public void obtenerNotarias() {
         try {
             notarias = notariasDAOBean.obtenerNotariasDeUsuario(usuarioSesion);
-            if(notarias.isEmpty()){
+            if (notarias.isEmpty()) {
                 PrimeFacesPopup.lanzarDialog(Effects.Explode, "Notarias no encontradas", "No se ha encontrado una notaría asociada a su usuario, puede configurarla en el panel de usuarios, de lo contrario no podrá generar radicaciones", true, false);
             }
         } catch (Exception e) {
             logger.error("Error al obtener las notarias, causado por " + e, e);
         }
     }
-    
+
     /**
-     * Crea una nueva radicación vacía para el llenado de la información necesaria.
+     * Crea una nueva radicación vacía para el llenado de la información
+     * necesaria.
      */
-    public void solicitarRadicacion(){
+    public void solicitarRadicacion() {
         try {
             radicaciones = null;
             MarEscrituras escrituraNueva = new MarEscrituras();
@@ -224,11 +227,11 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean{
             logger.error("Error creando nueva Radicación, causado por " + e, e);
         }
     }
-    
-    
+
     /**
      * Evento necesario para el cargue de archivos
-     * @param event 
+     *
+     * @param event
      */
     public void handleFileUpload(FileUploadEvent event) {
         try {
@@ -244,8 +247,8 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean{
             }
             boolean visibleCDN = false;
             MarPuntosMontajes puntoMontaje;
-            puntoMontaje = (MarPuntosMontajes)genericDAOBean.findByColumn(MarPuntosMontajes.class, "pmoNombre", "Principal");
-            if(puntoMontaje == null){
+            puntoMontaje = (MarPuntosMontajes) genericDAOBean.findByColumn(MarPuntosMontajes.class, "pmoNombre", "Principal");
+            if (puntoMontaje == null) {
                 String msj = "No hay un punto de montaje de nombre 'Principal', por favor configúrelo";
                 PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error Upload.!", msj, true, false);
                 throw new Exception(msj);
@@ -257,18 +260,18 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean{
             logger.error("Error al subir el archivo al repositorio, causado por " + e, e);
         }
     }
-    
+
     /**
      * Guarda la radicación actual.
      */
-    public void guardarRadicacion(){
+    public void guardarRadicacion() {
         try {
             MarEscrituras escrituraActual = radicacionSel.getEscId();
-            if(escrituraActual.getArcId() == null){
+            if (escrituraActual.getArcId() == null) {
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Documento faltante", "Necesita adjuntar la escritura para guardar el proceso", true, false);
                 return;
             }
-            
+
             //Valida que la radicación actual no haya sido cambiada de fase para guardar los cambios.
             if (radicacionSel.getRadId() != null) {
                 MarRadicacionesFasesEstados rfe = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radicacionSel);
@@ -280,33 +283,33 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean{
 
             //Se guarda la escritura primero.
             auditSessionUtils.setAuditReflectedValues(escrituraActual);
-            if(escrituraActual.getEscId() == null){
+            if (escrituraActual.getEscId() == null) {
                 genericDAOBean.save(escrituraActual);
-            }else{
+            } else {
                 genericDAOBean.merge(escrituraActual);
             }
-            
+
             //Luego se guarda la radicación usando la numeración correspondiente
             auditSessionUtils.setAuditReflectedValues(radicacionSel);
-            if(radicacionSel.getRadId() == null){
+            if (radicacionSel.getRadId() == null) {
                 NumeracionesManager nm = new NumeracionesManager();
-                String siguienteNum = nm.loadNextConsecutive("RAD01");
+                String siguienteNum = nm.loadNextConsecutiveRad("RAD01", radicacionSel);
                 radicacionSel.setRadNumero(siguienteNum);
                 radicacionSel.setRadFecha(new Date());
                 genericDAOBean.save(radicacionSel);
-            }else{
+            } else {
                 genericDAOBean.merge(radicacionSel);
             }
-            
+
             //Si la fase corresponde a un rechazo anterior o es nueva, crea el estado I-P
             BigDecimal dbSalida;
             Integer salida = -999;
             //Si las fases-estados está vacia, es una nueva radicación y se crea el estado I-P
-            if(radicacionesFasesEstados == null || radicacionesFasesEstados.isEmpty()){
+            if (radicacionesFasesEstados == null || radicacionesFasesEstados.isEmpty()) {
                 dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionSel.getRadId(),
                         "I-P", "A", usuarioSesion.getUsuId(), observacionesProceso, null);
                 salida = dbSalida.intValue();
-            }else{
+            } else {
                 MarRadicacionesFasesEstados rfes = radicacionesFasesEstados.get(radicacionesFasesEstados.size() - 1);
                 //Si la última fase-estado es de rechazo, vuelve a crear el estado I-P
                 if (rfes.getFesId().getFesCodigo().equals("I-R")) {
@@ -314,7 +317,7 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean{
                             "I-P", "A", usuarioSesion.getUsuId(), observacionesProceso, null);
                     salida = dbSalida.intValue();
                     //Si la última fase-estado es I-P solo actualiza la información
-                }else if(rfes.getFesId().getFesCodigo().equals("I-P")){
+                } else if (rfes.getFesId().getFesCodigo().equals("I-P")) {
                     genericDAOBean.merge(rfes);
                 }
             }
@@ -329,18 +332,18 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean{
             logger.error("Error guardando la radicación, causado por " + e, e);
         }
     }
-    
+
     /**
      * Cancela la radicación actual.
      */
-    public void cancelarRadicacion(){
+    public void cancelarRadicacion() {
         obtenerRadicacionesPendientes();
         radicacionSel = null;
     }
-    
+
     public CargueSolicitudesManagedBean() {
     }
-    
+
     public List<MarRadicaciones> getRadicaciones() {
         return radicaciones;
     }
@@ -436,7 +439,5 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean{
     public void setFechaFiltroFin(Date fechaFiltroFin) {
         this.fechaFiltroFin = fechaFiltroFin;
     }
-    
-    
-    
+
 }
