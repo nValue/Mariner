@@ -17,4 +17,6 @@ public interface WSSAPConsumerBeanLocal {
 
     public void getDetail(String liquidacion, Holder<ZPSCDPRNCAB> responseHeader, Holder<ZPSCDTTVURDETAIL> responseDetail) throws Exception;
     
+    public void vurPayment(String iCUENTABCO,String iFECHARECAUDO,String iHORARECAUDO,String iNROLIQ,String iVALOR,Holder<String> eMESSAGE,Holder<Integer> eRETURN) throws Exception;
+    
 }

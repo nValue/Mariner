@@ -1,7 +1,6 @@
 
 package co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method;
 
-import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;

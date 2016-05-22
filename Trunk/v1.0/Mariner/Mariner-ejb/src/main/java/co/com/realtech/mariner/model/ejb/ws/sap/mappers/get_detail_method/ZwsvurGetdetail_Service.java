@@ -1,7 +1,6 @@
 
 package co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method;
 
-import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.xml.namespace.QName;
@@ -17,20 +16,20 @@ import javax.xml.ws.WebServiceException;
  * Generated source version: 2.0
  * 
  */
-@WebServiceClient(name = "zwsvur_getdetail", targetNamespace = "urn:sap-com:document:sap:rfc:functions", wsdlLocation = "http://lamaria.elvalle.com:8000/sap/bc/srt/wsdl/bndg_620EFE55EA91C24BE1000000C0A8C841/wsdl11/allinone/ws_policy/document?sap-client=100")
+@WebServiceClient(name = "zwsvur_getdetail", targetNamespace = "urn:sap-com:document:sap:rfc:functions", wsdlLocation = "http://lavoragine.elvalle.com:8000/sap/bc/srt/wsdl/bndg_D5393857F156F52CE1000000C0A8C847/wsdl11/allinone/standard/document?sap-client=710")
 public class ZwsvurGetdetail_Service
     extends Service
 {
 
     private final static URL ZWSVURGETDETAIL_WSDL_LOCATION;
     private final static WebServiceException ZWSVURGETDETAIL_EXCEPTION;
-    private final static QName ZWSVURGETDETAIL_QNAME = new QName("urn:sap-com:document:sap:rfc:functions", "zwsvur_getdetail");
+    private final static QName ZWSVURGETDETAIL_QNAME = new QName("urn:sap-com:document:sap:rfc:functions", "ZWSVUR_GETDETAIL");
 
     static {
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://lamaria.elvalle.com:8000/sap/bc/srt/wsdl/bndg_620EFE55EA91C24BE1000000C0A8C841/wsdl11/allinone/ws_policy/document?sap-client=100");
+            url = new URL("http://lavoragine.elvalle.com:8000/sap/bc/srt/wsdl/bndg_D5393857F156F52CE1000000C0A8C847/wsdl11/allinone/standard/document?sap-client=710");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

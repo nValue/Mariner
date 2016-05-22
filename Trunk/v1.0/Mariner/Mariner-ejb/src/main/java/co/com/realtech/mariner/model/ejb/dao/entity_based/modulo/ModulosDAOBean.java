@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package co.com.realtech.mariner.model.ejb.dao.entity_based.modulo;
 
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBean;

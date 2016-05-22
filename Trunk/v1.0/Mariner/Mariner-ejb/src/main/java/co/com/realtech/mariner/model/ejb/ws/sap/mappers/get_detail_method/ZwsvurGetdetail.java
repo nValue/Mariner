@@ -1,7 +1,6 @@
 
 package co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method;
 
-import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.*;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
