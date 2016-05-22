@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/template-business.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="negocio">
+        <!-- Estilos personalizados pagina -->
+        <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
+        <script type="text/javascript" src="#{resource['js/primefaces.spanish.js']}"/>
+        <style type="text/css">
+
+        </style>
+
+        <div id="paperMain">
+            <div class="tituloCont" align="center">
+                <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                <div style="display: inline-block">
+                    <h:outputLabel styleClass="titleMain" value="Utilidades - WS Tester" />
+                    <h:outputLabel styleClass="subtitleMain" value="Utilidad para manejo de conexion con servicios web SAP"/>
+                </div>
+            </div>
+            <div class="contenidoPrinc" align="left">
+                <p:tabView id="tabContainer" orientation="left">
+                    <p:tab title="WSSAP - getDetail">
+                        <div style="padding: 12px;padding-top: 0px !important;">
+                            <h:form id="formSAPgetDetail">
+                                <h:panelGrid columns="3">
+                                    <h:outputLabel value="Liquidacion"/>
+                                    <p:inputText value="#{wSSOAPTesterGetDetailManagedBean.codigoLiquidacion}" required="true"/>
+                                    <p:commandButton value="Ejecutar" update="@form" action="#{wSSOAPTesterGetDetailManagedBean.ejecutarMetodo()}" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();"/>
+                                </h:panelGrid>
+                                <hr/>
+                            </h:form>
+                        </div>                            
+                    </p:tab>
+                    <p:tab title="WSSAP - get List Liquidaciones">
+                        <div style="padding: 12px;padding-top: 0px !important;">
+
+                        </div>      
+                    </p:tab>
+                </p:tabView>
+            </div>
+        </div>        
+    </ui:define>
+
+</ui:composition>
