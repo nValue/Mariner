@@ -325,9 +325,11 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
                 return;
             }
+            MarRadicaciones radicacionGuardada = radicacionSel;
             obtenerRadicacionesPendientes();
+            radicacionSel = radicacionGuardada;
             obtenerFasesEstadosDeRadicacion();
-            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso realizado", "Radicación guardada exitosamente", true, false);
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso realizado", "Se ha creado una nueva radicación con número: " + radicacionGuardada.getRadNumero(), true, false);
         } catch (Exception e) {
             logger.error("Error guardando la radicación, causado por " + e, e);
         }

@@ -45,6 +45,7 @@ public class RevisionManagedBean extends GenericManagedBean{
     private List<MarRadicacionesFasesEstados> radicacionesHistorial;
     private MarRadicacionesFasesEstados radicacionHistorialSel;
     
+    
     private Date fechaFiltroInic;
     private Date fechaFiltroFin;
     
@@ -93,6 +94,20 @@ public class RevisionManagedBean extends GenericManagedBean{
     }
     
     /**
+     * Obtiene las radicaciones que ya evaluó el usuario.
+     */
+    public void obtenerRadicacionesProcesadas(){
+        try {
+            radicacionesHistorial = radicFasesEstadosDAOBean.obtenerRadicFasesEstadosPorUsuarioFaseEstadoYFechas(usuarioSesion, null,fechaFiltroInic, fechaFiltroFin);
+            if(!radicacionesHistorial.isEmpty()){
+                radicacionFaseEstadoSel = radicacionesHistorial.get(0);
+            }
+        } catch (Exception e) {
+            logger.error("Error obteniendo las radicaciones procesadas, causado por : " + e, e);
+        }    
+    }
+    
+    /**
      * Asigna una nueva radicacion al usuario en sesión.
      */
     public void asignarNuevaRadicacion() {
@@ -124,13 +139,10 @@ public class RevisionManagedBean extends GenericManagedBean{
                     break;
             }
             MarRadicaciones radObtenida = radicacionFaseUltimoEstado.getRadId();
-            System.out.println("radicacionFaseUltimoEstado.getRadId() = " + radicacionFaseUltimoEstado.getRadId());
             obtenerRadicacionesPendientes();
             radicacionPendienteSel = radObtenida;
-            System.out.println("radicacionUsuarioSel = " + radicacionPendienteSel);
             obtenerFasesEstadosDeRadicacion();
-            System.out.println("radicacionUsuarioSel = " + radicacionPendienteSel);
-            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación encontrada", "Se ha asignado una nueva radicación a sus pendientes, puede verificarla en la lista desplegable de radicaciones", true, false);
+            
         } catch (Exception e) {
             logger.error("Error asignando una radicación disponible, causado por: " + e, e);
         }
@@ -165,17 +177,26 @@ public class RevisionManagedBean extends GenericManagedBean{
      */
     public void rechazarRadicacion(){
         try {
-            //Se obtiene el usuario que hizo el proceso para enviarle de vuelta el proceso.
+            //Se obtiene el usuario que hizo el proceso para enviarle de vuelta el proceso, el que la sube a SAP debe ser.
             List<MarRadicacionesFasesEstados> rfes = radicFasesEstadosDAOBean.obtenerRadicFaseEstDeRadyFase(radicacionPendienteSel, "G-S");
             MarUsuarios usuarioAsignado = rfes.get(rfes.size()-1).getUsuId();
             
-            //Se crea la fase proceso de rechazo (I-R) con las observaciones colocadas.
+            //Se crea la fase proceso de rechazo (R-R) con las observaciones colocadas.
             BigDecimal BDsalida = (BigDecimal)genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionPendienteSel.getRadId(), 
-                    "R-R", "R", usuarioAsignado,observaciones,null);
+                    "R-R", "R", usuarioSesion,observaciones,null);
             
             Integer salida = BDsalida.intValue();
             if(salida == -999){
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo incorrecto", "No se puede crear el estado rechazo de revisión para la radicación, por favor verifique que la información este correcta e intente de nuevo.", true, false);
+                return;
+            }
+            
+            //Ahora se crea de nuevo la fase proceso en liquidación pendiente (G-P) para que el liquidador vuelva a subir la radicación.
+            BDsalida = (BigDecimal)genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionPendienteSel.getRadId(), 
+                    "G-P", "A", usuarioAsignado,observaciones,null);
+            salida = BDsalida.intValue();
+            if(salida == -999){
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Generación Pendiente errror", "No se puede crear el estado de generación pendiente para la radicación, por favor verifique que la información este correcta e intente de nuevo.", true, false);
                 return;
             }
             obtenerRadicacionesPendientes();
@@ -183,6 +204,13 @@ public class RevisionManagedBean extends GenericManagedBean{
         } catch (Exception e) {
             logger.error("No se puede rechazar la radicación, debido a " + e, e);
         }        
+    }
+    
+    /**
+     * Selecciona una radicación del historial y muestra su información en pantalla.
+     */
+    public void seleccionarRadicacionHistorial(){
+        radicacionPendienteSel = radicacionFaseEstadoSel.getRadId();
     }
     
     /**
@@ -253,6 +281,14 @@ public class RevisionManagedBean extends GenericManagedBean{
 
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
+    }
+
+    public List<MarRadicacionesFasesEstados> getRadicacionesHistorial() {
+        return radicacionesHistorial;
+    }
+
+    public void setRadicacionesHistorial(List<MarRadicacionesFasesEstados> radicacionesHistorial) {
+        this.radicacionesHistorial = radicacionesHistorial;
     }
     
     

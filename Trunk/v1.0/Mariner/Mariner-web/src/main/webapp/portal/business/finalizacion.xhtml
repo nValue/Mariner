@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/template-business.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="negocio">
+        <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
+        <div id="paperMain">
+            <div class="tituloCont" align="center">
+                <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                <div style="display: inline-block">
+                    <h:outputLabel styleClass="titleMain" value="Finalización" />
+                    <h:outputLabel styleClass="subtitleMain" value="Última fase del proceso - Validación por las ORIPs"/>
+                </div>
+            </div>
+            <div class="contenidoPrinc" align="center">
+                <div class="descripcion" align="center">
+                    <div class="descText">
+                        La tabla muestra todas las radicaciones pendientes por validación, si desea buscar alguna particular puede usar el filtro de la parte izquierda, no olvide que si no selecciona las fechas correctas no verá la informacion deseada. Si quiere ver el detalle de alguna basta con hacer clic en el registro deseado y se mostrará toda su información adicional
+                    </div>
+                </div>
+                <h:form id="formFinalizacion">
+                    <div align="center" style="margin: 0px 5%;">
+                        <div align="left" style="margin: 20px;display: inline-block;width: 400px">
+                            <h:outputLabel value="Buscar por: "/>
+                            <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" value="#{finalizacionManagedBean.filtroBusquedaSel}" >
+                                <f:selectItems value="#{finalizacionManagedBean.filtrosBusqueda}" var="fil" itemLabel="#{fil.clave}" itemValue="#{fil}" />
+                                <p:ajax listener="#{finalizacionManagedBean.buscarRadicaciones()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" update="formFinalizacion"/>
+                            </p:selectOneMenu>
+                            <p:commandButton value="Buscar"/>
+                        </div>
+                        <div align="right" style="margin: 20px;display: inline-block;width: 300px">
+                            <h:outputLabel value="Fecha Desde"/>
+                            <p:calendar styleClass="calendarSmall" id="inputFecha1" value="#{finalizacionManagedBean.fechaFiltroInic}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
+                                <p:ajax event="dateSelect" listener="#{finalizacionManagedBean.buscarRadicaciones()}" update="formFinalizacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                            </p:calendar>
+                            <h:outputLabel value="Fecha Hasta"/>
+                            <p:calendar styleClass="calendarSmall" id="inputFecha2" value="#{finalizacionManagedBean.fechaFiltroFin}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
+                                <p:ajax event="dateSelect" listener="#{finalizacionManagedBean.buscarRadicaciones()}" update="formFinalizacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                            </p:calendar>
+                        </div>
+                    </div>
+                    <div align="center">
+                        <p:dataTable id="tablaRadicaciones" emptyMessage="No hay radicaciones asociadas a los filtros elegidos" value="#{finalizacionManagedBean.radicaciones}" 
+                                     selectionMode="#{finalizacionManagedBean.radicacionSel}" var="rads" rowKey="#{rads.radId}" paginator="true" rows="15" paginatorPosition="bottom"
+                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                            <p:column headerText="Número">
+                                <h:outputLabel value="#{rads.radNumero}"/>
+                            </p:column>
+                            <p:column headerText="Fecha" width="120">
+                                <h:outputLabel value="#{rads.radFecha}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
+                                </h:outputLabel>
+                            </p:column>
+                            <p:column headerText="Liquidación">
+                                <h:outputLabel value="#{rads.radLiquidacion}"/>
+                            </p:column>
+                            <p:column headerText="Último estado">
+                                <h:outputLabel value="#{finalizacionManagedBean.obtenerUltimoEstado(rads)}"/>
+                            </p:column>
+                            <p:column headerText="Escritura">
+                                <h:outputLabel value="#{rads.escId.escNumero}"/>
+                            </p:column>
+                            <p:column headerText="Otorgante">
+                                <h:outputLabel value="#{rads.escId.escNumero}"/>
+                            </p:column>
+                            <p:column headerText="(BF)" styleClass="colCenter" width="25">
+                                <a title="Presione para descargar la boleta fiscal" target="_new" href="#{request.contextPath}/static/fileDispatcher/#{rads.arcIdBoletaFiscal.arcId}-#{rads.arcIdBoletaFiscal.arcHash}.#{rads.arcIdBoletaFiscal.arcExtension}">
+                                    <img src="#{resource['/images/icons/icon-pdf2.png']}"/>
+                                </a>
+                            </p:column>
+                            <p:column headerText="(RP)" styleClass="colCenter" width="25">
+                                <a title="Presione para descargar el recibo de pago" target="_new" href="#{request.contextPath}/static/fileDispatcher/#{rads.arcIdReciboPago.arcId}-#{rads.arcIdReciboPago.arcHash}.#{rads.arcIdReciboPago.arcExtension}">
+                                    <img src="#{resource['/images/icons/icon-more.png']}"/>
+                                </a>
+                            </p:column>
+                            <p:commandLink title="Puede ver el detalle de la radicación actual" action="#{finalizacionManagedBean.obtenerDetalleTransaccion}" update=":modalCertificateDetail" oncomplete="PF('modalCertificateDetail').show();">
+                                    <img src="#{resource['/images/icons/icon-search.png']}" width="22"/>
+                                    <f:setPropertyActionListener target='#{finalizacionManagedBean.radicacionSel}' value="#{rads}"/>
+                                </p:commandLink>
+                        </p:dataTable>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

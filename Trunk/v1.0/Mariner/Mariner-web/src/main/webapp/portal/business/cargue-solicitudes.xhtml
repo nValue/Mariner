@@ -13,22 +13,22 @@
             <div class="tituloCont" align="center">
                 <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
                 <div style="display: inline-block">
-                    <h:outputLabel styleClass="titleMain" value="Cargue de solicitudes" />
-                    <h:outputLabel styleClass="subtitleMain" value="Subir, adjuntar y registrar liquidaciones"/>
+                    <h:outputLabel styleClass="titleMain" value="Radicación" />
+                    <h:outputLabel styleClass="subtitleMain" value="Creación de liquidaciones"/>
                 </div>
             </div>
             <div class="contenidoPrinc" align="center">
                 <div class="descripcion" align="center">
                     <div class="descText">
-                        Puede cargar las solicitudes, ver historial y modificar las existentes.
+                        Puede crear radicaciones y ver historial de sus radicaciones.
                     </div>
                 </div>
                 <h:form id="formFiltroRadicaciones">
                     <div align="left" style="margin: 0px 5%;">
-                        <h:outputLabel value="Pendientes: "/>
+                        <h:outputLabel value="Rechazados "/>
                         <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" converter="MarRadicacionesConverter" value="#{cargueSolicitudesManagedBean.radicacionSel}" >
                             <f:selectItem itemLabel=" - " itemValue="" />
-                            <f:selectItems value="#{cargueSolicitudesManagedBean.radicaciones}" var="radPend" itemLabel="#{radPend.marRadicacionesFasesEstadosList.size() > 1? '(P) ' : ''} #{radPend.radNumero}" itemValue="#{radPend}"/>
+                            <f:selectItems value="#{cargueSolicitudesManagedBean.radicaciones}" var="radPend" itemLabel="#{radPend.marRadicacionesFasesEstadosList.size() > 1? '(R) ' : ''} #{radPend.radNumero}" itemValue="#{radPend}"/>
                             <p:ajax listener="#{cargueSolicitudesManagedBean.seleccionarRadicacion()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" update="formRadicacion"/>
                         </p:selectOneMenu>
                         <p:commandButton style="vertical-align: top" value="Crear Radicación" action="#{cargueSolicitudesManagedBean.solicitarRadicacion()}" update="formRadicacion formFiltroRadicaciones" disabled="#{((cargueSolicitudesManagedBean.radicacionSel != null) and (cargueSolicitudesManagedBean.radicacionSel.radId == null))}"/>
@@ -55,7 +55,7 @@
                                 <p:inputTextarea value="#{cargueSolicitudesManagedBean.observacionesProceso}" style="width: 100%"/>
                             </h:panelGrid>
                             <div align="center" style="margin: 10px;">
-                                <p:commandButton value="Cargar Escritura" oncomplete="PF('fileUploadDialog').show()" />
+                                <p:commandButton value="Cargar Escritura" oncomplete="PF('fileUploadDialog').show()" rendered="#{(cargueSolicitudesManagedBean.radicacionSel.radId eq null || cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-P' || cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-R')}"/>
                                 <p:button value="Descargar Escritura" target="_new" href="/static/fileDispatcher/#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId.arcId}-#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId.arcHash}.#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId.arcExtension}"
                                           rendered="#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId != null}"/>
                             </div>

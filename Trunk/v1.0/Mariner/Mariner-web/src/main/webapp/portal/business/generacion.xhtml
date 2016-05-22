@@ -13,14 +13,14 @@
             <div class="tituloCont" align="center">
                 <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
                 <div style="display: inline-block">
-                    <h:outputLabel styleClass="titleMain" value="Generación de Liquidaciones" />
-                    <h:outputLabel styleClass="subtitleMain" value="Validación y generación de los documentos enviados"/>
+                    <h:outputLabel styleClass="titleMain" value="Liquidación" />
+                    <h:outputLabel styleClass="subtitleMain" value="Validación y cargue de radicaciones"/>
                 </div>
             </div>
             <div class="contenidoPrinc" align="center">
                 <div class="descripcion" align="center">
                     <div class="descText">
-                        En la parte izquierda encontrará las liquidaciones que tiene pendiente, si desea obtener una nueva solo pulse el botón "Obtener radicación" y le será asignada automáticamente una radicación. Si usted considera que la radicación es válida y puede seguir su proceso finalize con el botón "Validar Radicación"
+                        En la parte izquierda encontrará las liquidaciones que tiene pendientes, si desea obtener una nueva solo pulse el botón "Obtener radicación" y le será asignada automáticamente una radicación. Si usted considera que la radicación es válida y puede seguir su proceso finalize con el botón "Validar Radicación"
                     </div>
                 </div>
                 <h:form id="formTurnos">
@@ -29,7 +29,7 @@
                         <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" converter="MarRadicacionesConverter" value="#{generacionManagedBean.radicacionUsuarioSel}">
                             <p:ajax listener="#{generacionManagedBean.obtenerFasesEstadosDeRadicacion()}" update="formTurnos" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                             <f:selectItem itemLabel=" - " itemValue="" />
-                            <f:selectItems value="#{generacionManagedBean.radicacionesUsuario}" var="rads" itemLabel="#{rads.radNumero}" itemValue="#{rads}"/>
+                            <f:selectItems value="#{generacionManagedBean.radicacionesUsuario}" var="rads" itemLabel="#{generacionManagedBean.esRechazo(rads) ? '(R) ' : ''} #{rads.radNumero}" itemValue="#{rads}"/>
                         </p:selectOneMenu>
                         <p:commandButton style="vertical-align: top" value="Obtener Radicación" action="#{generacionManagedBean.asignarNuevaRadicacion()}" update="formTurnos" process="@this"/>
                         <p:commandButton style="vertical-align: top" value="Ver Historial" action="#{generacionManagedBean.obtenerRadicacionesProcesadas()}" oncomplete="PF('dialogHistorial').show()" update="modalHistorial" process="@this"/>

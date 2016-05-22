@@ -69,6 +69,11 @@ public class GeneracionManagedBean extends GenericManagedBean{
             radicacionesUsuario = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'G-P','G-S', 'R-R'", usuarioSesion);
             if(!radicacionesUsuario.isEmpty()){
                 radicacionUsuarioSel = radicacionesUsuario.get(0);
+                List<MarRadicacionesFasesEstados> rfe;
+                for (MarRadicaciones radicacion : radicacionesUsuario) {
+                    rfe = (List<MarRadicacionesFasesEstados>)genericDAOBean.findAllByColumn(MarRadicacionesFasesEstados.class, "radId", radicacion);
+                    radicacion.setMarRadicacionesFasesEstadosList(rfe);
+                }
                 obtenerFasesEstadosDeRadicacion();
             }
         } catch (Exception e) {
@@ -142,7 +147,7 @@ public class GeneracionManagedBean extends GenericManagedBean{
             obtenerRadicacionesPendientes();
             radicacionUsuarioSel = radObtenida;
             obtenerFasesEstadosDeRadicacion();
-            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación encontrada", "Se ha asignado una nueva radicación a sus pendientes, puede verificarla en la lista desplegable de radicaciones", true, false);
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación encontrada", "Se ha asignado la radicación <b> " + radObtenida.getRadNumero() + " </b> a sus pendientes, puede verificarla en la lista desplegable de radicaciones", true, false);
         } catch (Exception e) {
             logger.error("Error asignando una radicación disponible, causado por: " + e, e);
         }
@@ -165,8 +170,11 @@ public class GeneracionManagedBean extends GenericManagedBean{
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
                 return;
             }
+            MarRadicaciones radicacionGuardada = radicacionUsuarioSel;
             obtenerRadicacionesPendientes();
-            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación correcta", "Validación realizada correctamente", true, false);
+            radicacionUsuarioSel = radicacionGuardada;
+            obtenerFasesEstadosDeRadicacion();
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación correcta", "La radicación número: " + radicacionUsuarioSel.getRadNumero() + " ahora se encuentra en estado de pendiente para cargue en SAP.", true, false);
         } catch (Exception e) {
             logger.error("No se puede guardar la aprobación, causado por " + e, e);
         }
@@ -238,6 +246,27 @@ public class GeneracionManagedBean extends GenericManagedBean{
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Información no extraida", "No se puede obtener la información de SAP, causado por " + e, true, false);
             logger.error("No se puede obtener la información de SAP, causado por " + e, e);
         }
+    }
+    
+    /**
+     * Valida si una radicación es un rechazo o no - Necesario para el SelectOneMenu
+     * @param radicacionAEvaluar
+     * @return 
+     */
+    public boolean esRechazo(MarRadicaciones radicacionAEvaluar) {
+        try {
+            List<MarRadicacionesFasesEstados> rfEstados = (List<MarRadicacionesFasesEstados>)genericDAOBean.findAllByColumn(MarRadicacionesFasesEstados.class, "radId", radicacionAEvaluar, true, "rfeId");
+            if(!rfEstados.isEmpty()){
+                //Esto valida que el penúltimo estado sea rechazo por parte de los Aprobadores
+                MarRadicacionesFasesEstados rfe = rfEstados.get(rfEstados.size()-2);
+                if (rfe.getFesId().getFesCodigo().equals("R-R")) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            logger.error("No se pudo obtener el último estado de una radicación, causado por : " + e, e);
+        }
+        return false;
     }
 
     /**

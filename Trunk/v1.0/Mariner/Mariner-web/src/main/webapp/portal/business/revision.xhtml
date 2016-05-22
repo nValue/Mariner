@@ -14,13 +14,13 @@
                 <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
                 <div style="display: inline-block">
                     <h:outputLabel styleClass="titleMain" value="Revisión" />
-                    <h:outputLabel styleClass="subtitleMain" value="Visualización de los procesos aprobados por SAP"/>
+                    <h:outputLabel styleClass="subtitleMain" value="Aprobación de los procesos"/>
                 </div>
             </div>
             <div class="contenidoPrinc" align="center">
                 <div class="descripcion" align="center">
                     <div class="descText">
-                        Puede ver las radicaciones actuales ya sean pendientes o aprobadas por usted.
+                        Para ver toda la información de cada radicación pulse el botón "Boleta Fiscal", una vez confirme que la radicación es válida seleccione la opción "Aprobar", de lo contrario "Rechazar"
                     </div>
                 </div>
                 
@@ -74,6 +74,7 @@
                                 <p:inputTextarea value="#{revisionManagedBean.observaciones}" rows="2" style="width: 77%;display: block"/>
                                 <p:button style="margin: 10px;" value="Descargar Escritura" target="_new" href="/static/fileDispatcher/#{revisionManagedBean.radicacionPendienteSel.escId.arcId.arcId}-#{revisionManagedBean.radicacionPendienteSel.escId.arcId.arcHash}.#{revisionManagedBean.radicacionPendienteSel.escId.arcId.arcExtension}"
                                           rendered="#{revisionManagedBean.radicacionPendienteSel.escId.arcId != null}"/>
+                                <p:commandButton value="Boleta Fiscal" />
                             </div>
                             <div style="margin: 20px;display: inline-block; vertical-align: top; width: 40%;border: solid 1px #e0e0e0;">
                                 <p:dataTable value="#{revisionManagedBean.radicacionesFasesEstados}" var="rfe" paginator="true" rows="5" paginatorPosition="bottom"
@@ -92,10 +93,10 @@
                                 </p:dataTable>
                             </div>
                             <div>
-                                <p:commandButton style="vertical-align: top" value="Validar Radicación" action="#{revisionManagedBean.validarRadicacion()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-P')}" >
+                                <p:commandButton style="vertical-align: top" value="Validar Radicación" action="#{revisionManagedBean.validarRadicacion()}" update="formTurnos" rendered="#{(revisionManagedBean.radicacionFaseEstadoSel.fesId.fesCodigo eq 'R-P')}" >
                                     <p:confirm header="Confirmación" message="¿Esta seguro de que desea validar la radicación?" icon="ui-icon-alert" />
                                 </p:commandButton>
-                                <p:commandButton style="vertical-align: top" value="Rechazar" action="#{revisionManagedBean.rechazarRadicacion()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-P')}" >
+                                <p:commandButton style="vertical-align: top" value="Rechazar" action="#{revisionManagedBean.rechazarRadicacion()}" update="formTurnos" rendered="#{(revisionManagedBean.radicacionFaseEstadoSel.fesId.fesCodigo eq 'R-P')}" >
                                     <p:confirm header="Confirmación" message="¿Esta seguro de que desea rechazar esta radicación?" icon="ui-icon-alert" />
                                 </p:commandButton>
                             </div>
@@ -107,8 +108,44 @@
 
 
         <p:dialog id="modalHistorial" widgetVar="dialogHistorial" styleClass="modalTop" resizable="false" header="Historial de radicaciones" modal="true" width="950" minHeight="400">
-            <h:form id="formHistorial"></h:form>
-
+            <h:form id="formHistorial">
+                <div align="right" style="margin: 20px;">
+                    <h:outputLabel value="Fecha Desde"/>
+                    <p:calendar styleClass="calendarSmall" id="inputFecha1" value="#{revisionManagedBean.fechaFiltroInic}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
+                        <p:ajax event="dateSelect" listener="#{revisionManagedBean.obtenerRadicacionesProcesadas()}" update="formHistorial" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                    </p:calendar>
+                    <h:outputLabel value="Fecha Hasta"/>
+                    <p:calendar styleClass="calendarSmall" id="inputFecha2" value="#{revisionManagedBean.fechaFiltroFin}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
+                        <p:ajax event="dateSelect" listener="#{revisionManagedBean.obtenerRadicacionesProcesadas()}" update="formHistorial" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                    </p:calendar>
+                </div>
+                <p:dataTable style="margin: 20px;" value="#{revisionManagedBean.radicacionesHistorial}" 
+                             selection="#{revisionManagedBean.radicacionFaseEstadoSel}" var="radPro" selectionMode="single" rowKey="#{radPro.rfeId}" 
+                             paginator="true" rows="7" paginatorPosition="bottom"
+                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" emptyMessage="No hay radicaciones">
+                    <p:column headerText="Número" width="100" >
+                        <h:outputLabel value="#{radPro.radId.radNumero}"/>
+                    </p:column>
+                    <p:column headerText="Fecha" width="120">
+                        <h:outputLabel value="#{radPro.rfeFechaInicio}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column headerText="Escritura" width="100">
+                        <h:outputLabel value="#{radPro.radId.escId.escNumero}"/>
+                    </p:column>
+                    <p:column headerText="Estado">
+                        <h:outputLabel value="#{radPro.fesId.fesNombre}" />
+                    </p:column>
+                    <p:column headerText="Observaciones">
+                        <h:outputLabel value="#{radPro.rfeObservaciones}" />
+                    </p:column>
+                </p:dataTable>
+                <div align="center" style="margin: 20px;">
+                    <p:commandButton id="btnDetalle" value="Ver Detalle" update=":formTurnos" action="#{revisionManagedBean.seleccionarRadicacionHistorial()}" oncomplete="PF('dialogHistorial').hide()"/>
+                    <p:commandButton value="Cancelar" oncomplete="PF('dialogHistorial').hide()"/>
+                </div>
+            </h:form>
         </p:dialog>
     </ui:define>
 </ui:composition>
