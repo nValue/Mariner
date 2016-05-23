@@ -5,6 +5,8 @@
  */
 package co.com.realtech.mariner.model.entity.generic;
 
+import java.util.Objects;
+
 /**
  * Clase que tiene dos constantes para ser mapeada y usada en SelectOneMenu's y otros procesos
  * @author fabianagudelo
@@ -39,5 +41,34 @@ public class ClaveValor {
     public void setValor(String valor) {
         this.valor = valor;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ClaveValor other = (ClaveValor) obj;
+        if (!Objects.equals(this.clave, other.clave)) {
+            return false;
+        }
+        if (!Objects.equals(this.valor, other.valor)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
     
 }

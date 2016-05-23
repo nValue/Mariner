@@ -4,7 +4,9 @@ import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBean;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -128,6 +130,67 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
             throw e;
         }
         return radicacionesLibres;
+    }
+    
+    /**
+     * Obtiene las radicaciones que hayan llegado al estado de finalización por fechas y por tipo de búsqueda
+     * @param tipo
+     * @param campoBusqueda
+     * @param fechaInicial
+     * @param fechaFinal
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    @Override
+    public List<MarRadicaciones> obtenerRadicacionesFinalizacionPorFechasYParametro(String tipo, String campoBusqueda, Date fechaInicial, Date fechaFinal) throws MarinerPersistanceException {
+        List<MarRadicaciones> radicaciones = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            String sql = "WITH maxs AS (\n"
+                        + "SELECT DISTINCT r.*, MAX(rfe.rfe_id) OVER (PARTITION BY r.rad_id) AS maximo \n"
+                        + "FROM mar_radicaciones r\n"
+                        + "INNER JOIN mar_radicaciones_fases_estados rfe ON r.rad_id = rfe.rad_id\n"
+                        + "ORDER BY r.rad_id)\n"
+                        + "SELECT * FROM mar_radicaciones_fases_estados rfe \n"
+                        + "INNER JOIN maxs r ON r.maximo = rfe.rfe_id\n"
+                        + "INNER JOIN mar_fases_estados fe ON rfe.fes_id = fe.fes_id\n"
+                        + "WHERE 1 = 1 \n"
+                        + "  AND fe.fes_codigo IN ('P-A','F-A','F-R')\n"
+                        + "  AND TRUNC(rfe.rfe_fecha_inicio) BETWEEN TO_DATE('FECHA1','dd/MM/yyyy') AND TO_DATE('FECHA2','dd/MM/yyyy')";
+            if (tipo.equals("ES")) {
+                String valor = "";
+                switch (campoBusqueda) {
+                    case "P":
+                        valor = "'P-A'";
+                        break;
+                    case "A":
+                        valor = "'F-A'";
+                        break;
+                    case "R":
+                        valor = "'F-R'";
+                        break;
+                    default:
+                        break;
+                }
+                sql = sql.replace("1 = 1", " fe.fes_codigo = " + valor);
+            }else if(tipo.equals("RA")){
+                sql = sql.replace("1 = 1", " r.rad_numero = '" + campoBusqueda + "'");
+            }else if(tipo.equals("LI")){
+                sql = sql.replace("1 = 1", " r.rad_liquidacion = '" + campoBusqueda + "'");
+            }else if(tipo.equals("OT")){
+                sql = sql.replace("1 = 1", " r.rad_doc_otorgante = '" + campoBusqueda + "'");
+            }else if(tipo.equals("RE")){
+                sql = sql.replace("1 = 1", " r.rad_doc_receptor = '" + campoBusqueda + "'");
+            }
+            sql = sql.replace("FECHA1", sdf.format(fechaInicial));
+            sql = sql.replace("FECHA2", sdf.format(fechaFinal));
+            System.out.println("sql = " + sql);
+            Query q = getEntityManager().createNativeQuery(sql, MarRadicaciones.class);
+            radicaciones = (List<MarRadicaciones>) q.getResultList();
+        } catch (Exception e) {
+            throw e;
+        }
+        return radicaciones;
     }
     
     
