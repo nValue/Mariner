@@ -1,0 +1,18 @@
+/* 
+    Estilos para pantalla de seleccion de medio de pago.
+    Created on : 22/05/2016, 10:38:54 PM
+    Author     : Andres Rivera
+*/
+#payment-panel{
+    padding: 8px;
+}
+
+#payment-title{
+    border-radius: 4px;
+    border-bottom: 2px solid #0066ff;
+}
+
+.payment-methods{
+    text-align: center;
+    padding: 4px;
+}

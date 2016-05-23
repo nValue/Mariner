@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/template-business-external.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="negocio">
+        <div id="contenedorPayments">
+            <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
+            <link rel="stylesheet" type="text/css" href="#{resource['css/payment.css']}" />
+            <div id="paperMain">
+                <div class="tituloCont" align="center">
+                    <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                    <div style="display: inline-block">
+                        <h:outputLabel styleClass="titleMain" value="Pagos" />
+                        <h:outputLabel styleClass="subtitleMain" value="Busqueda y/o seleccion de radicaciones pendientes para pago."/>
+                    </div>
+                </div>
+                <div class="contenidoPrinc" align="center">
+                    <div class="descripcion" align="center">
+                        <div class="descText">
+                            En esta pantalla usted puede buscar o seleccionar una liquidación pendiente de pago, por favor ingrese la información solicitada. 
+                        </div>                        
+                    </div>
+                    <div align="left">
+                        <h:form id="formPayment">
+                            <h:panelGrid columns="7">
+                                <h:outputLabel value="Tipo de Busqueda" rendered="#{paymentManagedBean.autenticado != 'S'}"/>
+                                <p:selectOneMenu styleClass="inputModal" value="#{paymentManagedBean.tipoBusqueda}" style="width: 122px;" rendered="#{paymentManagedBean.autenticado != 'S'}">
+                                    <f:selectItem itemLabel="Liquidacion" itemValue="L" />
+                                    <f:selectItem itemLabel="Radicacion" itemValue="R" />
+                                </p:selectOneMenu>
+                                <h:outputLabel value="Numero" rendered="#{paymentManagedBean.autenticado != 'S'}"/>  
+                                <p:inputText value="#{paymentManagedBean.codigoBusqueda}" required="true" style="width: 160px !important;" rendered="#{paymentManagedBean.autenticado != 'S'}"/>
+                                <p:commandButton value="Buscar" action="#{paymentManagedBean.buscarRadicacion()}" update="@form" rendered="#{paymentManagedBean.autenticado != 'S'}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                                <h:outputLabel value="Radicaciones pendientes de pago" rendered="#{paymentManagedBean.autenticado eq 'S'}"/>  
+                                <p:selectOneMenu styleClass="inputModal" value="#{paymentManagedBean.radicacion}" converter="MarRadicacionesConverter" style="width: 222px;" rendered="#{paymentManagedBean.autenticado eq 'S'}">
+                                    <f:selectItems value="#{paymentManagedBean.radicaciones}" var="radicacion" itemLabel="#{radicacion.radNumero}" itemValue="#{radicacion}"/>
+                                    <p:ajax update="panelRadicacion"/>
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+                            <hr/>
+                            <!-- Panel de informacion de la radicacion seleccionada -->
+                            <h:panelGroup id="panelRadicacion">
+                                <h:panelGroup rendered="#{paymentManagedBean.radicacion!=null}">
+                                    <div id="payment-panel">
+                                        <div id="payment-title">
+                                            Informacion de la Radicacion
+                                        </div>
+                                        <div id="payment-detail">
+                                            <h:panelGrid columns="6">
+                                                <h:outputLabel class="labelLittle" value="Numero Radicacion" />
+                                                <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radNumero}" />
+                                                <h:outputLabel class="labelLittle" value="Liquidacion" />
+                                                <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radLiquidacion}" />
+                                                <h:outputLabel class="labelLittle" value="# Acto" />
+                                                <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radCodigoActo}" />
+                                                <h:outputLabel class="labelLittle" value="Fecha" />
+                                                <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radFecha}" >
+                                                    <f:convertDateTime timeZone="#{utilManagedBean.timeZone}" pattern="dd/MM/yyyy hh:mm" />
+                                                </p:outputLabel>
+                                                <h:outputLabel class="labelLittle" value="Cuantia" />
+                                                <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radCuantia}" />
+                                                <h:outputLabel class="labelLittle" value="Valor Liquidacion" />
+                                                <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radValorLiq}" />
+                                                <h:outputLabel class="labelLittle" value="Documento Otorgante" />
+                                                <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radDocOtorgante}" />
+                                                <h:outputLabel class="labelLittle" value="Documento Receptor" />
+                                                <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radDocReceptor}" />
+                                            </h:panelGrid>
+                                            <div class="payment-methods">
+                                                
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                                </h:panelGroup>
+                            </h:panelGroup>
+                        </h:form>
+                    </div>
+                </div>
+            </div>            
+        </div>        
+    </ui:define>
+
+</ui:composition>

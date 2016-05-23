@@ -21,10 +21,11 @@ public class Servicios {
      * liquidacion en otros sistemas.
      *
      * @param codigoLiquidacion
+     * @param codigoRadicacion
      * @return
      */
     @WebMethod(operationName = "creacionLiquidacion")
-    public EntidadLiquidacionResultado creacionLiquidacion(@WebParam(name = "codigoLiquidacion") String codigoLiquidacion) {
+    public EntidadLiquidacionResultado creacionLiquidacion(@WebParam(name = "codigoLiquidacion") String codigoLiquidacion,@WebParam(name = "codigoRadicacion")Long codigoRadicacion) {
         EntidadLiquidacionResultado salida = new EntidadLiquidacionResultado();
         try {
             salida.setEstado("OK");
@@ -43,11 +44,12 @@ public class Servicios {
      * Ajustar estado Liquidacion.
      *
      * @param codigoLiquidacion
+     * @param codigoRadicacion
      * @param estadoLiquidacion
      * @return
      */
     @WebMethod(operationName = "ajustarEstadoLiquidacion")
-    public EntidadLiquidacionResultado ajustarEstadoLiquidacion(@WebParam(name = "codigoLiquidacion") String codigoLiquidacion, @WebParam(name = "estadoLiquidacion") String estadoLiquidacion) {
+    public EntidadLiquidacionResultado ajustarEstadoLiquidacion(@WebParam(name = "codigoLiquidacion") String codigoLiquidacion,@WebParam(name = "codigoRadicacion")Long codigoRadicacion, @WebParam(name = "estadoLiquidacion") String estadoLiquidacion) {
         EntidadLiquidacionResultado salida = new EntidadLiquidacionResultado();
         try {
             salida.setEstado("OK");
@@ -66,12 +68,13 @@ public class Servicios {
      * Recibir informacion de la boleta Fiscal y del Recibo de Pago.
      *
      * @param codigoLiquidacion
+     * @param codigoRadicacion
      * @param boletaFiscal
      * @param reciboDePago
      * @return
      */
     @WebMethod(operationName = "recibirInformacionLiquidacion")
-    public EntidadLiquidacionResultado recibirInformacionLiquidacion(@WebParam(name = "codigoLiquidacion") String codigoLiquidacion, @WebParam(name = "boletaFiscal") byte[] boletaFiscal, @WebParam(name = "reciboDePago") byte[] reciboDePago) {
+    public EntidadLiquidacionResultado recibirInformacionLiquidacion(@WebParam(name = "codigoLiquidacion") String codigoLiquidacion,@WebParam(name = "codigoRadicacion")Long codigoRadicacion, @WebParam(name = "boletaFiscal") byte[] boletaFiscal, @WebParam(name = "reciboDePago") byte[] reciboDePago) {
         EntidadLiquidacionResultado salida = new EntidadLiquidacionResultado();
         try {
             salida.setEstado("OK");

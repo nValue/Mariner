@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/templates/template-principal.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="content">
+        <!-- Panel de usuario en modo External -->
+        <h:panelGroup id="panelHome">
+            <div id="backgroundDiv">
+                <h:form>
+                    <div class="headerMain">
+                        <div class="leftHeaderMain">
+                            <h:panelGroup rendered="#{sessionScope.auth eq 'S'}">
+                                <img id="menuicon" class="element-animation" style="margin: 10%;cursor: pointer" src="#{resource['/images/icons/menu-icon.png']}"/>                          
+                            </h:panelGroup>                            
+                        </div>
+                        <div class="centerHeaderMain">
+                            <a href="#{request.contextPath}">
+                                <img width="180px" style="display: inline-block;vertical-align: top;float: left" src="#{resource['/images/logoGobernacion.png']}"/>                                
+                            </a>                            
+                            <div class="mainTitle" style="">Plataforma de impuestos de Registro Valle del Cauca</div>
+                            <img class="imgValle" width="50px" src="#{resource['/images/valle.png']}"/>
+                        </div>
+                        <div class="rightHeaderMain">
+                            <table class="notificaciones-panel">
+                                <tr>
+                                    <!-- panel de Notificaciones -->
+                                    <td>
+                                        <h:panelGroup rendered="#{sessionScope.auth eq 'S'}">
+                                            <div id="usuarioNotificaciones" class="element-animation">
+                                                <h:panelGroup styleClass="notificacionesCounter">
+                                                    <div>
+                                                        #{notificacionesManagedBean.cantidadPendientes}
+                                                    </div>                                            
+                                                </h:panelGroup>                                                                                       
+                                            </div>
+                                            <div id="usuarioNotificacionesDetalle" align="center">
+                                                <div>
+                                                    <h:form id="formNotificacionesFlotante">
+                                                        <h:panelGroup id="panelNotificacionesFlotante">
+                                                            <div id="notificaciones-principal">
+                                                                <script type="text/javascript">
+                                                                    function fl_execute_button(idClass, status) {
+                                                                        if (status === 'P') {
+                                                                            var classes = document.getElementsByClassName(idClass);
+                                                                            var buttton = classes[0];
+                                                                            buttton.click();
+                                                                        }
+                                                                    }
+                                                                </script>
+                                                                <ui:repeat value="#{notificacionesManagedBean.notificaciones}" var="notificacion" varStatus="status">
+                                                                    <p:commandLink styleClass="btnNotificacion_#{notificacion.ntfId}" update="@(.notificacionesCounter) @this" action="#{notificacionesManagedBean.actualizarEstadoLecturaNotificacion(notificacion)}" onmouseover="fl_execute_button('btnNotificacion_#{notificacion.ntfId}', '#{notificacion.ntfEstado}');">
+                                                                        <div class="componente-notificacion-#{notificacion.ntfEstado}" title="#{notificacion.nftFecha}">
+                                                                            <div>
+                                                                                <table style="width: 100%">
+                                                                                    <tr>
+                                                                                        <td width="14" valign="middle">
+                                                                                            <div class="componente-notificacion-numero">
+                                                                                                #{status.index+1}-
+                                                                                            </div>
+                                                                                        </td>
+                                                                                        <td valign="top" class="componente-notificacion-texto">
+                                                                                            #{notificacion.ntfMensaje}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </table>
+                                                                            </div>
+                                                                            <div align="right" class="componente-notificacion-fecha">
+                                                                                <h:outputText value="#{notificacion.nftFecha}" >
+                                                                                    <f:convertDateTime timeZone="#{utilManagedBean.timeZone}" pattern="dd/MM/yyyy hh:mm:ss" />
+                                                                                </h:outputText>
+                                                                            </div>                                            
+                                                                        </div>
+                                                                    </p:commandLink>
+                                                                </ui:repeat>                                
+                                                            </div>
+                                                        </h:panelGroup>
+                                                    </h:form>
+                                                </div>
+                                            </div>
+                                        </h:panelGroup>                                        
+                                    </td>
+                                    <!-- panel de usuario -->
+                                    <td>
+                                        <h:panelGroup rendered="#{sessionScope.auth eq 'S'}">
+                                            <img id="usuarioImg" class="element-animation" style="cursor: pointer;width: 24px;" src="#{resource['/images/icons/user-icon.png']}" title="Presione para ver la informacion del usuario"/>  
+                                            <!--div para la información del usuario onHover-->
+                                            <div id="usuarioDiv" align="center">
+                                                <div id="imgUserBig">
+                                                    <span class="helper"></span>
+                                                    <img style="vertical-align: middle" src="#{resource['/images/user-male-big.png']}"/>
+                                                </div>
+                                                <div id="infoUser">
+                                                    <h:outputLabel style="font-size: 24px;display: block;color: #000;" value="#{indexManagedBean.usuario.usuLogin}" />
+                                                    <h:outputLabel style="font-size: 16px;display: block;color: #b5b5b5;" value="#{indexManagedBean.usuario.perId.perNombres} #{indexManagedBean.usuario.perId.perApellidos}" />
+                                                    <p:commandButton style="margin: 9%" value="Cambiar contraseña" oncomplete="PF('dialogContrasena').show()" />
+                                                </div>
+                                            </div>
+                                        </h:panelGroup>                                        
+                                    </td>
+                                    <!-- panel de cerrado de usuario -->
+                                    <td>
+                                        <p:commandLink action="#{indexManagedBean.salir()}" title="Presione aqui para cerrar la sesion de usuario" rendered="#{sessionScope.auth eq 'S'}">
+                                            <img class="element-animation" style="cursor: pointer;width: 24px;" src="#{resource['/images/icons/logout-icon.png']}"/>
+                                            <p:confirm header="Confirmacion" message="Esta seguro de que desea cerrar su sesion?" icon="ui-icon-alert" />
+                                        </p:commandLink>
+                                    </td>
+                                </tr>
+                            </table>                            
+                        </div>
+                    </div>
+                </h:form>
+                <div class="contentMain" align="center">
+                    <ui:insert name="negocio"/>
+                </div>
+            </div>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>
