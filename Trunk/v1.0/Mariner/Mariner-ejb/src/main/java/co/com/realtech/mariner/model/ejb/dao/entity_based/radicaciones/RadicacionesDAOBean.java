@@ -133,23 +133,66 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
     }
     
     /**
-     * Obtiene las radicaciones que hayan llegado al estado de finalización por fechas y por tipo de búsqueda
+     * Obtiene las radicaciones que atendió un usuario en una o mas fases y cuyo estado o estados finales sean los ingresados.
+     * @param usuario
+     * @param fasesAtendidas
+     * @param fasesFinales
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    public List<MarRadicaciones> obtenerRadsAtendidasYFaseFinal(MarUsuarios usuario, String fasesAtendidas, String fasesFinales) throws MarinerPersistanceException{
+        List<MarRadicaciones> radicaciones = new ArrayList<>();
+        try {
+            String sql = "WITH delUsuario AS \n"
+                    + "(\n"
+                    + "  SELECT DISTINCT r.*\n"
+                    + "  FROM mar_radicaciones r \n"
+                    + "  INNER JOIN mar_radicaciones_fases_estados rfe ON r.rad_id = rfe.rad_id\n"
+                    + "  INNER JOIN mar_fases_estados fe ON rfe.fes_id = fe.fes_id\n"
+                    + "  WHERE rfe.usu_id = %USUARIO%\n"
+                    + "    AND fe.fes_codigo IN (%FASESATENDIDAS%)\n"
+                    + "), maximos AS \n"
+                    + "( \n"
+                    + "SELECT DISTINCT r.*, MAX(rfe.rfe_id) OVER(PARTITION BY r.rad_id) AS rfe_id\n"
+                    + "FROM delUsuario r \n"
+                    + "INNER JOIN mar_radicaciones_fases_estados rfe ON r.rad_id = rfe.rad_id\n"
+                    + ") SELECT * FROM maximos m\n"
+                    + "INNER JOIN mar_radicaciones_fases_estados rfe ON m.rfe_id = rfe.rfe_id\n"
+                    + "INNER JOIN mar_fases_estados fe ON rfe.fes_id = fe.fes_id\n"
+                    + "WHERE fe.fes_codigo IN (%FASESULTIMAS%)";
+            sql = sql.replace("%USUARIO%", usuario.getUsuId().toString());
+            sql = sql.replace("%FASESATENDIDAS%", fasesAtendidas);
+            sql = sql.replace("%FASESULTIMAS%", fasesFinales);
+            System.out.println("obtenerRadsAtendidasYFaseFinal = " + sql);
+            Query q = getEntityManager().createNativeQuery(sql, MarRadicaciones.class);
+            radicaciones = q.getResultList();
+        } catch (Exception e) {
+            throw e;
+        }
+        return radicaciones;
+    }
+    
+    /**
+     * Obtiene las radicaciones que hayan llegado al estado de finalización por fechas y por tipo de búsqueda,
+     * el usuario es opcional
      * @param tipo
      * @param campoBusqueda
      * @param fechaInicial
      * @param fechaFinal
+     * @param usuario
      * @return
      * @throws MarinerPersistanceException 
      */
     @Override
-    public List<MarRadicaciones> obtenerRadicacionesFinalizacionPorFechasYParametro(String tipo, String campoBusqueda, Date fechaInicial, Date fechaFinal) throws MarinerPersistanceException {
+    public List<MarRadicaciones> obtenerRadicacionesFinalizacionPorFechasYParametro(String tipo, String campoBusqueda, Date fechaInicial, Date fechaFinal, MarUsuarios usuario) throws MarinerPersistanceException {
         List<MarRadicaciones> radicaciones = null;
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
             String sql = "WITH maxs AS (\n"
                         + "SELECT DISTINCT r.*, MAX(rfe.rfe_id) OVER (PARTITION BY r.rad_id) AS maximo \n"
                         + "FROM mar_radicaciones r\n"
-                        + "INNER JOIN mar_radicaciones_fases_estados rfe ON r.rad_id = rfe.rad_id\n"
+                        + "INNER JOIN mar_radicaciones_fases_estados rfe ON r.rad_id = rfe.rad_id \n"
+                        + "WHERE 3 = 3\n"
                         + "ORDER BY r.rad_id)\n"
                         + "SELECT * FROM mar_radicaciones_fases_estados rfe \n"
                         + "INNER JOIN maxs r ON r.maximo = rfe.rfe_id\n"
@@ -184,6 +227,9 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
             }
             sql = sql.replace("FECHA1", sdf.format(fechaInicial));
             sql = sql.replace("FECHA2", sdf.format(fechaFinal));
+            if(usuario != null){
+                sql = sql.replace("3 = 3", "rfe.usu_id = " + usuario.getUsuId());
+            }
             System.out.println("sql = " + sql);
             Query q = getEntityManager().createNativeQuery(sql, MarRadicaciones.class);
             radicaciones = (List<MarRadicaciones>) q.getResultList();
