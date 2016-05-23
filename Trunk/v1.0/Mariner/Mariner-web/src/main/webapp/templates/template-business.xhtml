@@ -188,6 +188,7 @@
                         <p:password id="contNueva2" value="#{indexManagedBean.claveNuevaRep}" required="true" requiredMessage="Debe repetir la clave nueva" 
                                     label="Repetir Clave Nueva" size="30" />
                     </h:panelGrid>
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
                     <div align="center" style="padding-top: 10px">                        
                         <p:commandButton value="Guardar" action="#{indexManagedBean.cambiarContrasena()}" />
                         <p:commandButton value="Cancelar" oncomplete="PF('dialogContrasena').hide()" process="@this"/>

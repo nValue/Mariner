@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package co.com.realtech.mariner.controller.jsf.managed_bean.portal.business;
 
 import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBean;
@@ -27,7 +22,6 @@ import javax.faces.bean.ViewScoped;
  */
 @ManagedBean
 @ViewScoped
-
 public class RevisionManagedBean extends GenericManagedBean{
 
     @EJB(beanName = "RadicacionesDAOBean")
@@ -67,6 +61,8 @@ public class RevisionManagedBean extends GenericManagedBean{
             if(!radicacionesPendientes.isEmpty()){
                 radicacionPendienteSel = radicacionesPendientes.get(0);
                 obtenerFasesEstadosDeRadicacion();
+            }else{
+                radicacionPendienteSel = null;
             }
         } catch (Exception e) {
             logger.error("Error obteniendo las radicaciones, causado por : " + e, e);
@@ -199,6 +195,7 @@ public class RevisionManagedBean extends GenericManagedBean{
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Generación Pendiente errror", "No se puede crear el estado de generación pendiente para la radicación, por favor verifique que la información este correcta e intente de nuevo.", true, false);
                 return;
             }
+            radicacionPendienteSel = null;
             obtenerRadicacionesPendientes();
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo realizado", "Proceso rechazado correctamente", true, false);
         } catch (Exception e) {

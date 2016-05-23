@@ -61,7 +61,7 @@
                             </div>
                         </div>
                         <div style="margin: 20px;display: inline-block; vertical-align: top; width: 40%;border: solid 1px #e0e0e0;">
-                            <p:dataTable value="#{cargueSolicitudesManagedBean.radicacionesFasesEstados}" var="rfe" paginator="true" rows="5" paginatorPosition="bottom"
+                            <p:dataTable value="#{cargueSolicitudesManagedBean.radicacionesFasesEstados}" var="rfe" paginator="true" rows="7" paginatorPosition="bottom"
                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" emptyMessage="No hay fases">
                                 <p:column headerText="Fase">
                                     <h:outputLabel value="#{rfe.fesId.fesNombre}"/>
