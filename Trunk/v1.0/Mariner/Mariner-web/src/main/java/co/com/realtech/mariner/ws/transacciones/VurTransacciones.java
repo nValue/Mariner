@@ -119,10 +119,12 @@ public class VurTransacciones {
      *
      * @param codigoTransaccion
      * @param claveConfirmacion
+     * @param fechaPago
+     * @param valorPagado
      * @return
      */
     @WebMethod(operationName = "confirmarTransaccion")
-    public VURTransaccionConfirmacion confirmarTransaccion(@WebParam(name = "codigoTransaccion") Long codigoTransaccion, @WebParam(name = "claveConfirmacion") String claveConfirmacion) {
+    public VURTransaccionConfirmacion confirmarTransaccion(@WebParam(name = "codigoTransaccion") Long codigoTransaccion, @WebParam(name = "fechaPago") String claveConfirmacion, @WebParam(name = "claveConfirmacion") String fechaPago, @WebParam(name = "valorPagado") Long valorPagado) {
         VURTransaccionConfirmacion confirmacion = new VURTransaccionConfirmacion();
         try {
             String claveConfConstante = ConstantesUtils.cargarConstante("WS-PASARELA-CODIGO-CONFIRMACION");

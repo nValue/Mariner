@@ -109,6 +109,7 @@ public class IndexManagedBean implements Serializable {
                 PrimeFacesPopup.lanzarDialog(Effects.Explode, "Notificacion", "Usuario o contraseña incorrectos", true, false);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("No se puede validar el usuario, causado por: " + e);
         }
     }

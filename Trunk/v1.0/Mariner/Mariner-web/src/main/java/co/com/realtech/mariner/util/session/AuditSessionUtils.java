@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
  * @since JDK1.6
  * @version 1.0
  */
-public class AuditSessionUtils implements Serializable{
+public class AuditSessionUtils implements Serializable {
 
     public static AuditSessionUtils create() {
         return new AuditSessionUtils();
@@ -37,8 +37,13 @@ public class AuditSessionUtils implements Serializable{
             Class clazz = obj.getClass();
             // Asignar fecha de modificacion del objeto
             HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-            MarUsuarios usuario=((MarUsuarios) request.getSession().getValue("marineruser"));
-            user = usuario.getUsuId()+"-"+usuario.getUsuLogin();
+            MarUsuarios usuario = ((MarUsuarios) request.getSession().getValue("marineruser"));
+            try {
+                user = usuario.getUsuId() + "-" + usuario.getUsuLogin();
+            } catch (Exception e) {
+                user = "";
+            }
+
             try {
                 Field audUsuario = clazz.getDeclaredField("audUsuario");
                 audUsuario.setAccessible(true);

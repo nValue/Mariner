@@ -61,6 +61,10 @@
     font-size: 10px;
 }
 
+.labelMiddle{
+    font-size: 12px;
+}
+
 .labelText{
     border: 1px solid #d6d6d6;
     width: 200px;

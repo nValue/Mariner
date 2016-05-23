@@ -8,6 +8,11 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="negocio">
+        <style type="text/css">
+            #modalTransaccion{
+                top: 44px !important;
+            }
+        </style>
         <div id="contenedorPayments">
             <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
             <link rel="stylesheet" type="text/css" href="#{resource['css/payment.css']}" />
@@ -47,42 +52,96 @@
                             <h:panelGroup id="panelRadicacion">
                                 <h:panelGroup rendered="#{paymentManagedBean.radicacion!=null}">
                                     <div id="payment-panel">
-                                        <div id="payment-title">
-                                            Informacion de la Radicacion
+                                        <div class="payment-title">
+                                            <span>
+                                                Informacion de la liquidacion
+                                            </span>                                            
                                         </div>
-                                        <div id="payment-detail">
+                                        <div class="payment-detail">
                                             <h:panelGrid columns="6">
-                                                <h:outputLabel class="labelLittle" value="Numero Radicacion" />
+                                                <h:outputLabel class="labelMiddle" value="Numero Radicacion" />
                                                 <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radNumero}" />
-                                                <h:outputLabel class="labelLittle" value="Liquidacion" />
+                                                <h:outputLabel class="labelMiddle" value="Liquidacion" />
                                                 <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radLiquidacion}" />
-                                                <h:outputLabel class="labelLittle" value="# Acto" />
+                                                <h:outputLabel class="labelMiddle" value="# Acto" />
                                                 <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radCodigoActo}" />
-                                                <h:outputLabel class="labelLittle" value="Fecha" />
+                                                <h:outputLabel class="labelMiddle" value="Fecha" />
                                                 <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radFecha}" >
                                                     <f:convertDateTime timeZone="#{utilManagedBean.timeZone}" pattern="dd/MM/yyyy hh:mm" />
                                                 </p:outputLabel>
-                                                <h:outputLabel class="labelLittle" value="Cuantia" />
+                                                <h:outputLabel class="labelMiddle" value="Cuantia" />
                                                 <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radCuantia}" />
-                                                <h:outputLabel class="labelLittle" value="Valor Liquidacion" />
-                                                <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radValorLiq}" />
-                                                <h:outputLabel class="labelLittle" value="Documento Otorgante" />
-                                                <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radDocOtorgante}" />
-                                                <h:outputLabel class="labelLittle" value="Documento Receptor" />
-                                                <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radDocReceptor}" />
-                                            </h:panelGrid>
+                                                <h:outputLabel class="labelMiddle" value="Valor Liquidacion" />
+                                                <p:outputLabel class="labelText" value="#{paymentManagedBean.radicacion.radValorLiq}" />                                                
+                                            </h:panelGrid>                                            
+                                        </div>
+                                    </div>            
+                                    <div>
+                                        <div class="payment-title">
+                                            <span>
+                                                Seleccion de medios de pago
+                                            </span>                                            
+                                        </div>
+                                        <div>
                                             <div class="payment-methods">
-                                                
+                                                <p:commandLink styleClass="payment-button" action="#{paymentManagedBean.seleccionarMedioPago('PSE')}" title="Presione para realizar el pago mediante Pagos en Linea PSE" update=":modalTransaccion">
+                                                    <img src="#{resource['images/icons/logo-pse-nuevo.png']}" alt="Pagos mediante PSE"/><br/>
+                                                    <span>
+                                                        Pagos en Linea
+                                                    </span>
+                                                </p:commandLink>
+                                                <p:commandLink styleClass="payment-button" action="#{paymentManagedBean.seleccionarMedioPago('RECIBO')}" title="Presione para realizar el pago mediante Consignacion en Ventanilla de Banco" update=":modalTransaccion">
+                                                    <img src="#{resource['images/icons/logo-codigo-barras.png']}" alt="Pago mediante consignacion en Ventanilla"/><br/>
+                                                    <span>
+                                                        Pago en Ventanilla
+                                                    </span>
+                                                </p:commandLink>
                                             </div>
                                         </div>
-                                    </div>                                    
+                                    </div>
                                 </h:panelGroup>
                             </h:panelGroup>
                         </h:form>
                     </div>
                 </div>
             </div>            
-        </div>        
+        </div>   
+
+        <!-- Dialog confirmacion de la transaccion -->        
+        <p:dialog id="modalTransaccion" widgetVar="dialogTransaccion" closeOnEscape="true" draggable="true" resizable="false" header="Informacion detalle Transaccion" modal="true">
+            <div>
+                <h:form id="formModalTransaccion">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Referencia"/>
+                        <p:outputLabel class="labelText" value="#{paymentManagedBean.transaccion.traReferencia}" style="width: 278px;"/>  
+                        <h:outputLabel value="Valor"/>
+                        <p:outputLabel class="labelText" value="#{paymentManagedBean.transaccion.traValor}" style="width: 278px;"/>                                                
+
+                        <h:outputLabel value="Tipo Documeto"/>
+                        <p:selectOneMenu styleClass="inputModal" value="#{paymentManagedBean.transaccion.tdcId}" converter="MarTiposDocumentosConverter" style="width: 250px;">
+                            <f:selectItems value="#{paymentManagedBean.tiposDocumentos}" var="docs" itemLabel="#{docs.tdcNombre}" itemValue="#{docs}"/>
+                        </p:selectOneMenu>
+                        <h:outputLabel value="Documento"/>
+                        <p:inputText value="#{paymentManagedBean.transaccion.traDocumento}" required="true" size="20"/>
+                        <h:outputLabel value="Nombres"/>
+                        <p:inputText value="#{paymentManagedBean.transaccion.traNombres}" required="true" size="20"/>
+                        <h:outputLabel value="Apellidos"/>
+                        <p:inputText value="#{paymentManagedBean.transaccion.traApellidos}" required="true" size="20"/>                        
+                        <h:outputLabel value="Telefono"/>
+                        <p:inputText value="#{paymentManagedBean.transaccion.traTelefono}" required="true" size="20"/>   
+                        <h:outputLabel value="Correo"/>
+                        <p:inputText value="#{paymentManagedBean.transaccion.traCorreo}" validator="EmailValidator" required="true" size="20"/>                        
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <h:panelGrid columns="3">
+                            <p:commandButton value="Realizar Pago" update="@form" action="#{paymentManagedBean.realizarTransaccion()}" disabled="#{paymentManagedBean.transaccion.traEstado != 'T'}"/>
+                            <p:commandButton value="Descargar Recibo" action="#{paymentManagedBean.descargarRecibo()}" rendered="#{paymentManagedBean.transaccion.traId != null and paymentManagedBean.tipoPago eq 'RECIBO'}" immediate="true" ajax="false"/>
+                            <p:commandButton value="Cancelar" oncomplete="PF('dialogTransaccion').hide();" immediate="true"/>
+                        </h:panelGrid>                        
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
     </ui:define>
 
 </ui:composition>
