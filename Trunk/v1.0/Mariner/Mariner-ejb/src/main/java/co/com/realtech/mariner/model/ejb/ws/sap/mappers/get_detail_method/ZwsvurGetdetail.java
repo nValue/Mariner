@@ -26,8 +26,8 @@ public interface ZwsvurGetdetail {
      * @param eHEADER
      */
     @WebMethod(operationName = "ZPSCDFM_VUR_GETDETAIL")
-    @RequestWrapper(localName = "ZPSCDFM_VUR_GETDETAIL", targetNamespace = "urn:sap-com:document:sap:rfc:functions", className = "co.com.realtech.ws.map.ZPSCDFMVURGETDETAIL")
-    @ResponseWrapper(localName = "ZPSCDFM_VUR_GETDETAILResponse", targetNamespace = "urn:sap-com:document:sap:rfc:functions", className = "co.com.realtech.ws.map.ZPSCDFMVURGETDETAILResponse")
+    @RequestWrapper(localName = "ZPSCDFM_VUR_GETDETAIL", targetNamespace = "urn:sap-com:document:sap:rfc:functions", className = "co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDFMVURGETDETAIL")
+    @ResponseWrapper(localName = "ZPSCDFM_VUR_GETDETAILResponse", targetNamespace = "urn:sap-com:document:sap:rfc:functions", className = "co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDFMVURGETDETAILResponse")
     public void zpscdfmVURGETDETAIL(
         @WebParam(name = "I_NROLIQ", targetNamespace = "")
         String iNROLIQ,

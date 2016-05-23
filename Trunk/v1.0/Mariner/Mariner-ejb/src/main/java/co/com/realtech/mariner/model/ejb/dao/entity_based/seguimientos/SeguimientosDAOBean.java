@@ -33,7 +33,7 @@ public class SeguimientosDAOBean extends GenericDAOBean implements SeguimientosD
         List<NvaSeguimiento> filtros = new ArrayList<>();
         try {
             SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
-            Query q = getEntityManager().createQuery("from NvaSeguimiento as n where date_trunc('day',n.audFecha) between to_date(:fechaInicial,'DD/MM/YYYY') and to_date(:fechaFinal,'DD/MM/YYYY') and UPPER(n.segClave) LIKE :filtrado order by n.segId desc");
+            Query q = getEntityManager().createQuery("from NvaSeguimiento as n where trunc(n.audFecha) between to_date(:fechaInicial,'DD/MM/YYYY') and to_date(:fechaFinal,'DD/MM/YYYY') and UPPER(n.segClave) LIKE :filtrado order by n.segId desc");
             q.setParameter("fechaInicial", sdf.format(fechaInicial));
             q.setParameter("fechaFinal", sdf.format(fechaFinal));
             q.setParameter("filtrado", "%" + texto.toUpperCase() + "%");

@@ -3,7 +3,7 @@ package co.com.realtech.mariner.model.ejb.ws.sap.implementations;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDPRNCAB;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDTTVURDETAIL;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZwsvurGetdetail;
-import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZwsvurGetdetail_Service;
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZsnGetdetail;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import java.io.Serializable;
 import java.net.Authenticator;
@@ -48,19 +48,23 @@ public class SAPWSGetDetailsImplementation implements Serializable {
                 Authenticator.setDefault(new Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(userWS,claveWS.toCharArray());
+                        return new PasswordAuthentication(userWS, claveWS.toCharArray());
                     }
                 });
-                
-                QName qname = new QName("urn:sap-com:document:sap:rfc:functions", "ZWSVUR_GETDETAIL");
-                ZwsvurGetdetail_Service serviceD = new ZwsvurGetdetail_Service(null, qname);
-                ZwsvurGetdetail port = serviceD.getZwsvurGetdetail();
+
+                QName qname = new QName("urn:sap-com:document:sap:rfc:functions", "zsn_getdetail");
+                ZsnGetdetail serviceD = new ZsnGetdetail(null, qname);
+                ZwsvurGetdetail port = serviceD.getZbnGetdetail();
                 BindingProvider bindingProvider = (BindingProvider) port;
                 bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, urlWS);
+                
+                String url="http://lavoragine.elvalle.com:8000/sap/bc/srt/rfc/sap/zwsvur_getdetail/710/zsn_getdetail/zbn_getdetail";
+                System.out.println("NEMTHYS"+url);
+                bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
                 return port;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             throw new Exception("Error generando Definicion de servicio zwsvur_getdetail web en URL " + urlWS + " causado por " + e);
         }
     }

@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Clase Java para anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
  * 
  * <pre>
  * &lt;complexType>
@@ -42,7 +42,7 @@ public class ZPSCDFMVURGETDETAILResponse {
     protected ZPSCDPRNCAB eheader;
 
     /**
-     * Gets the value of the edetail property.
+     * Obtiene el valor de la propiedad edetail.
      * 
      * @return
      *     possible object is
@@ -54,7 +54,7 @@ public class ZPSCDFMVURGETDETAILResponse {
     }
 
     /**
-     * Sets the value of the edetail property.
+     * Define el valor de la propiedad edetail.
      * 
      * @param value
      *     allowed object is
@@ -66,7 +66,7 @@ public class ZPSCDFMVURGETDETAILResponse {
     }
 
     /**
-     * Gets the value of the eheader property.
+     * Obtiene el valor de la propiedad eheader.
      * 
      * @return
      *     possible object is
@@ -78,7 +78,7 @@ public class ZPSCDFMVURGETDETAILResponse {
     }
 
     /**
-     * Sets the value of the eheader property.
+     * Define el valor de la propiedad eheader.
      * 
      * @param value
      *     allowed object is

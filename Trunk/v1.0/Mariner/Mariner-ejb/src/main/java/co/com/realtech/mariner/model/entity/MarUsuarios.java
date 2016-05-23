@@ -42,7 +42,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarUsuarios.findByAudUsuario", query = "SELECT m FROM MarUsuarios m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarUsuarios.findByAudFecha", query = "SELECT m FROM MarUsuarios m WHERE m.audFecha = :audFecha"),
     @NamedQuery(name = "MarUsuarios.findByUsuUltimoIngreso", query = "SELECT m FROM MarUsuarios m WHERE m.usuUltimoIngreso = :usuUltimoIngreso"),
-    @NamedQuery(name = "MarUsuarios.findByUsuTipo", query = "SELECT m FROM MarUsuarios m WHERE m.usuTipo = :usuTipo")})
+    @NamedQuery(name = "MarUsuarios.findByUsuTipo", query = "SELECT m FROM MarUsuarios m WHERE m.usuTipo = :usuTipo"),
+    @NamedQuery(name = "MarUsuarios.findByUsuAliasSap", query = "SELECT m FROM MarUsuarios m WHERE m.usuAliasSap = :usuAliasSap")})
 public class MarUsuarios implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -70,10 +71,7 @@ public class MarUsuarios implements Serializable {
     private String usuEstado;
     @Size(max = 50)
     @Column(name = "AUD_USUARIO", length = 50)
-    private String audUsuario;    
-    @Size(max = 60)
-    @Column(name = "USU_ALIAS_SAP", length = 60)
-    private String usuAliasSap;    
+    private String audUsuario;
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
@@ -83,6 +81,9 @@ public class MarUsuarios implements Serializable {
     @Size(max = 20)
     @Column(name = "USU_TIPO", length = 20)
     private String usuTipo;
+    @Size(max = 60)
+    @Column(name = "USU_ALIAS_SAP", length = 60)
+    private String usuAliasSap;
     @OneToMany(mappedBy = "usuId")
     private List<MarNotificaciones> marNotificacionesList;
     @OneToMany(mappedBy = "usuId")
@@ -179,6 +180,14 @@ public class MarUsuarios implements Serializable {
         this.usuTipo = usuTipo;
     }
 
+    public String getUsuAliasSap() {
+        return usuAliasSap;
+    }
+
+    public void setUsuAliasSap(String usuAliasSap) {
+        this.usuAliasSap = usuAliasSap;
+    }
+
     public List<MarNotificaciones> getMarNotificacionesList() {
         return marNotificacionesList;
     }
@@ -258,14 +267,6 @@ public class MarUsuarios implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarUsuarios[ usuId=" + usuId + " ]";
-    }
-
-    public String getUsuAliasSap() {
-        return usuAliasSap;
-    }
-
-    public void setUsuAliasSap(String usuAliasSap) {
-        this.usuAliasSap = usuAliasSap;
     }
     
 }

@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for ZPSCD_PRNCAB complex type.
+ * <p>Clase Java para ZPSCD_PRNCAB complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
  * 
  * <pre>
  * &lt;complexType name="ZPSCD_PRNCAB">
@@ -161,7 +161,7 @@ public class ZPSCDPRNCAB {
     protected String fechalimite;
 
     /**
-     * Gets the value of the vnumero property.
+     * Obtiene el valor de la propiedad vnumero.
      * 
      * @return
      *     possible object is
@@ -173,7 +173,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vnumero property.
+     * Define el valor de la propiedad vnumero.
      * 
      * @param value
      *     allowed object is
@@ -185,7 +185,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the votonombre property.
+     * Obtiene el valor de la propiedad votonombre.
      * 
      * @return
      *     possible object is
@@ -197,7 +197,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the votonombre property.
+     * Define el valor de la propiedad votonombre.
      * 
      * @param value
      *     allowed object is
@@ -209,7 +209,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vbennombre property.
+     * Obtiene el valor de la propiedad vbennombre.
      * 
      * @return
      *     possible object is
@@ -221,7 +221,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vbennombre property.
+     * Define el valor de la propiedad vbennombre.
      * 
      * @param value
      *     allowed object is
@@ -233,7 +233,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the votocc property.
+     * Obtiene el valor de la propiedad votocc.
      * 
      * @return
      *     possible object is
@@ -245,7 +245,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the votocc property.
+     * Define el valor de la propiedad votocc.
      * 
      * @param value
      *     allowed object is
@@ -257,7 +257,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vbencc property.
+     * Obtiene el valor de la propiedad vbencc.
      * 
      * @return
      *     possible object is
@@ -269,7 +269,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vbencc property.
+     * Define el valor de la propiedad vbencc.
      * 
      * @param value
      *     allowed object is
@@ -281,7 +281,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the votonit property.
+     * Obtiene el valor de la propiedad votonit.
      * 
      * @return
      *     possible object is
@@ -293,7 +293,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the votonit property.
+     * Define el valor de la propiedad votonit.
      * 
      * @param value
      *     allowed object is
@@ -305,7 +305,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vbennit property.
+     * Obtiene el valor de la propiedad vbennit.
      * 
      * @return
      *     possible object is
@@ -317,7 +317,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vbennit property.
+     * Define el valor de la propiedad vbennit.
      * 
      * @param value
      *     allowed object is
@@ -329,7 +329,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the votonum property.
+     * Obtiene el valor de la propiedad votonum.
      * 
      * @return
      *     possible object is
@@ -341,7 +341,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the votonum property.
+     * Define el valor de la propiedad votonum.
      * 
      * @param value
      *     allowed object is
@@ -353,7 +353,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vbennum property.
+     * Obtiene el valor de la propiedad vbennum.
      * 
      * @return
      *     possible object is
@@ -365,7 +365,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vbennum property.
+     * Define el valor de la propiedad vbennum.
      * 
      * @param value
      *     allowed object is
@@ -377,7 +377,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vmunicipio property.
+     * Obtiene el valor de la propiedad vmunicipio.
      * 
      * @return
      *     possible object is
@@ -389,7 +389,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vmunicipio property.
+     * Define el valor de la propiedad vmunicipio.
      * 
      * @param value
      *     allowed object is
@@ -401,7 +401,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vclaveper property.
+     * Obtiene el valor de la propiedad vclaveper.
      * 
      * @return
      *     possible object is
@@ -413,7 +413,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vclaveper property.
+     * Define el valor de la propiedad vclaveper.
      * 
      * @param value
      *     allowed object is
@@ -425,7 +425,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vmunnombre property.
+     * Obtiene el valor de la propiedad vmunnombre.
      * 
      * @return
      *     possible object is
@@ -437,7 +437,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vmunnombre property.
+     * Define el valor de la propiedad vmunnombre.
      * 
      * @param value
      *     allowed object is
@@ -449,7 +449,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vfecliq property.
+     * Obtiene el valor de la propiedad vfecliq.
      * 
      * @return
      *     possible object is
@@ -461,7 +461,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vfecliq property.
+     * Define el valor de la propiedad vfecliq.
      * 
      * @param value
      *     allowed object is
@@ -473,7 +473,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the uname property.
+     * Obtiene el valor de la propiedad uname.
      * 
      * @return
      *     possible object is
@@ -485,7 +485,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the uname property.
+     * Define el valor de la propiedad uname.
      * 
      * @param value
      *     allowed object is
@@ -497,7 +497,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vfecldp property.
+     * Obtiene el valor de la propiedad vfecldp.
      * 
      * @return
      *     possible object is
@@ -509,7 +509,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vfecldp property.
+     * Define el valor de la propiedad vfecldp.
      * 
      * @param value
      *     allowed object is
@@ -521,7 +521,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vtexto property.
+     * Obtiene el valor de la propiedad vtexto.
      * 
      * @return
      *     possible object is
@@ -533,7 +533,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vtexto property.
+     * Define el valor de la propiedad vtexto.
      * 
      * @param value
      *     allowed object is
@@ -545,7 +545,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vclase property.
+     * Obtiene el valor de la propiedad vclase.
      * 
      * @return
      *     possible object is
@@ -557,7 +557,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vclase property.
+     * Define el valor de la propiedad vclase.
      * 
      * @param value
      *     allowed object is
@@ -569,7 +569,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vnumliq property.
+     * Obtiene el valor de la propiedad vnumliq.
      * 
      * @return
      *     possible object is
@@ -581,7 +581,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vnumliq property.
+     * Define el valor de la propiedad vnumliq.
      * 
      * @param value
      *     allowed object is
@@ -593,7 +593,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vdocumento property.
+     * Obtiene el valor de la propiedad vdocumento.
      * 
      * @return
      *     possible object is
@@ -605,7 +605,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vdocumento property.
+     * Define el valor de la propiedad vdocumento.
      * 
      * @param value
      *     allowed object is
@@ -617,7 +617,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vtotal property.
+     * Obtiene el valor de la propiedad vtotal.
      * 
      * @return
      *     possible object is
@@ -629,7 +629,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vtotal property.
+     * Define el valor de la propiedad vtotal.
      * 
      * @param value
      *     allowed object is
@@ -641,7 +641,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vdescladoc property.
+     * Obtiene el valor de la propiedad vdescladoc.
      * 
      * @return
      *     possible object is
@@ -653,7 +653,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vdescladoc property.
+     * Define el valor de la propiedad vdescladoc.
      * 
      * @param value
      *     allowed object is
@@ -665,7 +665,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vdesoridoc property.
+     * Obtiene el valor de la propiedad vdesoridoc.
      * 
      * @return
      *     possible object is
@@ -677,7 +677,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vdesoridoc property.
+     * Define el valor de la propiedad vdesoridoc.
      * 
      * @param value
      *     allowed object is
@@ -689,7 +689,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vfecdoc property.
+     * Obtiene el valor de la propiedad vfecdoc.
      * 
      * @return
      *     possible object is
@@ -701,7 +701,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vfecdoc property.
+     * Define el valor de la propiedad vfecdoc.
      * 
      * @param value
      *     allowed object is
@@ -713,7 +713,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vmatinm property.
+     * Obtiene el valor de la propiedad vmatinm.
      * 
      * @return
      *     possible object is
@@ -725,7 +725,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vmatinm property.
+     * Define el valor de la propiedad vmatinm.
      * 
      * @param value
      *     allowed object is
@@ -737,7 +737,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vtintmora property.
+     * Obtiene el valor de la propiedad vtintmora.
      * 
      * @return
      *     possible object is
@@ -749,7 +749,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vtintmora property.
+     * Define el valor de la propiedad vtintmora.
      * 
      * @param value
      *     allowed object is
@@ -761,7 +761,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vajuste property.
+     * Obtiene el valor de la propiedad vajuste.
      * 
      * @return
      *     possible object is
@@ -773,7 +773,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vajuste property.
+     * Define el valor de la propiedad vajuste.
      * 
      * @param value
      *     allowed object is
@@ -785,7 +785,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the codtar property.
+     * Obtiene el valor de la propiedad codtar.
      * 
      * @return
      *     possible object is
@@ -797,7 +797,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the codtar property.
+     * Define el valor de la propiedad codtar.
      * 
      * @param value
      *     allowed object is
@@ -809,7 +809,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vnotaria property.
+     * Obtiene el valor de la propiedad vnotaria.
      * 
      * @return
      *     possible object is
@@ -821,7 +821,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vnotaria property.
+     * Define el valor de la propiedad vnotaria.
      * 
      * @param value
      *     allowed object is
@@ -833,7 +833,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vdsctoint property.
+     * Obtiene el valor de la propiedad vdsctoint.
      * 
      * @return
      *     possible object is
@@ -845,7 +845,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vdsctoint property.
+     * Define el valor de la propiedad vdsctoint.
      * 
      * @param value
      *     allowed object is
@@ -857,7 +857,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vdsctoimp property.
+     * Obtiene el valor de la propiedad vdsctoimp.
      * 
      * @return
      *     possible object is
@@ -869,7 +869,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vdsctoimp property.
+     * Define el valor de la propiedad vdsctoimp.
      * 
      * @param value
      *     allowed object is
@@ -881,7 +881,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the vtotdscto property.
+     * Obtiene el valor de la propiedad vtotdscto.
      * 
      * @return
      *     possible object is
@@ -893,7 +893,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the vtotdscto property.
+     * Define el valor de la propiedad vtotdscto.
      * 
      * @param value
      *     allowed object is
@@ -905,7 +905,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Gets the value of the fechalimite property.
+     * Obtiene el valor de la propiedad fechalimite.
      * 
      * @return
      *     possible object is
@@ -917,7 +917,7 @@ public class ZPSCDPRNCAB {
     }
 
     /**
-     * Sets the value of the fechalimite property.
+     * Define el valor de la propiedad fechalimite.
      * 
      * @param value
      *     allowed object is

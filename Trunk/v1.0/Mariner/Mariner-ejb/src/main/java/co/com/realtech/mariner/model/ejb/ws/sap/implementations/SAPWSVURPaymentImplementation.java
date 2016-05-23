@@ -1,7 +1,5 @@
 package co.com.realtech.mariner.model.ejb.ws.sap.implementations;
 
-import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZwsvurGetdetail;
-import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZwsvurGetdetail_Service;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.vur_payment.ZwsvurPayment;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.vur_payment.ZwsvurPayment_Service;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;

@@ -48,7 +48,12 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarTransacciones.findByTraMedioPagoNota", query = "SELECT m FROM MarTransacciones m WHERE m.traMedioPagoNota = :traMedioPagoNota"),
     @NamedQuery(name = "MarTransacciones.findByAudFecha", query = "SELECT m FROM MarTransacciones m WHERE m.audFecha = :audFecha"),
     @NamedQuery(name = "MarTransacciones.findByAudUsuario", query = "SELECT m FROM MarTransacciones m WHERE m.audUsuario = :audUsuario"),
-    @NamedQuery(name = "MarTransacciones.findByTraReferencia", query = "SELECT m FROM MarTransacciones m WHERE m.traReferencia = :traReferencia")})
+    @NamedQuery(name = "MarTransacciones.findByTraReferencia", query = "SELECT m FROM MarTransacciones m WHERE m.traReferencia = :traReferencia"),
+    @NamedQuery(name = "MarTransacciones.findByTraDocumento", query = "SELECT m FROM MarTransacciones m WHERE m.traDocumento = :traDocumento"),
+    @NamedQuery(name = "MarTransacciones.findByTraNombres", query = "SELECT m FROM MarTransacciones m WHERE m.traNombres = :traNombres"),
+    @NamedQuery(name = "MarTransacciones.findByTraApellidos", query = "SELECT m FROM MarTransacciones m WHERE m.traApellidos = :traApellidos"),
+    @NamedQuery(name = "MarTransacciones.findByTraTelefono", query = "SELECT m FROM MarTransacciones m WHERE m.traTelefono = :traTelefono"),
+    @NamedQuery(name = "MarTransacciones.findByTraCorreo", query = "SELECT m FROM MarTransacciones m WHERE m.traCorreo = :traCorreo")})
 public class MarTransacciones implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -90,9 +95,27 @@ public class MarTransacciones implements Serializable {
     @Size(max = 40)
     @Column(name = "TRA_REFERENCIA", length = 40)
     private String traReferencia;
+    @Size(max = 40)
+    @Column(name = "TRA_DOCUMENTO", length = 40)
+    private String traDocumento;
+    @Size(max = 60)
+    @Column(name = "TRA_NOMBRES", length = 60)
+    private String traNombres;
+    @Size(max = 60)
+    @Column(name = "TRA_APELLIDOS", length = 60)
+    private String traApellidos;
+    @Size(max = 20)
+    @Column(name = "TRA_TELEFONO", length = 20)
+    private String traTelefono;
+    @Size(max = 100)
+    @Column(name = "TRA_CORREO", length = 100)
+    private String traCorreo;
     @JoinColumn(name = "RAD_ID", referencedColumnName = "RAD_ID")
     @OneToOne
     private MarRadicaciones radId;
+    @JoinColumn(name = "TDC_ID", referencedColumnName = "TDC_ID")
+    @ManyToOne
+    private MarTiposDocumentos tdcId;
     @JoinColumn(name = "USU_ID", referencedColumnName = "USU_ID")
     @ManyToOne
     private MarUsuarios usuId;
@@ -200,12 +223,60 @@ public class MarTransacciones implements Serializable {
         this.traReferencia = traReferencia;
     }
 
+    public String getTraDocumento() {
+        return traDocumento;
+    }
+
+    public void setTraDocumento(String traDocumento) {
+        this.traDocumento = traDocumento;
+    }
+
+    public String getTraNombres() {
+        return traNombres;
+    }
+
+    public void setTraNombres(String traNombres) {
+        this.traNombres = traNombres;
+    }
+
+    public String getTraApellidos() {
+        return traApellidos;
+    }
+
+    public void setTraApellidos(String traApellidos) {
+        this.traApellidos = traApellidos;
+    }
+
+    public String getTraTelefono() {
+        return traTelefono;
+    }
+
+    public void setTraTelefono(String traTelefono) {
+        this.traTelefono = traTelefono;
+    }
+
+    public String getTraCorreo() {
+        return traCorreo;
+    }
+
+    public void setTraCorreo(String traCorreo) {
+        this.traCorreo = traCorreo;
+    }
+
     public MarRadicaciones getRadId() {
         return radId;
     }
 
     public void setRadId(MarRadicaciones radId) {
         this.radId = radId;
+    }
+
+    public MarTiposDocumentos getTdcId() {
+        return tdcId;
+    }
+
+    public void setTdcId(MarTiposDocumentos tdcId) {
+        this.tdcId = tdcId;
     }
 
     public MarUsuarios getUsuId() {

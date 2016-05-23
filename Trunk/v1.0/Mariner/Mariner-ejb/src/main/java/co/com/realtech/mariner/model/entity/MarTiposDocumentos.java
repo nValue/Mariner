@@ -70,6 +70,8 @@ public class MarTiposDocumentos implements Serializable {
     private List<MarRadicaciones> marRadicacionesList1;
     @OneToMany(mappedBy = "tdcId")
     private List<MarPersonas> marPersonasList;
+    @OneToMany(mappedBy = "tdcId")
+    private List<MarTransacciones> marTransaccionesList;
 
     public MarTiposDocumentos() {
     }
@@ -146,6 +148,14 @@ public class MarTiposDocumentos implements Serializable {
 
     public void setMarPersonasList(List<MarPersonas> marPersonasList) {
         this.marPersonasList = marPersonasList;
+    }
+
+    public List<MarTransacciones> getMarTransaccionesList() {
+        return marTransaccionesList;
+    }
+
+    public void setMarTransaccionesList(List<MarTransacciones> marTransaccionesList) {
+        this.marTransaccionesList = marTransaccionesList;
     }
 
     @Override
