@@ -43,7 +43,7 @@ public class SAPWSGetDetailsImplementation implements Serializable {
 
         try {
             if (urlWS == null || urlWS.equals("")) {
-                throw new Exception("Error generando Definicion de servicio zwsvur_getdetail No se ha encontrado URL (WS-SAP-GET-DETAIL) en sistema de constantes");
+                throw new Exception("Error generando Definicion de servicio ZWSVUR_GETDETAIL No se ha encontrado URL (WS-SAP-GET-DETAIL) en sistema de constantes");
             } else {
                 Authenticator.setDefault(new Authenticator() {
                     @Override
@@ -57,10 +57,6 @@ public class SAPWSGetDetailsImplementation implements Serializable {
                 ZwsvurGetdetail port = serviceD.getZwsvurGetdetail();
                 BindingProvider bindingProvider = (BindingProvider) port;
                 bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, urlWS);
-                bindingProvider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, userWS);
-                bindingProvider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, claveWS);
-
-                bindingProvider.getRequestContext().put("com.sun.xml.ws.request.timeout", 60000);
                 return port;
             }
         } catch (Exception e) {

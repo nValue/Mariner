@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Clase Java para ZPSCD_LIQDETALLE complex type.
+ * <p>Java class for ZPSCD_LIQDETALLE complex type.
  * 
- * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="ZPSCD_LIQDETALLE">
@@ -265,7 +265,7 @@ public class ZPSCDLIQDETALLE {
     protected BigDecimal baseest5;
 
     /**
-     * Obtiene el valor de la propiedad mandt.
+     * Gets the value of the mandt property.
      * 
      * @return
      *     possible object is
@@ -277,7 +277,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad mandt.
+     * Sets the value of the mandt property.
      * 
      * @param value
      *     allowed object is
@@ -289,7 +289,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad renta.
+     * Gets the value of the renta property.
      * 
      * @return
      *     possible object is
@@ -301,7 +301,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad renta.
+     * Sets the value of the renta property.
      * 
      * @param value
      *     allowed object is
@@ -313,7 +313,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad nroliq.
+     * Gets the value of the nroliq property.
      * 
      * @return
      *     possible object is
@@ -325,7 +325,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad nroliq.
+     * Sets the value of the nroliq property.
      * 
      * @param value
      *     allowed object is
@@ -337,7 +337,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad nrocons.
+     * Gets the value of the nrocons property.
      * 
      * @return
      *     possible object is
@@ -349,7 +349,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad nrocons.
+     * Sets the value of the nrocons property.
      * 
      * @param value
      *     allowed object is
@@ -361,7 +361,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad codigo.
+     * Gets the value of the codigo property.
      * 
      * @return
      *     possible object is
@@ -373,7 +373,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad codigo.
+     * Sets the value of the codigo property.
      * 
      * @param value
      *     allowed object is
@@ -385,7 +385,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad nrotornag.
+     * Gets the value of the nrotornag property.
      * 
      * @return
      *     possible object is
@@ -397,7 +397,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad nrotornag.
+     * Sets the value of the nrotornag property.
      * 
      * @param value
      *     allowed object is
@@ -409,7 +409,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad nroreliq.
+     * Gets the value of the nroreliq property.
      * 
      * @return
      *     possible object is
@@ -421,7 +421,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad nroreliq.
+     * Sets the value of the nroreliq property.
      * 
      * @param value
      *     allowed object is
@@ -433,7 +433,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad codclase.
+     * Gets the value of the codclase property.
      * 
      * @return
      *     possible object is
@@ -445,7 +445,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad codclase.
+     * Sets the value of the codclase property.
      * 
      * @param value
      *     allowed object is
@@ -457,7 +457,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad codmarca.
+     * Gets the value of the codmarca property.
      * 
      * @return
      *     possible object is
@@ -469,7 +469,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad codmarca.
+     * Sets the value of the codmarca property.
      * 
      * @param value
      *     allowed object is
@@ -481,7 +481,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad cantidadliq.
+     * Gets the value of the cantidadliq property.
      * 
      * @return
      *     possible object is
@@ -493,7 +493,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad cantidadliq.
+     * Sets the value of the cantidadliq property.
      * 
      * @param value
      *     allowed object is
@@ -505,7 +505,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad cantidad.
+     * Gets the value of the cantidad property.
      * 
      * @return
      *     possible object is
@@ -517,7 +517,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad cantidad.
+     * Sets the value of the cantidad property.
      * 
      * @param value
      *     allowed object is
@@ -529,7 +529,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad basegravliq.
+     * Gets the value of the basegravliq property.
      * 
      * @return
      *     possible object is
@@ -541,7 +541,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad basegravliq.
+     * Sets the value of the basegravliq property.
      * 
      * @param value
      *     allowed object is
@@ -553,7 +553,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad basegrav.
+     * Gets the value of the basegrav property.
      * 
      * @return
      *     possible object is
@@ -565,7 +565,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad basegrav.
+     * Sets the value of the basegrav property.
      * 
      * @param value
      *     allowed object is
@@ -577,7 +577,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad vrimpuesto.
+     * Gets the value of the vrimpuesto property.
      * 
      * @return
      *     possible object is
@@ -589,7 +589,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad vrimpuesto.
+     * Sets the value of the vrimpuesto property.
      * 
      * @param value
      *     allowed object is
@@ -601,7 +601,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad consvraut.
+     * Gets the value of the consvraut property.
      * 
      * @return
      *     possible object is
@@ -613,7 +613,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad consvraut.
+     * Sets the value of the consvraut property.
      * 
      * @param value
      *     allowed object is
@@ -625,7 +625,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad vrparticip.
+     * Gets the value of the vrparticip property.
      * 
      * @return
      *     possible object is
@@ -637,7 +637,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad vrparticip.
+     * Sets the value of the vrparticip property.
      * 
      * @param value
      *     allowed object is
@@ -649,7 +649,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad consvrpartaut.
+     * Gets the value of the consvrpartaut property.
      * 
      * @return
      *     possible object is
@@ -661,7 +661,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad consvrpartaut.
+     * Sets the value of the consvrpartaut property.
      * 
      * @param value
      *     allowed object is
@@ -673,7 +673,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad vrexcedent.
+     * Gets the value of the vrexcedent property.
      * 
      * @return
      *     possible object is
@@ -685,7 +685,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad vrexcedent.
+     * Sets the value of the vrexcedent property.
      * 
      * @param value
      *     allowed object is
@@ -697,7 +697,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad consvrexced.
+     * Gets the value of the consvrexced property.
      * 
      * @return
      *     possible object is
@@ -709,7 +709,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad consvrexced.
+     * Sets the value of the consvrexced property.
      * 
      * @param value
      *     allowed object is
@@ -721,7 +721,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad consvrdif.
+     * Gets the value of the consvrdif property.
      * 
      * @return
      *     possible object is
@@ -733,7 +733,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad consvrdif.
+     * Sets the value of the consvrdif property.
      * 
      * @param value
      *     allowed object is
@@ -745,7 +745,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad consvrdifexced.
+     * Gets the value of the consvrdifexced property.
      * 
      * @return
      *     possible object is
@@ -757,7 +757,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad consvrdifexced.
+     * Sets the value of the consvrdifexced property.
      * 
      * @param value
      *     allowed object is
@@ -769,7 +769,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad regtipoperso.
+     * Gets the value of the regtipoperso property.
      * 
      * @return
      *     possible object is
@@ -781,7 +781,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad regtipoperso.
+     * Sets the value of the regtipoperso property.
      * 
      * @param value
      *     allowed object is
@@ -793,7 +793,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad regcantidad.
+     * Gets the value of the regcantidad property.
      * 
      * @return
      *     possible object is
@@ -805,7 +805,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad regcantidad.
+     * Sets the value of the regcantidad property.
      * 
      * @param value
      *     allowed object is
@@ -817,7 +817,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad regbasegrav.
+     * Gets the value of the regbasegrav property.
      * 
      * @return
      *     possible object is
@@ -829,7 +829,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad regbasegrav.
+     * Sets the value of the regbasegrav property.
      * 
      * @param value
      *     allowed object is
@@ -841,7 +841,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad regtaraut.
+     * Gets the value of the regtaraut property.
      * 
      * @return
      *     possible object is
@@ -853,7 +853,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad regtaraut.
+     * Sets the value of the regtaraut property.
      * 
      * @param value
      *     allowed object is
@@ -865,7 +865,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad regestampaut.
+     * Gets the value of the regestampaut property.
      * 
      * @return
      *     possible object is
@@ -877,7 +877,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad regestampaut.
+     * Sets the value of the regestampaut property.
      * 
      * @param value
      *     allowed object is
@@ -889,7 +889,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad regintaut.
+     * Gets the value of the regintaut property.
      * 
      * @return
      *     possible object is
@@ -901,7 +901,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad regintaut.
+     * Sets the value of the regintaut property.
      * 
      * @param value
      *     allowed object is
@@ -913,7 +913,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad degtaraut.
+     * Gets the value of the degtaraut property.
      * 
      * @return
      *     possible object is
@@ -925,7 +925,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad degtaraut.
+     * Sets the value of the degtaraut property.
      * 
      * @param value
      *     allowed object is
@@ -937,7 +937,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad decfoncue.
+     * Gets the value of the decfoncue property.
      * 
      * @return
      *     possible object is
@@ -949,7 +949,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad decfoncue.
+     * Sets the value of the decfoncue property.
      * 
      * @param value
      *     allowed object is
@@ -961,7 +961,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad unidadliq.
+     * Gets the value of the unidadliq property.
      * 
      * @return
      *     possible object is
@@ -973,7 +973,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad unidadliq.
+     * Sets the value of the unidadliq property.
      * 
      * @param value
      *     allowed object is
@@ -985,7 +985,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad unidad.
+     * Gets the value of the unidad property.
      * 
      * @return
      *     possible object is
@@ -997,7 +997,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad unidad.
+     * Sets the value of the unidad property.
      * 
      * @param value
      *     allowed object is
@@ -1009,7 +1009,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad prevtadetliq.
+     * Gets the value of the prevtadetliq property.
      * 
      * @return
      *     possible object is
@@ -1021,7 +1021,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad prevtadetliq.
+     * Sets the value of the prevtadetliq property.
      * 
      * @param value
      *     allowed object is
@@ -1033,7 +1033,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad prevtadet.
+     * Gets the value of the prevtadet property.
      * 
      * @return
      *     possible object is
@@ -1045,7 +1045,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad prevtadet.
+     * Sets the value of the prevtadet property.
      * 
      * @param value
      *     allowed object is
@@ -1057,7 +1057,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad prevtanetliq.
+     * Gets the value of the prevtanetliq property.
      * 
      * @return
      *     possible object is
@@ -1069,7 +1069,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad prevtanetliq.
+     * Sets the value of the prevtanetliq property.
      * 
      * @param value
      *     allowed object is
@@ -1081,7 +1081,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad prevtanet.
+     * Gets the value of the prevtanet property.
      * 
      * @return
      *     possible object is
@@ -1093,7 +1093,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad prevtanet.
+     * Sets the value of the prevtanet property.
      * 
      * @param value
      *     allowed object is
@@ -1105,7 +1105,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad vrempyenvliq.
+     * Gets the value of the vrempyenvliq property.
      * 
      * @return
      *     possible object is
@@ -1117,7 +1117,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad vrempyenvliq.
+     * Sets the value of the vrempyenvliq property.
      * 
      * @param value
      *     allowed object is
@@ -1129,7 +1129,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad vrempyenv.
+     * Gets the value of the vrempyenv property.
      * 
      * @return
      *     possible object is
@@ -1141,7 +1141,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad vrempyenv.
+     * Sets the value of the vrempyenv property.
      * 
      * @param value
      *     allowed object is
@@ -1153,7 +1153,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad tarifaliq.
+     * Gets the value of the tarifaliq property.
      * 
      * @return
      *     possible object is
@@ -1165,7 +1165,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad tarifaliq.
+     * Sets the value of the tarifaliq property.
      * 
      * @param value
      *     allowed object is
@@ -1177,7 +1177,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad tarifa.
+     * Gets the value of the tarifa property.
      * 
      * @return
      *     possible object is
@@ -1189,7 +1189,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad tarifa.
+     * Sets the value of the tarifa property.
      * 
      * @param value
      *     allowed object is
@@ -1201,7 +1201,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad tarifapartliq.
+     * Gets the value of the tarifapartliq property.
      * 
      * @return
      *     possible object is
@@ -1213,7 +1213,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad tarifapartliq.
+     * Sets the value of the tarifapartliq property.
      * 
      * @param value
      *     allowed object is
@@ -1225,7 +1225,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad tarifapart.
+     * Gets the value of the tarifapart property.
      * 
      * @return
      *     possible object is
@@ -1237,7 +1237,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad tarifapart.
+     * Sets the value of the tarifapart property.
      * 
      * @param value
      *     allowed object is
@@ -1249,7 +1249,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad nrodecfc.
+     * Gets the value of the nrodecfc property.
      * 
      * @return
      *     possible object is
@@ -1261,7 +1261,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad nrodecfc.
+     * Sets the value of the nrodecfc property.
      * 
      * @param value
      *     allowed object is
@@ -1273,7 +1273,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad nroregfc.
+     * Gets the value of the nroregfc property.
      * 
      * @return
      *     possible object is
@@ -1285,7 +1285,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad nroregfc.
+     * Sets the value of the nroregfc property.
      * 
      * @param value
      *     allowed object is
@@ -1297,7 +1297,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad nrodecom.
+     * Gets the value of the nrodecom property.
      * 
      * @return
      *     possible object is
@@ -1309,7 +1309,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad nrodecom.
+     * Sets the value of the nrodecom property.
      * 
      * @param value
      *     allowed object is
@@ -1321,7 +1321,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad vraduyaraliq.
+     * Gets the value of the vraduyaraliq property.
      * 
      * @return
      *     possible object is
@@ -1333,7 +1333,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad vraduyaraliq.
+     * Sets the value of the vraduyaraliq property.
      * 
      * @param value
      *     allowed object is
@@ -1345,7 +1345,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad vraduyara.
+     * Gets the value of the vraduyara property.
      * 
      * @return
      *     possible object is
@@ -1357,7 +1357,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad vraduyara.
+     * Sets the value of the vraduyara property.
      * 
      * @param value
      *     allowed object is
@@ -1369,7 +1369,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad imppromvigliq.
+     * Gets the value of the imppromvigliq property.
      * 
      * @return
      *     possible object is
@@ -1381,7 +1381,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad imppromvigliq.
+     * Sets the value of the imppromvigliq property.
      * 
      * @param value
      *     allowed object is
@@ -1393,7 +1393,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad imppromvig.
+     * Gets the value of the imppromvig property.
      * 
      * @return
      *     possible object is
@@ -1405,7 +1405,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad imppromvig.
+     * Sets the value of the imppromvig property.
      * 
      * @param value
      *     allowed object is
@@ -1417,7 +1417,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad estampiudaliq.
+     * Gets the value of the estampiudaliq property.
      * 
      * @return
      *     possible object is
@@ -1429,7 +1429,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad estampiudaliq.
+     * Sets the value of the estampiudaliq property.
      * 
      * @param value
      *     allowed object is
@@ -1441,7 +1441,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad estampiuda.
+     * Gets the value of the estampiuda property.
      * 
      * @return
      *     possible object is
@@ -1453,7 +1453,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad estampiuda.
+     * Sets the value of the estampiuda property.
      * 
      * @param value
      *     allowed object is
@@ -1465,7 +1465,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad tarifaporcliq.
+     * Gets the value of the tarifaporcliq property.
      * 
      * @return
      *     possible object is
@@ -1477,7 +1477,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad tarifaporcliq.
+     * Sets the value of the tarifaporcliq property.
      * 
      * @param value
      *     allowed object is
@@ -1489,7 +1489,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad tarifaporc.
+     * Gets the value of the tarifaporc property.
      * 
      * @return
      *     possible object is
@@ -1501,7 +1501,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad tarifaporc.
+     * Sets the value of the tarifaporc property.
      * 
      * @param value
      *     allowed object is
@@ -1513,7 +1513,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad baseest.
+     * Gets the value of the baseest property.
      * 
      * @return
      *     possible object is
@@ -1525,7 +1525,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad baseest.
+     * Sets the value of the baseest property.
      * 
      * @param value
      *     allowed object is
@@ -1537,7 +1537,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad baseest1.
+     * Gets the value of the baseest1 property.
      * 
      * @return
      *     possible object is
@@ -1549,7 +1549,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad baseest1.
+     * Sets the value of the baseest1 property.
      * 
      * @param value
      *     allowed object is
@@ -1561,7 +1561,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad baseest2.
+     * Gets the value of the baseest2 property.
      * 
      * @return
      *     possible object is
@@ -1573,7 +1573,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad baseest2.
+     * Sets the value of the baseest2 property.
      * 
      * @param value
      *     allowed object is
@@ -1585,7 +1585,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad baseest3.
+     * Gets the value of the baseest3 property.
      * 
      * @return
      *     possible object is
@@ -1597,7 +1597,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad baseest3.
+     * Sets the value of the baseest3 property.
      * 
      * @param value
      *     allowed object is
@@ -1609,7 +1609,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad baseest4.
+     * Gets the value of the baseest4 property.
      * 
      * @return
      *     possible object is
@@ -1621,7 +1621,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad baseest4.
+     * Sets the value of the baseest4 property.
      * 
      * @param value
      *     allowed object is
@@ -1633,7 +1633,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Obtiene el valor de la propiedad baseest5.
+     * Gets the value of the baseest5 property.
      * 
      * @return
      *     possible object is
@@ -1645,7 +1645,7 @@ public class ZPSCDLIQDETALLE {
     }
 
     /**
-     * Define el valor de la propiedad baseest5.
+     * Sets the value of the baseest5 property.
      * 
      * @param value
      *     allowed object is

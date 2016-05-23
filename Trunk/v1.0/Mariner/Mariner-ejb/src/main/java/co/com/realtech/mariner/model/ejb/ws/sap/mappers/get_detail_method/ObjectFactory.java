@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRegistry;
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
- * generated in the co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method package. 
+ * generated in the co.com.realtech.ws.map package. 
  * <p>An ObjectFactory allows you to programatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
@@ -23,7 +23,7 @@ public class ObjectFactory {
 
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: co.com.realtech.ws.map
      * 
      */
     public ObjectFactory() {

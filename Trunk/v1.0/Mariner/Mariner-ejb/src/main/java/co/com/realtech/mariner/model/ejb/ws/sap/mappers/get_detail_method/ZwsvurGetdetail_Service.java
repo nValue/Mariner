@@ -16,7 +16,7 @@ import javax.xml.ws.WebServiceException;
  * Generated source version: 2.0
  * 
  */
-@WebServiceClient(name = "zwsvur_getdetail", targetNamespace = "urn:sap-com:document:sap:rfc:functions", wsdlLocation = "http://lavoragine.elvalle.com:8000/sap/bc/srt/wsdl/bndg_D5393857F156F52CE1000000C0A8C847/wsdl11/allinone/standard/document?sap-client=710")
+@WebServiceClient(name = "ZWSVUR_GETDETAIL", targetNamespace = "urn:sap-com:document:sap:rfc:functions", wsdlLocation = "http://lavoragine.elvalle.com:8000/sap/bc/srt/wsdl/bndg_D5393857F156F52CE1000000C0A8C847/wsdl11/allinone/standard/document?sap-client=710")
 public class ZwsvurGetdetail_Service
     extends Service
 {
