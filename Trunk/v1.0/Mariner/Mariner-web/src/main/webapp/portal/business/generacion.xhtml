@@ -31,7 +31,7 @@
                             <f:selectItem itemLabel=" - " itemValue="" />
                             <f:selectItems value="#{generacionManagedBean.radicacionesUsuario}" var="rads" itemLabel="#{generacionManagedBean.esRechazo(rads) ? '(R) ' : ''} #{rads.radNumero}" itemValue="#{rads}"/>
                         </p:selectOneMenu>
-                        <p:commandButton style="vertical-align: top" value="Obtener Radicación" action="#{generacionManagedBean.asignarNuevaRadicacion()}" update="formTurnos" process="@this"/>
+                        <p:commandButton style="vertical-align: top" value="Obtener Radicación" action="#{generacionManagedBean.asignarNuevaRadicacion()}" update="formTurnos" process="@this" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                         <p:commandButton style="vertical-align: top" value="Ver Historial" action="#{generacionManagedBean.obtenerRadicacionesProcesadas()}" oncomplete="PF('dialogHistorial').show()" update="modalHistorial" process="@this"/>
                     </div>
 
@@ -57,7 +57,7 @@
                                     <h:outputLabel class="labelLittle" value="Num Doc Otorga" />
                                     <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.tdcIdOtorgante.tdcSigla}" />
                                     <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radDocOtorgante}" />
-
+                                    
                                     <h:outputLabel class="labelLittle" value="Tipo Doc Recibe" />
                                     <h:outputLabel class="labelLittle" value="Num Doc Recibe" />
                                     <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.tdcIdReceptor.tdcSigla}" />
@@ -92,10 +92,12 @@
                                 </p:dataTable>
                             </div>
                             <div>
-                                <p:commandButton style="vertical-align: top" value="Validar Radicación" action="#{generacionManagedBean.validarRadicacion()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-P')}" >
+                                <p:commandButton style="vertical-align: top" value="Validar Radicación" action="#{generacionManagedBean.validarRadicacion()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-P')}" 
+                                                 onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()">
                                     <p:confirm header="Confirmación" message="¿Esta seguro de que desea validar la radicación?" icon="ui-icon-alert" />
                                 </p:commandButton>
-                                <p:commandButton style="vertical-align: top" value="Rechazar" action="#{generacionManagedBean.rechazarRadicacion()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-P')}" >
+                                <p:commandButton style="vertical-align: top" value="Rechazar" action="#{generacionManagedBean.rechazarRadicacion()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-P')}" 
+                                                 onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()">
                                     <p:confirm header="Confirmación" message="¿Esta seguro de que desea rechazar esta radicación?" icon="ui-icon-alert" />
                                 </p:commandButton>
                                 <p:commandButton style="vertical-align: top" value="Obtener SAP" action="#{generacionManagedBean.obtenerSAP()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-S')}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>

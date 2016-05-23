@@ -13,48 +13,48 @@
             <div class="tituloCont" align="center">
                 <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
                 <div style="display: inline-block">
-                    <h:outputLabel styleClass="titleMain" value="Finalización" />
-                    <h:outputLabel styleClass="subtitleMain" value="Última fase del proceso - Validación por las ORIPs"/>
+                    <h:outputLabel styleClass="titleMain" value="Historial" />
+                    <h:outputLabel styleClass="subtitleMain" value="Transacciones realizadas por el usuario"/>
                 </div>
             </div>
             <div class="contenidoPrinc" align="center">
                 <div class="descripcion" align="center">
                     <div class="descText">
-                        La tabla muestra todas las radicaciones pendientes por validación, si desea buscar alguna particular puede usar el filtro de la parte izquierda, no olvide que si no selecciona las fechas correctas no verá la informacion deseada. Si quiere ver el detalle de alguna basta con hacer clic en el registro deseado y se mostrará toda su información adicional
+                        Puede consultar todas las transacciones que usted ha procesado en algún momento, use los filtros y el rango de fechas para traer la información deseada.
                     </div>
                 </div>
-                <h:form id="formFinalizacion">
+                <h:form id="formHistorial">
                     <div align="center" style="width: 100%">
                         <div align="left" style="margin-top: 20px;display: inline-block;width: 470px;vertical-align: top">
                             <h:outputLabel value="Buscar por: "/>
-                            <p:selectOneMenu style="vertical-align: top;width: 130px;" converter="ClaveValorConverter" value="#{finalizacionManagedBean.filtroBusquedaSel}" >
-                                <f:selectItems value="#{finalizacionManagedBean.filtrosBusqueda}" var="fil" itemLabel="#{fil.valor}" itemValue="#{fil}" />
-                                <p:ajax listener="#{finalizacionManagedBean.seleccionarFiltroBusq()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" update="formFinalizacion"/>
+                            <p:selectOneMenu style="vertical-align: top;width: 130px;" converter="ClaveValorConverter" value="#{historialManagedBean.filtroBusquedaSel}" >
+                                <f:selectItems value="#{historialManagedBean.filtrosBusqueda}" var="fil" itemLabel="#{fil.valor}" itemValue="#{fil}" />
+                                <p:ajax listener="#{historialManagedBean.seleccionarFiltroBusq()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" update="formHistorial"/>
                             </p:selectOneMenu>
-                            <p:selectOneMenu style="vertical-align: top;width: 110px;margin: 0px 5px" value="#{finalizacionManagedBean.estadoProcesoSel}" converter="ClaveValorConverter" rendered="#{finalizacionManagedBean.filtroBusquedaSel.clave eq 'ES'}">
-                                <f:selectItems value="#{finalizacionManagedBean.estadosProcesos}" var="esP" itemLabel="#{esP.valor}" itemValue="#{esP}"/>
-                                <p:ajax onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" update="formFinalizacion"/>
+                            <p:selectOneMenu style="vertical-align: top;width: 110px;margin: 0px 5px" value="#{historialManagedBean.estadoProcesoSel}" converter="ClaveValorConverter" rendered="#{historialManagedBean.filtroBusquedaSel.clave eq 'ES'}">
+                                <f:selectItems value="#{historialManagedBean.estadosProcesos}" var="esP" itemLabel="#{esP.valor}" itemValue="#{esP}"/>
+                                <p:ajax onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" update="formHistorial"/>
                             </p:selectOneMenu>
-                            <p:inputText style="width: 130px;margin: 0px 5px" placeholder="Filtro" value="#{finalizacionManagedBean.campoBusqueda}" rendered="#{!(finalizacionManagedBean.filtroBusquedaSel.clave eq 'ES')}" />
-                            <p:commandButton style="vertical-align: top;" value="Buscar" action="#{finalizacionManagedBean.buscarRadicaciones()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('wvRadicaciones').clearFilters();" update="formFinalizacion"/>
+                            <p:inputText style="width: 130px;margin: 0px 5px" placeholder="Filtro" value="#{historialManagedBean.campoBusqueda}" rendered="#{!(historialManagedBean.filtroBusquedaSel.clave eq 'ES')}" />
+                            <p:commandButton style="vertical-align: top;" value="Buscar" action="#{historialManagedBean.buscarRadicaciones()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('wvRadicaciones').clearFilters();" update="formHistorial"/>
                         </div>
                         <div align="right" style="margin-top: 20px;display: inline-block;width: 420px;vertical-align: top">
                             <h:outputLabel value="Fecha Desde"/>
-                            <p:calendar styleClass="calendarSmall" id="inputFecha1" value="#{finalizacionManagedBean.fechaFiltroInic}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
-                                <p:ajax event="dateSelect" listener="#{finalizacionManagedBean.buscarRadicaciones()}" update="formFinalizacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                            <p:calendar styleClass="calendarSmall" id="inputFecha1" value="#{historialManagedBean.fechaFiltroInic}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
+                                <p:ajax event="dateSelect" listener="#{historialManagedBean.buscarRadicaciones()}" update="formHistorial" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                             </p:calendar>
                             <h:outputLabel value="Fecha Hasta"/>
-                            <p:calendar styleClass="calendarSmall" id="inputFecha2" value="#{finalizacionManagedBean.fechaFiltroFin}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
-                                <p:ajax event="dateSelect" listener="#{finalizacionManagedBean.buscarRadicaciones()}" update="formFinalizacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                            <p:calendar styleClass="calendarSmall" id="inputFecha2" value="#{historialManagedBean.fechaFiltroFin}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
+                                <p:ajax event="dateSelect" listener="#{historialManagedBean.buscarRadicaciones()}" update="formHistorial" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                             </p:calendar>
                         </div>
                     </div>
                     <div align="center" style="margin-top: 20px">
-                        <p:dataTable id="tablaRadicaciones" widgetVar="wvRadicaciones" emptyMessage="No hay radicaciones asociadas a los filtros elegidos" value="#{finalizacionManagedBean.radicaciones}" 
-                                     selectionMode="single" selection="#{finalizacionManagedBean.radicacionSel}" var="rads" rowKey="#{rads.radId}" paginator="true" rows="15" paginatorPosition="bottom"
+                        <p:dataTable id="tablaRadicaciones" widgetVar="wvRadicaciones" emptyMessage="No hay radicaciones asociadas a los filtros elegidos" value="#{historialManagedBean.radicaciones}" 
+                                     selectionMode="single" selection="#{historialManagedBean.radicacionSel}" var="rads" rowKey="#{rads.radId}" paginator="true" rows="15" paginatorPosition="bottom"
                                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                                     filteredValue="#{finalizacionManagedBean.radicacionesFiltro}" >
-                            <p:ajax event="rowSelect" listener="#{finalizacionManagedBean.obtenerUltimaFase()}" oncomplete="PF('dialogDetalle').show()" update=":formDetalle"/>
+                                     filteredValue="#{historialManagedBean.radicacionesFiltro}" >
+                            <p:ajax event="rowSelect" listener="#{historialManagedBean.obtenerUltimaFase()}" oncomplete="PF('dialogDetalle').show()" update=":formDetalle"/>
                             <p:column headerText="Número" filterBy="#{rads.radNumero}" style="text-align: center" width="120" >
                                 <h:outputLabel value="#{rads.radNumero}" />
                             </p:column>
@@ -70,7 +70,7 @@
                                 <h:outputLabel value="#{rads.escId.escNumero}"/>
                             </p:column>
                             <p:column headerText="Estado" style="text-align: center" >
-                                <h:outputLabel value="#{finalizacionManagedBean.obtenerUltimoEstado(rads)}" />
+                                <h:outputLabel value="#{historialManagedBean.obtenerUltimoEstado(rads)}" />
                             </p:column>
                             <p:column headerText="(BF)" styleClass="colCenter" width="25">
                                 <a title="Presione para descargar la boleta fiscal" target="_new" href="#{request.contextPath}/static/fileDispatcher/#{rads.arcIdBoletaFiscal.arcId}-#{rads.arcIdBoletaFiscal.arcHash}.#{rads.arcIdBoletaFiscal.arcExtension}">
@@ -103,10 +103,10 @@
                         <h:outputLabel class="labelLittle" value="Notaria"/>
                         <h:outputLabel class="labelLittle" value="Número Escritura" />
                         <h:outputLabel class="labelLittle" value="Fecha Escritura" />
-                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.radNumero}" style="width: 150px;"/>
-                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.notId.notNombre}" style="width: 150px;" />
-                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.escId.escNumero}" style="width: 150px;" />
-                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.escId.escFecha}" style="width: 150px;" >
+                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.radNumero}" style="width: 150px;"/>
+                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.notId.notNombre}" style="width: 150px;" />
+                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.escId.escNumero}" style="width: 150px;" />
+                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.escId.escFecha}" style="width: 150px;" >
                             <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"/>
                         </p:outputLabel>
 
@@ -114,26 +114,24 @@
                         <h:outputLabel class="labelLittle" value="Num Doc Otorga" />
                         <h:outputLabel class="labelLittle" value="Tipo Doc Recibe" />
                         <h:outputLabel class="labelLittle" value="Num Doc Recibe" />
-                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.tdcIdOtorgante.tdcSigla}" style="width: 150px;" />
-                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.radDocOtorgante}" style="width: 150px;"/>
-                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.tdcIdReceptor.tdcSigla}" style="width: 150px;"/>
-                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.radDocReceptor}" style="width: 150px;" />
+                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.tdcIdOtorgante.tdcSigla}" style="width: 150px;" />
+                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.radDocOtorgante}" style="width: 150px;"/>
+                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.tdcIdReceptor.tdcSigla}" style="width: 150px;"/>
+                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.radDocReceptor}" style="width: 150px;" />
 
                         <h:outputLabel class="labelLittle" value="Liquidación" />
                         <h:outputLabel class="labelLittle" value="Código Acto" />
                         <h:outputText class="labelLittle" value="Es exterior"/>
                         <h:outputText class="labelLittle" value="Valor"/>
-                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.radLiquidacion}" style="width: 150px;" />
-                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.radCodigoActo}" style="width: 150px;" />
-                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.radEsExterior}" style="width: 150px;" />
-                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.radValorLiq}" style="width: 150px;" />
+                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.radLiquidacion}" style="width: 150px;" />
+                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.radCodigoActo}" style="width: 150px;" />
+                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.radEsExterior}" style="width: 150px;" />
+                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.radValorLiq}" style="width: 150px;" />
                     </h:panelGrid>
-                    <h:outputLabel style="display: block;text-align: left" class="labelLittle" value="Observaciones" />
-                    <p:inputTextarea value="#{finalizacionManagedBean.observaciones}" rows="1" style="width: 620px;display: block" readonly="#{!(finalizacionManagedBean.radFaseEstado.fesId.fesCodigo eq 'P-A')}"/>
                 </div>
-                <p:dataTable value="#{finalizacionManagedBean.radFasesEstados}" var="rfe" paginator="true" rows="5" paginatorPosition="bottom"
+                <p:dataTable value="#{historialManagedBean.radFasesEstados}" var="rfe" paginator="true" rows="5" paginatorPosition="bottom"
                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" >
-                    <p:column headerText="ID" width="40" style="text-align: center" >
+                    <p:column headerText="Id" width="40" style="text-align: center" >
                         <h:outputLabel value="#{rfe.rfeId}" />
                     </p:column>
                     <p:column headerText="Fase">
@@ -154,13 +152,13 @@
                     </p:column>
                 </p:dataTable>
                 <div align="center" style="margin: 20px;">
-                    <p:commandButton style="vertical-align: top" value="Finalizar" action="#{finalizacionManagedBean.finalizarRadicacion()}" update=":formFinalizacion" rendered="#{(finalizacionManagedBean.radFaseEstado.fesId.fesCodigo eq 'P-A')}" oncomplete="PF('dialogDetalle').hide()">
-                        <p:confirm header="Confirmación" message="¿Esta seguro de que desea validar la radicación?" icon="ui-icon-alert" />
-                    </p:commandButton>
-                    <p:commandButton style="vertical-align: top" value="Rechazar" action="#{finalizacionManagedBean.rechazarRadicacion()}" update=":formFinalizacion" rendered="#{(finalizacionManagedBean.radFaseEstado.fesId.fesCodigo eq 'P-A')}" oncomplete="PF('dialogDetalle').hide()">
-                        <p:confirm header="Confirmación" message="¿Esta seguro de que desea rechazar esta radicación?" icon="ui-icon-alert" />
-                    </p:commandButton>
-                    <p:commandButton value="Cancelar" oncomplete="PF('dialogDetalle').hide()"/>
+                    <p:button style="margin: 10px;" value="Boleta Fiscal" target="_new" href="/static/fileDispatcher/#{historialManagedBean.radicacionSel.arcIdBoletaFiscal.arcId}-#{historialManagedBean.radicacionSel.arcIdBoletaFiscal.arcHash}.#{historialManagedBean.radicacionSel.arcIdBoletaFiscal.arcExtension}"
+                                          rendered="#{generacionManagedBean.radicacionUsuarioSel.escId.arcId != null}"/>
+                    <p:button style="margin: 10px;" value="Recibo de Pago" target="_new" href="/static/fileDispatcher/#{historialManagedBean.radicacionSel.arcIdReciboPago.arcId}-#{historialManagedBean.radicacionSel.arcIdReciboPago.arcHash}.#{historialManagedBean.radicacionSel.arcIdReciboPago.arcExtension}"
+                                          rendered="#{generacionManagedBean.radicacionUsuarioSel.escId.arcId != null}"/>
+                    <p:button style="margin: 10px;" value="Escritura" target="_new" href="/static/fileDispatcher/#{historialManagedBean.radicacionSel.escId.arcId.arcId}-#{historialManagedBean.radicacionSel.escId.arcId.arcHash}.#{historialManagedBean.radicacionSel.escId.arcId.arcExtension}"
+                                          rendered="#{generacionManagedBean.radicacionUsuarioSel.escId.arcId != null}"/>
+                    <p:commandButton value="Cerrar" oncomplete="PF('dialogDetalle').hide()"/>
                 </div>
             </h:form>
         </p:dialog>

@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package co.com.realtech.mariner.controller.jsf.managed_bean.portal.business;
 
 import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBean;
@@ -8,7 +13,6 @@ import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.generic.ClaveValor;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,14 +21,14 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 /**
- * ManagedBean encargado de la validación y autorización de la pantalla de 
- * finalización de proceso por parte de las ORIPs
+ * ManagedBean usado para el historial de todos los usuarios, la información
+ * disponible varía dependiendo del rol
  * @author fabianagudelo
  */
 @ManagedBean
 @ViewScoped
-public class FinalizacionManagedBean extends GenericManagedBean{
-    
+public class HistorialManagedBean extends GenericManagedBean {
+
     @EJB(beanName = "RadicacionesDAOBean")
     private RadicacionesDAOBeanLocal radicacionesDAOBean;
     
@@ -46,7 +50,6 @@ public class FinalizacionManagedBean extends GenericManagedBean{
     private ClaveValor estadoProcesoSel;
     
     private String campoBusqueda;
-    private String observaciones;
     
     private Date fechaFiltroInic;
     private Date fechaFiltroFin;
@@ -56,7 +59,6 @@ public class FinalizacionManagedBean extends GenericManagedBean{
         fechaFiltroInic = new Date();
         fechaFiltroFin = new Date();
         estadosProcesos = new ArrayList<>();
-        estadosProcesos.add(new ClaveValor("P", "Pendientes"));
         estadosProcesos.add(new ClaveValor("A", "Aprobados"));
         estadosProcesos.add(new ClaveValor("R", "Rechazados"));
         
@@ -75,7 +77,6 @@ public class FinalizacionManagedBean extends GenericManagedBean{
      * Deja las variables cargadas por defecto y realiza la búsqueda.
      */
     public void limpiarVariables(){
-        observaciones = "";
         estadoProcesoSel = estadosProcesos.get(0);
         filtroBusquedaSel = filtrosBusqueda.get(0);
         buscarRadicaciones();
@@ -86,20 +87,6 @@ public class FinalizacionManagedBean extends GenericManagedBean{
      */
     public void seleccionarFiltroBusq(){
         campoBusqueda = "";
-        System.out.println("filtroBusquedaSel = " + filtroBusquedaSel);
-        //filtroBusquedaSel = filtrosBusqueda.get(0);
-    }
-    
-    /**
-     * Obtiene las radicaciones que no han tenido un concepto de aprobación por parte de las ORIPs.
-     */
-    public void obtenerRadicacionesPendientes(){
-        try {
-            radicaciones = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'P-A'", null);
-        } catch (Exception e) {
-            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Valor no encontrado", "No se pueden traer las radicaciones pendientes: " + e.getMessage(), true, false);
-            logger.error("No se pueden traer las radicaciones pendientes, causado por: " + e, e);
-        }
     }
     
     /**
@@ -145,7 +132,7 @@ public class FinalizacionManagedBean extends GenericManagedBean{
             if(filtroBusquedaSel.getClave().equals("ES")){
                 campoBusqueda = estadoProcesoSel.getClave();
             }
-            radicaciones = radicacionesDAOBean.obtenerRadicacionesFinalizacionPorFechasYParametro(filtroBusquedaSel.getClave(), campoBusqueda, fechaFiltroInic, fechaFiltroFin, null);    
+            radicaciones = radicacionesDAOBean.obtenerRadicacionesFinalizacionPorFechasYParametro(filtroBusquedaSel.getClave(), campoBusqueda, fechaFiltroInic, fechaFiltroFin,usuarioSesion);    
             if(!radicaciones.isEmpty()){
                 radicacionSel = radicaciones.get(0);
             }
@@ -171,54 +158,6 @@ public class FinalizacionManagedBean extends GenericManagedBean{
         
     }
     
-    /**
-     * Finaliza todo el proceso de la radiación con el último estado.
-     */
-    public void finalizarRadicacion() {
-        try {
-            MarRadicacionesFasesEstados rfe = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radicacionSel);
-            if (rfe.getFesId().getFesCodigo().equals("P-A")) {
-                BigDecimal BDsalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionSel.getRadId(),
-                        "F-A", "A", usuarioSesion.getUsuId(), observaciones, null);
-                Integer salida = BDsalida.intValue();
-                if (salida == -999) {
-                    PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo.", true, false);
-                    return;
-                }
-                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Finalización correcta", "Radicación finalizada correctamente", true, false);
-            } else {
-                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso ya validado", "El proceso ya fue validado por algún otro funcionario mientras estaba siendo consultado", true, false);
-            }
-            obtenerRadicacionesPendientes();
-        } catch (Exception e) {
-            logger.error("No se puede guardar la aprobación, causado por " + e, e);
-        }
-    }
-    
-    /**
-     * Deja el proceso en estado todo el proceso de la radiación con el último estado.
-     */
-    public void rechazarRadicacion() {
-        try {
-            MarRadicacionesFasesEstados rfe = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radicacionSel);
-            if (rfe.getFesId().getFesCodigo().equals("P-A")) {
-                BigDecimal BDsalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionSel.getRadId(),
-                        "F-R", "R", usuarioSesion.getUsuId(), observaciones, null);
-                Integer salida = BDsalida.intValue();
-                if (salida == -999) {
-                    PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo.", true, false);
-                    return;
-                }
-                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo correcto", "Radicación guardada con estado de rechazo, aunque el proceso en SAP es válido y debe verificarse", true, false);
-            } else {
-                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso ya validado", "El proceso ya fue validado por algún otro funcionario mientras estaba siendo consultado", true, false);
-            }
-            obtenerRadicacionesPendientes();
-        } catch (Exception e) {
-            logger.error("No se puede guardar la aprobación, causado por " + e, e);
-        }
-    }
-
     public List<MarRadicaciones> getRadicaciones() {
         return radicaciones;
     }
@@ -299,14 +238,6 @@ public class FinalizacionManagedBean extends GenericManagedBean{
         this.radFaseEstado = radFaseEstado;
     }
 
-    public String getObservaciones() {
-        return observaciones;
-    }
-
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones;
-    }
-
     public List<MarRadicacionesFasesEstados> getRadFasesEstados() {
         return radFasesEstados;
     }
@@ -323,8 +254,4 @@ public class FinalizacionManagedBean extends GenericManagedBean{
         this.radicacionesFiltro = radicacionesFiltro;
     }
     
-    
-    
-    
-
 }
