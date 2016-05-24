@@ -59,7 +59,7 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
             setAutenticado(SessionUtils.obtenerValor("auth"));
             setTiposDocumentos((List<MarTiposDocumentos>) genericDAOBean.loadAllForEntity(MarTiposDocumentos.class, "tdcNombre asc"));
             if (getAutenticado().equals("S")) {
-                setRadicaciones(radicacionesDAOBean.obtenerRadsAtendidasYFaseFinal(usuarioSesion, "'I-P'", "R-A"));
+                setRadicaciones(radicacionesDAOBean.obtenerRadsAtendidasYFaseFinal(usuarioSesion, "'I-P'", "'R-A'"));
                 if (!getRadicaciones().isEmpty()) {
                     setRadicacion(getRadicaciones().get(0));
                 } else {
@@ -144,7 +144,6 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                 }
                 PrimeFacesContext.execute("PF('dialogTransaccion').show();");
             }
-            System.out.println("Seleccionado medio de pago " + ttPago);
         } catch (Exception e) {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero ha ocurrido un error seleccionando el medio de pago.", true, false);
             logger.error("Error realizando seleccion de medio de pago radicacion, causado por " + e);

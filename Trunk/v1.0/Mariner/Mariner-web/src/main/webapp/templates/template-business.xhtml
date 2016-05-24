@@ -35,6 +35,28 @@
                                 <p:commandButton value="Olvidé la clave" />
                             </div>
                         </div> 
+                        <div id="panelOpcionesExternas">
+                            <div>
+                                Si usted tiene un numero de liquidación y desea realizar el pago mediante Pagos en Línea o Descargando el Recibo de pago para consignación bancaria, presione el vínculo <b> Pagar Liquidación</b>
+                            </div>
+                            <a href="#{request.contextPath}/external/payment.vur">
+                                <div>
+                                    <img src="#{resource['images/icons/icono-payment.png']}" alt="Imagen Pago Liquidaciones"/>
+                                </div>
+                                <span>
+                                    Pagar Liquidacion
+                                </span>
+                            </a>
+
+                            <a>
+                                <div>
+                                    <img src="#{resource['images/icons/icono-chat.png']}" alt="Imagen Acceso al Chat"/>
+                                </div>
+                                <span>
+                                    Ingresar al Chat
+                                </span>
+                            </a>                            
+                        </div>
                     </div>
                 </div>
             </h:form>

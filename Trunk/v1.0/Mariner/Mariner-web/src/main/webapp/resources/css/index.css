@@ -63,13 +63,61 @@
 }
 
 #loginDiv{
-    margin-top: 80px;
+    margin-top: 10px;
     width: 350px;
-    height: 300px;
+    height: 272px;
     background: rgba(255, 255, 255, 1);
     -webkit-box-shadow: 1px 2px 15px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 1px 2px 15px 0px rgba(0,0,0,0.75);
     box-shadow: 1px 2px 15px 0px rgba(0,0,0,0.75);
+}
+
+#panelOpcionesExternas{
+    text-align: center;
+}
+
+#panelOpcionesExternas>div{
+    text-align: center;
+    font-size: 13px !important;
+    padding: 5px;
+    padding-left: 12px;
+    padding-right: 12px;
+    background-color: rgba(255, 255, 255, 0.79);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid white;
+    border-top: 1px solid white;
+}
+
+#panelOpcionesExternas>hr{
+    width: 562px;
+    border: 1px solid rgba(27, 27, 27, 0.4);
+}
+
+#panelOpcionesExternas>a{
+    text-decoration: none !important;
+    display: inline-block;
+    width: 90px;
+    height: 90px;
+    border: 2px solid silver;
+    border-radius: 4px;
+    margin: 4px;
+    vertical-align: top;
+    background-color: rgba(255, 255, 255, 0.73);
+    font-size: 13px;
+    color: black;
+    font-weight: bold;
+}
+
+#panelOpcionesExternas>a:hover{    
+    border: 2px solid gray;
+    font-weight: 700;
+}
+
+#panelOpcionesExternas>a>div>img{
+    width: 45px;
+    height: 45px;
+    margin-top: 6px;
 }
 
 .headerLoginBorder{
@@ -79,7 +127,7 @@
 }
 
 .headerLoginDiv{
-    height: 50px;
+    height: 30px;
     text-align: center;
     color: #42A5F5;
     border: solid 1px #e0e0e0;
@@ -91,7 +139,7 @@
     -webkit-transform: translateY(-50%);
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 800;
 }
 
