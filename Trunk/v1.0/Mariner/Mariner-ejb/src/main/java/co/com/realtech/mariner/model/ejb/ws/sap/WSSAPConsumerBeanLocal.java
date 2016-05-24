@@ -1,5 +1,6 @@
 package co.com.realtech.mariner.model.ejb.ws.sap;
 
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.business.get_detail_method.DetalleLiquidacion;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDPRNCAB;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDTTVURDETAIL;
 import javax.ejb.Local;
@@ -15,7 +16,7 @@ import javax.xml.ws.Holder;
 @Local
 public interface WSSAPConsumerBeanLocal {
 
-    public void getDetail(String liquidacion, Holder<ZPSCDPRNCAB> responseHeader, Holder<ZPSCDTTVURDETAIL> responseDetail) throws Exception;
+    public DetalleLiquidacion getDetail(String liquidacion) throws Exception;
     
     public void vurPayment(String iCUENTABCO,String iFECHARECAUDO,String iHORARECAUDO,String iNROLIQ,String iVALOR,Holder<String> eMESSAGE,Holder<Integer> eRETURN) throws Exception;
     

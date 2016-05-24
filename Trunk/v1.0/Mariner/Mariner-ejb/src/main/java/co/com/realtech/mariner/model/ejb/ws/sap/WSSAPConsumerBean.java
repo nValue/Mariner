@@ -1,7 +1,9 @@
 package co.com.realtech.mariner.model.ejb.ws.sap;
 
+import co.com.realtech.mariner.model.ejb.ws.sap.converters.SAPGetDetailConverter;
 import co.com.realtech.mariner.model.ejb.ws.sap.implementations.SAPWSGetDetailsImplementation;
 import co.com.realtech.mariner.model.ejb.ws.sap.implementations.SAPWSVURPaymentImplementation;
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.business.get_detail_method.DetalleLiquidacion;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDPRNCAB;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDTTVURDETAIL;
 import javax.ejb.Stateless;
@@ -18,17 +20,19 @@ import javax.xml.ws.Holder;
 public class WSSAPConsumerBean implements WSSAPConsumerBeanLocal {
 
     /**
-     * Cargar detalle de la liquidacion.
+     * Consulta y mapeo de datos liquidacion SAP.
      *
      * @param liquidacion
-     * @param responseHeader
-     * @param responseDetail
+     * @return
      * @throws Exception
      */
     @Override
-    public void getDetail(String liquidacion, Holder<ZPSCDPRNCAB> responseHeader, Holder<ZPSCDTTVURDETAIL> responseDetail) throws Exception {
+    public DetalleLiquidacion getDetail(String liquidacion) throws Exception {
+        Holder<ZPSCDPRNCAB> responseHeader = new Holder<>();
+        Holder<ZPSCDTTVURDETAIL> responseDetail = new Holder<>();
         SAPWSGetDetailsImplementation wsSapIm = SAPWSGetDetailsImplementation.create();
         wsSapIm.getDetail(liquidacion, responseHeader, responseDetail);
+        return SAPGetDetailConverter.convertHolders(responseHeader, responseDetail);
     }
 
     /**
