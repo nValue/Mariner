@@ -220,7 +220,7 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
             radicacionSel.setNotId(notarias.get(0));
             //radicacionSel.setTdcIdReceptor(tiposDocumentosRecibe.get(0));
             //radicacionSel.setTdcIdOtorgante(tiposDocumentosOtorga.get(0));
-            radicacionSel.setRadEstado("Y");
+            radicacionSel.setRadEstado("A");
             observacionesProceso = "";
             radicacionesFasesEstados = null;
         } catch (Exception e) {

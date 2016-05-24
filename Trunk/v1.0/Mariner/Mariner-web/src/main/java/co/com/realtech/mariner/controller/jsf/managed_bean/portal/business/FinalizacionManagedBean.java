@@ -189,6 +189,9 @@ public class FinalizacionManagedBean extends GenericManagedBean{
             } else {
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso ya validado", "El proceso ya fue validado por algún otro funcionario mientras estaba siendo consultado", true, false);
             }
+            radicacionSel.setRadEstado("F");
+            auditSessionUtils.setAuditReflectedValues(radicacionSel);
+            genericDAOBean.save(radicacionSel);
             obtenerRadicacionesPendientes();
         } catch (Exception e) {
             logger.error("No se puede guardar la aprobación, causado por " + e, e);
@@ -213,6 +216,9 @@ public class FinalizacionManagedBean extends GenericManagedBean{
             } else {
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso ya validado", "El proceso ya fue validado por algún otro funcionario mientras estaba siendo consultado", true, false);
             }
+            radicacionSel.setRadEstado("R");
+            auditSessionUtils.setAuditReflectedValues(radicacionSel);
+            genericDAOBean.save(radicacionSel);
             obtenerRadicacionesPendientes();
         } catch (Exception e) {
             logger.error("No se puede guardar la aprobación, causado por " + e, e);
