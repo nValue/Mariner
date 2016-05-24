@@ -55,18 +55,18 @@
                                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                      filteredValue="#{finalizacionManagedBean.radicacionesFiltro}" >
                             <p:ajax event="rowSelect" listener="#{finalizacionManagedBean.obtenerUltimaFase()}" oncomplete="PF('dialogDetalle').show()" update=":formDetalle"/>
-                            <p:column headerText="Número" filterBy="#{rads.radNumero}" style="text-align: center" width="120" >
+                            <p:column headerText="Número" filterBy="#{rads.radNumero}" style="text-align: center" width="120" filterMatchMode="contains">
                                 <h:outputLabel value="#{rads.radNumero}" />
                             </p:column>
-                            <p:column headerText="Fecha" width="120" filterBy="#{rads.radFecha}">
+                            <p:column headerText="Fecha" width="120" filterBy="#{rads.radFecha}" filterMatchMode="contains">
                                 <h:outputLabel value="#{rads.radFecha}">
                                     <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
                                 </h:outputLabel>
                             </p:column>
-                            <p:column headerText="Liquidación" style="text-align: center" filterBy="#{rads.radLiquidacion}" >
+                            <p:column headerText="Liquidación" style="text-align: center" filterBy="#{rads.radLiquidacion}" filterMatchMode="contains">
                                 <h:outputLabel value="#{rads.radLiquidacion}"/>
                             </p:column>
-                            <p:column headerText="Escritura" style="text-align: center" filterBy="#{rads.escId.escNumero}" >
+                            <p:column headerText="Escritura" style="text-align: center" filterBy="#{rads.escId.escNumero}" filterMatchMode="contains">
                                 <h:outputLabel value="#{rads.escId.escNumero}"/>
                             </p:column>
                             <p:column headerText="Estado" style="text-align: center" >

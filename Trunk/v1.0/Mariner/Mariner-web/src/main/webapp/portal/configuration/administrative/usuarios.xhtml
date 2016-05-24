@@ -58,7 +58,7 @@
 
                                 <h:outputLabel class="labelLittle" value="Usuario"/>
                                 <h:outputLabel class="labelLittle" value="Correo" />
-                                <p:inputText value="#{usuariosManagedBean.usuarioSel.usuLogin}" style="width: 230px"/>
+                                <p:inputText value="#{usuariosManagedBean.usuarioSel.usuLogin}" readonly="#{usuariosManagedBean.usuarioSel.usuLogin eq 'MARINER'}" style="width: 230px"/>
                                 <p:inputText value="#{usuariosManagedBean.personaSel.perEmail}" style="width: 230px" validator="EmailValidator"/>
                                 <h:outputLabel class="labelLittle" value="Teléfono" />
                                 <h:outputLabel class="labelLittle" value="Estado" />

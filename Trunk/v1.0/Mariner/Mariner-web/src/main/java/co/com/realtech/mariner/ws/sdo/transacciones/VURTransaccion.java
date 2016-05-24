@@ -24,6 +24,7 @@ public class VURTransaccion implements Serializable {
     private String numeroDocumento;
     private String referencia;
     private String codigoServicioACH;
+    private String tipoMedioPago;
     private VURTransaccionLogSDO log;
 
     public VURTransaccion() {
@@ -139,6 +140,14 @@ public class VURTransaccion implements Serializable {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public String getTipoMedioPago() {
+        return tipoMedioPago;
+    }
+
+    public void setTipoMedioPago(String tipoMedioPago) {
+        this.tipoMedioPago = tipoMedioPago;
     }
 
 }

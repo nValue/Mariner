@@ -7,16 +7,14 @@ import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarTiposDocumentos;
 import co.com.realtech.mariner.model.entity.MarTransacciones;
+import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.util.cdf.CDFFileDispatcher;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
-import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import co.com.realtech.mariner.util.session.SessionUtils;
-import java.io.IOException;
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -52,21 +50,28 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
     private List<MarRadicaciones> radicaciones;
     private MarTransacciones transaccion;
     private List<MarTiposDocumentos> tiposDocumentos;
+    private MarUsuarios usuarioTransaccionSistema;
 
     @Override
     public void init() {
         try {
-            setAutenticado(SessionUtils.obtenerValor("auth"));
-            setTiposDocumentos((List<MarTiposDocumentos>) genericDAOBean.loadAllForEntity(MarTiposDocumentos.class, "tdcNombre asc"));
-            if (getAutenticado().equals("S")) {
-                setRadicaciones(radicacionesDAOBean.obtenerRadsAtendidasYFaseFinal(usuarioSesion, "'I-P'", "'R-A'"));
-                if (!getRadicaciones().isEmpty()) {
-                    setRadicacion(getRadicaciones().get(0));
-                } else {
-                    PrimeFacesPopup.lanzarDialog(Effects.Fold, "Notificacion", "No se han encontrado radicaciones pendientes por pago", true, false);
-                }
+            setUsuarioTransaccionSistema((MarUsuarios) genericDAOBean.findByColumn(MarUsuarios.class, "usuLogin", "MARINER"));
+
+            if (getUsuarioTransaccionSistema() == null) {
+                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero el usuario <b>Mariner</b> no esta listo para hacer transacciones.", true, false);
             } else {
-                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Por favor ingrese el numero de la liquidacion de la cual desea realizar el pago.", true, false);
+                setAutenticado(SessionUtils.obtenerValor("auth"));
+                setTiposDocumentos((List<MarTiposDocumentos>) genericDAOBean.loadAllForEntity(MarTiposDocumentos.class, "tdcNombre asc"));
+                if (getAutenticado().equals("S")) {
+                    setRadicaciones(radicacionesDAOBean.obtenerRadsAtendidasYFaseFinal(usuarioSesion, "'I-P'", "'R-A'"));
+                    if (!getRadicaciones().isEmpty()) {
+                        setRadicacion(getRadicaciones().get(0));
+                    } else {
+                        PrimeFacesPopup.lanzarDialog(Effects.Fold, "Notificacion", "No se han encontrado radicaciones pendientes por pago", true, false);
+                    }
+                } else {
+                    PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Por favor ingrese el numero de la liquidacion de la cual desea realizar el pago.", true, false);
+                }
             }
         } catch (Exception e) {
             logger.error("Error inicializando PaymentManagedBean, causado por " + e);
@@ -133,6 +138,7 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                 getTransaccion().setTraCuantia(getRadicacion().getRadCuantia());
                 getTransaccion().setTraFechaInicio(new Date());
                 getTransaccion().setTraEstado("T");
+                getTransaccion().setUsuId(getUsuarioTransaccionSistema());
 
                 if (getAutenticado().equals("S")) {
                     getTransaccion().setTraApellidos(usuarioSesion.getPerId().getPerApellidos());
@@ -297,6 +303,14 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
 
     public void setTiposDocumentos(List<MarTiposDocumentos> tiposDocumentos) {
         this.tiposDocumentos = tiposDocumentos;
+    }
+
+    public MarUsuarios getUsuarioTransaccionSistema() {
+        return usuarioTransaccionSistema;
+    }
+
+    public void setUsuarioTransaccionSistema(MarUsuarios usuarioTransaccionSistema) {
+        this.usuarioTransaccionSistema = usuarioTransaccionSistema;
     }
 
 }
