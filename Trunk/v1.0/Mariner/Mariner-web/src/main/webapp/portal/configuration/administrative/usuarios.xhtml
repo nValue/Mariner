@@ -123,7 +123,7 @@
                     </p:selectOneMenu>
                 </div>
                 <div align="center" style="margin: 20px">
-                    <p:commandButton value="Asignar Rol" action="#{usuariosManagedBean.asignarRol()}" update=":formUsuario :formUsuario:tableRolesUsuario" process="@this"/>
+                    <p:commandButton value="Asignar Rol" action="#{usuariosManagedBean.asignarRol()}" update=":formUsuario :formUsuario:tableRolesUsuario"/>
                     <p:commandButton value="Cancelar" oncomplete="PF('modalRoles').hide()"/>
                 </div>
             </h:form>

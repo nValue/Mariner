@@ -83,10 +83,7 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
 
     public void obtenerRoles() {
         try {
-            roles = (List<MarRoles>) genericDAOBean.loadAllForEntity(MarRoles.class, "rolNombre");
-            if (!roles.isEmpty()) {
-                rolSel = roles.get(0);
-            }
+            roles = (List<MarRoles>) genericDAOBean.loadAllForEntity(MarRoles.class, "rolNombre");            
         } catch (Exception e) {
             logger.error("Error obteniendo los roles disponibles, causado por :" + e, e);
         }
@@ -109,9 +106,6 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
     public void obtenerRolesDeUsuario() {
         try {
             rolesUsuarios = (List<MarRolesUsuarios>) genericDAOBean.findAllByColumn(MarRolesUsuarios.class, "usuId.usuId", usuarioSel.getUsuId(), true, "rolId.rolNombre");
-            if (!rolesUsuarios.isEmpty()) {
-                rolUsuarioSel = rolesUsuarios.get(0);
-            }
         } catch (Exception e) {
             logger.error("Error obteniendo los roles del usuario, causado por " + e, e);
         }
@@ -163,6 +157,7 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
      */
     public void asignarRol() {
         try {
+            System.out.println("Nemths ROL:"+rolSel.getRolNombre());
             Predicate<MarRolesUsuarios> rolExistente = r -> r.getRolId().equals(rolSel);
             boolean existeRol = rolesUsuarios.stream().anyMatch(rolExistente);
             if (existeRol) {
