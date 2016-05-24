@@ -24,6 +24,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -32,7 +33,8 @@ import javax.validation.constraints.Size;
  * @author Andres Rivera
  */
 @Entity
-@Table(name = "MAR_USUARIOS")
+@Table(name = "MAR_USUARIOS", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"USU_LOGIN"})})
 @NamedQueries({
     @NamedQuery(name = "MarUsuarios.findAll", query = "SELECT m FROM MarUsuarios m"),
     @NamedQuery(name = "MarUsuarios.findByUsuId", query = "SELECT m FROM MarUsuarios m WHERE m.usuId = :usuId"),

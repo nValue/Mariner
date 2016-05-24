@@ -68,6 +68,8 @@ public class MarTransacciones implements Serializable {
     private BigInteger traCuantia;
     @Column(name = "TRA_VALOR")
     private BigInteger traValor;
+    @Column(name = "TRA_VALOR_PAGADO")
+    private BigInteger traValorPagado;    
     @Column(name = "TRA_FECHA_INICIO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date traFechaInicio;
@@ -310,6 +312,14 @@ public class MarTransacciones implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarTransacciones[ traId=" + traId + " ]";
+    }
+
+    public BigInteger getTraValorPagado() {
+        return traValorPagado;
+    }
+
+    public void setTraValorPagado(BigInteger traValorPagado) {
+        this.traValorPagado = traValorPagado;
     }
     
 }
