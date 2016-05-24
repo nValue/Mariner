@@ -3,6 +3,7 @@ package co.com.realtech.mariner.model.ejb.dao.entity_based.usuarios;
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBean;
 import co.com.realtech.mariner.model.entity.MarPersonas;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
+import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -81,6 +82,25 @@ public class UsuariosDAOBean extends GenericDAOBean implements UsuariosDAOBeanLo
             return false;
         }
         return validacion;
+    }
+    
+    /**
+     * Obtiene los usuarios asociados a un módulo específico.
+     * @param idModulo
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    @Override
+    public List<MarUsuarios> obtenerAsociadosAModulo(String idModulo) throws MarinerPersistanceException {
+        List<MarUsuarios> usuarios = null;
+        try {
+            Query q = getEntityManager().createQuery("SELECT u FROM MarRolesModulos rm INNER JOIN rm.rolId.marRolesUsuariosList.usuId u WHERE rm.modId.modId = :modId ");
+            q.setParameter("modId", idModulo);
+            usuarios = q.getResultList();
+        } catch (Exception e) {
+            throw e;
+        }
+        return usuarios;
     }
 
 }

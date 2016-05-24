@@ -14,7 +14,8 @@ import java.util.List;
 import javax.ejb.Local;
 
 /**
- *
+ * Bean de sessión destinado a todas las consultas que se hagan a las fases y los estados
+ * de las radicaciones.
  * @author fabianagudelo
  */
 @Local
@@ -25,6 +26,8 @@ public interface RadicFasesEstadosDAOBeanLocal {
     public List<MarRadicacionesFasesEstados> obtenerRadicFasesEstadosPorUsuarioFaseEstadoYFechas(MarUsuarios usuario, String faseEstado, Date fechaIn, Date fechaFin) throws MarinerPersistanceException;
     
     public MarRadicacionesFasesEstados obtenerUltimaFaseDeRadicacion(MarRadicaciones radicacion) throws MarinerPersistanceException;
+    
+    public List<MarRadicacionesFasesEstados> obtenerPendientesConCodigos(String fases) throws MarinerPersistanceException ;
     
     
 }

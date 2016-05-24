@@ -2,6 +2,7 @@ package co.com.realtech.mariner.model.ejb.dao.entity_based.usuarios;
 
 import co.com.realtech.mariner.model.entity.MarPersonas;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
+import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -17,5 +18,7 @@ public interface UsuariosDAOBeanLocal {
     public List<MarUsuarios> loadUserFiltered(String filterValue, MarUsuarios usuarioSession) throws Exception;
     
     public boolean validacionCreacionUsuario(MarUsuarios usuario, MarPersonas persona) throws Exception;
+    
+    public List<MarUsuarios> obtenerAsociadosAModulo(String idModulo) throws MarinerPersistanceException;
     
 }

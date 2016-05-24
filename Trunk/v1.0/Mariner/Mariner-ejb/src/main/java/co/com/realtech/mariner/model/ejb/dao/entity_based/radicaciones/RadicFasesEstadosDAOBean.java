@@ -114,5 +114,35 @@ public class RadicFasesEstadosDAOBean extends GenericDAOBean implements RadicFas
         }
         return radFaseEstado;
     }
-    
+
+    /**
+     * Obtiene las radicaciones cuya ultima fase se encuentre en las ingresadas y siempre y cuando esté (A)ctiva
+     * @param fases
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    @Override
+    public List<MarRadicacionesFasesEstados> obtenerPendientesConCodigos(String fases) throws MarinerPersistanceException {
+        List<MarRadicacionesFasesEstados> rads = null;
+        try {
+            String sql = "WITH ultEstado AS \n"
+                    + "(\n"
+                    + "SELECT DISTINCT r.rad_id, MAX(rfe.rfe_id) OVER(PARTITION BY r.rad_id) AS rfe_id\n"
+                    + "FROM mar_radicaciones r \n"
+                    + "INNER JOIN mar_radicaciones_fases_estados rfe ON r.rad_id = rfe.rad_id\n"
+                    + "WHERE r.rad_estado = 'A'\n"
+                    + ") \n"
+                    + "SELECT rfe.* FROM mar_radicaciones_fases_estados rfe \n"
+                    + "INNER JOIN ultEstado u ON rfe.rfe_id = u.rfe_id\n"
+                    + "INNER JOIN mar_fases_estados fe ON rfe.fes_id = fe.fes_id\n"
+                    + "WHERE fe.fes_codigo IN (%ESTADOS%)";
+            sql = sql.replace("%ESTADOS%", fases);
+            Query q = getEntityManager().createNativeQuery(sql,MarRadicacionesFasesEstados.class);
+            rads = q.getResultList();
+        } catch (Exception e) {
+            throw e;
+        }
+        return rads;
+    }
+
 }
