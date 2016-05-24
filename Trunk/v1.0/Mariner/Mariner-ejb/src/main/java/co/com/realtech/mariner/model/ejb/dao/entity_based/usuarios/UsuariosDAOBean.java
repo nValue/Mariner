@@ -102,5 +102,42 @@ public class UsuariosDAOBean extends GenericDAOBean implements UsuariosDAOBeanLo
         }
         return usuarios;
     }
+    
+    /**
+     * Obtiene la cantidad de radicaciones que tiene pendiente un usuario, para una fase
+     * @param usuario
+     * @param fase
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    @Override
+    public int obtenerCantPendientesDeUsuario(MarUsuarios usuario, String fase) throws MarinerPersistanceException{
+        int cant = 0;
+        try {
+            String sql = "WITH maxs AS \n"
+                    + "(\n"
+                    + "  SELECT r.rad_id, MAX(rfe.rfe_id) AS rfe_id\n"
+                    + "  FROM mar_radicaciones r \n"
+                    + "  INNER JOIN mar_radicaciones_fases_estados rfe ON r.rad_id = rfe.rad_id\n"
+                    + "  WHERE r.rad_estado = 'A'\n"
+                    + "  GROUP BY r.rad_id\n"
+                    + ") SELECT COUNT(*) AS total\n"
+                    + "FROM maxs m\n"
+                    + "INNER JOIN mar_radicaciones_fases_estados rfe ON m.rfe_id = rfe.rfe_id\n"
+                    + "INNER JOIN mar_fases_estados fe ON rfe.fes_id = fe.fes_id\n"
+                    + "WHERE fe.fes_codigo = %FASES%\n"
+                    + "  AND rfe.usu_id = %USUARIO%\n"
+                    + "GROUP BY rfe.usu_id";
+            sql = sql.replace("%USUARIO%", usuario.getUsuId().toString());
+            sql = sql.replace("%FASE%", fase);
+            System.out.println("sql = " + sql);
+            Query q = getEntityManager().createNativeQuery(sql);
+            q.setMaxResults(1);
+            cant = (int)q.getSingleResult();
+        } catch (Exception e) {
+            throw e;
+        }
+        return cant;
+    }
 
 }

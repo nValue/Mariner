@@ -43,6 +43,10 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarRadicacionesFasesEstados.findByRfeFechaFin", query = "SELECT m FROM MarRadicacionesFasesEstados m WHERE m.rfeFechaFin = :rfeFechaFin"),
     @NamedQuery(name = "MarRadicacionesFasesEstados.findByRfeEstadoAprobacion", query = "SELECT m FROM MarRadicacionesFasesEstados m WHERE m.rfeEstadoAprobacion = :rfeEstadoAprobacion")})
 public class MarRadicacionesFasesEstados implements Serializable {
+
+    @JoinColumn(name = "RCA_ID", referencedColumnName = "RCA_ID")
+    @ManyToOne
+    private MarRechazosCausales rcaId;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -230,6 +234,14 @@ public class MarRadicacionesFasesEstados implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados[ rfeId=" + rfeId + " ]";
+    }
+
+    public MarRechazosCausales getRcaId() {
+        return rcaId;
+    }
+
+    public void setRcaId(MarRechazosCausales rcaId) {
+        this.rcaId = rcaId;
     }
     
 }

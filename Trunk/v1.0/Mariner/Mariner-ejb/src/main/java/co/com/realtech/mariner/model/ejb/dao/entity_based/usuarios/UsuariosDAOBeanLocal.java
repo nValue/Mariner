@@ -21,4 +21,6 @@ public interface UsuariosDAOBeanLocal {
     
     public List<MarUsuarios> obtenerAsociadosAModulo(String idModulo) throws MarinerPersistanceException;
     
+    public int obtenerCantPendientesDeUsuario(MarUsuarios usuario, String fase) throws MarinerPersistanceException;
+    
 }
