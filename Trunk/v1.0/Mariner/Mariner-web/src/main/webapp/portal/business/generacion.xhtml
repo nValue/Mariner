@@ -41,29 +41,29 @@
                                 <h:outputLabel class="labelLittle" value="Radicación No" style="display: block"/>
                                 <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radNumero}"/>
                                 <h:panelGrid columns="2" >
-                                    
+
                                     <h:outputText class="labelLittle" value="Código SAP"/>
                                     <h:outputLabel class="labelLittle" value="Notaria"/>
                                     <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radId}" />
                                     <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.notId.notNombre}" />
-                                    
+
                                     <h:outputLabel class="labelLittle" value="Número Escritura" />
                                     <h:outputLabel class="labelLittle" value="Fecha Escritura" />
                                     <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.escId.escNumero}" />
                                     <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.escId.escFecha}" >
                                         <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"/>
                                     </p:outputLabel>
-                                    
+
                                 </h:panelGrid>
                                 <h:outputText value="Motivo Rechazo" style="display: block" class="labelLittle" rendered="#{generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'R-R'}"/>
                                 <p:inputTextarea readonly="true" value="#{generacionManagedBean.radFaseEstadoActual.rcaId.rcaNombres}" style="width: 77%"
                                                  rendered="#{generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'R-R'}" rows="2"/>
-                                
+
                                 <h:outputLabel style="display: block" class="labelLittle" value="Observaciones" />
                                 <p:inputTextarea value="#{generacionManagedBean.observaciones}" rows="2" style="width: 77%;display: block"/>
                                 <p:button style="margin: 10px;" value="Descargar Escritura" target="_new" href="/static/fileDispatcher/#{generacionManagedBean.radicacionUsuarioSel.escId.arcId.arcId}-#{generacionManagedBean.radicacionUsuarioSel.escId.arcId.arcHash}.#{generacionManagedBean.radicacionUsuarioSel.escId.arcId.arcExtension}"
                                           rendered="#{generacionManagedBean.radicacionUsuarioSel.escId.arcId != null}"/>
-                                
+
                             </div>
                             <div style="margin: 20px;display: inline-block; vertical-align: top; width: 40%;border: solid 1px #e0e0e0;">
                                 <p:dataTable value="#{generacionManagedBean.radicacionesFasesEstados}" var="rfe" paginator="true" rows="7" paginatorPosition="bottom"
@@ -114,7 +114,7 @@
                 <p:dataTable style="margin: 20px;" value="#{generacionManagedBean.radicacionesFasesEstProcesadas}" 
                              selection="#{generacionManagedBean.radicacionFaseEstProcesadaSel}" var="radPro" selectionMode="single" rowKey="#{radPro.rfeId}" 
                              paginator="true" rows="7" paginatorPosition="bottom"
-                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" emptyMessage="No hay radicaciones">
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" emptyMessage="No hay radicaciones">
                     <p:column headerText="Número" width="100" >
                         <h:outputLabel value="#{radPro.radId.radNumero}"/>
                     </p:column>
@@ -139,7 +139,7 @@
                 </div>
             </h:form>
         </p:dialog>
-        
+
         <p:dialog id="modalRechazo" widgetVar="dialogRechazo" styleClass="modalTop" resizable="false" header="Causal de rechazo" modal="true" width="500" minHeight="300">
             <h:form id="formRechazo">
                 <h:panelGrid columns="2" style="margin: 30px">
@@ -153,22 +153,22 @@
                 <p:commandButton value="Cancelar" oncomplete="PF('dialogRechazo').hide()" />
             </h:form>
         </p:dialog>
-        
-        <p:dialog id="modalLiquidacion" widgetVar="dialogLiquidacion" styleClass="modalTop" resizable="false" header="Número de liquidación a validar" modal="true" width="700" minHeight="500">
+
+        <p:dialog id="modalLiquidacion" widgetVar="dialogLiquidacion" styleClass="modalTop" resizable="false" header="Número de liquidación a validar" modal="true" width="880" minHeight="500">
             <h:form id="formLiquidacion">
                 <div class="descripcion" align="center">
                     <div class="descText">
                         Por favor ingrese el número de liquidación creado en SAP
                     </div>
                 </div>
-                <h:panelGrid columns="3" style="margin: 30px">
+                <h:panelGrid columns="3" style="margin: 10px">
                     <p:outputLabel value="Número de liquidación" />
                     <p:inputText value="#{generacionManagedBean.numeroLiquidacion}" style="width: 200px"/>
                     <p:commandButton value="Validar" action="#{generacionManagedBean.obtenerInformacionSAP()}" update="formLiquidacion"  
                                      onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();"/>
                 </h:panelGrid>
                 <h:panelGroup rendered="#{generacionManagedBean.detalleLiquidacion != null and generacionManagedBean.detalleLiquidacion.liqNumero != ''}" >
-                    <div style="margin: 20px">
+                    <div style="margin: 10px;">
                         <div class="contLabelText">
                             <h:outputLabel class="labelLittle" value="Número de Liquidación"/>
                             <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.liqNumero}" />
@@ -189,15 +189,33 @@
                             <h:outputLabel class="labelLittle" value="Beneficiario"/>
                             <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.benNombre}" />
                         </div>
+                        <div class="contLabelText">
+                            <h:outputLabel class="labelLittle" value="Valor"/>
+                            <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.total}" />
+                        </div>
+                        <div class="contLabelText">
+                            <h:outputLabel class="labelLittle" value="Valor Descuento"/>
+                            <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.totalDesc}" />
+                        </div>
+                        <div class="contLabelText">
+                            <h:outputLabel class="labelLittle" value="Usuario SAP"/>
+                            <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.uname}" />
+                        </div>
+                        <div class="contLabelText">
+                            <h:outputLabel class="labelLittle" value="Fecha Liquidacion"/>
+                            <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.fechaLiquidacion}" />
+                        </div>
+                    </div>
+                    <div>
+                        <h:outputLabel class="labelLittle" value="Texto / Comentarios"/><br/>
+                        <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.texto}" style="width: 632px;" />
                     </div>
                     <div align="center" style="margin: 20px">
-                        <p:commandButton value="Vincular" action="#{generacionManagedBean.vincularInformacionSAP()}" update="formTurnos"
-                                         onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();" >
+                        <p:commandButton value="Vincular" action="#{generacionManagedBean.vincularInformacionSAP()}" update=":formTurnos" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();" >
                             <p:confirm header="Confirmación" message="¿Esta seguro de que desea vincular esta información del SAP al proceso de VUR?" icon="ui-icon-alert" />
                         </p:commandButton>
                     </div>
                 </h:panelGroup>
-                <p:commandButton value="Cancelar" oncomplete="PF('dialogLiquidacion').hide()" />
             </h:form>
         </p:dialog>
 

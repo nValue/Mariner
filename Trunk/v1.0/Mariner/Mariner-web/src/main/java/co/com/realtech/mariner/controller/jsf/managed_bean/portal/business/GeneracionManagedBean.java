@@ -10,6 +10,7 @@ import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarRechazosCausales;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.model.logic.radicaciones_sap.SAPRadicacionesLogicOperations;
+import co.com.realtech.mariner.model.sdo.estandar.EntidadLiquidacionResultado;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
@@ -330,13 +331,19 @@ public class GeneracionManagedBean extends GenericManagedBean {
             }   
         }
     }
-    
     /**
      * Dada la información de detalle liquidación, la vincula al proceso actual.
      */
     public void vincularInformacionSAP(){
-        sapRadicacionesLogicOperations.vincularRadicacionSAP(radicacionUsuarioSel, numeroLiquidacion);
-        PrimeFacesPopup.lanzarDialog(Effects.Explode, "Proceso finalizado", "Vinculación realizada correctamente y cambiada a validación por aprobador.", true, false);
+        EntidadLiquidacionResultado salida=sapRadicacionesLogicOperations.vincularRadicacionSAP(radicacionUsuarioSel, numeroLiquidacion);
+        if(salida.getEstado().equals("OK")){
+            obtenerFasesEstadosDeRadicacion();
+            PrimeFacesContext.execute("PF('dialogLiquidacion').hide();");
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso finalizado", "Vinculación realizada correctamente y cambiada a validación por aprobador.", true, false);
+        }
+        else{
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error vinculacion", salida.getLog().getMensaje(), true, false);
+        }        
     }
     
     public List<MarRadicaciones> getRadicacionesUsuario() {
