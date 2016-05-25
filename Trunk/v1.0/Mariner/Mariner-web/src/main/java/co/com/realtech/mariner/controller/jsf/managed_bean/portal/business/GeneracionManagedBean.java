@@ -84,7 +84,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
     public void obtenerRadicacionesPendientes() {
         try {
             System.out.println("ObteniendoPdtes");
-            radicacionesUsuario = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'G-P', 'R-R'", usuarioSesion);
+            radicacionesUsuario = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'G-P', 'G-S', 'R-R'", usuarioSesion);
             if(!radicacionesUsuario.isEmpty()){
                 radicacionUsuarioSel = radicacionesUsuario.get(0);
                 obtenerFasesEstadosDeRadicacion();
@@ -227,7 +227,15 @@ public class GeneracionManagedBean extends GenericManagedBean {
      */
     public void obtenerSAP() {
         try {
-            System.out.println("Obteniendo de SAP...");
+            
+            MarRadicacionesFasesEstados rfEst = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radicacionUsuarioSel);
+            if(rfEst.getFesId().getFesCodigo().equals("G-A")){
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso validado", "La radicación actual ya ha sido cargada y validada correctamente desde el sistema SAP, puede continuar con otros procesos.", true, false);
+            }else if(rfEst.getFesId().getFesCodigo().equals("G-S")){
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso en espera", "El proceso aún se encuentra en espera del cargue de información por parte de la plataforma SAP.", true, false);
+            }
+            
+            /*
             //Valida que haya una respuesta por parte del WS en SAP
             if (true) {
                 //Si no es vació hay que buscar otra validación para confirmar que los datos son correctos.
@@ -243,7 +251,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
                 }
             } else {
                 PrimeFacesPopup.lanzarDialog(Effects.Explode, "Información no extraida", "No hay datos de retorno por parte de SAP, verifique la creación correcta del proceso en dicha plataforma e intente de nuevo", true, false);
-            }
+            }*/
         } catch (Exception e) {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Información no extraida", "No se puede obtener la información de SAP, causado por " + e, true, false);
             logger.error("No se puede obtener la información de SAP, causado por " + e, e);
@@ -258,9 +266,8 @@ public class GeneracionManagedBean extends GenericManagedBean {
     public String esRechazo(MarRadicaciones radSel){
         String valor = radSel.getRadNumero();
         try {
-            List<MarRadicacionesFasesEstados> hayAlgo = radicFasesEstadosDAOBean.obtenerRadicFaseEstDeRadyFase(radSel, "I-R"); 
-            if(hayAlgo == null || hayAlgo.isEmpty()){
-            }else{
+            MarRadicacionesFasesEstados ultimo = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radSel);
+            if(ultimo.getFesId().getFesCodigo().equals("R-R")){
                 valor = "(R) " + valor;
             }
         } catch (Exception e) {

@@ -91,7 +91,7 @@
                                                  onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogRechazo').show()">
                                     <p:confirm header="Confirmación" message="¿Esta seguro de que desea rechazar esta radicación?" icon="ui-icon-alert" />
                                 </p:commandButton>
-                                <p:commandButton style="vertical-align: top" value="Obtener SAP" action="#{generacionManagedBean.obtenerSAP()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-S')}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                                <p:commandButton style="vertical-align: top" value="Verificar SAP" action="#{generacionManagedBean.obtenerSAP()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-S')}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                             </div>
                         </h:panelGroup>
                     </div>

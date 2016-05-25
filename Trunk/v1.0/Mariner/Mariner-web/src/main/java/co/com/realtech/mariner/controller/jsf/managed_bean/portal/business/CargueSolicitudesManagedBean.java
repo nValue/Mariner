@@ -208,9 +208,8 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
     public String esRechazo(MarRadicaciones radSel){
         String valor = radSel.getRadNumero();
         try {
-            List<MarRadicacionesFasesEstados> hay = radicFasesEstadosDAOBean.obtenerRadicFaseEstDeRadyFase(radSel, "I-R"); 
-            if(hay == null || hay.isEmpty()){
-            }else{
+            MarRadicacionesFasesEstados ultimo = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radSel);
+            if(ultimo.getFesId().getFesCodigo().equals("I-R")){
                 valor = "(R) " + valor;
             }
         } catch (Exception e) {
