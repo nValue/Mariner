@@ -23,13 +23,18 @@
                             <div class="headerLoginDiv">
                                 <div>Autenticación</div>
                             </div>
-                            <h:panelGrid cellpadding="" columns="1" style="margin: 40px 0;">
+                            <h:panelGrid cellpadding="" columns="1" style="margin: 40px;margin-bottom: 10px;">
                                 <h:outputLabel for="idUsu" value="Usuario: " />
                                 <p:inputText id="idUsu" value="#{indexManagedBean.usuario.usuLogin}" required="true" label="Usuario" size="30"/>
                                 <h:outputLabel for="idCont" value="Contraseña: " />
                                 <p:password id="idCont" value="#{indexManagedBean.usuario.usuPassword}" required="true" label="Password" size="30"/>
                             </h:panelGrid>
-                            <div align="center">
+                            <div>
+                                <div style="width: 320px;" align="center">
+                                    <p:captcha label="Captcha" language="es" required="true"/>
+                                </div>                                
+                            </div>
+                            <div align="center" style="padding: 12px;">
                                 <p:commandButton value="Entrar" action="#{indexManagedBean.autenticar()}" update="@this :panelHome" ajax="false"/>
                                 <p:commandButton value="Registrarme" action="#{indexManagedBean.activarRegistro()}" update=":modalRegistro" oncomplete="PF('dialogRegistro').show()" process="@this" rendered="false" />
                                 <p:commandButton value="Olvidé la clave" />

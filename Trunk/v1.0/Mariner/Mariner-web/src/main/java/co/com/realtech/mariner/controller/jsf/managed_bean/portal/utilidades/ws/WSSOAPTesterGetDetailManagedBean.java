@@ -42,7 +42,10 @@ public class WSSOAPTesterGetDetailManagedBean extends GenericManagedBean impleme
         try {
             DetalleLiquidacion detalle;
             detalle = wSSAPConsumerBean.getDetail(getCodigoLiquidacion());
-            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Servicio web ejecutado correctamente, parametro:" + detalle.getMatricula(), true, false);
+            System.out.println("D1:"+detalle.getBenCc());
+            System.out.println("D2:"+detalle.getTotal());
+            System.out.println("D3:"+detalle.getMunicipio());
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Servicio web ejecutado correctamente, parametro:" + detalle.getLiqNumero(), true, false);
         } catch (Exception e) {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Error consultando meotodo getDetail, causado por " + e, true, false);
             logger.error("Error ejecutando metodo get Details, causado por " + e);
