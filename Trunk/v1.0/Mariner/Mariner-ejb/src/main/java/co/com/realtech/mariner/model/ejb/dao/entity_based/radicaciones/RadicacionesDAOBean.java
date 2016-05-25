@@ -163,6 +163,7 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
                         + "  AND TRUNC(rfe.rfe_fecha_inicio) BETWEEN TO_DATE('FECHA1','dd/MM/yyyy') AND TO_DATE('FECHA2','dd/MM/yyyy')";
             if (tipo.equals("ES")) {
                 String valor = "";
+                sql = sql.replace("AND TRUNC(rfe.rfe_fecha_inicio) BETWEEN TO_DATE('FECHA1','dd/MM/yyyy') AND TO_DATE('FECHA2','dd/MM/yyyy')", "");
                 switch (campoBusqueda) {
                     case "P":
                         valor = "'P-A'";
