@@ -77,7 +77,7 @@ public class AsignacionesManagedBean extends GenericManagedBean{
     public int traerPendientesDeUsuario(){
         int num = 0;
         try {
-            
+            num = usuariosDAOBean.obtenerCantPendientesDeUsuario(usuarioSel, "I-P");
         } catch (Exception e) {
             String sql = "No se pueden obtener las radicaciones pendientes para un usuario, causado por: " + e;
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Error en usuarios", sql, true, false);
@@ -85,4 +85,55 @@ public class AsignacionesManagedBean extends GenericManagedBean{
         }
         return num;
     }
+
+    public List<MarRadicacionesFasesEstados> getRadFasesEstadosDisponibles() {
+        return radFasesEstadosDisponibles;
+    }
+
+    public void setRadFasesEstadosDisponibles(List<MarRadicacionesFasesEstados> radFasesEstadosDisponibles) {
+        this.radFasesEstadosDisponibles = radFasesEstadosDisponibles;
+    }
+
+    public MarRadicacionesFasesEstados getRadFaseEstadoDisponible() {
+        return radFaseEstadoDisponible;
+    }
+
+    public void setRadFaseEstadoDisponible(MarRadicacionesFasesEstados radFaseEstadoDisponible) {
+        this.radFaseEstadoDisponible = radFaseEstadoDisponible;
+    }
+
+    public List<MarRadicacionesFasesEstados> getRadFasesEstadosUsuario() {
+        return radFasesEstadosUsuario;
+    }
+
+    public void setRadFasesEstadosUsuario(List<MarRadicacionesFasesEstados> radFasesEstadosUsuario) {
+        this.radFasesEstadosUsuario = radFasesEstadosUsuario;
+    }
+
+    public MarRadicacionesFasesEstados getRadFaseEstadoUsuario() {
+        return radFaseEstadoUsuario;
+    }
+
+    public void setRadFaseEstadoUsuario(MarRadicacionesFasesEstados radFaseEstadoUsuario) {
+        this.radFaseEstadoUsuario = radFaseEstadoUsuario;
+    }
+
+    public List<MarUsuarios> getUsuarios() {
+        return usuarios;
+    }
+
+    public void setUsuarios(List<MarUsuarios> usuarios) {
+        this.usuarios = usuarios;
+    }
+
+    public MarUsuarios getUsuarioSel() {
+        return usuarioSel;
+    }
+
+    public void setUsuarioSel(MarUsuarios usuarioSel) {
+        this.usuarioSel = usuarioSel;
+    }
+    
+    
+    
 }

@@ -25,7 +25,21 @@
                 </div>
                 <h:form id="formAsignaciones">
                     <div align="center" style="width: 400px;display: inline-block">
-                        
+                        <p:dataTable value="#{asignacionesManagedBean.radFasesEstadosDisponibles}" selection="#{asignacionesManagedBean.radFaseEstadoDisponible}"
+                                     var="disp" emptyMessage="No hay radicaciones en espera" rowKey="#{disp.rfeId}" paginator="true" rows="7" paginatorPosition="bottom"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" >
+                            <p:column headerText="Radicación">
+                                <h:outputLabel value="#{disp.radId.radNumero}"/>
+                            </p:column>
+                            <p:column headerText="Escritura">
+                                <h:outputLabel value="#{disp.radId.escId.escNumero}"/>
+                            </p:column>
+                            <p:column headerText="Fecha">
+                                <h:outputLabel value="#{disp.rfeFechaInicio}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
+                                </h:outputLabel>
+                            </p:column>
+                        </p:dataTable>
                     </div>
                     <div align="center" style="width: 400px;display: inline-block">
                         

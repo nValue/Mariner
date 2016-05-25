@@ -68,9 +68,7 @@ public class IndexManagedBean implements Serializable {
         setUsuario(new MarUsuarios());
         contextPath = JSFUtils.getCurrentContext();
         auditSessionUtils = AuditSessionUtils.create();
-        claveAntigua = "";
-        claveNueva = "c";
-        claveNueva = "d";
+        limpiarCampos();
     }
 
     /**
@@ -216,11 +214,24 @@ public class IndexManagedBean implements Serializable {
     }
     
     /**
+     * Limpia todos los campos de contraseña para el cambio.
+     */
+    public void limpiarCampos(){
+        claveAntigua = "";
+        claveNueva = "";
+        claveNueva = "";
+    }
+    
+    /**
      * Cambia la contraseña actual del usuario.
      */
     public void cambiarContrasena() throws ValidatorException {
         try {
             if (verificarClaveAntigua()) {
+                if(claveAntigua.equals(claveNueva)){
+                    PrimeFacesPopup.lanzarDialog(Effects.Bounce, "Claves iguales", "La clave nueva no puede ser igual a la anterior", true, false);
+                    return;
+                }
                 usuario.setUsuPassword(CryptoUtils.encrypt(claveNueva));
                 auditSessionUtils.setAuditReflectedValues(usuario);
                 genericDAOBean.merge(usuario);

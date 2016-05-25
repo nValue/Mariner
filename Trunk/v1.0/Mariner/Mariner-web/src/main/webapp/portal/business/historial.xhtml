@@ -69,7 +69,7 @@
                             <p:column headerText="Escritura" style="text-align: center" filterBy="#{rads.escId.escNumero}" >
                                 <h:outputLabel value="#{rads.escId.escNumero}"/>
                             </p:column>
-                            <p:column headerText="Estado" style="text-align: center" >
+                            <p:column headerText="Estado" style="text-align: center" filterBy="#{historialManagedBean.obtenerUltimoEstado(rads)}" >
                                 <h:outputLabel value="#{historialManagedBean.obtenerUltimoEstado(rads)}" />
                             </p:column>
                             <p:column headerText="(BF)" styleClass="colCenter" width="25">

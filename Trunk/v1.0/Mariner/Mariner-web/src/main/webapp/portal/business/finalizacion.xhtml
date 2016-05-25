@@ -39,12 +39,12 @@
                             <p:commandButton style="vertical-align: top;" value="Buscar" action="#{finalizacionManagedBean.buscarRadicaciones()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('wvRadicaciones').clearFilters();" update="formFinalizacion"/>
                         </div>
                         <div align="right" style="margin-top: 20px;display: inline-block;width: 420px;vertical-align: top">
-                            <h:outputLabel value="Fecha Desde"/>
-                            <p:calendar styleClass="calendarSmall" id="inputFecha1" value="#{finalizacionManagedBean.fechaFiltroInic}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
+                            <h:outputLabel value="Fecha Desde" rendered="#{finalizacionManagedBean.filtroBusquedaSel eq 'ES'}"/>
+                            <p:calendar styleClass="calendarSmall" id="inputFecha1" value="#{finalizacionManagedBean.fechaFiltroInic}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}" rendered="#{finalizacionManagedBean.filtroBusquedaSel eq 'ES'}">
                                 <p:ajax event="dateSelect" listener="#{finalizacionManagedBean.buscarRadicaciones()}" update="formFinalizacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                             </p:calendar>
-                            <h:outputLabel value="Fecha Hasta"/>
-                            <p:calendar styleClass="calendarSmall" id="inputFecha2" value="#{finalizacionManagedBean.fechaFiltroFin}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
+                            <h:outputLabel value="Fecha Hasta" rendered="#{finalizacionManagedBean.filtroBusquedaSel eq 'ES'}"/>
+                            <p:calendar styleClass="calendarSmall" id="inputFecha2" value="#{finalizacionManagedBean.fechaFiltroFin}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}" rendered="#{finalizacionManagedBean.filtroBusquedaSel eq 'ES'}">
                                 <p:ajax event="dateSelect" listener="#{finalizacionManagedBean.buscarRadicaciones()}" update="formFinalizacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                             </p:calendar>
                         </div>
@@ -69,8 +69,8 @@
                             <p:column headerText="Escritura" style="text-align: center" filterBy="#{rads.escId.escNumero}" filterMatchMode="contains">
                                 <h:outputLabel value="#{rads.escId.escNumero}"/>
                             </p:column>
-                            <p:column headerText="Estado" style="text-align: center" >
-                                <h:outputLabel value="#{finalizacionManagedBean.obtenerUltimoEstado(rads)}" />
+                            <p:column headerText="Notaría" style="text-align: center" filterBy="#{rads.notId.notNombre}" filterMatchMode="contains">
+                                <h:outputLabel value="#{rads.notId.notNombre}" />
                             </p:column>
                             <p:column headerText="(BF)" styleClass="colCenter" width="25">
                                 <a title="Presione para descargar la boleta fiscal" target="_new" href="#{request.contextPath}/static/fileDispatcher/#{rads.arcIdBoletaFiscal.arcId}-#{rads.arcIdBoletaFiscal.arcHash}.#{rads.arcIdBoletaFiscal.arcExtension}">
@@ -110,14 +110,14 @@
                             <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"/>
                         </p:outputLabel>
 
-                        <h:outputLabel class="labelLittle" value="Tipo Doc Otorga" />
-                        <h:outputLabel class="labelLittle" value="Num Doc Otorga" />
-                        <h:outputLabel class="labelLittle" value="Tipo Doc Recibe" />
-                        <h:outputLabel class="labelLittle" value="Num Doc Recibe" />
-                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.tdcIdOtorgante.tdcSigla}" style="width: 150px;" />
-                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.radDocOtorgante}" style="width: 150px;"/>
-                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.tdcIdReceptor.tdcSigla}" style="width: 150px;"/>
-                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.radDocReceptor}" style="width: 150px;" />
+                        <h:outputLabel class="labelLittle" value="Nombre Beneficiario" />
+                        <h:outputLabel class="labelLittle" value="Número Documento Beneficiario" />
+                        <h:outputLabel class="labelLittle" value="Nombre Otorgante" />
+                        <h:outputLabel class="labelLittle" value="Número Documento Otorgante" />
+                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeBenNombre}" style="width: 150px;" />
+                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeBenNum}" style="width: 150px;"/>
+                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeOtoNombre}" style="width: 150px;"/>
+                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeOtoNum}" style="width: 150px;"/>
 
                         <h:outputLabel class="labelLittle" value="Liquidación" />
                         <h:outputLabel class="labelLittle" value="Código Acto" />
@@ -151,6 +151,9 @@
                     </p:column>
                     <p:column headerText="Comentarios">
                         <h:outputText value="#{rfe.rfeObservaciones}"/>
+                    </p:column>
+                    <p:column headerText="Rechazo">
+                        <h:outputText value="#{rfe.rcaId.rcaNombres}"/>
                     </p:column>
                 </p:dataTable>
                 <div align="center" style="margin: 20px;">

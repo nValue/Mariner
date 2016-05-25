@@ -28,10 +28,10 @@
                         <h:outputLabel value="Rechazados "/>
                         <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" converter="MarRadicacionesConverter" value="#{cargueSolicitudesManagedBean.radicacionSel}" >
                             <f:selectItem itemLabel=" - " itemValue="" />
-                            <f:selectItems value="#{cargueSolicitudesManagedBean.radicaciones}" var="radPend" itemLabel="#{radPend.marRadicacionesFasesEstadosList.size() > 1? '(R) ' : ''} #{radPend.radNumero}" itemValue="#{radPend}"/>
+                            <f:selectItems value="#{cargueSolicitudesManagedBean.radicaciones}" var="radPend" itemLabel="#{(cargueSolicitudesManagedBean.esRechazo(radPend))}" itemValue="#{radPend}"/>
                             <p:ajax listener="#{cargueSolicitudesManagedBean.seleccionarRadicacion()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" update="formRadicacion"/>
                         </p:selectOneMenu>
-                        <p:commandButton style="vertical-align: top" value="Crear Radicación" action="#{cargueSolicitudesManagedBean.solicitarRadicacion()}" update="formRadicacion formFiltroRadicaciones" disabled="#{((cargueSolicitudesManagedBean.radicacionSel != null) and (cargueSolicitudesManagedBean.radicacionSel.radId == null))}"/>
+                        <p:commandButton style="vertical-align: top" value="Crear Radicación" action="#{cargueSolicitudesManagedBean.solicitarRadicacion()}" update="formRadicacion formFiltroRadicaciones" disabled="#{((cargueSolicitudesManagedBean.radicacionSel != null) and (cargueSolicitudesManagedBean.radicacionSel.radId == null))}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                         <p:commandButton style="vertical-align: top" value="Historial" oncomplete="PF('dialogHistorial').show();" update="modalHistorial"/>
                     </div>
                 </h:form>
@@ -50,9 +50,13 @@
                                 <h:outputLabel value="Número Escritura" />
                                 <p:inputText value="#{cargueSolicitudesManagedBean.radicacionSel.escId.escNumero}" />
                                 <h:outputLabel value="Fecha Escritura" />
-                                <p:calendar value="#{cargueSolicitudesManagedBean.radicacionSel.escId.escFecha}" pattern="dd-MM-yyyy" locale="es" required="true"/>
+                                <p:calendar value="#{cargueSolicitudesManagedBean.radicacionSel.escId.escFecha}" pattern="dd-MM-yyyy" locale="es" required="true" navigator="true" yearRange="c-60:c+1"/>
+                                <h:outputText value="Motivo Rechazo" rendered="#{cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-R'}"/>
+                                <p:inputTextarea readonly="true" value="#{cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.rcaId.rcaNombres}" style="width: 100%"
+                                                 rendered="#{cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-R'}" rows="2"/>
                                 <h:outputText value="Observaciones"/>
                                 <p:inputTextarea value="#{cargueSolicitudesManagedBean.observacionesProceso}" style="width: 100%"/>
+                                
                             </h:panelGrid>
                             <div align="center" style="margin: 10px;">
                                 <p:commandButton value="Cargar Escritura" oncomplete="PF('fileUploadDialog').show()" rendered="#{(cargueSolicitudesManagedBean.radicacionSel.radId eq null || cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-P' || cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-R')}"/>
@@ -62,13 +66,14 @@
                         </div>
                         <div style="margin: 20px;display: inline-block; vertical-align: top; width: 40%;border: solid 1px #e0e0e0;">
                             <p:dataTable value="#{cargueSolicitudesManagedBean.radicacionesFasesEstados}" var="rfe" paginator="true" rows="7" paginatorPosition="bottom"
-                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" emptyMessage="No hay fases">
-                                <p:column headerText="Fase">
+                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" emptyMessage="No hay fases"
+                                         styleClass="tableSmall">
+                                <p:column headerText="Fase" styleClass="colCenter">
                                     <h:outputLabel value="#{rfe.fesId.fesNombre}"/>
                                 </p:column>
-                                <p:column headerText="Fecha">
+                                <p:column headerText="Fecha" width="90">
                                     <h:outputText value="#{rfe.rfeFechaInicio}">
-                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
+                                        <f:convertDateTime pattern="dd/MM/yy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
                                     </h:outputText>
                                 </p:column>
                                 <p:column headerText="Comentarios">
@@ -77,7 +82,8 @@
                             </p:dataTable>
                         </div>
                         <div style="margin: 20px">
-                            <p:commandButton value="Guardar" action="#{cargueSolicitudesManagedBean.guardarRadicacion()}" rendered="#{(cargueSolicitudesManagedBean.radicacionSel.radId eq null || cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-P' || cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-R')}" update="formRadicacion :formFiltroRadicaciones" >
+                            <p:commandButton value="Guardar" action="#{cargueSolicitudesManagedBean.guardarRadicacion()}" rendered="#{(cargueSolicitudesManagedBean.radicacionSel.radId eq null || cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-R')}" update="formRadicacion :formFiltroRadicaciones"
+                                              onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()">
                                 <p:confirm header="Confirmación" message="¿Esta seguro de que desea guardar la radicación?" icon="ui-icon-alert" />
                             </p:commandButton>
                             <p:commandButton value="Cancelar" action="#{cargueSolicitudesManagedBean.cancelarRadicacion()}"  onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"

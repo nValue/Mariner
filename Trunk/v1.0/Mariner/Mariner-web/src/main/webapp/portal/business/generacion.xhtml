@@ -29,10 +29,10 @@
                         <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" converter="MarRadicacionesConverter" value="#{generacionManagedBean.radicacionUsuarioSel}">
                             <p:ajax listener="#{generacionManagedBean.obtenerFasesEstadosDeRadicacion()}" update="formTurnos" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                             <f:selectItem itemLabel=" - " itemValue="" />
-                            <f:selectItems value="#{generacionManagedBean.radicacionesUsuario}" var="rads" itemLabel="#{generacionManagedBean.esRechazo(rads) ? '(R) ' : ''} #{rads.radNumero}" itemValue="#{rads}"/>
+                            <f:selectItems value="#{generacionManagedBean.radicacionesUsuario}" var="rads" itemLabel="#{(generacionManagedBean.esRechazo(rads))}" itemValue="#{rads}"/>
                         </p:selectOneMenu>
                         <p:commandButton style="vertical-align: top" value="Obtener Radicación" action="#{generacionManagedBean.asignarNuevaRadicacion()}" update="formTurnos" process="@this" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
-                        <p:commandButton style="vertical-align: top" value="Ver Historial" action="#{generacionManagedBean.obtenerRadicacionesProcesadas()}" oncomplete="PF('dialogHistorial').show()" update="modalHistorial" process="@this"/>
+                        <p:commandButton style="vertical-align: top" value="Ver Historial" action="#{generacionManagedBean.obtenerRadicacionesProcesadas()}" update="modalHistorial" process="@this" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogHistorial').show()"/>
                     </div>
 
                     <div align="center" style="padding: 20px;">
@@ -41,34 +41,24 @@
                                 <h:outputLabel class="labelLittle" value="Radicación No" style="display: block"/>
                                 <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radNumero}"/>
                                 <h:panelGrid columns="2" >
+                                    
+                                    <h:outputText class="labelLittle" value="Código SAP"/>
                                     <h:outputLabel class="labelLittle" value="Notaria"/>
-                                    <h:outputText class="labelLittle" value="Es exterior"/>
+                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radId}" />
                                     <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.notId.notNombre}" />
-                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radEsExterior}" />
-
+                                    
                                     <h:outputLabel class="labelLittle" value="Número Escritura" />
                                     <h:outputLabel class="labelLittle" value="Fecha Escritura" />
                                     <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.escId.escNumero}" />
                                     <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.escId.escFecha}" >
                                         <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"/>
                                     </p:outputLabel>
-
-                                    <h:outputLabel class="labelLittle" value="Tipo Doc Otorga" />
-                                    <h:outputLabel class="labelLittle" value="Num Doc Otorga" />
-                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.tdcIdOtorgante.tdcSigla}" />
-                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radDocOtorgante}" />
                                     
-                                    <h:outputLabel class="labelLittle" value="Tipo Doc Recibe" />
-                                    <h:outputLabel class="labelLittle" value="Num Doc Recibe" />
-                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.tdcIdReceptor.tdcSigla}" />
-                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radDocReceptor}" />
-
-                                    <h:outputLabel class="labelLittle" value="Código Acto" />
-                                    <h:outputLabel class="labelLittle" value="Cuantia" />
-                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radCodigoActo}" />
-                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radCuantia}" />
-
                                 </h:panelGrid>
+                                <h:outputText value="Motivo Rechazo" style="display: block" class="labelLittle" rendered="#{generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'R-R'}"/>
+                                <p:inputTextarea readonly="true" value="#{generacionManagedBean.radFaseEstadoActual.rcaId.rcaNombres}" style="width: 77%"
+                                                 rendered="#{generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'R-R'}" rows="2"/>
+                                
                                 <h:outputLabel style="display: block" class="labelLittle" value="Observaciones" />
                                 <p:inputTextarea value="#{generacionManagedBean.observaciones}" rows="2" style="width: 77%;display: block"/>
                                 <p:button style="margin: 10px;" value="Descargar Escritura" target="_new" href="/static/fileDispatcher/#{generacionManagedBean.radicacionUsuarioSel.escId.arcId.arcId}-#{generacionManagedBean.radicacionUsuarioSel.escId.arcId.arcHash}.#{generacionManagedBean.radicacionUsuarioSel.escId.arcId.arcExtension}"
@@ -77,13 +67,14 @@
                             </div>
                             <div style="margin: 20px;display: inline-block; vertical-align: top; width: 40%;border: solid 1px #e0e0e0;">
                                 <p:dataTable value="#{generacionManagedBean.radicacionesFasesEstados}" var="rfe" paginator="true" rows="7" paginatorPosition="bottom"
-                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                             styleClass="tableSmall">
                                     <p:column headerText="Fase">
                                         <h:outputLabel value="#{rfe.fesId.fesNombre}"/>
                                     </p:column>
-                                    <p:column headerText="Fecha">
+                                    <p:column headerText="Fecha" width="90">
                                         <h:outputText value="#{rfe.rfeFechaInicio}">
-                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
+                                            <f:convertDateTime pattern="dd/MM/yy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
                                         </h:outputText>
                                     </p:column>
                                     <p:column headerText="Comentarios">
@@ -92,12 +83,12 @@
                                 </p:dataTable>
                             </div>
                             <div>
-                                <p:commandButton style="vertical-align: top" value="Validar Radicación" action="#{generacionManagedBean.validarRadicacion()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-P')}" 
+                                <p:commandButton style="vertical-align: top" value="Validar Radicación" action="#{generacionManagedBean.validarRadicacion()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-P') || (generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'R-R')}" 
                                                  onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()">
                                     <p:confirm header="Confirmación" message="¿Esta seguro de que desea validar la radicación?" icon="ui-icon-alert" />
                                 </p:commandButton>
-                                <p:commandButton style="vertical-align: top" value="Rechazar" action="#{generacionManagedBean.rechazarRadicacion()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-P')}" 
-                                                 onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()">
+                                <p:commandButton style="vertical-align: top" value="Rechazar" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-P') || (generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'R-R')}" 
+                                                 onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogRechazo').show()">
                                     <p:confirm header="Confirmación" message="¿Esta seguro de que desea rechazar esta radicación?" icon="ui-icon-alert" />
                                 </p:commandButton>
                                 <p:commandButton style="vertical-align: top" value="Obtener SAP" action="#{generacionManagedBean.obtenerSAP()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-S')}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
@@ -146,6 +137,20 @@
                     <p:commandButton id="btnDetalle" value="Ver Detalle" action="#{generacionManagedBean.verDetalleRadSel()}" update=":formTurnos"/>
                     <p:commandButton value="Cancelar" oncomplete="PF('dialogHistorial').hide()"/>
                 </div>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog id="modalRechazo" widgetVar="dialogRechazo" styleClass="modalTop" resizable="false" header="Causal de rechazo" modal="true" width="500" minHeight="300">
+            <h:form id="formRechazo">
+                <h:panelGrid columns="2" style="margin: 30px">
+                    <p:outputLabel value="Motivo" />
+                    <p:selectOneMenu value="#{generacionManagedBean.rechazoSel}" converter="MarRechazosCausalesConverter" style="width: 300px">
+                        <f:selectItems value="#{generacionManagedBean.rechazos}" var="rech" itemLabel="#{rech.rcaNombres}" itemValue="#{rech}"/>
+                    </p:selectOneMenu>
+                </h:panelGrid>
+                <p:commandButton value="Rechazar" action="#{generacionManagedBean.rechazarRadicacion()}" update="formTurnos"  
+                                 onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogRechazo').hide()"/>
+                <p:commandButton value="Cancelar" oncomplete="PF('dialogRechazo').hide()" />
             </h:form>
         </p:dialog>
 

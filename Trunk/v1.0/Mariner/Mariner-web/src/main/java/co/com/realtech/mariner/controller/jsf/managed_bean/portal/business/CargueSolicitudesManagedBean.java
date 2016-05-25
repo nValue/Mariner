@@ -83,11 +83,6 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
             radicaciones = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'I-P','I-R'", usuarioSesion);
             if (!radicaciones.isEmpty()) {
                 radicacionSel = radicaciones.get(0);
-                List<MarRadicacionesFasesEstados> rfe;
-                for (MarRadicaciones radicacion : radicaciones) {
-                    rfe = (List<MarRadicacionesFasesEstados>) genericDAOBean.findAllByColumn(MarRadicacionesFasesEstados.class, "radId", radicacion);
-                    radicacion.setMarRadicacionesFasesEstadosList(rfe);
-                }
                 obtenerFasesEstadosDeRadicacion();
             }
         } catch (Exception e) {
@@ -166,7 +161,6 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
             if (!radicacionesFasesEstProcesadas.isEmpty()) {
                 radicacionFaseEstProcesadaSel = radicacionesFasesEstProcesadas.get(0);
             }
-            System.out.println("radicacionesFasesEstProcesadas = " + radicacionesFasesEstProcesadas);
         } catch (Exception e) {
             logger.error("Error obteniendo las radicaciones procesadas, causado por : " + e, e);
         }
@@ -204,6 +198,24 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
         } catch (Exception e) {
             logger.error("Error al obtener las notarias, causado por " + e, e);
         }
+    }
+    
+    /**
+     * Pregunta si la radicacion actual es un rechazo (Sirve para colocar el (R) en la lista de los pendientes)
+     * @param radSel
+     * @return 
+     */
+    public String esRechazo(MarRadicaciones radSel){
+        String valor = radSel.getRadNumero();
+        try {
+            List<MarRadicacionesFasesEstados> hay = radicFasesEstadosDAOBean.obtenerRadicFaseEstDeRadyFase(radSel, "I-R"); 
+            if(hay == null || hay.isEmpty()){
+            }else{
+                valor = "(R) " + valor;
+            }
+        } catch (Exception e) {
+        }
+        return valor;
     }
 
     /**

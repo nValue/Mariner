@@ -151,7 +151,7 @@
                                             <div id="infoUser">
                                                 <h:outputLabel style="font-size: 24px;display: block;color: #000;" value="#{indexManagedBean.usuario.usuLogin}" />
                                                 <h:outputLabel style="font-size: 16px;display: block;color: #b5b5b5;" value="#{indexManagedBean.usuario.perId.perNombres} #{indexManagedBean.usuario.perId.perApellidos}" />
-                                                <p:commandButton style="margin: 9%" value="Cambiar contraseña" oncomplete="PF('dialogContrasena').show()" />
+                                                <p:commandButton style="margin: 9%" value="Cambiar contraseña" action="#{indexManagedBean.limpiarCampos()}" oncomplete="PF('dialogContrasena').show()" update="modalContrasena"/>
                                             </div>
                                         </div>
                                     </td>
@@ -215,7 +215,7 @@
                         <p:password id="contNueva2" value="#{indexManagedBean.claveNuevaRep}" required="true" requiredMessage="Debe repetir la clave nueva" 
                                     label="Repetir Clave Nueva" size="30" />
                     </h:panelGrid>
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" severity="error"/>
                     <div align="center" style="padding-top: 10px">                        
                         <p:commandButton value="Guardar" action="#{indexManagedBean.cambiarContrasena()}" />
                         <p:commandButton value="Cancelar" oncomplete="PF('dialogContrasena').hide()" process="@this"/>

@@ -4,22 +4,20 @@ import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBe
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFasesEstadosDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicacionesDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.ws.sap.WSSAPConsumerBeanLocal;
-import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDPRNCAB;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
+import co.com.realtech.mariner.model.entity.MarRechazosCausales;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.xml.ws.Holder;
 
 /**
  * ManagedBean encargado de asignar las radicaciones a los liquidadores y enviar
@@ -49,6 +47,9 @@ public class GeneracionManagedBean extends GenericManagedBean {
 
     private List<MarRadicacionesFasesEstados> radicacionesFasesEstados;
 
+    private List<MarRechazosCausales> rechazos;
+    private MarRechazosCausales rechazoSel;
+    
     private String observaciones;
     private Date fechaFiltroInic;
     private Date fechaFiltroFin;
@@ -58,6 +59,23 @@ public class GeneracionManagedBean extends GenericManagedBean {
         fechaFiltroInic = new Date();
         fechaFiltroFin = new Date();
         obtenerRadicacionesPendientes();
+        obtenerRechazos();
+    }
+    
+    /**
+     * Obtiene los rechazos disponibles en la plataforma.
+     */
+    public void obtenerRechazos(){
+        try {
+            rechazos = (List<MarRechazosCausales>)genericDAOBean.loadAllForEntity(MarRechazosCausales.class, "rcaId");
+            if(!rechazos.isEmpty()){
+                rechazoSel = rechazos.get(0);
+            }
+        } catch (Exception e) {
+            String msj = "No se pueden obtener los motivos del rechazo, causado por : " + e;
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazos inválidos", msj, true, false);
+            logger.error(msj, e);
+        }
     }
 
     /**
@@ -65,14 +83,10 @@ public class GeneracionManagedBean extends GenericManagedBean {
      */
     public void obtenerRadicacionesPendientes() {
         try {
-            radicacionesUsuario = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'G-P','G-S', 'R-R'", usuarioSesion);
-            if (!radicacionesUsuario.isEmpty()) {
+            System.out.println("ObteniendoPdtes");
+            radicacionesUsuario = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'G-P', 'R-R'", usuarioSesion);
+            if(!radicacionesUsuario.isEmpty()){
                 radicacionUsuarioSel = radicacionesUsuario.get(0);
-                List<MarRadicacionesFasesEstados> rfe;
-                for (MarRadicaciones radicacion : radicacionesUsuario) {
-                    rfe = (List<MarRadicacionesFasesEstados>) genericDAOBean.findAllByColumn(MarRadicacionesFasesEstados.class, "radId", radicacion);
-                    radicacion.setMarRadicacionesFasesEstadosList(rfe);
-                }
                 obtenerFasesEstadosDeRadicacion();
             }
         } catch (Exception e) {
@@ -148,7 +162,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
             obtenerRadicacionesPendientes();
             radicacionUsuarioSel = radObtenida;
             obtenerFasesEstadosDeRadicacion();
-            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación encontrada", "Se ha asignado la radicación <b> " + radObtenida.getRadNumero() + " </b> a sus pendientes, puede verificarla en la lista desplegable de radicaciones", true, false);
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación encontrada", "Se ha asignado la radicación <b> -" + radObtenida.getRadNumero() + "- </b> a sus pendientes, puede verificarla en la lista desplegable de radicaciones", true, false);
         } catch (Exception e) {
             logger.error("Error asignando una radicación disponible, causado por: " + e, e);
         }
@@ -198,6 +212,9 @@ public class GeneracionManagedBean extends GenericManagedBean {
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo incorrecto", "No se puede crear el estado rechazo para la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
                 return;
             }
+            MarRadicacionesFasesEstados rfeNuevo = (MarRadicacionesFasesEstados)genericDAOBean.findByColumn(MarRadicacionesFasesEstados.class, "rfeId.rfeId", BDsalida);
+            rfeNuevo.setRcaId(rechazoSel);
+            genericDAOBean.merge(rfeNuevo);
             obtenerRadicacionesPendientes();
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo realizado", "Proceso rechazado correctamente", true, false);
         } catch (Exception e) {
@@ -234,28 +251,23 @@ public class GeneracionManagedBean extends GenericManagedBean {
     }
 
     /**
-     * Valida si una radicación es un rechazo o no - Necesario para el
-     * SelectOneMenu
-     *
-     * @param radicacionAEvaluar
-     * @return
+     * Pregunta si la radicacion actual es un rechazo (Sirve para colocar el (R) en la lista de los pendientes)
+     * @param radSel
+     * @return 
      */
-    public boolean esRechazo(MarRadicaciones radicacionAEvaluar) {
+    public String esRechazo(MarRadicaciones radSel){
+        String valor = radSel.getRadNumero();
         try {
-            List<MarRadicacionesFasesEstados> rfEstados = (List<MarRadicacionesFasesEstados>) genericDAOBean.findAllByColumn(MarRadicacionesFasesEstados.class, "radId", radicacionAEvaluar, true, "rfeId");
-            if (!rfEstados.isEmpty()) {
-                //Esto valida que el penúltimo estado sea rechazo por parte de los Aprobadores
-                MarRadicacionesFasesEstados rfe = rfEstados.get(rfEstados.size() - 2);
-                if (rfe.getFesId().getFesCodigo().equals("R-R")) {
-                    return true;
-                }
+            List<MarRadicacionesFasesEstados> hayAlgo = radicFasesEstadosDAOBean.obtenerRadicFaseEstDeRadyFase(radSel, "I-R"); 
+            if(hayAlgo == null || hayAlgo.isEmpty()){
+            }else{
+                valor = "(R) " + valor;
             }
         } catch (Exception e) {
-            logger.error("No se pudo obtener el último estado de una radicación, causado por : " + e, e);
         }
-        return false;
+        return valor;
     }
-
+    
     /**
      * Muestra el detalle de una radicación vieja en pantalla.
      */
@@ -355,5 +367,23 @@ public class GeneracionManagedBean extends GenericManagedBean {
     public void setFechaFiltroFin(Date fechaFiltroFin) {
         this.fechaFiltroFin = fechaFiltroFin;
     }
+
+    public List<MarRechazosCausales> getRechazos() {
+        return rechazos;
+    }
+
+    public void setRechazos(List<MarRechazosCausales> rechazos) {
+        this.rechazos = rechazos;
+    }
+
+    public MarRechazosCausales getRechazoSel() {
+        return rechazoSel;
+    }
+
+    public void setRechazoSel(MarRechazosCausales rechazoSel) {
+        this.rechazoSel = rechazoSel;
+    }
+    
+    
 
 }
