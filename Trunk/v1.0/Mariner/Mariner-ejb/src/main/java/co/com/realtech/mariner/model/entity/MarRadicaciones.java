@@ -90,8 +90,8 @@ public class MarRadicaciones implements Serializable {
     private String radCodigoActo;
     @Column(name = "RAD_CUANTIA")
     private BigInteger radCuantia;
-    @Column(name = "RAD_VALOR_LIQ")
-    private BigInteger radValorLiq;
+    @Column(name = "RAD_VALOR_LIQ", precision = 14, scale = 3)
+    private BigDecimal radValorLiq;
     @Size(max = 1)
     @Column(name = "RAD_ES_EXTERIOR", length = 1)
     private String radEsExterior;
@@ -113,12 +113,8 @@ public class MarRadicaciones implements Serializable {
     @JoinColumn(name = "NOT_ID", referencedColumnName = "NOT_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarNotarias notId;
-    @JoinColumn(name = "TDC_ID_OTORGANTE", referencedColumnName = "TDC_ID")
-    @ManyToOne
-    private MarTiposDocumentos tdcIdOtorgante;
-    @JoinColumn(name = "TDC_ID_RECEPTOR", referencedColumnName = "TDC_ID")
-    @ManyToOne
-    private MarTiposDocumentos tdcIdReceptor;
+    @OneToOne(mappedBy = "radId")
+    private MarRadicacionesDetallesSap marRadicacionesDetallesSap;
     @OneToMany(mappedBy = "radId")
     private List<MarRadicacionesFasesEstados> marRadicacionesFasesEstadosList;
     @OneToOne(mappedBy = "radId")
@@ -209,11 +205,11 @@ public class MarRadicaciones implements Serializable {
         this.radCuantia = radCuantia;
     }
 
-    public BigInteger getRadValorLiq() {
+    public BigDecimal getRadValorLiq() {
         return radValorLiq;
     }
 
-    public void setRadValorLiq(BigInteger radValorLiq) {
+    public void setRadValorLiq(BigDecimal radValorLiq) {
         this.radValorLiq = radValorLiq;
     }
 
@@ -273,20 +269,12 @@ public class MarRadicaciones implements Serializable {
         this.notId = notId;
     }
 
-    public MarTiposDocumentos getTdcIdOtorgante() {
-        return tdcIdOtorgante;
+    public MarRadicacionesDetallesSap getMarRadicacionesDetallesSap() {
+        return marRadicacionesDetallesSap;
     }
 
-    public void setTdcIdOtorgante(MarTiposDocumentos tdcIdOtorgante) {
-        this.tdcIdOtorgante = tdcIdOtorgante;
-    }
-
-    public MarTiposDocumentos getTdcIdReceptor() {
-        return tdcIdReceptor;
-    }
-
-    public void setTdcIdReceptor(MarTiposDocumentos tdcIdReceptor) {
-        this.tdcIdReceptor = tdcIdReceptor;
+    public void setMarRadicacionesDetallesSap(MarRadicacionesDetallesSap marRadicacionesDetallesSap) {
+        this.marRadicacionesDetallesSap = marRadicacionesDetallesSap;
     }
 
     public List<MarRadicacionesFasesEstados> getMarRadicacionesFasesEstadosList() {

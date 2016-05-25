@@ -46,11 +46,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ZPSCDTTVURDETAIL }
+     * Create an instance of {@link ZPSCDDETACTOT }
      * 
      */
-    public ZPSCDTTVURDETAIL createZPSCDTTVURDETAIL() {
-        return new ZPSCDTTVURDETAIL();
+    public ZPSCDDETACTOT createZPSCDDETACTOT() {
+        return new ZPSCDDETACTOT();
     }
 
     /**
@@ -62,11 +62,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ZPSCDLIQDETALLE }
+     * Create an instance of {@link ZPSCDDETACTO }
      * 
      */
-    public ZPSCDLIQDETALLE createZPSCDLIQDETALLE() {
-        return new ZPSCDLIQDETALLE();
+    public ZPSCDDETACTO createZPSCDDETACTO() {
+        return new ZPSCDDETACTO();
     }
 
 }

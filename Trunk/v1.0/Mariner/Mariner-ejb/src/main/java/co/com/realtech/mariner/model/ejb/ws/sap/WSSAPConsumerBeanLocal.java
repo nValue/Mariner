@@ -1,8 +1,6 @@
 package co.com.realtech.mariner.model.ejb.ws.sap;
 
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.business.get_detail_method.DetalleLiquidacion;
-import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDPRNCAB;
-import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDTTVURDETAIL;
 import javax.ejb.Local;
 import javax.xml.ws.Holder;
 

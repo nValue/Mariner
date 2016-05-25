@@ -6,68 +6,120 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Objeto de conversion y transmicion de datos de liquidacion
+ * Objeto de conversion y transmision de datos de liquidacion
  *
  * @author Andres Rivera
  * @version 1.0
  * @since JDK1.8
  */
 public class DetalleLiquidacion implements Serializable {
-
-    private String documentoOtorgante;
-    private String numeroOtorgante;
-    private String documentoBenificiario;
-    private String numeroBenificiario;
+    
+    private String liqNumero;
+    private String otoNombre;
+    private String benNombre;
+    private String otoCc;
+    private String benCc;
+    private String otoNit;
+    private String benNit;
+    private String otoNum;
+    private String benNum;
     private String municipio;
+    private String clavePer;
+    private String munNombre;
     private String fechaLiquidacion;
-    private String usuarioSAP;
-    private String observaciones;
-    private String claseLiquidacion;
-    private BigDecimal valorTotal;
-    private String fechaDocumento;
+    private String uname;
+    private String fechaLdp;
+    private String texto;
+    private String clase;
+    private String documento;
+    private BigDecimal total;
+    private String descladoc;
+    private String descoridoc;
+    private String fechaDoc;
     private String matricula;
-    private BigDecimal interesesMora;
-    private BigDecimal ajuste;
+    private BigDecimal tintMora;
+    private String codTarifa;
     private String notaria;
-    private BigDecimal descuentoIntereses;
-    private BigDecimal descuento;
-    private BigDecimal totalDescuento;
-    private String fechaLimitePagoBoleta;
+    private BigDecimal descInt;
+    private BigDecimal descImp;
+    private BigDecimal totalDesc;
+    private String fechaLimite;
+    private String norodrad;    
     private List<DetalleLiquidacionItem> itemsDetalle = new ArrayList<>();
 
     public DetalleLiquidacion() {
     }
 
-    public String getDocumentoOtorgante() {
-        return documentoOtorgante;
+    public String getLiqNumero() {
+        return liqNumero;
     }
 
-    public void setDocumentoOtorgante(String documentoOtorgante) {
-        this.documentoOtorgante = documentoOtorgante;
+    public void setLiqNumero(String liqNumero) {
+        this.liqNumero = liqNumero;
     }
 
-    public String getNumeroOtorgante() {
-        return numeroOtorgante;
+    public String getOtoNombre() {
+        return otoNombre;
     }
 
-    public void setNumeroOtorgante(String numeroOtorgante) {
-        this.numeroOtorgante = numeroOtorgante;
+    public void setOtoNombre(String otoNombre) {
+        this.otoNombre = otoNombre;
     }
 
-    public String getDocumentoBenificiario() {
-        return documentoBenificiario;
+    public String getBenNombre() {
+        return benNombre;
     }
 
-    public void setDocumentoBenificiario(String documentoBenificiario) {
-        this.documentoBenificiario = documentoBenificiario;
+    public void setBenNombre(String benNombre) {
+        this.benNombre = benNombre;
     }
 
-    public String getNumeroBenificiario() {
-        return numeroBenificiario;
+    public String getOtoCc() {
+        return otoCc;
     }
 
-    public void setNumeroBenificiario(String numeroBenificiario) {
-        this.numeroBenificiario = numeroBenificiario;
+    public void setOtoCc(String otoCc) {
+        this.otoCc = otoCc;
+    }
+
+    public String getBenCc() {
+        return benCc;
+    }
+
+    public void setBenCc(String benCc) {
+        this.benCc = benCc;
+    }
+
+    public String getOtoNit() {
+        return otoNit;
+    }
+
+    public void setOtoNit(String otoNit) {
+        this.otoNit = otoNit;
+    }
+
+    public String getBenNit() {
+        return benNit;
+    }
+
+    public void setBenNit(String benNit) {
+        this.benNit = benNit;
+    }
+
+    public String getOtoNum() {
+        return otoNum;
+    }
+
+    public void setOtoNum(String otoNum) {
+        this.otoNum = otoNum;
+    }
+
+    public String getBenNum() {
+        return benNum;
+    }
+
+    public void setBenNum(String benNum) {
+        this.benNum = benNum;
     }
 
     public String getMunicipio() {
@@ -78,6 +130,22 @@ public class DetalleLiquidacion implements Serializable {
         this.municipio = municipio;
     }
 
+    public String getClavePer() {
+        return clavePer;
+    }
+
+    public void setClavePer(String clavePer) {
+        this.clavePer = clavePer;
+    }
+
+    public String getMunNombre() {
+        return munNombre;
+    }
+
+    public void setMunNombre(String munNombre) {
+        this.munNombre = munNombre;
+    }
+
     public String getFechaLiquidacion() {
         return fechaLiquidacion;
     }
@@ -86,44 +154,76 @@ public class DetalleLiquidacion implements Serializable {
         this.fechaLiquidacion = fechaLiquidacion;
     }
 
-    public String getUsuarioSAP() {
-        return usuarioSAP;
+    public String getUname() {
+        return uname;
     }
 
-    public void setUsuarioSAP(String usuarioSAP) {
-        this.usuarioSAP = usuarioSAP;
+    public void setUname(String uname) {
+        this.uname = uname;
     }
 
-    public String getObservaciones() {
-        return observaciones;
+    public String getFechaLdp() {
+        return fechaLdp;
     }
 
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones;
+    public void setFechaLdp(String fechaLdp) {
+        this.fechaLdp = fechaLdp;
     }
 
-    public String getClaseLiquidacion() {
-        return claseLiquidacion;
+    public String getTexto() {
+        return texto;
     }
 
-    public void setClaseLiquidacion(String claseLiquidacion) {
-        this.claseLiquidacion = claseLiquidacion;
+    public void setTexto(String texto) {
+        this.texto = texto;
     }
 
-    public BigDecimal getValorTotal() {
-        return valorTotal;
+    public String getClase() {
+        return clase;
     }
 
-    public void setValorTotal(BigDecimal valorTotal) {
-        this.valorTotal = valorTotal;
+    public void setClase(String clase) {
+        this.clase = clase;
     }
 
-    public String getFechaDocumento() {
-        return fechaDocumento;
+    public String getDocumento() {
+        return documento;
     }
 
-    public void setFechaDocumento(String fechaDocumento) {
-        this.fechaDocumento = fechaDocumento;
+    public void setDocumento(String documento) {
+        this.documento = documento;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public void setTotal(BigDecimal total) {
+        this.total = total;
+    }
+
+    public String getDescladoc() {
+        return descladoc;
+    }
+
+    public void setDescladoc(String descladoc) {
+        this.descladoc = descladoc;
+    }
+
+    public String getDescoridoc() {
+        return descoridoc;
+    }
+
+    public void setDescoridoc(String descoridoc) {
+        this.descoridoc = descoridoc;
+    }
+
+    public String getFechaDoc() {
+        return fechaDoc;
+    }
+
+    public void setFechaDoc(String fechaDoc) {
+        this.fechaDoc = fechaDoc;
     }
 
     public String getMatricula() {
@@ -134,20 +234,20 @@ public class DetalleLiquidacion implements Serializable {
         this.matricula = matricula;
     }
 
-    public BigDecimal getInteresesMora() {
-        return interesesMora;
+    public BigDecimal getTintMora() {
+        return tintMora;
     }
 
-    public void setInteresesMora(BigDecimal interesesMora) {
-        this.interesesMora = interesesMora;
+    public void setTintMora(BigDecimal tintMora) {
+        this.tintMora = tintMora;
     }
 
-    public BigDecimal getAjuste() {
-        return ajuste;
+    public String getCodTarifa() {
+        return codTarifa;
     }
 
-    public void setAjuste(BigDecimal ajuste) {
-        this.ajuste = ajuste;
+    public void setCodTarifa(String codTarifa) {
+        this.codTarifa = codTarifa;
     }
 
     public String getNotaria() {
@@ -158,36 +258,44 @@ public class DetalleLiquidacion implements Serializable {
         this.notaria = notaria;
     }
 
-    public BigDecimal getDescuentoIntereses() {
-        return descuentoIntereses;
+    public BigDecimal getDescInt() {
+        return descInt;
     }
 
-    public void setDescuentoIntereses(BigDecimal descuentoIntereses) {
-        this.descuentoIntereses = descuentoIntereses;
+    public void setDescInt(BigDecimal descInt) {
+        this.descInt = descInt;
     }
 
-    public BigDecimal getDescuento() {
-        return descuento;
+    public BigDecimal getDescImp() {
+        return descImp;
     }
 
-    public void setDescuento(BigDecimal descuento) {
-        this.descuento = descuento;
+    public void setDescImp(BigDecimal descImp) {
+        this.descImp = descImp;
     }
 
-    public BigDecimal getTotalDescuento() {
-        return totalDescuento;
+    public BigDecimal getTotalDesc() {
+        return totalDesc;
     }
 
-    public void setTotalDescuento(BigDecimal totalDescuento) {
-        this.totalDescuento = totalDescuento;
+    public void setTotalDesc(BigDecimal totalDesc) {
+        this.totalDesc = totalDesc;
     }
 
-    public String getFechaLimitePagoBoleta() {
-        return fechaLimitePagoBoleta;
+    public String getFechaLimite() {
+        return fechaLimite;
     }
 
-    public void setFechaLimitePagoBoleta(String fechaLimitePagoBoleta) {
-        this.fechaLimitePagoBoleta = fechaLimitePagoBoleta;
+    public void setFechaLimite(String fechaLimite) {
+        this.fechaLimite = fechaLimite;
+    }
+
+    public String getNorodrad() {
+        return norodrad;
+    }
+
+    public void setNorodrad(String norodrad) {
+        this.norodrad = norodrad;
     }
 
     public List<DetalleLiquidacionItem> getItemsDetalle() {
@@ -198,4 +306,5 @@ public class DetalleLiquidacion implements Serializable {
         this.itemsDetalle = itemsDetalle;
     }
 
+    
 }

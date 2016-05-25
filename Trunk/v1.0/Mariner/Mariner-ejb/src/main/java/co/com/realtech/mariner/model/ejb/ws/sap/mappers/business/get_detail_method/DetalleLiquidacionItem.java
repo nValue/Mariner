@@ -10,51 +10,33 @@ import java.math.BigDecimal;
  * @version 1.0
  * @since JDK1.8
  */
-public class DetalleLiquidacionItem implements Serializable{
-    
-    private String tipoRenta;
-    private String numeroLiquidacion;
-    private String consecutivo;
+public class DetalleLiquidacionItem implements Serializable {
+
     private String codigoActo;
-    private BigDecimal cantidadLiquidaciones;
-    private BigDecimal cantidad;
-    private BigDecimal baseGrabable;
-    private BigDecimal baseGrabableLiquidacion;
-    private BigDecimal valorImpuesto;
-    private BigDecimal valorImpuestoAutoliquidado;
-    private BigDecimal valorExedente;
-    private BigDecimal valorExedenteAutoliquidado;
-    private BigDecimal valorNetoMonedaDocumento;
-    private String tarifaAutoliquidada;
-    private BigDecimal valorEstampillaProdesarrollo;
-    private BigDecimal valorEstampillaProcultura;
-    private BigDecimal valorEstampillaProseguridad;
-    private BigDecimal valorEstampillaProuceva;
-    
-    public DetalleLiquidacionItem(){}
+    private String nombreASR;
+    private String tipoPer;
+    private BigDecimal baseIpp;
+    private BigDecimal baseCio;
+    private BigDecimal baseEst;
+    private String tarifaIpp;
+    private String tarifaCio;
+    private String tarifaEst;
+    private BigDecimal impuestoIpp;
+    private BigDecimal impuestoCio;
+    private BigDecimal baseEst1;
+    private BigDecimal baseEst2;
+    private BigDecimal valorSinCuantia;
+    private BigDecimal valorServInfo;
+    private BigDecimal ValorIntereses;
+    private String fechaDocumento;
+    private String fechaVencimiento;
+    private String fechaPago;
+    private BigDecimal baseEst3;
+    private BigDecimal valorEstadoProd;
+    private BigDecimal baseEst4;
+    private BigDecimal baseEst5;
 
-    public String getTipoRenta() {
-        return tipoRenta;
-    }
-
-    public void setTipoRenta(String tipoRenta) {
-        this.tipoRenta = tipoRenta;
-    }
-
-    public String getNumeroLiquidacion() {
-        return numeroLiquidacion;
-    }
-
-    public void setNumeroLiquidacion(String numeroLiquidacion) {
-        this.numeroLiquidacion = numeroLiquidacion;
-    }
-
-    public String getConsecutivo() {
-        return consecutivo;
-    }
-
-    public void setConsecutivo(String consecutivo) {
-        this.consecutivo = consecutivo;
+    public DetalleLiquidacionItem() {
     }
 
     public String getCodigoActo() {
@@ -65,116 +47,180 @@ public class DetalleLiquidacionItem implements Serializable{
         this.codigoActo = codigoActo;
     }
 
-    public BigDecimal getCantidadLiquidaciones() {
-        return cantidadLiquidaciones;
+    public String getNombreASR() {
+        return nombreASR;
     }
 
-    public void setCantidadLiquidaciones(BigDecimal cantidadLiquidaciones) {
-        this.cantidadLiquidaciones = cantidadLiquidaciones;
+    public void setNombreASR(String nombreASR) {
+        this.nombreASR = nombreASR;
     }
 
-    public BigDecimal getCantidad() {
-        return cantidad;
+    public String getTipoPer() {
+        return tipoPer;
     }
 
-    public void setCantidad(BigDecimal cantidad) {
-        this.cantidad = cantidad;
+    public void setTipoPer(String tipoPer) {
+        this.tipoPer = tipoPer;
     }
 
-    public BigDecimal getBaseGrabable() {
-        return baseGrabable;
+    public BigDecimal getBaseIpp() {
+        return baseIpp;
     }
 
-    public void setBaseGrabable(BigDecimal baseGrabable) {
-        this.baseGrabable = baseGrabable;
+    public void setBaseIpp(BigDecimal baseIpp) {
+        this.baseIpp = baseIpp;
     }
 
-    public BigDecimal getBaseGrabableLiquidacion() {
-        return baseGrabableLiquidacion;
+    public BigDecimal getBaseCio() {
+        return baseCio;
     }
 
-    public void setBaseGrabableLiquidacion(BigDecimal baseGrabableLiquidacion) {
-        this.baseGrabableLiquidacion = baseGrabableLiquidacion;
+    public void setBaseCio(BigDecimal baseCio) {
+        this.baseCio = baseCio;
     }
 
-    public BigDecimal getValorImpuesto() {
-        return valorImpuesto;
+    public BigDecimal getBaseEst() {
+        return baseEst;
     }
 
-    public void setValorImpuesto(BigDecimal valorImpuesto) {
-        this.valorImpuesto = valorImpuesto;
+    public void setBaseEst(BigDecimal baseEst) {
+        this.baseEst = baseEst;
     }
 
-    public BigDecimal getValorImpuestoAutoliquidado() {
-        return valorImpuestoAutoliquidado;
+    public String getTarifaIpp() {
+        return tarifaIpp;
     }
 
-    public void setValorImpuestoAutoliquidado(BigDecimal valorImpuestoAutoliquidado) {
-        this.valorImpuestoAutoliquidado = valorImpuestoAutoliquidado;
+    public void setTarifaIpp(String tarifaIpp) {
+        this.tarifaIpp = tarifaIpp;
     }
 
-    public BigDecimal getValorExedente() {
-        return valorExedente;
+    public String getTarifaCio() {
+        return tarifaCio;
     }
 
-    public void setValorExedente(BigDecimal valorExedente) {
-        this.valorExedente = valorExedente;
+    public void setTarifaCio(String tarifaCio) {
+        this.tarifaCio = tarifaCio;
     }
 
-    public BigDecimal getValorExedenteAutoliquidado() {
-        return valorExedenteAutoliquidado;
+    public String getTarifaEst() {
+        return tarifaEst;
     }
 
-    public void setValorExedenteAutoliquidado(BigDecimal valorExedenteAutoliquidado) {
-        this.valorExedenteAutoliquidado = valorExedenteAutoliquidado;
+    public void setTarifaEst(String tarifaEst) {
+        this.tarifaEst = tarifaEst;
     }
 
-    public BigDecimal getValorNetoMonedaDocumento() {
-        return valorNetoMonedaDocumento;
+    public BigDecimal getImpuestoIpp() {
+        return impuestoIpp;
     }
 
-    public void setValorNetoMonedaDocumento(BigDecimal valorNetoMonedaDocumento) {
-        this.valorNetoMonedaDocumento = valorNetoMonedaDocumento;
+    public void setImpuestoIpp(BigDecimal impuestoIpp) {
+        this.impuestoIpp = impuestoIpp;
     }
 
-    public String getTarifaAutoliquidada() {
-        return tarifaAutoliquidada;
+    public BigDecimal getImpuestoCio() {
+        return impuestoCio;
     }
 
-    public void setTarifaAutoliquidada(String tarifaAutoliquidada) {
-        this.tarifaAutoliquidada = tarifaAutoliquidada;
+    public void setImpuestoCio(BigDecimal impuestoCio) {
+        this.impuestoCio = impuestoCio;
     }
 
-    public BigDecimal getValorEstampillaProdesarrollo() {
-        return valorEstampillaProdesarrollo;
+    public BigDecimal getBaseEst2() {
+        return baseEst2;
     }
 
-    public void setValorEstampillaProdesarrollo(BigDecimal valorEstampillaProdesarrollo) {
-        this.valorEstampillaProdesarrollo = valorEstampillaProdesarrollo;
+    public void setBaseEst2(BigDecimal baseEst2) {
+        this.baseEst2 = baseEst2;
     }
 
-    public BigDecimal getValorEstampillaProcultura() {
-        return valorEstampillaProcultura;
+    public BigDecimal getValorSinCuantia() {
+        return valorSinCuantia;
     }
 
-    public void setValorEstampillaProcultura(BigDecimal valorEstampillaProcultura) {
-        this.valorEstampillaProcultura = valorEstampillaProcultura;
+    public void setValorSinCuantia(BigDecimal valorSinCuantia) {
+        this.valorSinCuantia = valorSinCuantia;
     }
 
-    public BigDecimal getValorEstampillaProseguridad() {
-        return valorEstampillaProseguridad;
+    public BigDecimal getValorServInfo() {
+        return valorServInfo;
     }
 
-    public void setValorEstampillaProseguridad(BigDecimal valorEstampillaProseguridad) {
-        this.valorEstampillaProseguridad = valorEstampillaProseguridad;
+    public void setValorServInfo(BigDecimal valorServInfo) {
+        this.valorServInfo = valorServInfo;
     }
 
-    public BigDecimal getValorEstampillaProuceva() {
-        return valorEstampillaProuceva;
+    public BigDecimal getValorIntereses() {
+        return ValorIntereses;
     }
 
-    public void setValorEstampillaProuceva(BigDecimal valorEstampillaProuceva) {
-        this.valorEstampillaProuceva = valorEstampillaProuceva;
+    public void setValorIntereses(BigDecimal ValorIntereses) {
+        this.ValorIntereses = ValorIntereses;
     }
-    
+
+    public String getFechaDocumento() {
+        return fechaDocumento;
+    }
+
+    public void setFechaDocumento(String fechaDocumento) {
+        this.fechaDocumento = fechaDocumento;
+    }
+
+    public String getFechaVencimiento() {
+        return fechaVencimiento;
+    }
+
+    public void setFechaVencimiento(String fechaVencimiento) {
+        this.fechaVencimiento = fechaVencimiento;
+    }
+
+    public String getFechaPago() {
+        return fechaPago;
+    }
+
+    public void setFechaPago(String fechaPago) {
+        this.fechaPago = fechaPago;
+    }
+
+    public BigDecimal getBaseEst3() {
+        return baseEst3;
+    }
+
+    public void setBaseEst3(BigDecimal baseEst3) {
+        this.baseEst3 = baseEst3;
+    }
+
+    public BigDecimal getValorEstadoProd() {
+        return valorEstadoProd;
+    }
+
+    public void setValorEstadoProd(BigDecimal valorEstadoProd) {
+        this.valorEstadoProd = valorEstadoProd;
+    }
+
+    public BigDecimal getBaseEst4() {
+        return baseEst4;
+    }
+
+    public void setBaseEst4(BigDecimal baseEst4) {
+        this.baseEst4 = baseEst4;
+    }
+
+    public BigDecimal getBaseEst5() {
+        return baseEst5;
+    }
+
+    public void setBaseEst5(BigDecimal baseEst5) {
+        this.baseEst5 = baseEst5;
+    }
+
+    public BigDecimal getBaseEst1() {
+        return baseEst1;
+    }
+
+    public void setBaseEst1(BigDecimal baseEst1) {
+        this.baseEst1 = baseEst1;
+    }
+
 }

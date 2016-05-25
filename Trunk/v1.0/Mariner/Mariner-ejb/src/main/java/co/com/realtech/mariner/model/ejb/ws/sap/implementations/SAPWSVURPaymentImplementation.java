@@ -1,7 +1,7 @@
 package co.com.realtech.mariner.model.ejb.ws.sap.implementations;
 
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.vur_payment.ZsnPayment;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.vur_payment.ZwsvurPayment;
-import co.com.realtech.mariner.model.ejb.ws.sap.mappers.vur_payment.ZwsvurPayment_Service;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import java.io.Serializable;
 import javax.xml.namespace.QName;
@@ -41,9 +41,9 @@ public class SAPWSVURPaymentImplementation implements Serializable {
             if (urlWS == null || urlWS.equals("")) {
                 throw new Exception("Error generando Definicion de servicio zwsvur_payment No se ha encontrado URL (WS-SAP-GET-DETAIL) en sistema de constantes");
             } else {
-                QName qname = new QName("urn:sap-com:document:sap:rfc:functions", "zwsvur_payment");
-                ZwsvurPayment_Service serviceD = new ZwsvurPayment_Service(null, qname);
-                ZwsvurPayment port = serviceD.getZwsvurPayment();
+                QName qname = new QName("urn:sap-com:document:sap:rfc:functions", "zsn_payment");
+                ZsnPayment serviceD = new ZsnPayment(null, qname);
+                ZwsvurPayment port = serviceD.getZbnPayment();
                 BindingProvider bindingProvider = (BindingProvider) port;
                 bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, urlWS);
                 bindingProvider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, userWS);
@@ -57,8 +57,10 @@ public class SAPWSVURPaymentImplementation implements Serializable {
             throw new Exception("Error generando Definicion de servicio zwsvur_getdetail web en URL " + urlWS + " causado por " + e);
         }
     }
+
     /**
      * Metodo de invocacion Pagos SAP para VUR valle del cauca
+     *
      * @param iCUENTABCO
      * @param iFECHARECAUDO
      * @param iHORARECAUDO
@@ -66,10 +68,10 @@ public class SAPWSVURPaymentImplementation implements Serializable {
      * @param iVALOR
      * @param eMESSAGE
      * @param eRETURN
-     * @throws Exception 
+     * @throws Exception
      */
-    public void vurPayment(String iCUENTABCO,String iFECHARECAUDO,String iHORARECAUDO,String iNROLIQ,String iVALOR,Holder<String> eMESSAGE,Holder<Integer> eRETURN) throws Exception{
-        ZwsvurPayment portService=loadServiceDefinition();
+    public void vurPayment(String iCUENTABCO, String iFECHARECAUDO, String iHORARECAUDO, String iNROLIQ, String iVALOR, Holder<String> eMESSAGE, Holder<Integer> eRETURN) throws Exception {
+        ZwsvurPayment portService = loadServiceDefinition();
         portService.zpscdfmVURPAYMENT(iCUENTABCO, iFECHARECAUDO, iHORARECAUDO, iNROLIQ, iVALOR, eMESSAGE, eRETURN);
     }
 

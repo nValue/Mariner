@@ -32,7 +32,7 @@ public interface ZwsvurGetdetail {
         @WebParam(name = "I_NROLIQ", targetNamespace = "")
         String iNROLIQ,
         @WebParam(name = "E_DETAIL", targetNamespace = "", mode = WebParam.Mode.OUT)
-        Holder<ZPSCDTTVURDETAIL> eDETAIL,
+        Holder<ZPSCDDETACTOT> eDETAIL,
         @WebParam(name = "E_HEADER", targetNamespace = "", mode = WebParam.Mode.OUT)
         Holder<ZPSCDPRNCAB> eHEADER);
 

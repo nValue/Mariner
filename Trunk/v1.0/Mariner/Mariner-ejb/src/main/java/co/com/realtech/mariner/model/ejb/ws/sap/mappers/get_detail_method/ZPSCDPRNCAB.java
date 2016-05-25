@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="V_NUMERO" type="{urn:sap-com:document:sap:rfc:functions}char10"/>
+ *         &lt;element name="V_NUMERO" type="{urn:sap-com:document:sap:rfc:functions}char16"/>
  *         &lt;element name="V_OTO_NOMBRE" type="{urn:sap-com:document:sap:rfc:functions}char80"/>
  *         &lt;element name="V_BEN_NOMBRE" type="{urn:sap-com:document:sap:rfc:functions}char80"/>
  *         &lt;element name="V_OTO_CC" type="{urn:sap-com:document:sap:rfc:functions}char1"/>
@@ -50,6 +50,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="V_DSCTO_IMP" type="{urn:sap-com:document:sap:rfc:functions}curr15.2"/>
  *         &lt;element name="V_TOT_DSCTO" type="{urn:sap-com:document:sap:rfc:functions}curr15.2"/>
  *         &lt;element name="FECHALIMITE" type="{urn:sap-com:document:sap:rfc:functions}date10"/>
+ *         &lt;element name="NRORAD" type="{urn:sap-com:document:sap:rfc:functions}numeric20"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -91,7 +92,8 @@ import javax.xml.bind.annotation.XmlType;
     "vdsctoint",
     "vdsctoimp",
     "vtotdscto",
-    "fechalimite"
+    "fechalimite",
+    "nrorad"
 })
 public class ZPSCDPRNCAB {
 
@@ -159,6 +161,8 @@ public class ZPSCDPRNCAB {
     protected BigDecimal vtotdscto;
     @XmlElement(name = "FECHALIMITE", required = true)
     protected String fechalimite;
+    @XmlElement(name = "NRORAD", required = true)
+    protected String nrorad;
 
     /**
      * Obtiene el valor de la propiedad vnumero.
@@ -926,6 +930,30 @@ public class ZPSCDPRNCAB {
      */
     public void setFECHALIMITE(String value) {
         this.fechalimite = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad nrorad.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNRORAD() {
+        return nrorad;
+    }
+
+    /**
+     * Define el valor de la propiedad nrorad.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNRORAD(String value) {
+        this.nrorad = value;
     }
 
 }

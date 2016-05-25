@@ -1,5 +1,5 @@
 
-package co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method;
+package co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_list_method;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,16 +9,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Clase Java para ZPSCDTT_VUR_DETAIL complex type.
+ * <p>Clase Java para ZPSCDTT_VUR_LIST complex type.
  * 
  * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
  * 
  * <pre>
- * &lt;complexType name="ZPSCDTT_VUR_DETAIL">
+ * &lt;complexType name="ZPSCDTT_VUR_LIST">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="item" type="{urn:sap-com:document:sap:rfc:functions}ZPSCD_LIQDETALLE" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="item" type="{urn:sap-com:document:sap:rfc:functions}ZPSCD_PRNCAB" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -28,12 +28,12 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ZPSCDTT_VUR_DETAIL", propOrder = {
+@XmlType(name = "ZPSCDTT_VUR_LIST", propOrder = {
     "item"
 })
-public class ZPSCDTTVURDETAIL {
+public class ZPSCDTTVURLIST {
 
-    protected List<ZPSCDLIQDETALLE> item;
+    protected List<ZPSCDPRNCAB> item;
 
     /**
      * Gets the value of the item property.
@@ -53,13 +53,13 @@ public class ZPSCDTTVURDETAIL {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link ZPSCDLIQDETALLE }
+     * {@link ZPSCDPRNCAB }
      * 
      * 
      */
-    public List<ZPSCDLIQDETALLE> getItem() {
+    public List<ZPSCDPRNCAB> getItem() {
         if (item == null) {
-            item = new ArrayList<ZPSCDLIQDETALLE>();
+            item = new ArrayList<ZPSCDPRNCAB>();
         }
         return this.item;
     }

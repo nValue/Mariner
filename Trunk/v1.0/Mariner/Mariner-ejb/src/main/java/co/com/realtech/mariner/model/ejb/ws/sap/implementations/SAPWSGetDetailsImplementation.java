@@ -1,7 +1,7 @@
 package co.com.realtech.mariner.model.ejb.ws.sap.implementations;
 
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDDETACTOT;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDPRNCAB;
-import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDTTVURDETAIL;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZwsvurGetdetail;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZsnGetdetail;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
@@ -57,14 +57,9 @@ public class SAPWSGetDetailsImplementation implements Serializable {
                 ZwsvurGetdetail port = serviceD.getZbnGetdetail();
                 BindingProvider bindingProvider = (BindingProvider) port;
                 bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, urlWS);
-                
-                String url="http://lavoragine.elvalle.com:8000/sap/bc/srt/rfc/sap/zwsvur_getdetail/710/zsn_getdetail/zbn_getdetail";
-                System.out.println("NEMTHYS"+url);
-                bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
                 return port;
             }
         } catch (Exception e) {
-            //e.printStackTrace();
             throw new Exception("Error generando Definicion de servicio zwsvur_getdetail web en URL " + urlWS + " causado por " + e);
         }
     }
@@ -77,12 +72,12 @@ public class SAPWSGetDetailsImplementation implements Serializable {
      * @param responseDetail
      * @throws Exception
      */
-    public void getDetail(String liquidacion, Holder<ZPSCDPRNCAB> responseHeader, Holder<ZPSCDTTVURDETAIL> responseDetail) throws Exception {
+    public void getDetail(String liquidacion, Holder<ZPSCDPRNCAB> responseHeader, Holder<ZPSCDDETACTOT> responseDetail) throws Exception {
         try {
             ZwsvurGetdetail portService = loadServiceDefinition();
             portService.zpscdfmVURGETDETAIL(liquidacion, responseDetail, responseHeader);
         } catch (Exception e) {
-            System.out.println("Error en WS - consultarTarifaConvenio, causado por: " + e);
+            System.out.println("Error en WS - obteniendo detalle liquidacion, causado por: " + e);
             throw e;
         }
     }

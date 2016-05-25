@@ -53,7 +53,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarTransacciones.findByTraNombres", query = "SELECT m FROM MarTransacciones m WHERE m.traNombres = :traNombres"),
     @NamedQuery(name = "MarTransacciones.findByTraApellidos", query = "SELECT m FROM MarTransacciones m WHERE m.traApellidos = :traApellidos"),
     @NamedQuery(name = "MarTransacciones.findByTraTelefono", query = "SELECT m FROM MarTransacciones m WHERE m.traTelefono = :traTelefono"),
-    @NamedQuery(name = "MarTransacciones.findByTraCorreo", query = "SELECT m FROM MarTransacciones m WHERE m.traCorreo = :traCorreo")})
+    @NamedQuery(name = "MarTransacciones.findByTraCorreo", query = "SELECT m FROM MarTransacciones m WHERE m.traCorreo = :traCorreo"),
+    @NamedQuery(name = "MarTransacciones.findByTraValorPagado", query = "SELECT m FROM MarTransacciones m WHERE m.traValorPagado = :traValorPagado")})
 public class MarTransacciones implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -65,11 +66,9 @@ public class MarTransacciones implements Serializable {
     @Column(name = "TRA_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal traId;
     @Column(name = "TRA_CUANTIA")
-    private BigInteger traCuantia;
-    @Column(name = "TRA_VALOR")
-    private BigInteger traValor;
-    @Column(name = "TRA_VALOR_PAGADO")
-    private BigInteger traValorPagado;    
+    private BigInteger traCuantia;    
+    @Column(name = "TRA_VALOR", precision = 16, scale = 3)
+    private BigDecimal traValor;
     @Column(name = "TRA_FECHA_INICIO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date traFechaInicio;
@@ -112,6 +111,8 @@ public class MarTransacciones implements Serializable {
     @Size(max = 100)
     @Column(name = "TRA_CORREO", length = 100)
     private String traCorreo;
+    @Column(name = "TRA_VALOR_PAGADO")
+    private BigInteger traValorPagado;
     @JoinColumn(name = "RAD_ID", referencedColumnName = "RAD_ID")
     @OneToOne
     private MarRadicaciones radId;
@@ -145,11 +146,11 @@ public class MarTransacciones implements Serializable {
         this.traCuantia = traCuantia;
     }
 
-    public BigInteger getTraValor() {
+    public BigDecimal getTraValor() {
         return traValor;
     }
 
-    public void setTraValor(BigInteger traValor) {
+    public void setTraValor(BigDecimal traValor) {
         this.traValor = traValor;
     }
 
@@ -265,6 +266,14 @@ public class MarTransacciones implements Serializable {
         this.traCorreo = traCorreo;
     }
 
+    public BigInteger getTraValorPagado() {
+        return traValorPagado;
+    }
+
+    public void setTraValorPagado(BigInteger traValorPagado) {
+        this.traValorPagado = traValorPagado;
+    }
+
     public MarRadicaciones getRadId() {
         return radId;
     }
@@ -312,14 +321,6 @@ public class MarTransacciones implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarTransacciones[ traId=" + traId + " ]";
-    }
-
-    public BigInteger getTraValorPagado() {
-        return traValorPagado;
-    }
-
-    public void setTraValorPagado(BigInteger traValorPagado) {
-        this.traValorPagado = traValorPagado;
     }
     
 }

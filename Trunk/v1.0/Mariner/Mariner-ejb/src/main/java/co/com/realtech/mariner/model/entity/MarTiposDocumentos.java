@@ -64,10 +64,6 @@ public class MarTiposDocumentos implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(mappedBy = "tdcIdOtorgante")
-    private List<MarRadicaciones> marRadicacionesList;
-    @OneToMany(mappedBy = "tdcIdReceptor")
-    private List<MarRadicaciones> marRadicacionesList1;
     @OneToMany(mappedBy = "tdcId")
     private List<MarPersonas> marPersonasList;
     @OneToMany(mappedBy = "tdcId")
@@ -124,22 +120,6 @@ public class MarTiposDocumentos implements Serializable {
 
     public void setAudFecha(Date audFecha) {
         this.audFecha = audFecha;
-    }
-
-    public List<MarRadicaciones> getMarRadicacionesList() {
-        return marRadicacionesList;
-    }
-
-    public void setMarRadicacionesList(List<MarRadicaciones> marRadicacionesList) {
-        this.marRadicacionesList = marRadicacionesList;
-    }
-
-    public List<MarRadicaciones> getMarRadicacionesList1() {
-        return marRadicacionesList1;
-    }
-
-    public void setMarRadicacionesList1(List<MarRadicaciones> marRadicacionesList1) {
-        this.marRadicacionesList1 = marRadicacionesList1;
     }
 
     public List<MarPersonas> getMarPersonasList() {

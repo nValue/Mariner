@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="E_DETAIL" type="{urn:sap-com:document:sap:rfc:functions}ZPSCDTT_VUR_DETAIL"/>
+ *         &lt;element name="E_DETAIL" type="{urn:sap-com:document:sap:rfc:functions}ZPSCD_DETACTO_T"/>
  *         &lt;element name="E_HEADER" type="{urn:sap-com:document:sap:rfc:functions}ZPSCD_PRNCAB"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -37,7 +37,7 @@ import javax.xml.bind.annotation.XmlType;
 public class ZPSCDFMVURGETDETAILResponse {
 
     @XmlElement(name = "E_DETAIL", required = true)
-    protected ZPSCDTTVURDETAIL edetail;
+    protected ZPSCDDETACTOT edetail;
     @XmlElement(name = "E_HEADER", required = true)
     protected ZPSCDPRNCAB eheader;
 
@@ -46,10 +46,10 @@ public class ZPSCDFMVURGETDETAILResponse {
      * 
      * @return
      *     possible object is
-     *     {@link ZPSCDTTVURDETAIL }
+     *     {@link ZPSCDDETACTOT }
      *     
      */
-    public ZPSCDTTVURDETAIL getEDETAIL() {
+    public ZPSCDDETACTOT getEDETAIL() {
         return edetail;
     }
 
@@ -58,10 +58,10 @@ public class ZPSCDFMVURGETDETAILResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link ZPSCDTTVURDETAIL }
+     *     {@link ZPSCDDETACTOT }
      *     
      */
-    public void setEDETAIL(ZPSCDTTVURDETAIL value) {
+    public void setEDETAIL(ZPSCDDETACTOT value) {
         this.edetail = value;
     }
 
