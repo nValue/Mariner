@@ -20,16 +20,16 @@ import javax.naming.InitialContext;
  * @version 1.0
  * @since JDK1.8
  */
-public class SAOListadoLiquidacionesLogicOperations {
+public class SAPListadoLiquidacionesLogicOperations {
 
     protected GenericDAOBeanLocal genericDAOBean;
     protected WSSAPConsumerBeanLocal wSSAPConsumerBean;
 
-    public static SAOListadoLiquidacionesLogicOperations create() {
-        return new SAOListadoLiquidacionesLogicOperations();
+    public static SAPListadoLiquidacionesLogicOperations create() {
+        return new SAPListadoLiquidacionesLogicOperations();
     }
 
-    private SAOListadoLiquidacionesLogicOperations() {
+    private SAPListadoLiquidacionesLogicOperations() {
         try {
             InitialContext ic = new InitialContext();
             genericDAOBean = (GenericDAOBeanLocal) ic.lookup(JDNIUtils.getEJBJDNIName(GenericDAOBean.class, Boolean.TRUE));
