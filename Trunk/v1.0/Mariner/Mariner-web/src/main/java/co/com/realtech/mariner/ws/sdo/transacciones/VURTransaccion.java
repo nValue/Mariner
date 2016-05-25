@@ -1,6 +1,7 @@
 package co.com.realtech.mariner.ws.sdo.transacciones;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * SDO de transacciones para pasarela de pagos y WS Pasarela.
@@ -25,6 +26,8 @@ public class VURTransaccion implements Serializable {
     private String referencia;
     private String codigoServicioACH;
     private String tipoMedioPago;
+    private Date fechaTransaccion;
+    private Date fechaVencimiento;
     private VURTransaccionLogSDO log;
 
     public VURTransaccion() {
@@ -148,6 +151,22 @@ public class VURTransaccion implements Serializable {
 
     public void setTipoMedioPago(String tipoMedioPago) {
         this.tipoMedioPago = tipoMedioPago;
+    }
+
+    public Date getFechaTransaccion() {
+        return fechaTransaccion;
+    }
+
+    public void setFechaTransaccion(Date fechaTransaccion) {
+        this.fechaTransaccion = fechaTransaccion;
+    }
+
+    public Date getFechaVencimiento() {
+        return fechaVencimiento;
+    }
+
+    public void setFechaVencimiento(Date fechaVencimiento) {
+        this.fechaVencimiento = fechaVencimiento;
     }
 
 }

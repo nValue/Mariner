@@ -11,10 +11,10 @@ import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.model.sdo.estandar.EntidadLiquidacionResultado;
 import co.com.realtech.mariner.model.sdo.logs.EntidadLog;
+import co.com.realtech.mariner.util.string.BusinessStringUtils;
 import co.com.realtech.mariner.ws.servicios_vur.marshall.liquidacion.LiquidacionMarshaller;
 import co.com.realtech.mariner.ws.servicios_vur.marshall.liquidacion.LiquidacionMarshallersBuilder;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -67,6 +67,7 @@ public class Servicios {
                         detalleSAP.setRadId(radicacion);
                     }
                     // Buscar la radicacion por liquidacion en SAP
+                    codigoLiquidacion=BusinessStringUtils.convertNumeroLiquidacion(codigoLiquidacion);
                     DetalleLiquidacion detalleWS = wSSAPConsumerBean.getDetail(codigoLiquidacion);
 
                     if (detalleWS.getLiqNumero() != null && !detalleWS.getLiqNumero().equals("")) {
@@ -75,7 +76,7 @@ public class Servicios {
                         marshall.fillLiquidacionValues(detalleSAP, radicacion, detalleWS);
                         detalleSAP = marshall.getSap();
                         List<MarRadicacionesActosSap> actosSAP = marshall.getActos();
-                        // Guardamos la radicacion
+                        // Guardamos la radicacion.
                         genericDAOBean.merge(radicacion);
                         
                         // Guardamos informacion de la liquidacion.

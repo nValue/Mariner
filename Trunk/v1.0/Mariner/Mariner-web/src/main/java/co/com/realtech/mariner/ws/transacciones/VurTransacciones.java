@@ -62,6 +62,8 @@ public class VurTransacciones {
                     transaccion.setDescripcionTransaccion("Pago de Derechos de Registro Valle del Cauca");
                     transaccion.setReferencia(transaccionBD.getTraReferencia());
                     transaccion.setTipoMedioPago(transaccionBD.getTraTipoPago());
+                    transaccion.setFechaTransaccion(transaccionBD.getTraFechaInicio());
+                    transaccion.setFechaVencimiento(extrarDateLimitFromTransaction(transaccionBD));
                     long valorTransaccion;
                     try {
                         valorTransaccion = transaccionBD.getTraValor().longValue();
@@ -111,6 +113,8 @@ public class VurTransacciones {
                     transaccion.setDescripcionTransaccion("Pago de Derechos de Registro Valle del Cauca");
                     transaccion.setReferencia(transaccionBD.getTraReferencia());
                     transaccion.setTipoMedioPago(transaccionBD.getTraTipoPago());
+                    transaccion.setFechaTransaccion(transaccionBD.getTraFechaInicio());
+                    transaccion.setFechaVencimiento(extrarDateLimitFromTransaction(transaccionBD));
                     long valorTransaccion;
                     try {
                         valorTransaccion = transaccionBD.getTraValor().longValue();
@@ -149,7 +153,7 @@ public class VurTransacciones {
         VURTransaccionConfirmacion confirmacion = new VURTransaccionConfirmacion();
         try {
             String claveConfConstante = ConstantesUtils.cargarConstante("WS-PASARELA-CODIGO-CONFIRMACION");
-            
+
             if (claveConfConstante.equals(claveConfirmacion)) {
                 MarTransacciones transaccionBD = (MarTransacciones) genericDAOBean.findByColumn(MarTransacciones.class, "traId", new BigDecimal(codigoTransaccion));
 
@@ -158,7 +162,7 @@ public class VurTransacciones {
                         // 
                         // Verificamos que la radicacion siga en estado pendiente de pago.
                         MarRadicacionesFasesEstados estado = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(transaccionBD.getRadId());
-                        
+
                         if (estado.getFesId().getFesCodigo().equals("R-A")) {
                             // verificamos la fecha de la transaccion sea dd/MM/yyyy hh:mm:ss
                             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
@@ -205,5 +209,23 @@ public class VurTransacciones {
             confirmacion.setLog(new VURTransaccionLogSDO("ERROR", "Se ha produccido un error interno confirmando la transaccion", "Error intentando confirmar la transaccion por codigo, error interno " + e));
         }
         return confirmacion;
+    }
+
+    /**
+     * Extract fecha limite de pago de la transaccion.
+     *
+     * @param transaccion
+     * @return
+     */
+    public static Date extrarDateLimitFromTransaction(MarTransacciones transaccion) {
+        Date fecha;
+        try {
+            String fechaString = transaccion.getRadId().getMarRadicacionesDetallesSap().getRdeFechaLimite();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            fecha = sdf.parse(fechaString);
+        } catch (Exception e) {
+            fecha = null;
+        }
+        return fecha;
     }
 }
