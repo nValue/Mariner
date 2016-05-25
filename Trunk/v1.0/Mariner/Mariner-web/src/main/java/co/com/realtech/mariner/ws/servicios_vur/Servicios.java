@@ -11,8 +11,8 @@ import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.model.sdo.estandar.EntidadLiquidacionResultado;
 import co.com.realtech.mariner.model.sdo.logs.EntidadLog;
-import co.com.realtech.mariner.ws.servicios_vur.marshaller.EntityMarshallers;
-import co.com.realtech.mariner.ws.servicios_vur.marshaller.EntityMarshallersBuilder;
+import co.com.realtech.mariner.ws.servicios_vur.marshall.liquidacion.LiquidacionMarshaller;
+import co.com.realtech.mariner.ws.servicios_vur.marshall.liquidacion.LiquidacionMarshallersBuilder;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -67,24 +67,29 @@ public class Servicios {
                         detalleSAP.setRadId(radicacion);
                     }
                     // Buscar la radicacion por liquidacion en SAP
-                    DetalleLiquidacion detalle = wSSAPConsumerBean.getDetail(codigoLiquidacion);
-                    if (detalle.getLiqNumero() != null && !detalle.getLiqNumero().equals("")) {
-                        EntityMarshallers marshall = EntityMarshallersBuilder.createEntityMarshallers();
-                        List<MarRadicacionesActosSap> actos = new ArrayList<>();
-                        marshall.mixDetailObjects(detalleSAP, actos, radicacion, detalle);
+                    DetalleLiquidacion detalleWS = wSSAPConsumerBean.getDetail(codigoLiquidacion);
+
+                    if (detalleWS.getLiqNumero() != null && !detalleWS.getLiqNumero().equals("")) {
+
+                        LiquidacionMarshaller marshall = LiquidacionMarshallersBuilder.createLiquidacionMarshaller();
+                        marshall.fillLiquidacionValues(detalleSAP, radicacion, detalleWS);
+                        detalleSAP = marshall.getSap();
+                        List<MarRadicacionesActosSap> actosSAP = marshall.getActos();
+                        // Guardamos la radicacion
+                        genericDAOBean.merge(radicacion);
+                        
+                        // Guardamos informacion de la liquidacion.
                         if (detalleSAP.getRdeId() == null) {
                             genericDAOBean.save(detalleSAP);
                         } else {
                             genericDAOBean.merge(detalleSAP);
                         }
                         // Guardamos los actos de la liquidacion
-                        for (MarRadicacionesActosSap actoSap : actos) {
+                        for (MarRadicacionesActosSap actoSap : actosSAP) {
                             actoSap.setRdeId(detalleSAP);
                             actoSap.setAudFecha(new Date());
                             genericDAOBean.save(actoSap);
-                        }
-                        // Guardamos la radicacion
-                        genericDAOBean.merge(radicacion);
+                        }                        
                         // Guardamos la nueva fase estado del proceso.
                         MarUsuarios usuarioSistema = ((MarUsuarios) genericDAOBean.findByColumn(MarUsuarios.class, "usuLogin", "MARINER"));
                         BigDecimal regEstado = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacion, "G-A", "A", usuarioSistema, "", null);
