@@ -4,10 +4,12 @@ import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBe
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFasesEstadosDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicacionesDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.ws.sap.WSSAPConsumerBeanLocal;
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.business.get_detail_method.DetalleLiquidacion;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarRechazosCausales;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
+import co.com.realtech.mariner.model.logic.radicaciones_sap.SAPRadicacionesLogicOperations;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
@@ -46,6 +48,8 @@ public class GeneracionManagedBean extends GenericManagedBean {
     private MarRadicacionesFasesEstados radicacionFaseEstProcesadaSel;
 
     private List<MarRadicacionesFasesEstados> radicacionesFasesEstados;
+    
+    private DetalleLiquidacion detalleLiquidacion;
 
     private List<MarRechazosCausales> rechazos;
     private MarRechazosCausales rechazoSel;
@@ -53,11 +57,16 @@ public class GeneracionManagedBean extends GenericManagedBean {
     private String observaciones;
     private Date fechaFiltroInic;
     private Date fechaFiltroFin;
+    
+    private String numeroLiquidacion;
+    
+    private SAPRadicacionesLogicOperations sapRadicacionesLogicOperations;
 
     @Override
     public void init() {
         fechaFiltroInic = new Date();
         fechaFiltroFin = new Date();
+        numeroLiquidacion = "";
         obtenerRadicacionesPendientes();
         obtenerRechazos();
     }
@@ -77,7 +86,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
             logger.error(msj, e);
         }
     }
-
+    
     /**
      * Obtiene las radicaciones asignadas al usuario.
      */
@@ -303,6 +312,33 @@ public class GeneracionManagedBean extends GenericManagedBean {
         return false;
     }
 
+    
+    /**
+     * Llama al servicio web de SAP para extraer todos los datos.
+     */
+    public void obtenerInformacionSAP(){
+        if(numeroLiquidacion.isEmpty()){
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Liquidación requerida", "Debe escribir un número de liquidación para poder validarla en SAP", true, false);
+        }else{
+            sapRadicacionesLogicOperations = SAPRadicacionesLogicOperations.create();
+            try {
+                detalleLiquidacion = sapRadicacionesLogicOperations.consultarLiquidacionSAP(numeroLiquidacion);    
+            } catch (Exception e) {
+                String msj = "No se pueden extraer los datos de SAP, causado por: " + e;
+                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error en SAP", msj , true, false);
+                logger.error(msj, e);
+            }   
+        }
+    }
+    
+    /**
+     * Dada la información de detalle liquidación, la vincula al proceso actual.
+     */
+    public void vincularInformacionSAP(){
+        sapRadicacionesLogicOperations.vincularRadicacionSAP(radicacionUsuarioSel, numeroLiquidacion);
+        PrimeFacesPopup.lanzarDialog(Effects.Explode, "Proceso finalizado", "Vinculación realizada correctamente y cambiada a validación por aprobador.", true, false);
+    }
+    
     public List<MarRadicaciones> getRadicacionesUsuario() {
         return radicacionesUsuario;
     }
@@ -389,6 +425,22 @@ public class GeneracionManagedBean extends GenericManagedBean {
 
     public void setRechazoSel(MarRechazosCausales rechazoSel) {
         this.rechazoSel = rechazoSel;
+    }
+
+    public String getNumeroLiquidacion() {
+        return numeroLiquidacion;
+    }
+
+    public void setNumeroLiquidacion(String numeroLiquidacion) {
+        this.numeroLiquidacion = numeroLiquidacion;
+    }
+
+    public DetalleLiquidacion getDetalleLiquidacion() {
+        return detalleLiquidacion;
+    }
+
+    public void setDetalleLiquidacion(DetalleLiquidacion detalleLiquidacion) {
+        this.detalleLiquidacion = detalleLiquidacion;
     }
     
     

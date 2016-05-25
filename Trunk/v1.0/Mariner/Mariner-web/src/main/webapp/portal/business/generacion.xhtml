@@ -91,7 +91,7 @@
                                                  onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogRechazo').show()">
                                     <p:confirm header="Confirmación" message="¿Esta seguro de que desea rechazar esta radicación?" icon="ui-icon-alert" />
                                 </p:commandButton>
-                                <p:commandButton style="vertical-align: top" value="Verificar SAP" action="#{generacionManagedBean.obtenerSAP()}" update="formTurnos" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-S')}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                                <p:commandButton style="vertical-align: top" value="Verificar SAP" update="formTurnos :formLiquidacion" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-S')}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogLiquidacion').show()"/>
                             </div>
                         </h:panelGroup>
                     </div>
@@ -153,7 +153,53 @@
                 <p:commandButton value="Cancelar" oncomplete="PF('dialogRechazo').hide()" />
             </h:form>
         </p:dialog>
+        
+        <p:dialog id="modalLiquidacion" widgetVar="dialogLiquidacion" styleClass="modalTop" resizable="false" header="Número de liquidación a validar" modal="true" width="700" minHeight="500">
+            <h:form id="formLiquidacion">
+                <div class="descripcion" align="center">
+                    <div class="descText">
+                        Por favor ingrese el número de liquidación creado en SAP
+                    </div>
+                </div>
+                <h:panelGrid columns="3" style="margin: 30px">
+                    <p:outputLabel value="Número de liquidación" />
+                    <p:inputText value="#{generacionManagedBean.numeroLiquidacion}" style="width: 200px"/>
+                    <p:commandButton value="Validar" action="#{generacionManagedBean.obtenerInformacionSAP()}" update="formLiquidacion"  
+                                     onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();"/>
+                </h:panelGrid>
+                <h:panelGroup rendered="#{generacionManagedBean.detalleLiquidacion != null and generacionManagedBean.detalleLiquidacion.liqNumero != ''}" >
+                    <div style="margin: 20px">
+                        <div class="contLabelText">
+                            <h:outputLabel class="labelLittle" value="Número de Liquidación"/>
+                            <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.liqNumero}" />
+                        </div>
+                        <div class="contLabelText">
+                            <h:outputLabel class="labelLittle" value="Matrícula"/>
+                            <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.matricula}" />
+                        </div>
+                        <div class="contLabelText">
+                            <h:outputLabel class="labelLittle" value="Notaría"/>
+                            <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.notaria}" />
+                        </div>
+                        <div class="contLabelText">
+                            <h:outputLabel class="labelLittle" value="Otorgante"/>
+                            <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.otoNombre}" />
+                        </div>
+                        <div class="contLabelText">
+                            <h:outputLabel class="labelLittle" value="Beneficiario"/>
+                            <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.benNombre}" />
+                        </div>
+                    </div>
+                    <div align="center" style="margin: 20px">
+                        <p:commandButton value="Vincular" action="#{generacionManagedBean.vincularInformacionSAP()}" update="formTurnos"
+                                         onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();" >
+                            <p:confirm header="Confirmación" message="¿Esta seguro de que desea vincular esta información del SAP al proceso de VUR?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </div>
+                </h:panelGroup>
+                <p:commandButton value="Cancelar" oncomplete="PF('dialogLiquidacion').hide()" />
+            </h:form>
+        </p:dialog>
 
     </ui:define>
-
 </ui:composition>

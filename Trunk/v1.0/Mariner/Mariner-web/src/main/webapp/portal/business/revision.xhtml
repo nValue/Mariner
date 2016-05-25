@@ -60,7 +60,7 @@
                                 <p:inputTextarea value="#{revisionManagedBean.observaciones}" rows="2" style="width: 77%;display: block"/>
                                 <p:button style="margin: 10px;" value="Descargar Escritura" target="_new" href="/static/fileDispatcher/#{revisionManagedBean.radicacionPendienteSel.escId.arcId.arcId}-#{revisionManagedBean.radicacionPendienteSel.escId.arcId.arcHash}.#{revisionManagedBean.radicacionPendienteSel.escId.arcId.arcExtension}"
                                           rendered="#{revisionManagedBean.radicacionPendienteSel.escId.arcId != null}"/>
-                                <p:commandButton value="Boleta Fiscal" />
+                                <p:commandButton value="Boleta Fiscal" oncomplete="PF('dialogBoleta').show()" />
                             </div>
                             <div style="margin: 20px;display: inline-block; vertical-align: top; width: 40%;border: solid 1px #e0e0e0;">
                                 <p:dataTable value="#{revisionManagedBean.radicacionesFasesEstados}" var="rfe" paginator="true" rows="7" paginatorPosition="bottom"
@@ -148,5 +148,22 @@
                 <p:commandButton value="Cancelar" oncomplete="PF('dialogRechazo').hide()" />
             </h:form>
         </p:dialog>
+        
+        <p:dialog id="modalBoleta" widgetVar="dialogBoleta" styleClass="modalTop" resizable="false" header="Resumen Boleta Fiscal" modal="true" width="950" minHeight="700">
+            <h:form id="formBoleta">
+                <div class="contLabelText">
+                    <h:outputLabel class="labelLittle" value="Número Beneficiario"/>
+                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeBenNum}" />
+                </div>
+                <div class="contLabelText">
+                    <h:outputLabel class="labelLittle" value="Nombre Beneficiario"/>
+                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeBenNombre}" />
+                </div>
+                <div align="center" style="display: block; margin: 20px">
+                    <p:commandButton value="Cerrar" oncomplete="PF('dialogBoleta').hide()" />
+                </div>
+            </h:form>
+        </p:dialog>
+        
     </ui:define>
 </ui:composition>
