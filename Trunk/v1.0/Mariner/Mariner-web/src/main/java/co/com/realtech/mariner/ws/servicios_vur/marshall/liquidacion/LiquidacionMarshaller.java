@@ -1,4 +1,4 @@
-package co.com.realtech.mariner.ws.servicios_vur.marshaller;
+package co.com.realtech.mariner.ws.servicios_vur.marshall.liquidacion;
 
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.business.get_detail_method.DetalleLiquidacion;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.business.get_detail_method.DetalleLiquidacionItem;
@@ -17,21 +17,24 @@ import java.util.List;
  * @version 1.0
  * @since
  */
-public class EntityMarshallers implements Serializable {
+public class LiquidacionMarshaller implements Serializable {
 
-    protected EntityMarshallers() {
+    private MarRadicacionesDetallesSap sap;
+    private List<MarRadicacionesActosSap> actos;
+
+    protected LiquidacionMarshaller() {
     }
 
     /**
      * Asignacion de propiedades uno a uno entre Entidad de base de datos y
      * Objecto SDO servicios web.
      *
-     * @param sap
-     * @param actos
+     * @param sapInput
      * @param radicacion
      * @param detalle
      */
-    public void mixDetailObjects(MarRadicacionesDetallesSap sap, List<MarRadicacionesActosSap> actos, MarRadicaciones radicacion, DetalleLiquidacion detalle) {
+    public void fillLiquidacionValues(MarRadicacionesDetallesSap sapInput, MarRadicaciones radicacion, DetalleLiquidacion detalle) {
+        sap = sapInput;
         sap.setRdeLiqNumero(detalle.getLiqNumero());
         sap.setRdeOtoNum(detalle.getOtoNum());
         sap.setRdeBenNum(detalle.getBenNum());
@@ -71,7 +74,6 @@ public class EntityMarshallers implements Serializable {
         actos = new ArrayList<>();
         for (DetalleLiquidacionItem det : detalle.getItemsDetalle()) {
             MarRadicacionesActosSap detSap = new MarRadicacionesActosSap();
-
             detSap.setRdsCodigoActo(det.getCodigoActo());
             detSap.setRdsNomnbreAsr(det.getNombreASR());
             detSap.setRdsTipoPer(det.getTipoPer());
@@ -96,6 +98,22 @@ public class EntityMarshallers implements Serializable {
             detSap.setRdsBaseEst5(det.getBaseEst5());
             actos.add(detSap);
         }
+    }
+
+    public MarRadicacionesDetallesSap getSap() {
+        return sap;
+    }
+
+    public void setSap(MarRadicacionesDetallesSap sap) {
+        this.sap = sap;
+    }
+
+    public List<MarRadicacionesActosSap> getActos() {
+        return actos;
+    }
+
+    public void setActos(List<MarRadicacionesActosSap> actos) {
+        this.actos = actos;
     }
 
 }
