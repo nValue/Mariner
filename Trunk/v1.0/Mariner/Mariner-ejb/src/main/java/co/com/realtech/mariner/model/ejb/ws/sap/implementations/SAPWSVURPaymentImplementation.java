@@ -33,13 +33,13 @@ public class SAPWSVURPaymentImplementation implements Serializable {
      */
     private ZwsvurPayment loadServiceDefinition() throws Exception {
         // Constante con URL del servicio web
-        String urlWS = ConstantesUtils.cargarConstante("WS-SAP-GET-DETAIL");
+        String urlWS = ConstantesUtils.cargarConstante("WS-SAP-PAYMENT");
         String userWS = ConstantesUtils.cargarConstante("WS-SAP-USER");
         String claveWS = ConstantesUtils.cargarConstante("WS-SAP-PASSWORD");
 
         try {
             if (urlWS == null || urlWS.equals("")) {
-                throw new Exception("Error generando Definicion de servicio zwsvur_payment No se ha encontrado URL (WS-SAP-GET-DETAIL) en sistema de constantes");
+                throw new Exception("Error generando Definicion de servicio zwsvur_payment No se ha encontrado URL (WWS-SAP-PAYMENT) en sistema de constantes");
             } else {
                 QName qname = new QName("urn:sap-com:document:sap:rfc:functions", "zsn_payment");
                 ZsnPayment serviceD = new ZsnPayment(null, qname);
@@ -48,13 +48,11 @@ public class SAPWSVURPaymentImplementation implements Serializable {
                 bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, urlWS);
                 bindingProvider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, userWS);
                 bindingProvider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, claveWS);
-
                 bindingProvider.getRequestContext().put("com.sun.xml.ws.request.timeout", 60000);
-                port.zpscdfmVURPAYMENT(claveWS, claveWS, claveWS, claveWS, userWS, null, null);
                 return port;
             }
         } catch (Exception e) {
-            throw new Exception("Error generando Definicion de servicio zwsvur_getdetail web en URL " + urlWS + " causado por " + e);
+            throw new Exception("Error generando Definicion de servicio zsn_payment web en URL " + urlWS + " causado por " + e);
         }
     }
 

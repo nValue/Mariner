@@ -4,11 +4,9 @@ import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFase
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFasesEstadosDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBean;
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
-import co.com.realtech.mariner.model.ejb.dao.procedure_based.ProcedureBasedBean;
-import co.com.realtech.mariner.model.ejb.dao.procedure_based.ProcedureBasedBeanLocal;
 import co.com.realtech.mariner.model.ejb.ws.sap.WSSAPConsumerBean;
 import co.com.realtech.mariner.model.ejb.ws.sap.WSSAPConsumerBeanLocal;
-import co.com.realtech.mariner.model.ejb.ws.sap.mappers.business.get_detail_method.DetalleLiquidacion;
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.get_detail_method.DetalleLiquidacion;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesActosSap;
 import co.com.realtech.mariner.model.entity.MarRadicacionesDetallesSap;
@@ -25,7 +23,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.naming.InitialContext;
 
 /**

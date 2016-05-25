@@ -1,8 +1,10 @@
 package co.com.realtech.mariner.model.ejb.ws.sap;
 
-import co.com.realtech.mariner.model.ejb.ws.sap.mappers.business.get_detail_method.DetalleLiquidacion;
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.get_detail_method.DetalleLiquidacion;
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.payment.DetallePago;
+import java.math.BigDecimal;
+import java.util.List;
 import javax.ejb.Local;
-import javax.xml.ws.Holder;
 
 /**
  * (interface) EJB encargado del consumo de servicios de la capa de SAP.
@@ -16,6 +18,8 @@ public interface WSSAPConsumerBeanLocal {
 
     public DetalleLiquidacion getDetail(String liquidacion) throws Exception;
     
-    public void vurPayment(String iCUENTABCO,String iFECHARECAUDO,String iHORARECAUDO,String iNROLIQ,String iVALOR,Holder<String> eMESSAGE,Holder<Integer> eRETURN) throws Exception;
+    public DetallePago aplicarPagoSAP(String codigoLiquidacion, String fechaRecaudo, String horaRecaudo, BigDecimal valor) throws Exception;
+    
+    public List<DetalleLiquidacion> getListLiquidaciones(String fecha) throws Exception ;
     
 }

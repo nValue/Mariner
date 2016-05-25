@@ -2,10 +2,17 @@ package co.com.realtech.mariner.model.ejb.ws.sap;
 
 import co.com.realtech.mariner.model.ejb.ws.sap.converters.SAPGetDetailConverter;
 import co.com.realtech.mariner.model.ejb.ws.sap.implementations.SAPWSGetDetailsImplementation;
+import co.com.realtech.mariner.model.ejb.ws.sap.implementations.SAPWSListLiquidacionesImplementation;
 import co.com.realtech.mariner.model.ejb.ws.sap.implementations.SAPWSVURPaymentImplementation;
-import co.com.realtech.mariner.model.ejb.ws.sap.mappers.business.get_detail_method.DetalleLiquidacion;
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.get_detail_method.DetalleLiquidacion;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDDETACTOT;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDPRNCAB;
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_list_method.ZPSCDTTVURLIST;
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.payment.DetallePago;
+import co.com.realtech.mariner.util.constantes.ConstantesUtils;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.xml.ws.Holder;
 
@@ -36,20 +43,61 @@ public class WSSAPConsumerBean implements WSSAPConsumerBeanLocal {
     }
 
     /**
-     * Metodo de invocacion Pagos SAP para VUR valle del cauca
+     * Proceso para aplicar proceso de pago en SAP.
      *
-     * @param iCUENTABCO
-     * @param iFECHARECAUDO
-     * @param iHORARECAUDO
-     * @param iNROLIQ
-     * @param iVALOR
-     * @param eMESSAGE
-     * @param eRETURN
+     * @param codigoLiquidacion
+     * @param fechaRecaudo
+     * @param horaRecaudo
+     * @param valor
+     * @return
      * @throws Exception
      */
     @Override
-    public void vurPayment(String iCUENTABCO, String iFECHARECAUDO, String iHORARECAUDO, String iNROLIQ, String iVALOR, Holder<String> eMESSAGE, Holder<Integer> eRETURN) throws Exception {
-        SAPWSVURPaymentImplementation wsPayment = SAPWSVURPaymentImplementation.create();
-        wsPayment.vurPayment(iCUENTABCO, iFECHARECAUDO, iHORARECAUDO, iNROLIQ, iVALOR, eMESSAGE, eRETURN);
+    public DetallePago aplicarPagoSAP(String codigoLiquidacion, String fechaRecaudo, String horaRecaudo, BigDecimal valor) throws Exception {
+        DetallePago detallePago = new DetallePago();
+        try {
+            detallePago = new DetallePago();
+            String codigoBanco = ConstantesUtils.cargarConstante("VUR-CODIGO-BANCO-SAP");
+            Holder<String> eMESSAGE = new Holder<>();
+            Holder<Integer> eRETURN = new Holder<>();
+            SAPWSVURPaymentImplementation wsPayment = SAPWSVURPaymentImplementation.create();
+            wsPayment.vurPayment(codigoBanco, detallePago.getFechaRecaudo(), fechaRecaudo, horaRecaudo, valor.toString(), eMESSAGE, eRETURN);
+
+            // Obtencion y mapeo de resultados.
+            detallePago.setNumeroLiquidacion(codigoLiquidacion);
+            detallePago.setFechaRecaudo(fechaRecaudo);
+            detallePago.setHoraRecaudo(horaRecaudo);
+            detallePago.setNumeroCuenta(codigoBanco);
+            detallePago.setValor(valor);
+
+            if (eRETURN.value == 0) {
+                detallePago.setEstadoSalida("OK");
+                detallePago.setMensajeSalida(eMESSAGE.value);
+            } else {
+                detallePago.setEstadoSalida("ERROR");
+                detallePago.setMensajeSalida("Error en SAP con codigo / mensaje: " + eMESSAGE.value);
+            }
+        } catch (Exception e) {
+            throw e;
+        }
+        return detallePago;
+    }
+
+    /**
+     * Obtener listado de liquidaciones pendientes.
+     *
+     * @param fecha
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<DetalleLiquidacion> getListLiquidaciones(String fecha) throws Exception {
+        try {
+            SAPWSListLiquidacionesImplementation impWS = SAPWSListLiquidacionesImplementation.create();
+            ZPSCDTTVURLIST datos = impWS.zpscdfmVURGETLIST(fecha);
+            return SAPGetDetailConverter.convertHoldersListas(datos);
+        } catch (Exception e) {
+            throw e;
+        }
     }
 }

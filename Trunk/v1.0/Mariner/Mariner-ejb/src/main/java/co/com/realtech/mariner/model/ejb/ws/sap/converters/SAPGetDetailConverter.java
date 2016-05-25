@@ -1,12 +1,14 @@
 package co.com.realtech.mariner.model.ejb.ws.sap.converters;
 
-import co.com.realtech.mariner.model.ejb.ws.sap.mappers.business.get_detail_method.DetalleLiquidacion;
-import co.com.realtech.mariner.model.ejb.ws.sap.mappers.business.get_detail_method.DetalleLiquidacionItem;
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.get_detail_method.DetalleLiquidacion;
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.get_detail_method.DetalleLiquidacionItem;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDDETACTO;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDDETACTOT;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDPRNCAB;
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_list_method.ZPSCDTTVURLIST;
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.ws.Holder;
 
 /**
@@ -92,6 +94,57 @@ public class SAPGetDetailConverter implements Serializable {
             throw e;
         }
         return detalle;
+    }
+    /**
+     * Convertor de Holder listado de liquidaciones a estructura list detalle liquidacion.
+     * @param datos
+     * @return
+     * @throws Exception 
+     */
+    public static List<DetalleLiquidacion> convertHoldersListas(ZPSCDTTVURLIST datos) throws Exception {
+        List<DetalleLiquidacion> detalles = new ArrayList<>();
+        try {
+            // Loop extratendo datos de listado de liquidaciones.
+            datos.getItem().stream().map((detLoop) -> {
+                DetalleLiquidacion detalle = new DetalleLiquidacion();
+                detalle.setLiqNumero(detLoop.getVNUMERO());
+                detalle.setOtoNum(detLoop.getVOTONUM());
+                detalle.setBenNum(detLoop.getVBENNUM());
+                detalle.setOtoNombre(detLoop.getVOTONOMBRE());
+                detalle.setBenNombre(detLoop.getVBENNOMBRE());
+                detalle.setOtoCc(detLoop.getVOTOCC());
+                detalle.setBenCc(detLoop.getVBENCC());
+                detalle.setOtoNit(detLoop.getVOTONIT());
+                detalle.setBenNit(detLoop.getVBENNIT());
+                detalle.setMunicipio(detLoop.getVMUNICIPIO());
+                detalle.setClavePer(detLoop.getVCLAVEPER());
+                detalle.setMunNombre(detLoop.getVMUNNOMBRE());
+                detalle.setFechaLiquidacion(detLoop.getVFECLIQ());
+                detalle.setUname(detLoop.getUNAME());
+                detalle.setFechaLdp(detLoop.getVFECLDP());
+                detalle.setTexto(detLoop.getVTEXTO());
+                detalle.setClase(detLoop.getVCLASE());
+                detalle.setDocumento(detLoop.getVDOCUMENTO());
+                detalle.setTotal(detLoop.getVTOTAL());
+                detalle.setDescladoc(detLoop.getVDESCLADOC());
+                detalle.setDescoridoc(detLoop.getVDESORIDOC());
+                detalle.setFechaDoc(detLoop.getVFECDOC());
+                detalle.setMatricula(detLoop.getVMATINM());
+                detalle.setTintMora(detLoop.getVTINTMORA());
+                detalle.setNotaria(detLoop.getVNOTARIA());
+                detalle.setDescInt(detLoop.getVDSCTOINT());
+                detalle.setDescImp(detLoop.getVDSCTOIMP());
+                detalle.setTotalDesc(detLoop.getVTOTDSCTO());
+                detalle.setFechaLimite(detLoop.getFECHALIMITE());
+                detalle.setNorodrad(detLoop.getNRORAD());
+                return detalle;
+            }).forEach((detalle) -> {
+                detalles.add(detalle);
+            });
+        } catch (Exception e) {
+            throw e;
+        }
+        return detalles;
     }
 
 }
