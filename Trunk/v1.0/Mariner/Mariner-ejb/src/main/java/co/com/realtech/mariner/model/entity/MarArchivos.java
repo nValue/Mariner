@@ -91,6 +91,10 @@ public class MarArchivos implements Serializable {
     @JoinColumn(name = "PMO_ID", referencedColumnName = "PMO_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarPuntosMontajes pmoId;
+    @OneToMany(mappedBy = "arcIdBoleta")
+    private List<MarRadicacionesArchivosSap> marRadicacionesArchivosSapList;
+    @OneToMany(mappedBy = "arcIdRecibo")
+    private List<MarRadicacionesArchivosSap> marRadicacionesArchivosSapList1;
     @OneToMany(mappedBy = "arcId")
     private List<MarReportes> marReportesList;
     @OneToMany(mappedBy = "arcId")
@@ -210,6 +214,22 @@ public class MarArchivos implements Serializable {
 
     public void setPmoId(MarPuntosMontajes pmoId) {
         this.pmoId = pmoId;
+    }
+
+    public List<MarRadicacionesArchivosSap> getMarRadicacionesArchivosSapList() {
+        return marRadicacionesArchivosSapList;
+    }
+
+    public void setMarRadicacionesArchivosSapList(List<MarRadicacionesArchivosSap> marRadicacionesArchivosSapList) {
+        this.marRadicacionesArchivosSapList = marRadicacionesArchivosSapList;
+    }
+
+    public List<MarRadicacionesArchivosSap> getMarRadicacionesArchivosSapList1() {
+        return marRadicacionesArchivosSapList1;
+    }
+
+    public void setMarRadicacionesArchivosSapList1(List<MarRadicacionesArchivosSap> marRadicacionesArchivosSapList1) {
+        this.marRadicacionesArchivosSapList1 = marRadicacionesArchivosSapList1;
     }
 
     public List<MarReportes> getMarReportesList() {

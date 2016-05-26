@@ -66,7 +66,7 @@ public class MarTransacciones implements Serializable {
     @Column(name = "TRA_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal traId;
     @Column(name = "TRA_CUANTIA")
-    private BigInteger traCuantia;    
+    private BigInteger traCuantia;
     @Column(name = "TRA_VALOR", precision = 16, scale = 3)
     private BigDecimal traValor;
     @Column(name = "TRA_FECHA_INICIO")
