@@ -39,8 +39,45 @@
                     </p:tab>
                     <p:tab title="WSSAP - get List Liquidaciones">
                         <div style="padding: 12px;padding-top: 0px !important;">
-
-                        </div>      
+                            <h:form id="formSAPLiquidaciones">
+                                <h:panelGrid columns="5">
+                                    <h:outputLabel value="Usuario"/>
+                                    <p:inputText value="#{wSSOAPGetLiqManagedBean.usuario}" required="false"/>
+                                    <h:outputLabel value="Tipo"/>
+                                    <p:selectOneMenu styleClass="inputModal" value="#{wSSOAPGetLiqManagedBean.tipo}" style="width: 250px;">
+                                        <f:selectItem itemLabel="Todas" itemValue="TODAS" />
+                                        <f:selectItem itemLabel="Usuario" itemValue="USUARIO" />
+                                    </p:selectOneMenu>
+                                    <p:commandButton value="Ejecutar" update="@form" action="#{wSSOAPGetLiqManagedBean.buscarLiquidaciones()}" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();"/>
+                                </h:panelGrid>
+                                <hr/>
+                                <h:panelGroup id="panelLiquidaciones">
+                                    <p:dataTable id="liquidaciones" var="liquidacion" value="#{wSSOAPGetLiqManagedBean.liquidaciones}" emptyMessage="No se han encontrado liquidaciones en el WS" rowIndexVar="idx">
+                                        <p:column headerText="#" width="40" styleClass="colCenter">
+                                            <h:outputText value="#{idx+1}" />
+                                        </p:column>
+                                        <p:column headerText="Codigo Liquidacion" styleClass="colCenter" width="140">
+                                            <h:outputText value="#{liquidacion.liqNumero}" />
+                                        </p:column>
+                                        <p:column headerText="Usuario SAP" styleClass="colCenter">
+                                            <h:outputText value="#{liquidacion.uname}" />
+                                        </p:column>
+                                        <p:column headerText="Fecha Documento" styleClass="colCenter">
+                                            <h:outputText value="#{liquidacion.fechaDoc}" />
+                                        </p:column>
+                                        <p:column headerText="Municipio" styleClass="colCenter">
+                                            <h:outputText value="#{liquidacion.munNombre}" />
+                                        </p:column>
+                                        <p:column headerText="Valor" styleClass="colCenter">
+                                            <h:outputText value="#{liquidacion.total}" />
+                                        </p:column>
+                                        <p:column headerText="Descuento" styleClass="colCenter">
+                                            <h:outputText value="#{liquidacion.totalDesc}" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:panelGroup>
+                            </h:form>
+                        </div>       
                     </p:tab>
                 </p:tabView>
             </div>

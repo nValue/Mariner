@@ -52,9 +52,10 @@ public class GeneracionManagedBean extends GenericManagedBean {
 
     private List<MarRadicacionesFasesEstados> radicacionesFasesEstados;
     
-    private List<DetalleLiquidacion> detallesLiquidaciones;
+    private String codigoLiquidacion;
     private DetalleLiquidacion detalleLiquidacion;
-
+    private List<DetalleLiquidacion> detallesLiquidaciones;
+    
     private List<MarRechazosCausales> rechazos;
     private MarRechazosCausales rechazoSel;
     
@@ -324,7 +325,8 @@ public class GeneracionManagedBean extends GenericManagedBean {
      */
     public void limpiarInfoBusqSAP(){
         numeroLiquidacion = "";
-        detalleLiquidacion = new DetalleLiquidacion();
+        codigoLiquidacion = "";
+        detalleLiquidacion= null;
         if(usuarioSesion.getUsuAliasSap() == null || usuarioSesion.getUsuAliasSap().isEmpty()){
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Usuario SAP no válido", "El usuario actual no tiene configurado un usuario de SAP para obtener los datos pendientes de liquidaciones, por favor configúrelo.", true, false);
             return;
@@ -341,7 +343,8 @@ public class GeneracionManagedBean extends GenericManagedBean {
      */
     public boolean obtenerLiqPendientes(){
         try {
-            detalleLiquidacion = null;
+            codigoLiquidacion = "";
+            detalleLiquidacion= null;
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             detallesLiquidaciones = sapLLO.obtenerLiquidacionesSAPByUsuario(sdf.format(fechaLiquidaciones),usuarioSesion.getUsuAliasSap());
             return true;
@@ -358,12 +361,12 @@ public class GeneracionManagedBean extends GenericManagedBean {
      * Llama al servicio web de SAP para extraer todos los datos.
      */
     public void obtenerInformacionSAP(){
-        if(detalleLiquidacion.getLiqNumero().isEmpty()){
+        if(getCodigoLiquidacion().isEmpty()){
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Liquidación requerida", "Debe seleccionar un número de liquidación para poder validarla en SAP", true, false);
         }else{
             sapRadicacionesLogicOperations = SAPRadicacionesLogicOperations.create();
             try {
-                detalleLiquidacion = sapRadicacionesLogicOperations.consultarLiquidacionSAP(detalleLiquidacion.getLiqNumero());    
+                setDetalleLiquidacion(sapRadicacionesLogicOperations.consultarLiquidacionSAP(getCodigoLiquidacion()));    
             } catch (Exception e) {
                 String msj = "No se pueden extraer los datos de SAP, causado por: " + e;
                 PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error en SAP", msj , true, false);
@@ -375,7 +378,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
      * Dada la información de detalle liquidación, la vincula al proceso actual.
      */
     public void vincularInformacionSAP(){
-        EntidadLiquidacionResultado salida=sapRadicacionesLogicOperations.vincularRadicacionSAP(radicacionUsuarioSel, detalleLiquidacion.getLiqNumero());
+        EntidadLiquidacionResultado salida=sapRadicacionesLogicOperations.vincularRadicacionSAP(radicacionUsuarioSel, getCodigoLiquidacion());
         if(salida.getEstado().equals("OK")){
             obtenerFasesEstadosDeRadicacion();
             PrimeFacesContext.execute("PF('dialogLiquidacion').hide();");
@@ -482,14 +485,6 @@ public class GeneracionManagedBean extends GenericManagedBean {
         this.numeroLiquidacion = numeroLiquidacion;
     }
 
-    public DetalleLiquidacion getDetalleLiquidacion() {
-        return detalleLiquidacion;
-    }
-
-    public void setDetalleLiquidacion(DetalleLiquidacion detalleLiquidacion) {
-        this.detalleLiquidacion = detalleLiquidacion;
-    }
-
     public List<DetalleLiquidacion> getDetallesLiquidaciones() {
         return detallesLiquidaciones;
     }
@@ -504,6 +499,22 @@ public class GeneracionManagedBean extends GenericManagedBean {
 
     public void setFechaLiquidaciones(Date fechaLiquidaciones) {
         this.fechaLiquidaciones = fechaLiquidaciones;
+    }
+
+    public String getCodigoLiquidacion() {
+        return codigoLiquidacion;
+    }
+
+    public void setCodigoLiquidacion(String codigoLiquidacion) {
+        this.codigoLiquidacion = codigoLiquidacion;
+    }
+
+    public DetalleLiquidacion getDetalleLiquidacion() {
+        return detalleLiquidacion;
+    }
+
+    public void setDetalleLiquidacion(DetalleLiquidacion detalleLiquidacion) {
+        this.detalleLiquidacion = detalleLiquidacion;
     }
     
     

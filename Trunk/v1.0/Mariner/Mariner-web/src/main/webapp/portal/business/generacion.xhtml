@@ -168,8 +168,8 @@
                             <p:ajax event="dateSelect" listener="#{generacionManagedBean.obtenerLiqPendientes()}" update="formLiquidacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                         </p:calendar>
                         <p:outputLabel value="Número de liquidación" />
-                        <p:selectOneMenu value="#{generacionManagedBean.detalleLiquidacion}" style="width: 250px" >
-                            <f:selectItems value="#{generacionManagedBean.detallesLiquidaciones}" var="liq" itemLabel="#{liq.liqNumero} - #{liq.fechaLiquidacion}" itemValue="#{liq}"/>
+                        <p:selectOneMenu value="#{generacionManagedBean.codigoLiquidacion}" style="width: 250px" >
+                            <f:selectItems value="#{generacionManagedBean.detallesLiquidaciones}" var="liq" itemLabel="#{liq.liqNumero} - #{liq.fechaLiquidacion}" itemValue="#{liq.liqNumero}"/>
                         </p:selectOneMenu>
                     </h:panelGrid>
                     <div align="center" style="display: block;margin: 10px;">
