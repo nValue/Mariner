@@ -5,12 +5,14 @@ import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.ws.sap.WSSAPConsumerBean;
 import co.com.realtech.mariner.model.ejb.ws.sap.WSSAPConsumerBeanLocal;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.get_detail_method.DetalleLiquidacion;
+import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.util.jdni.JDNIUtils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.naming.InitialContext;
+import javax.persistence.Query;
 
 /**
  * Operaciones logicas adicionales al obtener el listado de liquidaciones
@@ -59,23 +61,35 @@ public class SAPListadoLiquidacionesLogicOperations {
      * @throws Exception
      */
     public List<DetalleLiquidacion> obtenerLiquidacionesSAP(String fecha) throws Exception {
-        return wSSAPConsumerBean.getListLiquidaciones(fecha);
+        List<DetalleLiquidacion> liquidaciones = wSSAPConsumerBean.getListLiquidaciones(fecha);
+        List<DetalleLiquidacion> liquidacionesSalida = new ArrayList<>();
+        // Verificamos que no existan en la BD ya registradas
+        liquidaciones.stream().forEach((del) -> {
+            if (!existInDataBase(del.getLiqNumero())) {
+                liquidacionesSalida.add(del);
+            }
+        });
+        return liquidacionesSalida;
     }
+
     /**
      * Obtener listado de liquidaciones por usuario de SAP para el dia actual.
+     *
      * @param usuario
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     public List<DetalleLiquidacion> obtenerLiquidacionesSAPByUsuario(String usuario) throws Exception {
         return filtrarLiquidacionesUsuario(obtenerLiquidacionesSAP(), usuario);
     }
+
     /**
      * Obtener listado de liquidaciones para usuario actual y fecha ingresada,
+     *
      * @param fecha
      * @param usuario
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     public List<DetalleLiquidacion> obtenerLiquidacionesSAPByUsuario(String fecha, String usuario) throws Exception {
         return filtrarLiquidacionesUsuario(obtenerLiquidacionesSAP(fecha), usuario);
@@ -94,6 +108,25 @@ public class SAPListadoLiquidacionesLogicOperations {
             filtrado.add(liq);
         });
         return filtrado;
+    }
+
+    /**
+     * Verificar si la liquidacion ya esta vinculada en la BD
+     *
+     * @param codigoLiquidacion
+     * @return
+     */
+    public boolean existInDataBase(String codigoLiquidacion) {
+        boolean salida;
+        try {
+            Query counterQuery = genericDAOBean.getEntityManager().createNativeQuery("SELECT COUNT(1) FROM MAR_RADICACIONES WHERE RAD_LIQUIDACION=:liquidacion");
+            counterQuery.setParameter("liquidacion", codigoLiquidacion);
+            Integer counter = new Integer(counterQuery.getSingleResult().toString());
+            salida = counter > 0;
+        } catch (Exception e) {
+            salida = false;
+        }
+        return salida;
     }
 
 }
