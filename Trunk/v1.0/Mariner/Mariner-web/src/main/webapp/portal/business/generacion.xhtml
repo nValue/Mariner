@@ -91,7 +91,7 @@
                                                  onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogRechazo').show()">
                                     <p:confirm header="Confirmación" message="¿Esta seguro de que desea rechazar esta radicación?" icon="ui-icon-alert" />
                                 </p:commandButton>
-                                <p:commandButton style="vertical-align: top" value="Verificar SAP" update="formTurnos :formLiquidacion" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-S')}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogLiquidacion').show()"/>
+                                <p:commandButton style="vertical-align: top" value="Verificar SAP" update="formTurnos :formLiquidacion" action="#{generacionManagedBean.limpiarInfoBusqSAP()}" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-S')}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();"/>
                             </div>
                         </h:panelGroup>
                     </div>
@@ -158,15 +158,25 @@
             <h:form id="formLiquidacion">
                 <div class="descripcion" align="center">
                     <div class="descText">
-                        Por favor ingrese el número de liquidación creado en SAP
+                        Busque la fecha deseada para traer las liquidaciones pendientes, luego seleccione la adecuada en la lista desplegable y presione "Validar" para ver su información
                     </div>
                 </div>
-                <h:panelGrid columns="3" style="margin: 10px">
-                    <p:outputLabel value="Número de liquidación" />
-                    <p:inputText value="#{generacionManagedBean.numeroLiquidacion}" style="width: 200px"/>
-                    <p:commandButton value="Validar" action="#{generacionManagedBean.obtenerInformacionSAP()}" update="formLiquidacion"  
-                                     onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();"/>
-                </h:panelGrid>
+                <div align="center">
+                    <h:panelGrid columns="4">
+                        <p:outputLabel value="Fecha" />
+                        <p:calendar styleClass="calendarSmall" id="fechaLiq" value="#{generacionManagedBean.fechaLiquidaciones}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}" >
+                            <p:ajax event="dateSelect" listener="#{generacionManagedBean.obtenerLiqPendientes()}" update="formLiquidacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                        </p:calendar>
+                        <p:outputLabel value="Número de liquidación" />
+                        <p:selectOneMenu value="#{generacionManagedBean.detalleLiquidacion}" style="width: 250px" >
+                            <f:selectItems value="#{generacionManagedBean.detallesLiquidaciones}" var="liq" itemLabel="#{liq.liqNumero} - #{liq.fechaLiquidacion}" itemValue="#{liq}"/>
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    <div align="center" style="display: block;margin: 10px;">
+                        <p:commandButton value="Validar" action="#{generacionManagedBean.obtenerInformacionSAP()}" update="formLiquidacion"
+                                         onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();"/>
+                    </div>
+                </div>
                 <h:panelGroup rendered="#{generacionManagedBean.detalleLiquidacion != null and generacionManagedBean.detalleLiquidacion.liqNumero != ''}" >
                     <div style="margin: 10px;">
                         <div class="contLabelText">

@@ -43,9 +43,9 @@
                                 <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.radNumero}"/>
                                 <h:panelGrid columns="2" >
                                     <h:outputLabel class="labelLittle" value="Notaria"/>
-                                    <h:outputText class="labelLittle" value="Es exterior"/>
+                                    <h:outputText class="labelLittle" value="Liquidación"/>
                                     <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.notId.notNombre}" />
-                                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.radEsExterior}" />
+                                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.radLiquidacion}" />
 
                                     <h:outputLabel class="labelLittle" value="Número Escritura" />
                                     <h:outputLabel class="labelLittle" value="Fecha Escritura" />
@@ -53,14 +53,12 @@
                                     <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.escId.escFecha}" >
                                         <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"/>
                                     </p:outputLabel>
-
-
                                 </h:panelGrid>
                                 <h:outputLabel style="display: block" class="labelLittle" value="Observaciones" />
                                 <p:inputTextarea value="#{revisionManagedBean.observaciones}" rows="2" style="width: 77%;display: block"/>
                                 <p:button style="margin: 10px;" value="Descargar Escritura" target="_new" href="/static/fileDispatcher/#{revisionManagedBean.radicacionPendienteSel.escId.arcId.arcId}-#{revisionManagedBean.radicacionPendienteSel.escId.arcId.arcHash}.#{revisionManagedBean.radicacionPendienteSel.escId.arcId.arcExtension}"
                                           rendered="#{revisionManagedBean.radicacionPendienteSel.escId.arcId != null}"/>
-                                <p:commandButton value="Boleta Fiscal" oncomplete="PF('dialogBoleta').show()" />
+                                <p:commandButton value="Boleta Fiscal" action="#{revisionManagedBean.obtenerActosDeRadicacion()}" oncomplete="PF('dialogBoleta').show()" update=":formBoleta"/>
                             </div>
                             <div style="margin: 20px;display: inline-block; vertical-align: top; width: 40%;border: solid 1px #e0e0e0;">
                                 <p:dataTable value="#{revisionManagedBean.radicacionesFasesEstados}" var="rfe" paginator="true" rows="7" paginatorPosition="bottom"
@@ -149,8 +147,16 @@
             </h:form>
         </p:dialog>
         
-        <p:dialog id="modalBoleta" widgetVar="dialogBoleta" styleClass="modalTop" resizable="false" header="Resumen Boleta Fiscal" modal="true" width="950" minHeight="700">
+        <p:dialog id="modalBoleta" widgetVar="dialogBoleta" styleClass="modalTop" resizable="false" header="Resumen Boleta Fiscal" modal="true" width="1000" minHeight="700">
             <h:form id="formBoleta">
+                <div class="contLabelText">
+                    <h:outputLabel class="labelLittle" value="Número Liquidación"/>
+                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeLiqNumero}" />
+                </div>
+                <div class="contLabelText">
+                    <h:outputLabel class="labelLittle" value="Fecha Liquidación"/>
+                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeFechaLiquidacion}" />
+                </div>
                 <div class="contLabelText">
                     <h:outputLabel class="labelLittle" value="Número Beneficiario"/>
                     <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeBenNum}" />
@@ -159,6 +165,82 @@
                     <h:outputLabel class="labelLittle" value="Nombre Beneficiario"/>
                     <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeBenNombre}" />
                 </div>
+                <div class="contLabelText">
+                    <h:outputLabel class="labelLittle" value="Número Otorgante"/>
+                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeOtoNum}" />
+                </div>
+                <div class="contLabelText">
+                    <h:outputLabel class="labelLittle" value="Nombre Otorgante"/>
+                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeOtoNombre}" />
+                </div>
+                <div class="contLabelText">
+                    <h:outputLabel class="labelLittle" value="Valor"/>
+                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeTotal}" />
+                </div>
+                <div class="contLabelText">
+                    <h:outputLabel class="labelLittle" value="Interés Mora"/>
+                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeTintMora}" />
+                </div>
+                <div class="contLabelText">
+                    <h:outputLabel class="labelLittle" value="Código de Tarifa"/>
+                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeCodTarifa}" />
+                </div>
+                <div class="contLabelText">
+                    <h:outputLabel class="labelLittle" value="Fecha Documento"/>
+                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeFechaDoc}" />
+                </div>
+                <div class="contLabelText">
+                    <h:outputLabel class="labelLittle" value="Fecha Ldp"/>
+                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeFechaLdp}" />
+                </div>
+                <div class="contLabelText">
+                    <h:outputLabel class="labelLittle" value="Fecha Límite"/>
+                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeFechaLimite}" />
+                </div>
+                <div class="contLabelText">
+                    <h:outputLabel class="labelLittle" value="Matrícula"/>
+                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeMatricula}" />
+                </div>
+                <div class="contLabelText">
+                    <h:outputLabel class="labelLittle" value="Municipio"/>
+                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeMunNombre}" />
+                </div>
+                <div class="contLabelText">
+                    <h:outputLabel class="labelLittle" value="Notaría"/>
+                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeNotaria}" />
+                </div>
+                <p:dataTable styleClass="tableSmall" value="#{revisionManagedBean.radicacionesActos}" style="margin: 20px;" var="act" emptyMessage="No hay actos asociados al proceso" disabledSelection="true" >
+                    <p:column headerText="Código" width="40">
+                        <h:outputLabel value="#{act.rdsCodigoActo}" />
+                    </p:column>
+                    <p:column headerText="NombreAsr">
+                        <h:outputLabel value="#{act.rdsNomnbreAsr}" />
+                    </p:column>
+                    <p:column headerText="TipoPer" width="40">
+                        <h:outputLabel value="#{act.rdsTipoPer}" />
+                    </p:column>
+                    <p:column headerText="BaseIpp" width="50">
+                        <h:outputLabel value="#{act.rdsBaseIpp}" />
+                    </p:column>
+                    <p:column headerText="BaseCio" width="50">
+                        <h:outputLabel value="#{act.rdsBaseCio}" />
+                    </p:column>
+                    <p:column headerText="BaseEst" width="50">
+                        <h:outputLabel value="#{act.rdsBaseEst}" />
+                    </p:column>
+                    <p:column headerText="TarifaIpp" width="70">
+                        <h:outputLabel value="#{act.rdsTarifaIpp}" />
+                    </p:column>
+                    <p:column headerText="TarifaCio" width="70">
+                        <h:outputLabel value="#{act.rdsTarifaCio}" />
+                    </p:column>
+                    <p:column headerText="FechaDoc" width="70">
+                        <h:outputLabel value="#{act.rdsFechaDocumento}" />
+                    </p:column>
+                    <p:column headerText="FechaDoc" width="70">
+                        <h:outputLabel value="#{act.rdsFechaDocumento}" />
+                    </p:column>
+                </p:dataTable>
                 <div align="center" style="display: block; margin: 20px">
                     <p:commandButton value="Cerrar" oncomplete="PF('dialogBoleta').hide()" />
                 </div>

@@ -72,6 +72,7 @@
     padding: 3px 0px;
     text-align: center;
     min-height: 18px;
+    border-radius: 4px;
 }
 
 .calendarSmall .ui-inputfield{
@@ -96,4 +97,24 @@
     vertical-align: top;
     height: 38px;
     margin: 5px;
+}
+
+#leftLiq {
+    float:left;
+    display: inline-block;
+}
+
+#centerLiq {
+    display: inline-block;
+    margin:0 auto;
+}
+
+#rightLiq {
+    width: 180px;
+    display: inline-block;
+    float:right;
+}
+
+#containerLiq {
+    text-align:center;
 }

@@ -9,6 +9,7 @@ import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarRechazosCausales;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
+import co.com.realtech.mariner.model.logic.liquidaciones.SAPListadoLiquidacionesLogicOperations;
 import co.com.realtech.mariner.model.logic.radicaciones_sap.SAPRadicacionesLogicOperations;
 import co.com.realtech.mariner.model.sdo.estandar.EntidadLiquidacionResultado;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
@@ -16,6 +17,7 @@ import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -50,6 +52,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
 
     private List<MarRadicacionesFasesEstados> radicacionesFasesEstados;
     
+    private List<DetalleLiquidacion> detallesLiquidaciones;
     private DetalleLiquidacion detalleLiquidacion;
 
     private List<MarRechazosCausales> rechazos;
@@ -62,11 +65,14 @@ public class GeneracionManagedBean extends GenericManagedBean {
     private String numeroLiquidacion;
     
     private SAPRadicacionesLogicOperations sapRadicacionesLogicOperations;
+    private SAPListadoLiquidacionesLogicOperations sapLLO;
+    private Date fechaLiquidaciones;
 
     @Override
     public void init() {
         fechaFiltroInic = new Date();
         fechaFiltroFin = new Date();
+        fechaLiquidaciones = new Date();
         numeroLiquidacion = "";
         obtenerRadicacionesPendientes();
         obtenerRechazos();
@@ -312,18 +318,52 @@ public class GeneracionManagedBean extends GenericManagedBean {
         }
         return false;
     }
+    
+    /**
+     * Limpia toda la información de búsqueda en SAP.
+     */
+    public void limpiarInfoBusqSAP(){
+        numeroLiquidacion = "";
+        detalleLiquidacion = new DetalleLiquidacion();
+        if(usuarioSesion.getUsuAliasSap() == null || usuarioSesion.getUsuAliasSap().isEmpty()){
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Usuario SAP no válido", "El usuario actual no tiene configurado un usuario de SAP para obtener los datos pendientes de liquidaciones, por favor configúrelo.", true, false);
+            return;
+        }
+        sapLLO = SAPListadoLiquidacionesLogicOperations.create();
+        if(obtenerLiqPendientes()){
+            PrimeFacesContext.execute("PF('dialogLiquidacion').show()");
+        }
+    }
+    
+    /**
+     * Obtiene las liquidaciones pendientes para el usuario y el día seleccionado.
+     * @return 
+     */
+    public boolean obtenerLiqPendientes(){
+        try {
+            detalleLiquidacion = null;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            detallesLiquidaciones = sapLLO.obtenerLiquidacionesSAPByUsuario(sdf.format(fechaLiquidaciones),usuarioSesion.getUsuAliasSap());
+            return true;
+        } catch (Exception e) {
+            String msj = "No se pueden obtener las liquidaciones pendientes para el usuario, causado por : " + e;
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Liquidaciones error", msj, true, false);
+            logger.error(msj, e);
+            return false;
+        }
+    }
 
     
     /**
      * Llama al servicio web de SAP para extraer todos los datos.
      */
     public void obtenerInformacionSAP(){
-        if(numeroLiquidacion.isEmpty()){
-            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Liquidación requerida", "Debe escribir un número de liquidación para poder validarla en SAP", true, false);
+        if(detalleLiquidacion.getLiqNumero().isEmpty()){
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Liquidación requerida", "Debe seleccionar un número de liquidación para poder validarla en SAP", true, false);
         }else{
             sapRadicacionesLogicOperations = SAPRadicacionesLogicOperations.create();
             try {
-                detalleLiquidacion = sapRadicacionesLogicOperations.consultarLiquidacionSAP(numeroLiquidacion);    
+                detalleLiquidacion = sapRadicacionesLogicOperations.consultarLiquidacionSAP(detalleLiquidacion.getLiqNumero());    
             } catch (Exception e) {
                 String msj = "No se pueden extraer los datos de SAP, causado por: " + e;
                 PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error en SAP", msj , true, false);
@@ -335,7 +375,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
      * Dada la información de detalle liquidación, la vincula al proceso actual.
      */
     public void vincularInformacionSAP(){
-        EntidadLiquidacionResultado salida=sapRadicacionesLogicOperations.vincularRadicacionSAP(radicacionUsuarioSel, numeroLiquidacion);
+        EntidadLiquidacionResultado salida=sapRadicacionesLogicOperations.vincularRadicacionSAP(radicacionUsuarioSel, detalleLiquidacion.getLiqNumero());
         if(salida.getEstado().equals("OK")){
             obtenerFasesEstadosDeRadicacion();
             PrimeFacesContext.execute("PF('dialogLiquidacion').hide();");
@@ -448,6 +488,22 @@ public class GeneracionManagedBean extends GenericManagedBean {
 
     public void setDetalleLiquidacion(DetalleLiquidacion detalleLiquidacion) {
         this.detalleLiquidacion = detalleLiquidacion;
+    }
+
+    public List<DetalleLiquidacion> getDetallesLiquidaciones() {
+        return detallesLiquidaciones;
+    }
+
+    public void setDetallesLiquidaciones(List<DetalleLiquidacion> detallesLiquidaciones) {
+        this.detallesLiquidaciones = detallesLiquidaciones;
+    }
+
+    public Date getFechaLiquidaciones() {
+        return fechaLiquidaciones;
+    }
+
+    public void setFechaLiquidaciones(Date fechaLiquidaciones) {
+        this.fechaLiquidaciones = fechaLiquidaciones;
     }
     
     
