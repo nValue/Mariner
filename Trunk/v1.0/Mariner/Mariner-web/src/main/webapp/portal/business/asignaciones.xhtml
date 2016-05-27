@@ -14,7 +14,7 @@
                 <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
                 <div style="display: inline-block">
                     <h:outputLabel styleClass="titleMain" value="Asignaciones" />
-                    <h:outputLabel styleClass="subtitleMain" value="Cambiar, seleccionar o quitar radicaciones de los usuarios"/>
+                    <h:outputLabel styleClass="subtitleMain" value="Cambiar, seleccionar o quitar procesos de los usuarios"/>
                 </div>
             </div>
             <div class="contenidoPrinc" align="center">
@@ -24,11 +24,15 @@
                     </div>
                 </div>
                 <h:form id="formAsignaciones">
-                    <div align="center" style="width: 400px;display: inline-block">
-                        <p:dataTable value="#{asignacionesManagedBean.radFasesEstadosDisponibles}" selection="#{asignacionesManagedBean.radFaseEstadoDisponible}"
+                    <div align="center" style="width: 400px;display: inline-block; vertical-align: top">
+                        <p:dataTable styleClass="tableMaterial" value="#{asignacionesManagedBean.radFasesEstadosDisponibles}" selection="#{asignacionesManagedBean.radFaseEstadoDisponible}"
                                      var="disp" emptyMessage="No hay radicaciones en espera" rowKey="#{disp.rfeId}" paginator="true" rows="7" paginatorPosition="bottom"
-                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" >
-                            <p:column headerText="Radicación">
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                     selectionMode="single">
+                            <f:facet name="header">
+                                Procesos Pendientes
+                            </f:facet>
+                            <p:column headerText="Radicación" width="100">
                                 <h:outputLabel value="#{disp.radId.radNumero}"/>
                             </p:column>
                             <p:column headerText="Escritura">
@@ -41,11 +45,115 @@
                             </p:column>
                         </p:dataTable>
                     </div>
-                    <div align="center" style="width: 400px;display: inline-block">
-                        
+                    <div align="center" style="width: 400px;display: inline-block; vertical-align: top">
+                        <p:dataTable styleClass="tableMaterial" value="#{asignacionesManagedBean.usuarios}" selection="#{asignacionesManagedBean.usuarioSel}"
+                                     var="usu" emptyMessage="No hay usuarios configurados para atender los procesos" rowKey="#{usu.usuId}" paginator="true" rows="7" paginatorPosition="bottom"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                     selectionMode="single">
+                            <f:facet name="header">
+                                #{asignacionesManagedBean.rol eq 'LIQ' ? 'Liquidadores Disponibles' : 'Notarios Disponibles'}
+                            </f:facet>
+                            <p:column headerText="Nombres">
+                                <h:outputLabel value="#{usu.perId.perNombres} #{usu.perId.perApellidos}"/>
+                            </p:column>
+                            <p:column headerText="Login" width="100">
+                                <h:outputLabel value="#{usu.usuLogin}"/>
+                            </p:column>
+                            <p:column headerText="Cant." width="40">
+                                <h:outputLabel value="#{asignacionesManagedBean.traerPendientesDeUsuario(usu)}" />
+                            </p:column>
+                            <p:column headerText="Ver" styleClass="colCenter" width="30">
+                                <p:commandLink title="Puede ver las radicaciones actuales que tiene el funcionario" action="#{asignacionesManagedBean.obtenerPendientesUsuario()}" update=":modalRadicUsuario" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogRadicUsuario').show();">
+                                    <img src="#{resource['/images/icons/icon-search.png']}" width="16"/>
+                                    <f:setPropertyActionListener target="#{asignacionesManagedBean.usuarioSel}" value="#{usu}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                    <div align="center" style="margin: 20px;">
+                        <p:commandButton value="Asignar Radicación" oncomplete="PF('loadingDialog').hide();PF('dialogConfAsig').show()" update=":formConfAsig" />
                     </div>
                 </h:form>
             </div>
         </div>
+        
+        <!-- Modal para la confirmación de la asignación de una radicación -->
+        <p:dialog id="modalConfAsig" widgetVar="dialogConfAsig" styleClass="modalTop" resizable="false" header="Confirmación" modal="true" width="700" minHeight="350">
+            <h:form id="formConfAsig">
+                <div align="center" style="margin: 10px">
+                    <h:outputText value='Esta seguro de que desea vincular la radicación #{asignacionesManagedBean.radFaseEstadoDisponible.radId.radNumero} al usuario #{asignacionesManagedBean.usuarioSel.usuLogin}?'/>
+                </div>
+                <div align="center">
+                    <p:commandButton value="Si" action="#{asignacionesManagedBean.asignarRadicacion()}" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogConfAsig').hide()" update=":formAsignaciones"/>
+                    <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" oncomplete="PF('dialogConfAsig').hide();"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <!-- Modal que muestra todas las radicaciones pendientes de un usuario -->
+        <p:dialog id="modalRadicUsuario" widgetVar="dialogRadicUsuario" styleClass="modalTop" header="Radicaciones del usuario" modal="true" width="700" minHeight="600">
+            <h:form id="formRadicUsuario">
+                <div class="descripcion" align="center">
+                    <div class="descText">
+                        Esta es la información de los pendientes que tiene actualmente el usuario, puede que en el momento de reasignar una, su estado ya haya cambiado
+                    </div>
+                </div>
+                <div align="center" style="margin: 20px;">
+                    <p:dataTable styleClass="tableMaterial" emptyMessage="No hay procesos pendientes para este usuario" value="#{asignacionesManagedBean.radFasesEstadosUsuario}" selection="#{asignacionesManagedBean.radFaseEstadoUsuario}"
+                                 var="asigUsu" rowKey="#{asigUsu.rfeId}" selectionMode="single">
+                        <f:facet name="header">
+                            Procesos pendientes del usuario
+                        </f:facet>
+                        <p:column headerText="Radicación" width="100" class="colCenter">
+                            <h:outputLabel value="#{asigUsu.radId.radNumero}"/>
+                        </p:column>
+                        <p:column headerText="Escritura" class="colCenter">
+                            <h:outputLabel value="#{asigUsu.radId.escId.escNumero}"/>
+                        </p:column>
+                        <p:column headerText="Fecha" class="colCenter">
+                            <h:outputLabel value="#{asigUsu.rfeFechaInicio}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
+                            </h:outputLabel>
+                        </p:column>
+                        <p:column headerText="Tiempo(mins)" width="110" class="colCenter">
+                            <h:outputLabel value="#{asignacionesManagedBean.obtenerTiempoMins(asigUsu)}"/>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+                <div align="center" style="margin: 20px">
+                    <p:commandButton value="Reasignar a otro" update="modalUsuariosDisp" oncomplete="PF('dialogUsuariosDisp').show()"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog id="modalUsuariosDisp" widgetVar="dialogUsuariosDisp" styleClass="modalTop" header="Usuarios disponibles para asignación" modal="true" width="500" minHeight="500" >
+            <h:form>
+                <div class="descripcion" align="center">
+                    <div class="descText">
+                        Lista de usuarios disponibles para asignar la radicación
+                    </div>
+                </div>
+                <p:dataTable styleClass="tableMaterial" value="#{asignacionesManagedBean.usuariosReasigs}" selection="#{asignacionesManagedBean.usuarioReasigSel}"
+                             var="usuR" emptyMessage="No hay usuarios disponibles para reasignar una radicacion" rowKey="#{usuR.usuId}" paginator="true" rows="7" paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                             selectionMode="single">
+                    <p:column headerText="Nombres" class="colCenter">
+                        <h:outputLabel value="#{usuR.perId.perNombres} #{usuR.perId.perApellidos}"/>
+                    </p:column>
+                    <p:column headerText="Login" width="100" class="colCenter">
+                        <h:outputLabel value="#{usuR.usuLogin}"/>
+                    </p:column>
+                    <p:column headerText="Cantidad" width="80" class="colCenter">
+                        <h:outputLabel value="#{asignacionesManagedBean.traerPendientesDeUsuario(usuR)}" />
+                    </p:column>
+                </p:dataTable>
+                <div align="center" style="margin: 10px">
+                    <p:commandButton value="Reasignar" update="formRadicUsuario" action="#{asignacionesManagedBean.reAsignarRadicacion}" oncomplete="PF('dialogUsuariosDisp').hide()"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+
+        
     </ui:define>
 </ui:composition>

@@ -149,15 +149,16 @@ public class GeneracionManagedBean extends GenericManagedBean {
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Máximo encontrado", "El usuario tiene el máximo de radicaciones permitidas para el proceso ( " + maxRads + " )", true, false);
                 return;
             }
+            MarRadicacionesFasesEstados rfe = radFaseEstadoActual;
             radFaseEstadoActual = null;
             BigDecimal BDsalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_asignar_liquidacion", usuarioSesion.getUsuId().intValue(), "I-P", "");
-
             Integer salida = BDsalida.intValue();
             System.out.println("salida = " + salida);
             if (salida != null) {
                 switch (salida) {
                     case -999:
                         PrimeFacesPopup.lanzarDialog(Effects.Slide, "No hay datos", "No hay radicaciones disponibles en este momento, por favor intente mas tarde", true, false);
+                        radFaseEstadoActual = rfe;
                         return;
                     case -1000:
                         PrimeFacesPopup.lanzarDialog(Effects.Slide, "Fase generación necesaria", "No se encuentra una Fase-Estado de código 'G-P' por favor configúrela", true, false);

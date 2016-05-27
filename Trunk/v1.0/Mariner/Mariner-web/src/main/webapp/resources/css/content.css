@@ -118,3 +118,11 @@
 #containerLiq {
     text-align:center;
 }
+
+.ui-datatable.tableMaterial tbody td label{
+    font-size: 12px !important;
+}
+
+.ui-datatable.tableMaterial thead tr th{
+    background-image: none;
+}
