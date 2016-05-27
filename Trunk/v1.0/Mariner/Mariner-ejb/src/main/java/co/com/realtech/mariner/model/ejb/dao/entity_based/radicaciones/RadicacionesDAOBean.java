@@ -62,23 +62,24 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
     public List<MarRadicaciones> obtenerRadicacionesPorUltimaFase(String fase, MarUsuarios usuario) throws MarinerPersistanceException{
         List<MarRadicaciones> radicacionesLibres = new ArrayList<>();
         try {
-            String sql = "WITH maximos AS ( \n"
-                    + "   SELECT MAX(rfes.rfe_id) AS rfe_id, rfes.rad_id\n"
-                    + "    FROM mar_radicaciones_fases_estados rfes\n"
-                    + "    INNER JOIN mar_fases_estados fe ON rfes.fes_id = fe.fes_id\n"
-                    + "    %WHERE%\n"
+            String sql = "WITH maximos AS (\n"
+                    + "  SELECT MAX(rfes.rfe_id) AS rfe_id, rfes.rad_id\n"
+                    + "  FROM mar_radicaciones_fases_estados rfes\n"
+                    + "  INNER JOIN mar_fases_estados fe ON rfes.fes_id = fe.fes_id\n"
+                    + "  INNER JOIN mar_radicaciones r ON rfes.rad_id = r.rad_id\n"
+                    + "  WHERE 1 = 1\n"
+                    + "    AND r.rad_estado = 'A'\n"
                     + "    GROUP BY rfes.rad_id\n"
                     + ")\n"
-                    + "SELECT r.* FROM mar_radicaciones r \n"
-                    + "INNER JOIN maximos m ON r.rad_id = m.rad_id\n"
+                    + "SELECT r.* FROM maximos m \n"
                     + "INNER JOIN mar_radicaciones_fases_estados rfes ON m.rfe_id = rfes.rfe_id\n"
+                    + "INNER JOIN mar_radicaciones r ON rfes.rad_id = r.rad_id\n"
                     + "INNER JOIN mar_fases_estados fes ON rfes.fes_id = fes.fes_id\n"
-                    + "AND fes.fes_codigo IN (:fase)\n"
+                    + "WHERE 2 = 2\n"
+                    + "  AND fes.fes_codigo IN (:fase)\n"
                     + "ORDER BY r.rad_fecha";
-            if(usuario == null){
-                sql = sql.replace("%WHERE%", "");
-            }else{
-                sql = sql.replace("%WHERE%", "WHERE rfes.usu_id = " + usuario.getUsuId());
+            if (usuario != null){
+                sql = sql.replace("2 = 2", "rfes.usu_id = " + usuario.getUsuId());
             }
             sql = sql.replace(":fase", fase);
             Query q = getEntityManager().createNativeQuery(sql,MarRadicaciones.class);
@@ -160,10 +161,10 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
                         + "INNER JOIN mar_fases_estados fe ON rfe.fes_id = fe.fes_id\n"
                         + "WHERE 1 = 1 \n"
                         + "  AND fe.fes_codigo IN ('P-A','F-A','F-R')\n"
-                        + "  AND TRUNC(rfe.rfe_fecha_inicio) BETWEEN TO_DATE('FECHA1','dd/MM/yyyy') AND TO_DATE('FECHA2','dd/MM/yyyy')";
+                        + "  AND 4 = 4";
             if (tipo.equals("ES")) {
                 String valor = "";
-                sql = sql.replace("AND TRUNC(rfe.rfe_fecha_inicio) BETWEEN TO_DATE('FECHA1','dd/MM/yyyy') AND TO_DATE('FECHA2','dd/MM/yyyy')", "");
+                sql = sql.replace("4 = 4", " TRUNC(rfe.rfe_fecha_inicio) BETWEEN TO_DATE('FECHA1','dd/MM/yyyy') AND TO_DATE('FECHA2','dd/MM/yyyy')");
                 switch (campoBusqueda) {
                     case "P":
                         valor = "'P-A'";

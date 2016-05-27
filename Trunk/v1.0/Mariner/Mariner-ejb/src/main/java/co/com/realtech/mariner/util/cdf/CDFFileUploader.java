@@ -4,6 +4,7 @@ import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBean;
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
 import co.com.realtech.mariner.model.entity.MarArchivos;
 import co.com.realtech.mariner.model.entity.MarPuntosMontajes;
+import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import co.com.realtech.mariner.util.files.FileUtils;
 import co.com.realtech.mariner.util.jdni.JDNIUtils;
 import java.io.File;
@@ -69,7 +70,9 @@ public class CDFFileUploader {
             // cargamos todos los puntos de montaje disponibles.
             List<MarPuntosMontajes> puntosMontaje;
             puntosMontaje = (List<MarPuntosMontajes>) genericDAOBean.findAllByColumn(MarPuntosMontajes.class, "pmaEstado", "A", true, "pmaId desc");
-
+            if(!esTamanoValido(size)){
+                throw new Exception("No puede subir el archivo seleccionado, el archivo supera el tamaño máximo permitido.");
+            }
             if (!puntosMontaje.isEmpty()) {
                 if (puntosMontaje.size() == 1) {
                     MarPuntosMontajes pm = puntosMontaje.get(0);
@@ -105,6 +108,9 @@ public class CDFFileUploader {
         try {
             puntoMontaje = pmInput;
             Date sysdate = new Date();
+            if(!esTamanoValido(size)){
+                throw new Exception("El archivo supera el tamaño máximo permitido.");
+            }
             logger.debug("Encontrado punto de montaje Default " + puntoMontaje.getPmoNombre());
             // cargamos el hash que se le asignara al archivo
             String fileHash = nextSessionId();
@@ -152,6 +158,21 @@ public class CDFFileUploader {
             throw new Exception("Error guardando archivo en repositorio central de almacenamiento: " + e.getMessage(), e);
         }
         return file;
+    }
+    
+    /**
+     * Valida el tamaño del archivo para cargarlo, si no cumple con las condiciones informa al usuario
+     * @param size
+     * @return 
+     */
+    private boolean esTamanoValido(Long size) {
+        String maxTamano = ConstantesUtils.cargarConstante("MAX-CARGUE-ARCH");
+        Integer tamano = Integer.parseInt(maxTamano);
+        tamano = tamano * 1000 * 1000;
+        if (size > tamano) {
+            return false;
+        }
+        return true;   
     }
 
     /**
