@@ -47,6 +47,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarModulos.findByAudUsuario", query = "SELECT m FROM MarModulos m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarModulos.findByAudFecha", query = "SELECT m FROM MarModulos m WHERE m.audFecha = :audFecha")})
 public class MarModulos implements Serializable {
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -83,14 +84,14 @@ public class MarModulos implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToMany(mappedBy = "modIdPadre",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "modIdPadre", fetch = FetchType.EAGER)
     private List<MarModulos> marModulosList;
     @JoinColumn(name = "MOD_ID_PADRE", referencedColumnName = "MOD_ID")
     @ManyToOne
     private MarModulos modIdPadre;
     @OneToMany(mappedBy = "modId")
     private List<MarRolesModulos> marRolesModulosList;
-    
+
     @Transient
     private List<MarModulos> modulosMenu;
 
@@ -235,5 +236,5 @@ public class MarModulos implements Serializable {
     public void setModulosMenu(List<MarModulos> modulosMenu) {
         this.modulosMenu = modulosMenu;
     }
-    
+
 }

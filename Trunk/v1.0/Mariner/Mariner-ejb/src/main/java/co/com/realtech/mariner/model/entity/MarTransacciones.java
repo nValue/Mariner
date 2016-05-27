@@ -55,7 +55,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarTransacciones.findByTraTelefono", query = "SELECT m FROM MarTransacciones m WHERE m.traTelefono = :traTelefono"),
     @NamedQuery(name = "MarTransacciones.findByTraCorreo", query = "SELECT m FROM MarTransacciones m WHERE m.traCorreo = :traCorreo"),
     @NamedQuery(name = "MarTransacciones.findByTraValorPagadoPse", query = "SELECT m FROM MarTransacciones m WHERE m.traValorPagadoPse = :traValorPagadoPse"),
-    @NamedQuery(name = "MarTransacciones.findByTraReferenciaRecibo", query = "SELECT m FROM MarTransacciones m WHERE m.traReferenciaRecibo = :traReferenciaRecibo")})
+    @NamedQuery(name = "MarTransacciones.findByTraReferenciaRecibo", query = "SELECT m FROM MarTransacciones m WHERE m.traReferenciaRecibo = :traReferenciaRecibo"),
+    @NamedQuery(name = "MarTransacciones.findByTraPagoSapEstado", query = "SELECT m FROM MarTransacciones m WHERE m.traPagoSapEstado = :traPagoSapEstado"),
+    @NamedQuery(name = "MarTransacciones.findByTraPagoSapMensaje", query = "SELECT m FROM MarTransacciones m WHERE m.traPagoSapMensaje = :traPagoSapMensaje")})
 public class MarTransacciones implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -118,6 +120,12 @@ public class MarTransacciones implements Serializable {
     @Size(max = 200)
     @Column(name = "TRA_REFERENCIA_RECIBO", length = 200)
     private String traReferenciaRecibo;
+    @Size(max = 20)
+    @Column(name = "TRA_PAGO_SAP_ESTADO", length = 20)
+    private String traPagoSapEstado;
+    @Size(max = 2000)
+    @Column(name = "TRA_PAGO_SAP_MENSAJE", length = 2000)
+    private String traPagoSapMensaje;
     @JoinColumn(name = "RAD_ID", referencedColumnName = "RAD_ID")
     @OneToOne
     private MarRadicaciones radId;
@@ -285,6 +293,22 @@ public class MarTransacciones implements Serializable {
 
     public void setTraReferenciaRecibo(String traReferenciaRecibo) {
         this.traReferenciaRecibo = traReferenciaRecibo;
+    }
+
+    public String getTraPagoSapEstado() {
+        return traPagoSapEstado;
+    }
+
+    public void setTraPagoSapEstado(String traPagoSapEstado) {
+        this.traPagoSapEstado = traPagoSapEstado;
+    }
+
+    public String getTraPagoSapMensaje() {
+        return traPagoSapMensaje;
+    }
+
+    public void setTraPagoSapMensaje(String traPagoSapMensaje) {
+        this.traPagoSapMensaje = traPagoSapMensaje;
     }
 
     public MarRadicaciones getRadId() {

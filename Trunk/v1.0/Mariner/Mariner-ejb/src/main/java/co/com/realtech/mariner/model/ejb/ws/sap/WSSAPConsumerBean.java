@@ -11,7 +11,6 @@ import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_list_method.ZPSCDTTV
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.payment.DetallePago;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.xml.ws.Holder;
@@ -61,7 +60,7 @@ public class WSSAPConsumerBean implements WSSAPConsumerBeanLocal {
             Holder<String> eMESSAGE = new Holder<>();
             Holder<Integer> eRETURN = new Holder<>();
             SAPWSVURPaymentImplementation wsPayment = SAPWSVURPaymentImplementation.create();
-            wsPayment.vurPayment(codigoBanco, detallePago.getFechaRecaudo(), fechaRecaudo, horaRecaudo, valor.toString(), eMESSAGE, eRETURN);
+            wsPayment.vurPayment(codigoBanco, fechaRecaudo, horaRecaudo, codigoLiquidacion, valor.toString(), eMESSAGE, eRETURN);
 
             // Obtencion y mapeo de resultados.
             detallePago.setNumeroLiquidacion(codigoLiquidacion);
@@ -69,14 +68,8 @@ public class WSSAPConsumerBean implements WSSAPConsumerBeanLocal {
             detallePago.setHoraRecaudo(horaRecaudo);
             detallePago.setNumeroCuenta(codigoBanco);
             detallePago.setValor(valor);
-
-            if (eRETURN.value == 0) {
-                detallePago.setEstadoSalida("OK");
-                detallePago.setMensajeSalida(eMESSAGE.value);
-            } else {
-                detallePago.setEstadoSalida("ERROR");
-                detallePago.setMensajeSalida("Error en SAP con codigo / mensaje: " + eMESSAGE.value);
-            }
+            detallePago.setEstadoSalida(eRETURN.value.toString());
+            detallePago.setMensajeSalida("SAP Message: "+eMESSAGE.value);
         } catch (Exception e) {
             throw e;
         }
