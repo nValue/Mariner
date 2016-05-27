@@ -54,7 +54,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarTransacciones.findByTraApellidos", query = "SELECT m FROM MarTransacciones m WHERE m.traApellidos = :traApellidos"),
     @NamedQuery(name = "MarTransacciones.findByTraTelefono", query = "SELECT m FROM MarTransacciones m WHERE m.traTelefono = :traTelefono"),
     @NamedQuery(name = "MarTransacciones.findByTraCorreo", query = "SELECT m FROM MarTransacciones m WHERE m.traCorreo = :traCorreo"),
-    @NamedQuery(name = "MarTransacciones.findByTraValorPagado", query = "SELECT m FROM MarTransacciones m WHERE m.traValorPagado = :traValorPagado")})
+    @NamedQuery(name = "MarTransacciones.findByTraValorPagadoPse", query = "SELECT m FROM MarTransacciones m WHERE m.traValorPagadoPse = :traValorPagadoPse"),
+    @NamedQuery(name = "MarTransacciones.findByTraReferenciaRecibo", query = "SELECT m FROM MarTransacciones m WHERE m.traReferenciaRecibo = :traReferenciaRecibo")})
 public class MarTransacciones implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -111,8 +112,12 @@ public class MarTransacciones implements Serializable {
     @Size(max = 100)
     @Column(name = "TRA_CORREO", length = 100)
     private String traCorreo;
-    @Column(name = "TRA_VALOR_PAGADO")
-    private BigInteger traValorPagado;
+    @Size(max = 40)
+    @Column(name = "TRA_VALOR_PAGADO_PSE", length = 40)
+    private String traValorPagadoPse;
+    @Size(max = 200)
+    @Column(name = "TRA_REFERENCIA_RECIBO", length = 200)
+    private String traReferenciaRecibo;
     @JoinColumn(name = "RAD_ID", referencedColumnName = "RAD_ID")
     @OneToOne
     private MarRadicaciones radId;
@@ -266,12 +271,20 @@ public class MarTransacciones implements Serializable {
         this.traCorreo = traCorreo;
     }
 
-    public BigInteger getTraValorPagado() {
-        return traValorPagado;
+    public String getTraValorPagadoPse() {
+        return traValorPagadoPse;
     }
 
-    public void setTraValorPagado(BigInteger traValorPagado) {
-        this.traValorPagado = traValorPagado;
+    public void setTraValorPagadoPse(String traValorPagadoPse) {
+        this.traValorPagadoPse = traValorPagadoPse;
+    }
+
+    public String getTraReferenciaRecibo() {
+        return traReferenciaRecibo;
+    }
+
+    public void setTraReferenciaRecibo(String traReferenciaRecibo) {
+        this.traReferenciaRecibo = traReferenciaRecibo;
     }
 
     public MarRadicaciones getRadId() {

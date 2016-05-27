@@ -234,7 +234,6 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
             sql = sql.replace("%USUARIO%", usuario.getUsuId().toString());
             sql = sql.replace("%FASESATENDIDAS%", fasesAtendidas);
             sql = sql.replace("%FASESULTIMAS%", fasesFinales);
-            System.out.println("obtenerRadsAtendidasYFaseFinal = " + sql);
             Query q = getEntityManager().createNativeQuery(sql, MarRadicaciones.class);
             radicaciones = q.getResultList();
         } catch (Exception e) {

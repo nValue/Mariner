@@ -51,8 +51,9 @@ public class SAPGetDetailConverter implements Serializable {
             detalle.setClase(responseHeader.value.getVCLASE());
             detalle.setDocumento(responseHeader.value.getVDOCUMENTO());
             detalle.setTotal(responseHeader.value.getVTOTAL());
-            detalle.setDescladoc(responseHeader.value.getVDESCLADOC());
-            detalle.setDescoridoc(responseHeader.value.getVDESORIDOC());
+            
+            detalle.setDescladoc(SAPEquivalenceUtils.findClasesDocumentos(responseHeader.value.getVDESCLADOC()));
+            detalle.setDescoridoc(SAPEquivalenceUtils.findOrigenDocumentos(responseHeader.value.getVDESORIDOC()));
             detalle.setFechaDoc(responseHeader.value.getVFECDOC());
             detalle.setMatricula(responseHeader.value.getVMATINM());
             detalle.setTintMora(responseHeader.value.getVTINTMORA());
@@ -105,7 +106,7 @@ public class SAPGetDetailConverter implements Serializable {
         List<DetalleLiquidacion> detalles = new ArrayList<>();
         try {
             // Loop extratendo datos de listado de liquidaciones.
-            datos.getItem().stream().map((detLoop) -> {
+            datos.getItem().stream().map((co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_list_method.ZPSCDPRNCAB detLoop) -> {
                 DetalleLiquidacion detalle = new DetalleLiquidacion();
                 detalle.setLiqNumero(detLoop.getVNUMERO());
                 detalle.setOtoNum(detLoop.getVOTONUM());
@@ -126,8 +127,8 @@ public class SAPGetDetailConverter implements Serializable {
                 detalle.setClase(detLoop.getVCLASE());
                 detalle.setDocumento(detLoop.getVDOCUMENTO());
                 detalle.setTotal(detLoop.getVTOTAL());
-                detalle.setDescladoc(detLoop.getVDESCLADOC());
-                detalle.setDescoridoc(detLoop.getVDESORIDOC());
+                detalle.setDescladoc(SAPEquivalenceUtils.findClasesDocumentos(detLoop.getVDESCLADOC()));
+                detalle.setDescoridoc(SAPEquivalenceUtils.findOrigenDocumentos(detLoop.getVDESORIDOC()));
                 detalle.setFechaDoc(detLoop.getVFECDOC());
                 detalle.setMatricula(detLoop.getVMATINM());
                 detalle.setTintMora(detLoop.getVTINTMORA());

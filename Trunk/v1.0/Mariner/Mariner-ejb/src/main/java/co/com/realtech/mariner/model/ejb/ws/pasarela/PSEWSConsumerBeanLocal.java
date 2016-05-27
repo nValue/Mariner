@@ -1,5 +1,6 @@
 package co.com.realtech.mariner.model.ejb.ws.pasarela;
 
+import co.com.realtech.mariner.model.ejb.ws.pasarela.mappers.Transaccion;
 import javax.ejb.Local;
 
 /**
@@ -12,5 +13,7 @@ import javax.ejb.Local;
  */
 @Local
 public interface PSEWSConsumerBeanLocal {
+    
+    public Transaccion consultarTransaccion(String cus, String codEmpresa) throws Exception;
     
 }

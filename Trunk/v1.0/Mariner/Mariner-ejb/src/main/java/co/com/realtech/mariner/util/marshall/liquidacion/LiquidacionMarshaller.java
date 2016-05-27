@@ -66,8 +66,8 @@ public class LiquidacionMarshaller implements Serializable {
         sap.setRdeFechaLimite(detalle.getFechaLimite());
         sap.setRdeNorodrad(detalle.getNorodrad());
 
-        // Valores del objeto radicacion
-        radicacion.setRadValorLiq(detalle.getTotal());
+        // Valores del objeto radicacion        
+        radicacion.setRadValorLiq(detalle.getTotalDesc());
         radicacion.setRadLiquidacion(detalle.getLiqNumero());
 
         // Maping de los Actos

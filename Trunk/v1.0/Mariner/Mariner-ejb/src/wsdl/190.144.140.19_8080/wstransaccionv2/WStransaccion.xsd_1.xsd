@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.2-hudson-740-. --><xs:schema xmlns:tns="http://ws/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://ws/">
+
+<xs:element name="getTransaccion" type="tns:getTransaccion" />
+
+<xs:element name="getTransaccionResponse" type="tns:getTransaccionResponse" />
+
+<xs:complexType name="getTransaccion">
+<xs:sequence>
+<xs:element name="CUS" type="xs:string" minOccurs="0" />
+<xs:element name="CodEmpresa" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getTransaccionResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:transaccion" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="transaccion">
+<xs:sequence>
+<xs:element name="banco" type="xs:string" minOccurs="0" />
+<xs:element name="cus" type="xs:string" minOccurs="0" />
+<xs:element name="descripcion" type="xs:string" minOccurs="0" />
+<xs:element name="estado" type="xs:string" minOccurs="0" />
+<xs:element name="fechaFin" type="xs:string" minOccurs="0" />
+<xs:element name="fechaInicio" type="xs:string" minOccurs="0" />
+<xs:element name="identificacionUsuario" type="xs:string" minOccurs="0" />
+<xs:element name="referencia" type="xs:string" minOccurs="0" />
+<xs:element name="tipoUsauario" type="xs:string" minOccurs="0" />
+<xs:element name="valor" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
