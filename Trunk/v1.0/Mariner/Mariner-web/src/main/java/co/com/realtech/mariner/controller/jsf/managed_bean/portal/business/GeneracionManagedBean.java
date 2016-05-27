@@ -101,7 +101,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
     public void obtenerRadicacionesPendientes() {
         try {
             System.out.println("ObteniendoPdtes");
-            radicacionesUsuario = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'G-P', 'G-S', 'R-R'", usuarioSesion);
+            radicacionesUsuario = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'G-P', 'R-R'", usuarioSesion);
             if(!radicacionesUsuario.isEmpty()){
                 radicacionUsuarioSel = radicacionesUsuario.get(0);
                 obtenerFasesEstadosDeRadicacion();

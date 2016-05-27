@@ -190,12 +190,44 @@ public class RevisionManagedBean extends GenericManagedBean{
     }
     
     /**
+     * Desvincula una liquidación de SAP asociada a una radicación.
+     */
+    public void desvincularLiquidacion(){
+        try {
+            genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_desvincular_liquidacion", radicacionPendienteSel.getRadId());
+            
+            //Se obtiene el usuario que hizo el proceso para enviarle de vuelta el proceso, el que la sube a SAP debe ser.
+            List<MarRadicacionesFasesEstados> rfes = radicFasesEstadosDAOBean.obtenerRadicFaseEstDeRadyFase(radicacionPendienteSel, "G-P");
+            MarUsuarios usuarioAsignado = rfes.get(rfes.size()-1).getUsuId();
+            
+            //Se crea la fase proceso de rechazo (R-R) con las observaciones colocadas.
+            BigDecimal BDsalida = (BigDecimal)genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionPendienteSel.getRadId(), 
+                    "R-R", "R", usuarioAsignado,observaciones,null);
+            
+            Integer salida = BDsalida.intValue();
+            if(salida == -999){
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo incorrecto", "No se puede crear el estado rechazo de revisión para la radicación, por favor verifique que la información este correcta e intente de nuevo.", true, false);
+                return;
+            }
+            radicacionPendienteSel = null;
+            obtenerRadicacionesPendientes();
+            
+            
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Desvinculación completada", "Disvinculación realizada correctamente, se ha devuelto el proceso al liquidador.", true, false);
+        } catch (Exception e) {
+            String msj = "Error desvinculando la radicación, causado por: " + e;
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Desvinculación incompleta", msj, true, false);
+            logger.error(msj , e);
+        }
+    }
+    
+    /**
      * Rechaza la radicación a un estado anterior o la anula según sea el caso.
      */
     public void rechazarRadicacion(){
         try {
             //Se obtiene el usuario que hizo el proceso para enviarle de vuelta el proceso, el que la sube a SAP debe ser.
-            List<MarRadicacionesFasesEstados> rfes = radicFasesEstadosDAOBean.obtenerRadicFaseEstDeRadyFase(radicacionPendienteSel, "G-S");
+            List<MarRadicacionesFasesEstados> rfes = radicFasesEstadosDAOBean.obtenerRadicFaseEstDeRadyFase(radicacionPendienteSel, "G-P");
             MarUsuarios usuarioAsignado = rfes.get(rfes.size()-1).getUsuId();
             
             //Se crea la fase proceso de rechazo (R-R) con las observaciones colocadas.

@@ -88,7 +88,7 @@
                                     <p:confirm header="Confirmación" message="¿Esta seguro de que desea validar la radicación?" icon="ui-icon-alert" />
                                 </p:commandButton>
                                 <p:commandButton style="vertical-align: top" value="Rechazar" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-P') || (generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'R-R')}" 
-                                                 onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogRechazo').show()">
+                                                 onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogRechazo').show()" update=":formRechazo">
                                     <p:confirm header="Confirmación" message="¿Esta seguro de que desea rechazar esta radicación?" icon="ui-icon-alert" />
                                 </p:commandButton>
                                 <p:commandButton style="vertical-align: top" value="Verificar SAP" update="formTurnos :formLiquidacion" action="#{generacionManagedBean.limpiarInfoBusqSAP()}" rendered="#{(generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'G-S')}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();"/>
@@ -147,7 +147,10 @@
                     <p:selectOneMenu value="#{generacionManagedBean.rechazoSel}" converter="MarRechazosCausalesConverter" style="width: 300px">
                         <f:selectItems value="#{generacionManagedBean.rechazos}" var="rech" itemLabel="#{rech.rcaNombres}" itemValue="#{rech}"/>
                     </p:selectOneMenu>
+                    <p:outputLabel value="Observaciones" />
+                    <p:inputTextarea value="#{generacionManagedBean.observaciones}" rows="2" style="display: block;width: 330px"/>
                 </h:panelGrid>
+
                 <p:commandButton value="Rechazar" action="#{generacionManagedBean.rechazarRadicacion()}" update="formTurnos"  
                                  onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogRechazo').hide()"/>
                 <p:commandButton value="Cancelar" oncomplete="PF('dialogRechazo').hide()" />
@@ -168,8 +171,8 @@
                             <p:ajax event="dateSelect" listener="#{generacionManagedBean.obtenerLiqPendientes()}" update="formLiquidacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                         </p:calendar>
                         <p:outputLabel value="Número de liquidación" />
-                        <p:selectOneMenu value="#{generacionManagedBean.codigoLiquidacion}" style="width: 250px" >
-                            <f:selectItems value="#{generacionManagedBean.detallesLiquidaciones}" var="liq" itemLabel="#{liq.liqNumero} - #{liq.fechaLiquidacion}" itemValue="#{liq.liqNumero}"/>
+                        <p:selectOneMenu value="#{generacionManagedBean.codigoLiquidacion}" style="width: 350px" >
+                            <f:selectItems value="#{generacionManagedBean.detallesLiquidaciones}" var="liq" itemLabel="#{liq.liqNumero} - #{liq.fechaLiquidacion} - #{liq.documento}" itemValue="#{liq.liqNumero}"/>
                         </p:selectOneMenu>
                     </h:panelGrid>
                     <div align="center" style="display: block;margin: 10px;">
@@ -200,11 +203,11 @@
                             <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.benNombre}" />
                         </div>
                         <div class="contLabelText">
-                            <h:outputLabel class="labelLittle" value="Valor"/>
-                            <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.total}" />
+                            <h:outputLabel class="labelLittle" value="Número de escritura"/>
+                            <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.documento}" />
                         </div>
                         <div class="contLabelText">
-                            <h:outputLabel class="labelLittle" value="Valor Descuento"/>
+                            <h:outputLabel class="labelLittle" value="Total a pagar"/>
                             <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.totalDesc}" />
                         </div>
                         <div class="contLabelText">
@@ -222,8 +225,9 @@
                     </div>
                     <div align="center" style="margin: 20px">
                         <p:commandButton value="Vincular" action="#{generacionManagedBean.vincularInformacionSAP()}" update=":formTurnos" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();" >
-                            <p:confirm header="Confirmación" message="¿Esta seguro de que desea vincular esta información del SAP al proceso de VUR?" icon="ui-icon-alert" />
+                            <p:confirm header="Confirmación" message="¿Esta seguro de que desea vincular la liquidación número #{generacionManagedBean.detalleLiquidacion.liqNumero} de SAP al proceso de VUR?" icon="ui-icon-alert" />
                         </p:commandButton>
+                        <p:commandButton value="Cerrar" oncomplete="PF('dialogLiquidacion').hide()" />
                     </div>
                 </h:panelGroup>
             </h:form>

@@ -65,8 +65,8 @@ public class FinalizacionManagedBean extends GenericManagedBean{
         filtrosBusqueda.add(new ClaveValor("ES", "Estado"));
         filtrosBusqueda.add(new ClaveValor("RA", "Radicación"));
         filtrosBusqueda.add(new ClaveValor("LI", "Liquidación"));
-        filtrosBusqueda.add(new ClaveValor("OT", "CC Otorgante"));
-        filtrosBusqueda.add(new ClaveValor("RE", "CC Receptor"));
+        //filtrosBusqueda.add(new ClaveValor("OT", "CC Otorgante"));
+        //filtrosBusqueda.add(new ClaveValor("RE", "CC Receptor"));
         limpiarVariables();
         
     }
@@ -86,8 +86,7 @@ public class FinalizacionManagedBean extends GenericManagedBean{
      */
     public void seleccionarFiltroBusq(){
         campoBusqueda = "";
-        System.out.println("filtroBusquedaSel = " + filtroBusquedaSel);
-        //filtroBusquedaSel = filtrosBusqueda.get(0);
+        buscarRadicaciones();
     }
     
     /**

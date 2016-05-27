@@ -234,6 +234,7 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
             radicacionSel.setRadEstado("A");
             observacionesProceso = "";
             radicacionesFasesEstados = null;
+            radicacionFaseEstProcesadaSel = null;
         } catch (Exception e) {
             logger.error("Error creando nueva Radicación, causado por " + e, e);
         }
@@ -268,7 +269,8 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
             radicacionSel.getEscId().setArcId(archivo);
             PrimeFacesContext.execute("PF('fileUploadDialog').hide();");
         } catch (Exception e) {
-            logger.error("Error al subir el archivo al repositorio, causado por " + e, e);
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Archivo no es válido", e.getLocalizedMessage(), true, false);
+            logger.error("No se puede cargar el archivo, causado por: " + e.getLocalizedMessage(), e);
         }
     }
 

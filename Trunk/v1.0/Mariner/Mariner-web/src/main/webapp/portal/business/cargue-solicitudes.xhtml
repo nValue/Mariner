@@ -98,7 +98,7 @@
         <p:dialog id="modalFileUpload" widgetVar="fileUploadDialog" header="Cargue de Escritura en formato PDF" modal="true" draggable="false" closable="true" resizable="false" appendTo="@(body)" closeOnEscape="true">
             <div class="minDivPopup" style="width: 450px;">
                 <h:form enctype="multipart/form-data">
-                    <p:fileUpload fileUploadListener="#{cargueSolicitudesManagedBean.handleFileUpload}" mode="advanced" dragDropSupport="true" sizeLimit="2000000" update=":formRadicacion" allowTypes="/(\.|\/)(pdf)$/"
+                    <p:fileUpload fileUploadListener="#{cargueSolicitudesManagedBean.handleFileUpload}" mode="advanced" dragDropSupport="true" update=":formRadicacion" allowTypes="/(\.|\/)(pdf)$/"
                                   auto="true" cancelLabel="Cancelar" invalidFileMessage="Archivo inválido, por favor verifique que sea PDF" uploadLabel="Cargar" label="Seleccionar"/>
                 </h:form>
             </div>
