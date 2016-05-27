@@ -3,7 +3,6 @@ package co.com.realtech.mariner.controller.jsf.managed_bean.portal.business;
 import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBean;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFasesEstadosDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicacionesDAOBeanLocal;
-import co.com.realtech.mariner.model.ejb.ws.sap.WSSAPConsumerBeanLocal;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.get_detail_method.DetalleLiquidacion;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
@@ -39,9 +38,6 @@ public class GeneracionManagedBean extends GenericManagedBean {
 
     @EJB(beanName = "RadicFasesEstadosDAOBean")
     private RadicFasesEstadosDAOBeanLocal radicFasesEstadosDAOBean;
-
-    @EJB(beanName = "WSSAPConsumerBean")
-    private WSSAPConsumerBeanLocal wSSAPConsumerBean;
 
     private List<MarRadicaciones> radicacionesUsuario;
     private MarRadicaciones radicacionUsuarioSel;
@@ -101,7 +97,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
     public void obtenerRadicacionesPendientes() {
         try {
             System.out.println("ObteniendoPdtes");
-            radicacionesUsuario = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'G-P', 'R-R'", usuarioSesion);
+            radicacionesUsuario = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'G-P', 'R-R', 'G-S'", usuarioSesion);
             if(!radicacionesUsuario.isEmpty()){
                 radicacionUsuarioSel = radicacionesUsuario.get(0);
                 obtenerFasesEstadosDeRadicacion();
@@ -331,6 +327,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Usuario SAP no válido", "El usuario actual no tiene configurado un usuario de SAP para obtener los datos pendientes de liquidaciones, por favor configúrelo.", true, false);
             return;
         }
+        
         sapLLO = SAPListadoLiquidacionesLogicOperations.create();
         if(obtenerLiqPendientes()){
             PrimeFacesContext.execute("PF('dialogLiquidacion').show()");
@@ -380,7 +377,8 @@ public class GeneracionManagedBean extends GenericManagedBean {
     public void vincularInformacionSAP(){
         EntidadLiquidacionResultado salida=sapRadicacionesLogicOperations.vincularRadicacionSAP(radicacionUsuarioSel, getCodigoLiquidacion());
         if(salida.getEstado().equals("OK")){
-            obtenerFasesEstadosDeRadicacion();
+            radicacionUsuarioSel=null;
+            obtenerRadicacionesPendientes();
             PrimeFacesContext.execute("PF('dialogLiquidacion').hide();");
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso finalizado", "Vinculación realizada correctamente y cambiada a validación por aprobador.", true, false);
         }
