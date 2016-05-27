@@ -5,6 +5,7 @@ import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,22 +45,9 @@ public class RadicFasesEstadosDAOBean extends GenericDAOBean implements RadicFas
     }
     
     
-    
-    /**
-     * Obtiene las radicaciones-fases-estados asociadas a un usuario, una fase-estado y un rango de fechas
-     * @param usuario
-     * @param faseEstado
-     * @param fechaIn
-     * @param fechaFin
-     * @return
-     * @throws MarinerPersistanceException 
-     */
     @Override
     public List<MarRadicacionesFasesEstados> obtenerRadicFasesEstadosPorUsuarioFaseEstadoYFechas(MarUsuarios usuario, String faseEstado, Date fechaIn, Date fechaFin) throws MarinerPersistanceException{
         List<MarRadicacionesFasesEstados> radicacionesLibres = new ArrayList<>();
-        if(fechaIn == null || fechaFin == null){
-            return radicacionesLibres;
-        }
         try {
             String sql = "WITH ultimasFases AS (\n"
                     + "  SELECT DISTINCT rfe.rad_id, MAX(rfe.rfe_id) OVER(PARTITION BY rfe.rad_id) AS rfe_id\n"
@@ -72,14 +60,21 @@ public class RadicFasesEstadosDAOBean extends GenericDAOBean implements RadicFas
                     + ") SELECT rfe.* FROM mar_radicaciones_fases_estados rfe\n"
                     + "INNER JOIN ultimasFases uf ON rfe.rfe_id = uf.rfe_id\n"
                     + "ORDER BY rfe.rfe_fecha_inicio DESC";
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-            sql = sql.replace(":fechaIn", sdf.format(fechaIn));
-            sql = sql.replace(":fechaFin", sdf.format(fechaFin));
+            if(!faseEstado.contains("'")){
+                faseEstado = "'" + faseEstado + "'";
+            }
             sql = sql.replace((":usuId"), usuario.getUsuId().toString());
-            if(faseEstado == null){
+            if(fechaIn == null){
+                sql = sql.replace("AND TRUNC(rfe.rfe_fecha_inicio) BETWEEN TO_DATE(':fechaIn','dd-MM-yyyy') AND TO_DATE(':fechaFin','dd-MM-yyyy')", "");
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                sql = sql.replace(":fechaIn", sdf.format(fechaIn));
+                sql = sql.replace(":fechaFin", sdf.format(fechaFin));
+            }
+            if (faseEstado == null) {
                 sql = sql.replace(":WHEREFASE", "");
-            }else{
-                sql = sql.replace(":WHEREFASE", "AND fe.fes_codigo = '"+ faseEstado +"'");
+            } else {
+                sql = sql.replace(":WHEREFASE", "AND fe.fes_codigo IN (" + faseEstado + ")");
             }
             System.out.println("sql = " + sql);
             Query q = getEntityManager().createNativeQuery(sql, MarRadicacionesFasesEstados.class);
@@ -143,6 +138,56 @@ public class RadicFasesEstadosDAOBean extends GenericDAOBean implements RadicFas
             throw e;
         }
         return rads;
+    }
+    
+    
+    @Override
+    public int obtenerMinutosActualesRadFase(MarRadicacionesFasesEstados radFaseEst) throws MarinerPersistanceException{
+        int mins = 0;
+        try {
+            String sql = "SELECT ROUND((SYSDATE - rfe_fecha_inicio) * 24 * 60,0) AS diferencia\n"
+                        + "FROM mar_radicaciones_fases_estados\n"
+                        + "WHERE rfe_id = %RADFASEEST%";
+            sql = sql.replace("%RADFASEEST%", radFaseEst.getRfeId().toString());
+            Query q = getEntityManager().createNativeQuery(sql);
+            q.setMaxResults(1);
+            mins = ((BigDecimal)q.getSingleResult()).intValue();
+        } catch (Exception e) {
+            throw e;
+        }
+        return mins;
+    }
+
+    @Override
+    public List<MarRadicacionesFasesEstados> obtenerPorUltimaFaseUsuario(String fase, MarUsuarios usuario) throws MarinerPersistanceException {
+        List<MarRadicacionesFasesEstados> radicacionesLibres = new ArrayList<>();
+        try {
+            String sql = "WITH maximos AS (\n"
+                    + "  SELECT MAX(rfes.rfe_id) AS rfe_id, rfes.rad_id\n"
+                    + "  FROM mar_radicaciones_fases_estados rfes\n"
+                    + "  INNER JOIN mar_fases_estados fe ON rfes.fes_id = fe.fes_id\n"
+                    + "  INNER JOIN mar_radicaciones r ON rfes.rad_id = r.rad_id\n"
+                    + "  WHERE 1 = 1\n"
+                    + "    AND r.rad_estado = 'A'\n"
+                    + "    GROUP BY rfes.rad_id\n"
+                    + ")\n"
+                    + "SELECT rfes.* FROM maximos m \n"
+                    + "INNER JOIN mar_radicaciones_fases_estados rfes ON m.rfe_id = rfes.rfe_id\n"
+                    + "INNER JOIN mar_radicaciones r ON rfes.rad_id = r.rad_id\n"
+                    + "INNER JOIN mar_fases_estados fes ON rfes.fes_id = fes.fes_id\n"
+                    + "WHERE 2 = 2\n"
+                    + "  AND fes.fes_codigo IN (:fase)\n"
+                    + "ORDER BY r.rad_fecha";
+            if (usuario != null){
+                sql = sql.replace("2 = 2", "rfes.usu_id = " + usuario.getUsuId());
+            }
+            sql = sql.replace(":fase", fase);
+            Query q = getEntityManager().createNativeQuery(sql,MarRadicacionesFasesEstados.class);
+            radicacionesLibres = q.getResultList();
+        } catch (Exception e) {
+            throw e;
+        }
+        return radicacionesLibres;
     }
 
 }

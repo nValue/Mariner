@@ -4,6 +4,7 @@ import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBean;
 import co.com.realtech.mariner.model.entity.MarPersonas;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -94,8 +95,8 @@ public class UsuariosDAOBean extends GenericDAOBean implements UsuariosDAOBeanLo
     public List<MarUsuarios> obtenerAsociadosAModulo(String idModulo) throws MarinerPersistanceException {
         List<MarUsuarios> usuarios = null;
         try {
-            Query q = getEntityManager().createQuery("SELECT u FROM MarRolesModulos rm INNER JOIN rm.rolId.marRolesUsuariosList.usuId u WHERE rm.modId.modId = :modId ");
-            q.setParameter("modId", idModulo);
+            Query q = getEntityManager().createQuery("SELECT rul.usuId FROM MarRolesModulos rm INNER JOIN rm.rolId.marRolesUsuariosList rul WHERE rm.modId.modId = :modId ");
+            q.setParameter("modId", BigDecimal.valueOf(Long.parseLong(idModulo)));
             usuarios = q.getResultList();
         } catch (Exception e) {
             throw e;
@@ -121,19 +122,19 @@ public class UsuariosDAOBean extends GenericDAOBean implements UsuariosDAOBeanLo
                     + "  INNER JOIN mar_radicaciones_fases_estados rfe ON r.rad_id = rfe.rad_id\n"
                     + "  WHERE r.rad_estado = 'A'\n"
                     + "  GROUP BY r.rad_id\n"
-                    + ") SELECT COUNT(*) AS total\n"
+                    + ") SELECT NVL(MAX(COUNT(*)),0) AS total\n"
                     + "FROM maxs m\n"
                     + "INNER JOIN mar_radicaciones_fases_estados rfe ON m.rfe_id = rfe.rfe_id\n"
                     + "INNER JOIN mar_fases_estados fe ON rfe.fes_id = fe.fes_id\n"
-                    + "WHERE fe.fes_codigo = %FASES%\n"
+                    + "WHERE fe.fes_codigo IN (%FASES%)\n"
                     + "  AND rfe.usu_id = %USUARIO%\n"
                     + "GROUP BY rfe.usu_id";
             sql = sql.replace("%USUARIO%", usuario.getUsuId().toString());
-            sql = sql.replace("%FASE%", fase);
+            sql = sql.replace("%FASES%", fase);
             System.out.println("sql = " + sql);
             Query q = getEntityManager().createNativeQuery(sql);
             q.setMaxResults(1);
-            cant = (int)q.getSingleResult();
+            cant = ((BigDecimal)q.getSingleResult()).intValue();
         } catch (Exception e) {
             throw e;
         }

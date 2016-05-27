@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones;
 
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
@@ -22,12 +17,39 @@ import javax.ejb.Local;
 public interface RadicFasesEstadosDAOBeanLocal {
     
     public List<MarRadicacionesFasesEstados> obtenerRadicFaseEstDeRadyFase(MarRadicaciones radicacion, String faseEstado) throws MarinerPersistanceException;
+
     
+    /**
+     * Obtiene las radicaciones-fases-estados asociadas a un usuario, una fase-estado y un rango de fechas(Opcionales)
+     * @param usuario
+     * @param faseEstado
+     * @param fechaIn
+     * @param fechaFin
+     * @return
+     * @throws MarinerPersistanceException 
+     */
     public List<MarRadicacionesFasesEstados> obtenerRadicFasesEstadosPorUsuarioFaseEstadoYFechas(MarUsuarios usuario, String faseEstado, Date fechaIn, Date fechaFin) throws MarinerPersistanceException;
     
     public MarRadicacionesFasesEstados obtenerUltimaFaseDeRadicacion(MarRadicaciones radicacion) throws MarinerPersistanceException;
     
     public List<MarRadicacionesFasesEstados> obtenerPendientesConCodigos(String fases) throws MarinerPersistanceException ;
+    
+    /**
+     * Obtiene los minutos desde que un proceso se encuentra en un estado hasta el tiempo actual
+     * @param radFaseEst
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    public int obtenerMinutosActualesRadFase(MarRadicacionesFasesEstados radFaseEst) throws MarinerPersistanceException;
+    
+    /**
+     * Obtiene las radicaciones-fases-estados cuya ultima fase sea la ingresada y para un usuario específico si se envía
+     * @param fase El código de la fase, si quiere varias fases, escríbalas con coma y entre comillas simples ej: 'I-P','G-P'
+     * @param usuario
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    public List<MarRadicacionesFasesEstados> obtenerPorUltimaFaseUsuario(String fase, MarUsuarios usuario) throws MarinerPersistanceException;
     
     
 }

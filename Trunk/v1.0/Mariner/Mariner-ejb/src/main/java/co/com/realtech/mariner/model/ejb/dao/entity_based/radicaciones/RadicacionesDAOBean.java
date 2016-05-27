@@ -53,7 +53,7 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
     
     /**
      * Obtiene las radicaciones cuya ultima fase sea la ingresada y para un usuario específico si se envía
-     * @param fase El código de la fase, si quiere varias fases, escríbalas con coma y entre comillas simples ej: 'I-P','G-P' 
+     * @param fase El código de la fase, si quiere varias fases, escríbalas con coma y entre comillas simples ej: 'I-P','G-P'
      * @param usuario
      * @return
      * @throws MarinerPersistanceException 
