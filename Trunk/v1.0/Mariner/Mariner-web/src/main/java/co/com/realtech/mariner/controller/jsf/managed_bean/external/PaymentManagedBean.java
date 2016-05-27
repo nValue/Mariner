@@ -5,11 +5,13 @@ import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFase
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicacionesDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.ws.pasarela.PSEWSConsumerBeanLocal;
 import co.com.realtech.mariner.model.ejb.ws.pasarela.mappers.Transaccion;
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.payment.DetallePago;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarTiposDocumentos;
 import co.com.realtech.mariner.model.entity.MarTransacciones;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
+import co.com.realtech.mariner.model.logic.pagos.SAPPagosLogicOperations;
 import co.com.realtech.mariner.util.cdf.CDFFileDispatcher;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
@@ -122,8 +124,8 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                     MarRadicacionesFasesEstados estado = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(transaccionBD.getRadId());
 
                     if (estado.getFesId().getFesCodigo().equals("R-A")) {
-                        // verificamos la fecha de la transaccion sea dd/MM/yyyy hh:mm:ss
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                        // verificamos la fecha de la transaccion sea dd/MM/yyyy HH:mm:ss
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                         // Guardamos la nueva fase estado del a transaccion.
                         BigDecimal salida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", transaccionBD.getRadId(), "P-A", "A", transaccionBD.getUsuId(), "", null);
@@ -135,6 +137,22 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                                 } catch (Exception e) {
                                     transaccionBD.setTraFechaFinalizacion(new Date());
                                 }
+
+                                // Confirmamos la transaccion en SAP - Si no se guarda el error interno.
+                                try {
+                                    SAPPagosLogicOperations pagos = SAPPagosLogicOperations.create();
+                                    sdf = new SimpleDateFormat("yyyyMMdd");
+                                    String fechaRecaudo = sdf.format(transaccionBD.getTraFechaFinalizacion());
+                                    sdf = new SimpleDateFormat("HHmmss");
+                                    String horaRecaudo = sdf.format(transaccionBD.getTraFechaFinalizacion());
+                                    DetallePago detallePagoSap = pagos.aplicarPagoSAP(transaccionBD.getRadId().getRadLiquidacion(), fechaRecaudo, horaRecaudo, new BigDecimal(transaccionPasarela.getValor()));
+                                    transaccionBD.setTraPagoSapEstado(detallePagoSap.getEstadoSalida());
+                                    transaccionBD.setTraPagoSapMensaje(detallePagoSap.getMensajeSalida());
+                                } catch (Exception e) {
+                                    transaccionBD.setTraPagoSapEstado("-1");
+                                    transaccionBD.setTraPagoSapMensaje("Error interno intentando confirmar transaccion en SAP, causado por " + e);
+                                }
+
                                 transaccionBD.setTraReferenciaRecibo(transaccionPasarela.getReferencia());
                                 transaccionBD.setTraEstado("A");
                                 transaccionBD.setTraCus(transaccionPasarela.getCus());
