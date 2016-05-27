@@ -3,6 +3,8 @@ package co.com.realtech.mariner.controller.jsf.managed_bean.external;
 import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBean;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFasesEstadosDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicacionesDAOBeanLocal;
+import co.com.realtech.mariner.model.ejb.ws.pasarela.PSEWSConsumerBeanLocal;
+import co.com.realtech.mariner.model.ejb.ws.pasarela.mappers.Transaccion;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarTiposDocumentos;
@@ -10,11 +12,17 @@ import co.com.realtech.mariner.model.entity.MarTransacciones;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.util.cdf.CDFFileDispatcher;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
+import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import co.com.realtech.mariner.util.session.SessionUtils;
+import co.com.realtech.mariner.ws.sdo.transacciones.VURTransaccionLogSDO;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -41,6 +49,9 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
 
     @EJB(beanName = "RadicFasesEstadosDAOBean")
     private RadicFasesEstadosDAOBeanLocal radicFasesEstadosDAOBean;
+
+    @EJB(beanName = "PSEWSConsumerBean")
+    protected PSEWSConsumerBeanLocal pseWSConsumerBean;
 
     private String tipoPago;
     private String autenticado;
@@ -73,15 +84,93 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                     PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Por favor ingrese el numero de la liquidacion de la cual desea realizar el pago.", true, false);
                 }
             }
+            // Validar si viene un parametro por get en la URL con nombre (CUS)
+            try {
+                String parametroCUSPasarela = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("CUS");
+                if (parametroCUSPasarela != null && !parametroCUSPasarela.equals("")) {
+                    validarPagoPasarela(parametroCUSPasarela);
+                }
+            } catch (Exception e) {
+            }
         } catch (Exception e) {
             logger.error("Error inicializando PaymentManagedBean, causado por " + e);
         }
     }
 
     /**
+     * Validacion de pagos cuando viene una redireccion de la pasarela de pagos.
+     *
+     * @param cus
+     */
+    public void validarPagoPasarela(String cus) {
+        try {
+            // Verificamos la transaccion en la pasarela de pagos
+            String codigoEmpresa = ConstantesUtils.cargarConstante("WS-PASARELA-CODIGO-EMPRESA");
+            String cusPruebas = ConstantesUtils.cargarConstante("WS-PASARELA-CUS-PRUEBAS");
+            String pasarelaModoPruebas = ConstantesUtils.cargarConstante("WS-PASARELA-MODO-PRUEBAS");
+            Transaccion transaccionPasarela = pseWSConsumerBean.consultarTransaccion(pasarelaModoPruebas.equals("S") ? cusPruebas : cus, codigoEmpresa);
+
+            System.out.println("En pasarela " + transaccionPasarela.getEstado());
+            // cargamos la informacion de la transaccion.
+            BigDecimal referencia = new BigDecimal(transaccionPasarela.getReferencia());
+            setRadicacion((MarRadicaciones) genericDAOBean.findByColumn(MarRadicaciones.class, "radId", referencia));
+
+            if (getRadicacion() != null) {
+                if (transaccionPasarela.getEstado().equalsIgnoreCase("OK")) {
+                    // Verificamos que la radicacion siga en estado pendiente de pago. y cargamos la trancaccion
+                    MarTransacciones transaccionBD = getRadicacion().getMarTransacciones();
+                    MarRadicacionesFasesEstados estado = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(transaccionBD.getRadId());
+
+                    if (estado.getFesId().getFesCodigo().equals("R-A")) {
+                        // verificamos la fecha de la transaccion sea dd/MM/yyyy hh:mm:ss
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+                        // Guardamos la nueva fase estado del a transaccion.
+                        BigDecimal salida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", transaccionBD.getRadId(), "P-A", "A", transaccionBD.getUsuId(), "", null);
+
+                        try {
+                            if (salida.intValue() != -999) {
+                                try {
+                                    transaccionBD.setTraFechaFinalizacion(sdf.parse(transaccionPasarela.getFechaFin()));
+                                } catch (Exception e) {
+                                    transaccionBD.setTraFechaFinalizacion(new Date());
+                                }
+                                transaccionBD.setTraReferenciaRecibo(transaccionPasarela.getReferencia());
+                                transaccionBD.setTraEstado("A");
+                                transaccionBD.setTraCus(transaccionPasarela.getCus());
+                                transaccionBD.setTraValorPagadoPse(transaccionPasarela.getValor());
+
+                                genericDAOBean.merge(transaccionBD);
+                                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Transaccion finalizada correctamente, su Boleta Fiscar ya esta disponible en la ORIP para su visualizacion y descarga", true, false);
+                                logger.error("Transaccion finalizada correctamente para CUS " + cus);
+                            }
+                        } catch (Exception e) {
+                            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Transaccion no confirmada en la plataforma, Si su transaccion fue exitosa en la entidad Bancaria por favor contacte al administrador del sistema", true, false);
+                            logger.error("Transaccion no confirmada en la plataforma, error fecha El parametro fecha de la transaccion debe estar en formato DD/MM/YYYY HH24:MI:SS");
+                        }
+                    } else {
+                        PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Transaccion no confirmada en la plataforma, No se encuentra activa para confirmacion", true, false);
+                        logger.error("Transaccion no confirmada en la plataforma, No se encuentra activa para confirmacion");
+                    }
+                } else {
+                    PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "El Proceso de finalizacion de pago ha finalizado con estado " + transaccionPasarela.getEstado(), true, false);
+                    logger.error("Error validando informacion procedente de pasarela, la pasarela ha retornado " + transaccionPasarela.getEstado() + " para el cus " + cus);
+                }
+            } else {
+                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero no se ha encontrado la Liquidacion con Referencia " + cus, true, false);
+                logger.error("Error validando informacion procedente de pasarela, causado por, no se ha encontrado la radicacion con codigo radicacion " + cus);
+            }
+        } catch (Exception e) {
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero no fue posible validar la informacion de la pasarela, por favor intente nuevamente o contacte al administrador del sistema.", true, false);
+            logger.error("Error realizando validacion de pasarela de pagos, causado por " + e);
+        }
+    }
+
+    /**
      * Buscar radicacion segun filtro.
      */
-    public void buscarRadicacion() {
+    public
+            void buscarRadicacion() {
         try {
             if (getTipoBusqueda().equals("L")) {
                 List<MarRadicaciones> radiaciones = (List<MarRadicaciones>) genericDAOBean.findAllByColumn(MarRadicaciones.class, "radLiquidacion", getCodigoBusqueda(), true, "radId desc");
@@ -122,7 +211,8 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
             setTipoPago(ttPago);
             MarTransacciones transVerificacion = (MarTransacciones) genericDAOBean.findByColumn(MarTransacciones.class, "radId", getRadicacion());
 
-            if (transVerificacion != null) {
+            if (transVerificacion
+                    != null) {
                 if (transVerificacion.getTraEstado().equals("T")) {
                     setTransaccion(transVerificacion);
                     PrimeFacesContext.execute("PF('dialogTransaccion').show();");
@@ -175,9 +265,9 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
 
                 if (getTipoPago().equals("PSE")) {
                     // Logica para pagos en linea.
-                    String urlServletRedireccionPasarela = ConstantesUtils.cargarConstante("PSE-URL-REDIRECCION");
+                    String urlServletRedireccionPasarela = ConstantesUtils.cargarConstante("WS-URL-PASARELA-WEB");
                     // nemthys pasarela
-                    urlServletRedireccionPasarela += "?codigo=" + getTransaccion().getTraId();
+                    urlServletRedireccionPasarela += "?CODIGO=" + getTransaccion().getTraId();
                     // ponemos en session temporal
                     SessionUtils.asignarValor("TRANSACCION_TEMPORAL", getTransaccion().getTraId());
                     // Redireccionar a la pasarela de pagos.

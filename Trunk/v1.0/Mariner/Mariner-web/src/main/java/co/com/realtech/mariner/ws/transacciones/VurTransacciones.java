@@ -2,6 +2,8 @@ package co.com.realtech.mariner.ws.transacciones;
 
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFasesEstadosDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
+import co.com.realtech.mariner.model.ejb.ws.pasarela.PSEWSConsumerBeanLocal;
+import co.com.realtech.mariner.model.ejb.ws.pasarela.mappers.Transaccion;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarTransacciones;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
@@ -35,6 +37,9 @@ public class VurTransacciones {
 
     @EJB(beanName = "RadicFasesEstadosDAOBean")
     private RadicFasesEstadosDAOBeanLocal radicFasesEstadosDAOBean;
+
+    @EJB(beanName = "PSEWSConsumerBean")
+    protected PSEWSConsumerBeanLocal pseWSConsumerBean;
 
     /**
      * COnsulta transaccion para derechos de registro en la plataforma.
@@ -142,14 +147,16 @@ public class VurTransacciones {
      * Metodo de confirmacion de transaccion proveniente de la pasarela de
      * pagos.
      *
+     * @param cus
      * @param codigoTransaccion
      * @param claveConfirmacion
      * @param fechaPago
      * @param valorPagado
+     * @param referenciaCodigoBarras
      * @return
      */
     @WebMethod(operationName = "confirmarTransaccion")
-    public VURTransaccionConfirmacion confirmarTransaccion(@WebParam(name = "codigoTransaccion") Long codigoTransaccion, @WebParam(name = "claveConfirmacion") String claveConfirmacion, @WebParam(name = "fechaPago") String fechaPago, @WebParam(name = "valorPagado") Long valorPagado) {
+    public VURTransaccionConfirmacion confirmarTransaccion(@WebParam(name = "cus") String cus, @WebParam(name = "codigoTransaccion") Long codigoTransaccion, @WebParam(name = "claveConfirmacion") String claveConfirmacion, @WebParam(name = "fechaPago") String fechaPago, @WebParam(name = "valorPagado") Long valorPagado, @WebParam(name = "referenciaCodigoBarras") String referenciaCodigoBarras) {
         VURTransaccionConfirmacion confirmacion = new VURTransaccionConfirmacion();
         try {
             String claveConfConstante = ConstantesUtils.cargarConstante("WS-PASARELA-CODIGO-CONFIRMACION");
@@ -159,38 +166,54 @@ public class VurTransacciones {
 
                 if (transaccionBD != null) {
                     if (transaccionBD.getTraEstado().equals("T")) {
-                        // 
-                        // Verificamos que la radicacion siga en estado pendiente de pago.
-                        MarRadicacionesFasesEstados estado = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(transaccionBD.getRadId());
+                        // Verificamos la transaccion en la pasarela de pagos
+                        String codigoEmpresa = ConstantesUtils.cargarConstante("WS-PASARELA-CODIGO-EMPRESA");
+                        String cusPruebas = ConstantesUtils.cargarConstante("WS-PASARELA-CUS-PRUEBAS");
+                        String pasarelaModoPruebas = ConstantesUtils.cargarConstante("WS-PASARELA-MODO-PRUEBAS");
+                        Transaccion transaccionPasarela = pseWSConsumerBean.consultarTransaccion(pasarelaModoPruebas.equals("S") ? cusPruebas : cus, codigoEmpresa);
 
-                        if (estado.getFesId().getFesCodigo().equals("R-A")) {
-                            // verificamos la fecha de la transaccion sea dd/MM/yyyy hh:mm:ss
-                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+                        System.out.println("En pasarela " + transaccionPasarela.getEstado());
+                        if (transaccionPasarela.getEstado().equalsIgnoreCase("OK")) {
+                            // Verificamos que la radicacion siga en estado pendiente de pago.
+                            MarRadicacionesFasesEstados estado = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(transaccionBD.getRadId());
 
-                            try {
-                                // Guardamos la nueva fase estado del a transaccion.
-                                BigDecimal salida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", transaccionBD.getRadId(), "P-A", "A", transaccionBD.getUsuId(), "", null);
+                            if (estado.getFesId().getFesCodigo().equals("R-A")) {
+                                // verificamos la fecha de la transaccion sea dd/MM/yyyy hh:mm:ss
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-                                if (salida.intValue() != -999) {
-                                    transaccionBD.setTraFechaFinalizacion(sdf.parse(fechaPago));
-                                    transaccionBD.setTraValorPagado(new BigInteger(valorPagado.toString()));
-                                    transaccionBD.setTraFechaFinalizacion(new Date());
-                                    transaccionBD.setTraEstado("A");
-                                    genericDAOBean.merge(transaccionBD);
-                                    confirmacion.setEstado("OK");
-                                    confirmacion.setLog(new VURTransaccionLogSDO("OK", "Transaccion confirmada correctamente en la plataforma", "Transaccion confirmada correctamente en la plataforma"));
-                                } else {
+                                try {
+                                    // Guardamos la nueva fase estado del a transaccion.
+                                    BigDecimal salida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", transaccionBD.getRadId(), "P-A", "A", transaccionBD.getUsuId(), "", null);
+
+                                    if (salida.intValue() != -999) {
+                                        try {
+                                            transaccionBD.setTraFechaFinalizacion(sdf.parse(transaccionPasarela.getFechaFin()));
+                                        } catch (Exception e) {
+                                            transaccionBD.setTraFechaFinalizacion(new Date());
+                                        }
+                                        transaccionBD.setTraReferenciaRecibo(referenciaCodigoBarras);
+                                        transaccionBD.setTraEstado("A");
+                                        transaccionBD.setTraCus(transaccionPasarela.getCus());
+                                        transaccionBD.setTraValorPagadoPse(transaccionPasarela.getValor());
+
+                                        genericDAOBean.merge(transaccionBD);
+                                        confirmacion.setEstado("OK");
+                                        confirmacion.setLog(new VURTransaccionLogSDO("OK", "Transaccion confirmada correctamente en la plataforma", "Transaccion confirmada correctamente en la plataforma"));
+                                    } else {
+                                        confirmacion.setEstado("ERROR");
+                                        confirmacion.setLog(new VURTransaccionLogSDO("ERROR", "Transaccion no confirmada en la plataforma", "Ocurrio un error al confirmar la transaccion en la plataforma, no se ha podido agregar la fase estado."));
+                                    }
+                                } catch (MarinerPersistanceException e) {
                                     confirmacion.setEstado("ERROR");
-                                    confirmacion.setLog(new VURTransaccionLogSDO("ERROR", "Transaccion no confirmada en la plataforma", "Ocurrio un error al confirmar la transaccion en la plataforma, no se ha podido agregar la fase estado."));
+                                    confirmacion.setLog(new VURTransaccionLogSDO("ERROR", "Transaccion no confirmada en la plataforma", "Se ha producido un error al intentar confirmar la transaccion en la base de datos."));
                                 }
-                            } catch (MarinerPersistanceException | ParseException e) {
+                            } else {
                                 confirmacion.setEstado("ERROR");
-                                confirmacion.setLog(new VURTransaccionLogSDO("ERROR", "Transaccion no confirmada en la plataforma, error fecha", "El parametro fecha de la transaccion debe estar en formato DD/MM/YYYY HH24:MI:SS"));
+                                confirmacion.setLog(new VURTransaccionLogSDO("ERROR", "Transaccion no confirmada en la plataforma, No se encuentra activa para confirmacion", "Ocurrio un error al confirmar la transaccion en la plataforma, la transaccion seleccionada no se encuentra en la Fase-Estado pendiente para pago"));
                             }
-
                         } else {
                             confirmacion.setEstado("ERROR");
-                            confirmacion.setLog(new VURTransaccionLogSDO("ERROR", "Transaccion no confirmada en la plataforma, No se encuentra activa para confirmacion", "Ocurrio un error al confirmar la transaccion en la plataforma, la transaccion seleccionada no se encuentra en la Fase-Estado pendiente para pago"));
+                            confirmacion.setLog(new VURTransaccionLogSDO("ERROR", "Transaccion no confirmada en la plataforma, pasarela de pagos retorna " + transaccionPasarela.getEstado(), "Ocurrio un error al confirmar la transaccion el servicio web de la pasarela retorna " + transaccionPasarela.getEstado()));
                         }
                     } else {
                         confirmacion.setEstado("ERROR");
@@ -217,7 +240,7 @@ public class VurTransacciones {
      * @param transaccion
      * @return
      */
-    public static Date extrarDateLimitFromTransaction(MarTransacciones transaccion) {
+    private static Date extrarDateLimitFromTransaction(MarTransacciones transaccion) {
         Date fecha;
         try {
             String fechaString = transaccion.getRadId().getMarRadicacionesDetallesSap().getRdeFechaLimite();
