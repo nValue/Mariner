@@ -20,7 +20,7 @@ public interface RadicFasesEstadosDAOBeanLocal {
 
     
     /**
-     * Obtiene las radicaciones-fases-estados asociadas a un usuario, una fase-estado y un rango de fechas(Opcionales)
+     * Obtiene las radicaciones-fases-estados asociadas a un usuario, una fase-estado última y un rango de fechas(Opcionales)
      * @param usuario
      * @param faseEstado
      * @param fechaIn
