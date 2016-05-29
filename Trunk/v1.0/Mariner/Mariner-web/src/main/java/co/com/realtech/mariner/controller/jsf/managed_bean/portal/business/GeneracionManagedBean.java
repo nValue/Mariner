@@ -15,6 +15,7 @@ import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
+import co.com.realtech.mariner.util.sap_files.SAPFilesUtils;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -47,20 +48,20 @@ public class GeneracionManagedBean extends GenericManagedBean {
     private MarRadicacionesFasesEstados radicacionFaseEstProcesadaSel;
 
     private List<MarRadicacionesFasesEstados> radicacionesFasesEstados;
-    
+
     private String codigoLiquidacion;
     private DetalleLiquidacion detalleLiquidacion;
     private List<DetalleLiquidacion> detallesLiquidaciones;
-    
+
     private List<MarRechazosCausales> rechazos;
     private MarRechazosCausales rechazoSel;
-    
+
     private String observaciones;
     private Date fechaFiltroInic;
     private Date fechaFiltroFin;
-    
+
     private String numeroLiquidacion;
-    
+
     private SAPRadicacionesLogicOperations sapRadicacionesLogicOperations;
     private SAPListadoLiquidacionesLogicOperations sapLLO;
     private Date fechaLiquidaciones;
@@ -74,14 +75,14 @@ public class GeneracionManagedBean extends GenericManagedBean {
         obtenerRadicacionesPendientes();
         obtenerRechazos();
     }
-    
+
     /**
      * Obtiene los rechazos disponibles en la plataforma.
      */
-    public void obtenerRechazos(){
+    public void obtenerRechazos() {
         try {
-            rechazos = (List<MarRechazosCausales>)genericDAOBean.loadAllForEntity(MarRechazosCausales.class, "rcaId");
-            if(!rechazos.isEmpty()){
+            rechazos = (List<MarRechazosCausales>) genericDAOBean.loadAllForEntity(MarRechazosCausales.class, "rcaId");
+            if (!rechazos.isEmpty()) {
                 rechazoSel = rechazos.get(0);
             }
         } catch (Exception e) {
@@ -90,15 +91,14 @@ public class GeneracionManagedBean extends GenericManagedBean {
             logger.error(msj, e);
         }
     }
-    
+
     /**
      * Obtiene las radicaciones asignadas al usuario.
      */
     public void obtenerRadicacionesPendientes() {
         try {
-            System.out.println("ObteniendoPdtes");
             radicacionesUsuario = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'G-P', 'R-R', 'G-S'", usuarioSesion);
-            if(!radicacionesUsuario.isEmpty()){
+            if (!radicacionesUsuario.isEmpty()) {
                 radicacionUsuarioSel = radicacionesUsuario.get(0);
                 obtenerFasesEstadosDeRadicacion();
             }
@@ -226,7 +226,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo incorrecto", "No se puede crear el estado rechazo para la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
                 return;
             }
-            MarRadicacionesFasesEstados rfeNuevo = (MarRadicacionesFasesEstados)genericDAOBean.findByColumn(MarRadicacionesFasesEstados.class, "rfeId.rfeId", BDsalida);
+            MarRadicacionesFasesEstados rfeNuevo = (MarRadicacionesFasesEstados) genericDAOBean.findByColumn(MarRadicacionesFasesEstados.class, "rfeId.rfeId", BDsalida);
             rfeNuevo.setRcaId(rechazoSel);
             genericDAOBean.merge(rfeNuevo);
             obtenerRadicacionesPendientes();
@@ -241,31 +241,31 @@ public class GeneracionManagedBean extends GenericManagedBean {
      */
     public void obtenerSAP() {
         try {
-            
+
             MarRadicacionesFasesEstados rfEst = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radicacionUsuarioSel);
-            if(rfEst.getFesId().getFesCodigo().equals("G-A")){
+            if (rfEst.getFesId().getFesCodigo().equals("G-A")) {
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso validado", "La radicación actual ya ha sido cargada y validada correctamente desde el sistema SAP, puede continuar con otros procesos.", true, false);
-            }else if(rfEst.getFesId().getFesCodigo().equals("G-S")){
+            } else if (rfEst.getFesId().getFesCodigo().equals("G-S")) {
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso en espera", "El proceso aún se encuentra en espera del cargue de información por parte de la plataforma SAP.", true, false);
             }
-            
+
             /*
-            //Valida que haya una respuesta por parte del WS en SAP
-            if (true) {
-                //Si no es vació hay que buscar otra validación para confirmar que los datos son correctos.
-                BigDecimal BDsalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionUsuarioSel.getRadId(),
-                        "G-A", "A", usuarioSesion.getUsuId(), observaciones, null);
-                Integer salida = BDsalida.intValue();
-                if (salida == -999) {
-                    PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo incorrecto", "No se puede crear el estado rechazo para la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
-                    return;
-                } else {
-                    obtenerRadicacionesPendientes();
-                    PrimeFacesPopup.lanzarDialog(Effects.Slide, "Información Obtenida", "La información fue cargada correctamente a la radicación por parte del sistema SAP", true, false);
-                }
-            } else {
-                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Información no extraida", "No hay datos de retorno por parte de SAP, verifique la creación correcta del proceso en dicha plataforma e intente de nuevo", true, false);
-            }*/
+             //Valida que haya una respuesta por parte del WS en SAP
+             if (true) {
+             //Si no es vació hay que buscar otra validación para confirmar que los datos son correctos.
+             BigDecimal BDsalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionUsuarioSel.getRadId(),
+             "G-A", "A", usuarioSesion.getUsuId(), observaciones, null);
+             Integer salida = BDsalida.intValue();
+             if (salida == -999) {
+             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo incorrecto", "No se puede crear el estado rechazo para la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
+             return;
+             } else {
+             obtenerRadicacionesPendientes();
+             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Información Obtenida", "La información fue cargada correctamente a la radicación por parte del sistema SAP", true, false);
+             }
+             } else {
+             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Información no extraida", "No hay datos de retorno por parte de SAP, verifique la creación correcta del proceso en dicha plataforma e intente de nuevo", true, false);
+             }*/
         } catch (Exception e) {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Información no extraida", "No se puede obtener la información de SAP, causado por " + e, true, false);
             logger.error("No se puede obtener la información de SAP, causado por " + e, e);
@@ -273,22 +273,24 @@ public class GeneracionManagedBean extends GenericManagedBean {
     }
 
     /**
-     * Pregunta si la radicacion actual es un rechazo (Sirve para colocar el (R) en la lista de los pendientes)
+     * Pregunta si la radicacion actual es un rechazo (Sirve para colocar el (R)
+     * en la lista de los pendientes)
+     *
      * @param radSel
-     * @return 
+     * @return
      */
-    public String esRechazo(MarRadicaciones radSel){
+    public String esRechazo(MarRadicaciones radSel) {
         String valor = radSel.getRadNumero();
         try {
             MarRadicacionesFasesEstados ultimo = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radSel);
-            if(ultimo.getFesId().getFesCodigo().equals("R-R")){
+            if (ultimo.getFesId().getFesCodigo().equals("R-R")) {
                 valor = "(R) " + valor;
             }
         } catch (Exception e) {
         }
         return valor;
     }
-    
+
     /**
      * Muestra el detalle de una radicación vieja en pantalla.
      */
@@ -316,78 +318,85 @@ public class GeneracionManagedBean extends GenericManagedBean {
         }
         return false;
     }
-    
+
     /**
      * Limpia toda la información de búsqueda en SAP.
      */
-    public void limpiarInfoBusqSAP(){
+    public void limpiarInfoBusqSAP() {
         numeroLiquidacion = "";
         codigoLiquidacion = "";
-        detalleLiquidacion= null;
-        if(usuarioSesion.getUsuAliasSap() == null || usuarioSesion.getUsuAliasSap().isEmpty()){
+        detalleLiquidacion = null;
+        if (usuarioSesion.getUsuAliasSap() == null || usuarioSesion.getUsuAliasSap().isEmpty()) {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Usuario SAP no válido", "El usuario actual no tiene configurado un usuario de SAP para obtener los datos pendientes de liquidaciones, por favor configúrelo.", true, false);
             return;
         }
-        
+
         sapLLO = SAPListadoLiquidacionesLogicOperations.create();
-        if(obtenerLiqPendientes()){
+        if (obtenerLiqPendientes()) {
             PrimeFacesContext.execute("PF('dialogLiquidacion').show()");
         }
     }
-    
+
     /**
-     * Obtiene las liquidaciones pendientes para el usuario y el día seleccionado.
-     * @return 
+     * Obtiene las liquidaciones pendientes para el usuario y el día
+     * seleccionado.
+     *
+     * @return
      */
-    public boolean obtenerLiqPendientes(){
+    public boolean obtenerLiqPendientes() {
         try {
             codigoLiquidacion = "";
-            detalleLiquidacion= null;
+            detalleLiquidacion = null;
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-            detallesLiquidaciones = sapLLO.obtenerLiquidacionesSAPByUsuario(sdf.format(fechaLiquidaciones),usuarioSesion.getUsuAliasSap());
+            detallesLiquidaciones = sapLLO.obtenerLiquidacionesSAPByUsuario(sdf.format(fechaLiquidaciones), usuarioSesion.getUsuAliasSap());
             return true;
         } catch (Exception e) {
-            String msj = "No se pueden obtener las liquidaciones pendientes para el usuario, causado por : " + e;
+            String msj = "No se pueden obtener las liquidaciones pendientes para el usuario, por favor verifique la conexion con SAP";
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Liquidaciones error", msj, true, false);
             logger.error(msj, e);
             return false;
         }
     }
 
-    
     /**
      * Llama al servicio web de SAP para extraer todos los datos.
      */
-    public void obtenerInformacionSAP(){
-        if(getCodigoLiquidacion().isEmpty()){
+    public void obtenerInformacionSAP() {
+        if (getCodigoLiquidacion().isEmpty()) {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Liquidación requerida", "Debe seleccionar un número de liquidación para poder validarla en SAP", true, false);
-        }else{
+        } else {
             sapRadicacionesLogicOperations = SAPRadicacionesLogicOperations.create();
             try {
-                setDetalleLiquidacion(sapRadicacionesLogicOperations.consultarLiquidacionSAP(getCodigoLiquidacion()));    
+                setDetalleLiquidacion(sapRadicacionesLogicOperations.consultarLiquidacionSAP(getCodigoLiquidacion()));
             } catch (Exception e) {
                 String msj = "No se pueden extraer los datos de SAP, causado por: " + e;
-                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error en SAP", msj , true, false);
+                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error en SAP", msj, true, false);
                 logger.error(msj, e);
-            }   
+            }
         }
     }
+
     /**
      * Dada la información de detalle liquidación, la vincula al proceso actual.
      */
-    public void vincularInformacionSAP(){
-        EntidadLiquidacionResultado salida=sapRadicacionesLogicOperations.vincularRadicacionSAP(radicacionUsuarioSel, getCodigoLiquidacion());
-        if(salida.getEstado().equals("OK")){
-            radicacionUsuarioSel=null;
+    public void vincularInformacionSAP() {
+        EntidadLiquidacionResultado salida = sapRadicacionesLogicOperations.vincularRadicacionSAP(radicacionUsuarioSel, getCodigoLiquidacion());
+        if (salida.getEstado().equals("OK")) {
+            String salidaArchivos = SAPFilesUtils.vincularArchivosSAP(radicacionUsuarioSel.getRadId());
+            radicacionUsuarioSel = null;
             obtenerRadicacionesPendientes();
             PrimeFacesContext.execute("PF('dialogLiquidacion').hide();");
-            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso finalizado", "Vinculación realizada correctamente y cambiada a validación por aprobador.", true, false);
-        }
-        else{
+            if (salidaArchivos.equals("OK")) {
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso finalizado", "Vinculación realizada correctamente y cambiada a validación por aprobador.", true, false);
+            } else {
+                logger.error(salidaArchivos);
+                PrimeFacesPopup.lanzarDialog(Effects.Pulsate, "Notificacion", "Vinculación realizada correctamente y cambiada a validación por aprobador, el archivo de SAP no se ha podido vincular.", true, false);
+            }
+        } else {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error vinculacion", salida.getLog().getMensaje(), true, false);
-        }        
+        }
     }
-    
+
     public List<MarRadicaciones> getRadicacionesUsuario() {
         return radicacionesUsuario;
     }
@@ -515,7 +524,5 @@ public class GeneracionManagedBean extends GenericManagedBean {
     public void setDetalleLiquidacion(DetalleLiquidacion detalleLiquidacion) {
         this.detalleLiquidacion = detalleLiquidacion;
     }
-    
-    
 
 }

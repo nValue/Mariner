@@ -14,16 +14,13 @@ import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.model.logic.pagos.SAPPagosLogicOperations;
 import co.com.realtech.mariner.util.cdf.CDFFileDispatcher;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
-import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import co.com.realtech.mariner.util.session.SessionUtils;
-import co.com.realtech.mariner.ws.sdo.transacciones.VURTransaccionLogSDO;
+import co.com.realtech.mariner.util.string.BusinessStringUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -114,8 +111,8 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
 
             System.out.println("En pasarela " + transaccionPasarela.getEstado());
             // cargamos la informacion de la transaccion.
-            BigDecimal referencia = new BigDecimal(transaccionPasarela.getReferencia());
-            setRadicacion((MarRadicaciones) genericDAOBean.findByColumn(MarRadicaciones.class, "radId", referencia));
+            String referencia = BusinessStringUtils.convertNumeroLiquidacion(transaccionPasarela.getReferencia());
+            setRadicacion((MarRadicaciones) genericDAOBean.findByColumn(MarRadicaciones.class, "radLiquidacion", referencia));
 
             if (getRadicacion() != null) {
                 if (transaccionPasarela.getEstado().equalsIgnoreCase("OK")) {
@@ -167,16 +164,16 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                             logger.error("Transaccion no confirmada en la plataforma, error fecha El parametro fecha de la transaccion debe estar en formato DD/MM/YYYY HH24:MI:SS");
                         }
                     } else {
-                        PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Transaccion no confirmada en la plataforma, No se encuentra activa para confirmacion", true, false);
-                        logger.error("Transaccion no confirmada en la plataforma, No se encuentra activa para confirmacion");
+                        PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Transaccion no confirmada en la plataforma, No se encuentra activa para confirmacion (R-A)", true, false);
+                        logger.error("Transaccion no confirmada en la plataforma, No se encuentra activa para confirmacion en estado R-A");
                     }
                 } else {
                     PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "El Proceso de finalizacion de pago ha finalizado con estado " + transaccionPasarela.getEstado(), true, false);
                     logger.error("Error validando informacion procedente de pasarela, la pasarela ha retornado " + transaccionPasarela.getEstado() + " para el cus " + cus);
                 }
             } else {
-                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero no se ha encontrado la Liquidacion con Referencia " + cus, true, false);
-                logger.error("Error validando informacion procedente de pasarela, causado por, no se ha encontrado la radicacion con codigo radicacion " + cus);
+                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero no se ha encontrado la Liquidacion con Referencia " + referencia, true, false);
+                logger.error("Error validando informacion procedente de pasarela, causado por, no se ha encontrado la radicacion con Referencia " + referencia);
             }
         } catch (Exception e) {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero no fue posible validar la informacion de la pasarela, por favor intente nuevamente o contacte al administrador del sistema.", true, false);
@@ -241,7 +238,7 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                 setTransaccion(new MarTransacciones());
                 getTransaccion().setTraTipoPago(ttPago);
                 getTransaccion().setRadId(getRadicacion());
-                getTransaccion().setTraReferencia(getRadicacion().getRadId().toString());
+                getTransaccion().setTraReferencia(getRadicacion().getRadLiquidacion());
                 getTransaccion().setTraValor(getRadicacion().getRadValorLiq());
                 getTransaccion().setTraCuantia(getRadicacion().getRadCuantia());
                 getTransaccion().setTraFechaInicio(new Date());

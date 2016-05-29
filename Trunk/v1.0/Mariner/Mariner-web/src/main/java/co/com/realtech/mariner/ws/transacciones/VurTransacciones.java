@@ -32,13 +32,13 @@ import javax.jws.WebParam;
  */
 @WebService(serviceName = "VurTransacciones")
 public class VurTransacciones {
-    
+
     @EJB(beanName = "GenericDAOBean")
     protected GenericDAOBeanLocal genericDAOBean;
-    
+
     @EJB(beanName = "RadicFasesEstadosDAOBean")
     private RadicFasesEstadosDAOBeanLocal radicFasesEstadosDAOBean;
-    
+
     @EJB(beanName = "PSEWSConsumerBean")
     protected PSEWSConsumerBeanLocal pseWSConsumerBean;
 
@@ -53,7 +53,7 @@ public class VurTransacciones {
         VURTransaccion transaccion = new VURTransaccion();
         try {
             MarTransacciones transaccionBD = (MarTransacciones) genericDAOBean.findByColumn(MarTransacciones.class, "traId", new BigDecimal(codigoTransaccion));
-            
+
             if (transaccionBD != null) {
                 if (transaccionBD.getTraEstado().equalsIgnoreCase("T")) {
                     transaccion.setEstado("OK");
@@ -104,12 +104,13 @@ public class VurTransacciones {
     public VURTransaccion consultarTransaccionPorReferencia(@WebParam(name = "referencia") String referencia) {
         VURTransaccion transaccion = new VURTransaccion();
         try {
-            MarTransacciones transaccionBD = (MarTransacciones) genericDAOBean.findByColumn(MarTransacciones.class, "traReferencia", referencia);
-            
+            String codigoLiquidacion = BusinessStringUtils.convertNumeroLiquidacion(referencia);
+            MarTransacciones transaccionBD = (MarTransacciones) genericDAOBean.findByColumn(MarTransacciones.class, "traReferencia", codigoLiquidacion);
+
             if (transaccionBD != null) {
                 if (transaccionBD.getTraEstado().equalsIgnoreCase("T")) {
                     transaccion.setEstado("OK");
-                    transaccion.setLog(new VURTransaccionLogSDO("OK", "Transaccion con Referencia " + referencia + " encontrada en la plataforma VUR Valle del Cauca"));
+                    transaccion.setLog(new VURTransaccionLogSDO("OK", "Transaccion con Referencia " + codigoLiquidacion + " encontrada en la plataforma VUR Valle del Cauca"));
                     transaccion.setApellidos(transaccionBD.getTraApellidos());
                     transaccion.setNombres(transaccionBD.getTraNombres());
                     transaccion.setTipoDocumento(transaccionBD.getTdcId().getTdcSigla());
@@ -131,7 +132,7 @@ public class VurTransacciones {
                     transaccion.setCodigoServicioACH(ConstantesUtils.cargarConstante("WS-PASARELA-ACH"));
                 } else {
                     transaccion.setEstado("ERROR");
-                    transaccion.setLog(new VURTransaccionLogSDO("ERROR", "La transaccion con referencia " + referencia + " no se encuentra en un estado pendiente por pago"));
+                    transaccion.setLog(new VURTransaccionLogSDO("ERROR", "La transaccion con referencia " + codigoLiquidacion + " no se encuentra en un estado pendiente por pago"));
                 }
             } else {
                 transaccion.setEstado("ERROR");
@@ -159,25 +160,25 @@ public class VurTransacciones {
         VURTransaccionConfirmacion confirmacion = new VURTransaccionConfirmacion();
         try {
             String claveConfConstante = ConstantesUtils.cargarConstante("WS-PASARELA-CODIGO-CONFIRMACION");
-            
+
             if (claveConfConstante.equals(claveConfirmacion)) {
                 String codigoLiquidacion = BusinessStringUtils.convertNumeroLiquidacion(referenciaCodigoBarras);
                 MarRadicaciones radicacion = (MarRadicaciones) genericDAOBean.findByColumn(MarRadicaciones.class, "radLiquidacion", codigoLiquidacion);
                 MarTransacciones transaccionBD = (MarTransacciones) genericDAOBean.findByColumn(MarTransacciones.class, "radId", radicacion);
-                
+
                 if (transaccionBD != null) {
                     if (transaccionBD.getTraEstado().equals("T")) {
                         // Verificamos que la radicacion siga en estado pendiente de pago.
                         MarRadicacionesFasesEstados estado = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radicacion);
-                        
+
                         if (estado.getFesId().getFesCodigo().equals("R-A")) {
                             // verificamos la fecha de la transaccion sea dd/MM/yyyy HH:mm:ss
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                            
+
                             try {
                                 // Guardamos la nueva fase estado del a transaccion.
                                 BigDecimal salida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacion, "P-A", "A", transaccionBD.getUsuId(), "", null);
-                                
+
                                 if (salida.intValue() != -999) {
                                     try {
                                         transaccionBD.setTraFechaFinalizacion(sdf.parse(fechaPago));
@@ -199,11 +200,11 @@ public class VurTransacciones {
                                         transaccionBD.setTraPagoSapEstado("-1");
                                         transaccionBD.setTraPagoSapMensaje("Error interno intentando confirmar transaccion en SAP, causado por " + e);
                                     }
-                                    
+
                                     transaccionBD.setTraReferenciaRecibo(referenciaCodigoBarras);
                                     transaccionBD.setTraEstado("A");
                                     transaccionBD.setTraValorPagadoPse(valorPagado.toString());
-                                    
+
                                     genericDAOBean.merge(transaccionBD);
                                     confirmacion.setEstado("OK");
                                     confirmacion.setLog(new VURTransaccionLogSDO("OK", "Transaccion confirmada correctamente en la plataforma", "Transaccion confirmada correctamente en la plataforma"));

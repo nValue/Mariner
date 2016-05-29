@@ -79,6 +79,20 @@
                             </h:form>
                         </div>       
                     </p:tab>
+                    <p:tab title="WSSAP - updateStatus">
+                        <div style="padding: 12px;padding-top: 0px !important;">
+                            <h:form id="formSAPUpdateStatus">
+                                <h:panelGrid columns="6">
+                                    <h:outputLabel value="Liquidacion"/>
+                                    <p:inputText value="#{wSSOAPCambioEstadoManagedBean.liquidacion}" required="true" style="width: 180px;"/>
+                                    <h:outputLabel value="Estado"/>
+                                    <p:inputText value="#{wSSOAPCambioEstadoManagedBean.estado}" required="true" style="width: 180px;"/>
+                                    <p:commandButton value="Ejecutar" update="@form" action="#{wSSOAPCambioEstadoManagedBean.ejecutarCambioEstado()}" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();"/>
+                                </h:panelGrid>
+                                <hr/>
+                            </h:form>
+                        </div>                            
+                    </p:tab>
                 </p:tabView>
             </div>
         </div>        
