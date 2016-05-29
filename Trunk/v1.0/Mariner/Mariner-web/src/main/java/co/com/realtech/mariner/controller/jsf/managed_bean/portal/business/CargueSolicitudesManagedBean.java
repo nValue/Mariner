@@ -159,7 +159,7 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
         try {
             radicacionesFasesEstProcesadas = radicFasesEstadosDAOBean.obtenerRadicFasesEstadosPorUsuarioFaseEstadoYFechas(usuarioSesion, null, fechaFiltroInic, fechaFiltroFin);
             if (!radicacionesFasesEstProcesadas.isEmpty()) {
-                radicacionFaseEstProcesadaSel = radicacionesFasesEstProcesadas.get(0);
+                radicacionFaseEstProcesadaSel = radicacionesFasesEstProcesadas.get(radicacionesFasesEstProcesadas.size() - 1);
             }
         } catch (Exception e) {
             logger.error("Error obteniendo las radicaciones procesadas, causado por : " + e, e);

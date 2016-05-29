@@ -20,7 +20,7 @@
             <div class="contenidoPrinc" align="center">
                 <div class="descripcion" align="center">
                     <div class="descText">
-                        Para ver toda la información de cada radicación pulse el botón "Boleta Fiscal", una vez confirme que la radicación es válida seleccione la opción "Aprobar", de lo contrario "Rechazar"
+                        Para obtener una nueva liquidación pulse el botón "Obtener liquidación". Después de ver toda la información general, puede ver el detalle en el botón "Boleta Fiscal", una vez confirme que la radicación es válida seleccione la opción "Aprobar", de lo contrario "Rechazar"
                     </div>
                 </div>
                 
@@ -30,7 +30,7 @@
                         <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" converter="MarRadicacionesConverter" value="#{revisionManagedBean.radicacionPendienteSel}">
                             <p:ajax listener="#{revisionManagedBean.obtenerFasesEstadosDeRadicacion()}" update="formTurnos" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                             <f:selectItem itemLabel=" - " itemValue="" />
-                            <f:selectItems value="#{revisionManagedBean.radicacionesPendientes}" var="rads" itemLabel="#{rads.radNumero}" itemValue="#{rads}"/>
+                            <f:selectItems value="#{revisionManagedBean.radicacionesPendientes}" var="rads" itemLabel="#{rads.radNumero} - #{rads.radLiquidacion}" itemValue="#{rads}"/>
                         </p:selectOneMenu>
                         <p:commandButton style="vertical-align: top" value="Obtener Liquidación" action="#{revisionManagedBean.asignarNuevaRadicacion()}" update="formTurnos" process="@this" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                         <p:commandButton style="vertical-align: top" value="Ver Historial" action="#{revisionManagedBean.obtenerHistorialRadicaciones()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogHistorial').show()" update="modalHistorial" process="@this"/>
@@ -292,7 +292,7 @@
                 </div>
                 <div class="contLabelText">
                     <h:outputLabel class="labelLittle" value="Valor Interéses Mora"/>
-                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeTintMora}" />
+                    <h:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeTintMora}" converter="CurrencyConverter"/>
                 </div>
                 <div class="contLabelText">
                     <h:outputLabel class="labelLittle" value="Valor Dscto. Intereses"/>
@@ -316,11 +316,11 @@
                 </div>
                 <div class="contLabelText">
                     <h:outputLabel class="labelLittle" value="Valor Total"/>
-                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeTotal}" />
+                    <h:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeTotal}" converter="CurrencyConverter" />
                 </div>
                 <div class="contLabelText">
                     <h:outputLabel class="labelLittle" value="Valor Total-Descuento"/>
-                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeTotalDesc}" />
+                    <h:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeTotalDesc}" converter="CurrencyConverter" />
                 </div>
                 <div align="center" style="display: block; margin: 20px">
                     <p:commandButton value="Cerrar" oncomplete="PF('dialogBoleta').hide()" />

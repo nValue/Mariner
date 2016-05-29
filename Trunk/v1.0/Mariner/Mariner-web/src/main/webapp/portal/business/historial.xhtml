@@ -154,11 +154,11 @@
                 </p:dataTable>
                 <div align="center" style="margin: 20px;">
                     <p:button style="margin: 10px;" value="Boleta Fiscal" target="_new" href="/static/fileDispatcher/#{historialManagedBean.radicacionSel.arcIdBoletaFiscal.arcId}-#{historialManagedBean.radicacionSel.arcIdBoletaFiscal.arcHash}.#{historialManagedBean.radicacionSel.arcIdBoletaFiscal.arcExtension}"
-                                          rendered="#{generacionManagedBean.radicacionUsuarioSel.escId.arcId != null}"/>
+                                          rendered="#{historialManagedBean.radicacionSel.escId.arcId != null}"/>
                     <p:button style="margin: 10px;" value="Recibo de Pago" target="_new" href="/static/fileDispatcher/#{historialManagedBean.radicacionSel.arcIdReciboPago.arcId}-#{historialManagedBean.radicacionSel.arcIdReciboPago.arcHash}.#{historialManagedBean.radicacionSel.arcIdReciboPago.arcExtension}"
-                                          rendered="#{generacionManagedBean.radicacionUsuarioSel.escId.arcId != null}"/>
+                                          rendered="#{historialManagedBean.radicacionSel.escId.arcId != null}"/>
                     <p:button style="margin: 10px;" value="Escritura" target="_new" href="/static/fileDispatcher/#{historialManagedBean.radicacionSel.escId.arcId.arcId}-#{historialManagedBean.radicacionSel.escId.arcId.arcHash}.#{historialManagedBean.radicacionSel.escId.arcId.arcExtension}"
-                                          rendered="#{generacionManagedBean.radicacionUsuarioSel.escId.arcId != null}"/>
+                                          rendered="#{historialManagedBean.radicacionSel.escId.arcId != null}"/>
                     <p:commandButton value="Cerrar" oncomplete="PF('dialogDetalle').hide()"/>
                 </div>
             </h:form>

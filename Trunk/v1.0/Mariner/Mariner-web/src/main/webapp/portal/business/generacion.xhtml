@@ -20,7 +20,7 @@
             <div class="contenidoPrinc" align="center">
                 <div class="descripcion" align="center">
                     <div class="descText">
-                        En la parte izquierda encontrará las liquidaciones que tiene pendientes, si desea obtener una nueva solo pulse el botón "Obtener radicación" y le será asignada automáticamente una radicación. Si usted considera que la radicación es válida y puede seguir su proceso finalize con el botón "Validar Radicación"
+                        En la parte izquierda encontrará las liquidaciones que tiene pendientes, si desea obtener una nueva solo pulse el botón "Obtener radicación" y le será asignada automáticamente una radicación. Si usted considera que la radicación es válida y puede seguir su proceso finalice con el botón "Validar Radicación"
                     </div>
                 </div>
                 <h:form id="formTurnos">
@@ -47,9 +47,9 @@
                                     <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radId}" />
                                     <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.notId.notNombre}" />
 
-                                    <h:outputLabel class="labelLittle" value="Número Escritura" />
+                                    <h:outputLabel class="labelLittle" value="Número de Escritura" />
                                     <h:outputLabel class="labelLittle" value="Fecha Escritura" />
-                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.escId.escNumero}" />
+                                    <h:outputText class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.escId.escNumero}" /> 
                                     <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.escId.escFecha}" >
                                         <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"/>
                                     </p:outputLabel>
@@ -176,7 +176,7 @@
                         </p:selectOneMenu>
                     </h:panelGrid>
                     <div align="center" style="display: block;margin: 10px;">
-                        <p:commandButton value="Validar" action="#{generacionManagedBean.obtenerInformacionSAP()}" update="formLiquidacion"
+                        <p:commandButton value="Verificar" action="#{generacionManagedBean.obtenerInformacionSAP()}" update="formLiquidacion"
                                          onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();"/>
                     </div>
                 </div>
@@ -208,7 +208,7 @@
                         </div>
                         <div class="contLabelText">
                             <h:outputLabel class="labelLittle" value="Total a pagar"/>
-                            <p:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.totalDesc}" />
+                            <h:outputLabel class="labelText" value="#{generacionManagedBean.detalleLiquidacion.totalDesc}" converter="CurrencyConverter"/>
                         </div>
                         <div class="contLabelText">
                             <h:outputLabel class="labelLittle" value="Usuario SAP"/>

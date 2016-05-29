@@ -3,11 +3,13 @@ package co.com.realtech.mariner.controller.jsf.managed_bean.portal.business;
 import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBean;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFasesEstadosDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicacionesDAOBeanLocal;
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.cambio_estado.DetalleCambioEstado;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesActosSap;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarRechazosCausales;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
+import co.com.realtech.mariner.model.logic.estados.SAPEstadosLogicOperations;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
@@ -133,7 +135,7 @@ public class RevisionManagedBean extends GenericManagedBean{
         try {
             //Carga la constante del número máximo de radicaciones que puede tener un validador.
             Integer maxRads = Integer.parseInt(ConstantesUtils.cargarConstante("MAX-VALID-USER"));
-            if(radicacionesPendientes != null && (radicacionesPendientes.size() > maxRads)){
+            if(radicacionesPendientes != null && (radicacionesPendientes.size() >= maxRads)){
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Máximo encontrado", "El usuario tiene el máximo de radicaciones permitidas para el proceso ( " + maxRads + " )", true, false);
                 return;
             }
@@ -226,6 +228,12 @@ public class RevisionManagedBean extends GenericManagedBean{
      */
     public void rechazarRadicacion(){
         try {
+            SAPEstadosLogicOperations slo = SAPEstadosLogicOperations.create();
+            DetalleCambioEstado det = slo.cambiarEstadoLiquidacion(radicacionPendienteSel.getRadLiquidacion(), "A");
+            if(!det.getEstadoRespuesta().equals("0")){
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo incorrecto", "No se pudo anular la liquidación en SAP, causado por : " + det.getMensaje(), true, false);
+                return;
+            }
             //Se obtiene el usuario que hizo el proceso para enviarle de vuelta el proceso, el que la sube a SAP debe ser.
             List<MarRadicacionesFasesEstados> rfes = radicFasesEstadosDAOBean.obtenerRadicFaseEstDeRadyFase(radicacionPendienteSel, "G-P");
             MarUsuarios usuarioAsignado = rfes.get(rfes.size()-1).getUsuId();

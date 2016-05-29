@@ -190,10 +190,12 @@ public class FinalizacionManagedBean extends GenericManagedBean{
             }
             radicacionSel.setRadEstado("F");
             auditSessionUtils.setAuditReflectedValues(radicacionSel);
-            genericDAOBean.save(radicacionSel);
+            genericDAOBean.merge(radicacionSel);
             obtenerRadicacionesPendientes();
         } catch (Exception e) {
-            logger.error("No se puede guardar la aprobación, causado por " + e, e);
+            String mensaje = "No se puede guardar la aprobación, causado por " + e.getMessage();
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Finalización pendiente", mensaje, true, false);
+            logger.error(mensaje, e);
         }
     }
     
@@ -217,10 +219,12 @@ public class FinalizacionManagedBean extends GenericManagedBean{
             }
             radicacionSel.setRadEstado("R");
             auditSessionUtils.setAuditReflectedValues(radicacionSel);
-            genericDAOBean.save(radicacionSel);
+            genericDAOBean.merge(radicacionSel);
             obtenerRadicacionesPendientes();
         } catch (Exception e) {
-            logger.error("No se puede guardar la aprobación, causado por " + e, e);
+            String mensaje = "No se puede guardar el rechazo, causado por " + e.getMessage();
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Finalización pendiente", mensaje, true, false);
+            logger.error(mensaje, e);
         }
     }
 

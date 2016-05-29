@@ -116,19 +116,19 @@
                         <h:outputLabel class="labelLittle" value="Número Beneficiario" />
                         <h:outputLabel class="labelLittle" value="Nombre Otorgante" />
                         <h:outputLabel class="labelLittle" value="Número Otorgante" />
-                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeBenNombre}" style="width: 150px;" />
-                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeBenNum}" style="width: 150px;"/>
-                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeOtoNombre}" style="width: 150px;"/>
-                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeOtoNum}" style="width: 150px;" />
+                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeBenNombre}" style="width: 150px;" />
+                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeBenNum}" style="width: 150px;"/>
+                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeOtoNombre}" style="width: 150px;"/>
+                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeOtoNum}" style="width: 150px;" />
 
                         <h:outputLabel class="labelLittle" value="Liquidación" />
                         <h:outputLabel class="labelLittle" value="Valor" />
                         <h:outputText class="labelLittle" value="Escritura"/>
                         <h:outputText class="labelLittle" value="Matrícula"/>
-                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.radLiquidacion}" style="width: 150px;" />
-                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeTotal}" style="width: 150px;" />
-                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeDocumento}" style="width: 150px;" />
-                        <p:outputLabel class="labelText" value="#{historialManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeMatricula}" style="width: 150px;" />
+                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.radLiquidacion}" style="width: 150px;" />
+                        <h:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeTotal}" style="width: 150px;" converter="CurrencyConverter" />
+                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeDocumento}" style="width: 150px;" />
+                        <p:outputLabel class="labelText" value="#{finalizacionManagedBean.radicacionSel.marRadicacionesDetallesSap.rdeMatricula}" style="width: 150px;" />
                     </h:panelGrid>
                     <h:outputLabel style="display: block;text-align: left" class="labelLittle" value="Observaciones" />
                     <p:inputTextarea value="#{finalizacionManagedBean.observaciones}" rows="1" style="width: 620px;display: block" readonly="#{!(finalizacionManagedBean.radFaseEstado.fesId.fesCodigo eq 'P-A')}"/>
@@ -159,7 +159,7 @@
                     </p:column>
                 </p:dataTable>
                 <div align="center" style="margin: 20px;">
-                    <p:commandButton style="vertical-align: top" value="Finalizar" action="#{finalizacionManagedBean.finalizarRadicacion()}" update=":formFinalizacion" rendered="#{(finalizacionManagedBean.radFaseEstado.fesId.fesCodigo eq 'P-A')}" oncomplete="PF('dialogDetalle').hide()">
+                    <p:commandButton style="vertical-align: top" value="Aprobar" action="#{finalizacionManagedBean.finalizarRadicacion()}" update=":formFinalizacion" rendered="#{(finalizacionManagedBean.radFaseEstado.fesId.fesCodigo eq 'P-A')}" oncomplete="PF('dialogDetalle').hide()">
                         <p:confirm header="Confirmación" message="¿Esta seguro de que desea validar la radicación?" icon="ui-icon-alert" />
                     </p:commandButton>
                     <p:commandButton style="vertical-align: top" value="Rechazar" action="#{finalizacionManagedBean.rechazarRadicacion()}" update=":formFinalizacion" rendered="#{(finalizacionManagedBean.radFaseEstado.fesId.fesCodigo eq 'P-A')}" oncomplete="PF('dialogDetalle').hide()">
