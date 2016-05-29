@@ -7,6 +7,7 @@ import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDD
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDPRNCAB;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_list_method.ZPSCDTTVURLIST;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.ws.Holder;
@@ -51,7 +52,7 @@ public class SAPGetDetailConverter implements Serializable {
             detalle.setClase(responseHeader.value.getVCLASE());
             detalle.setDocumento(responseHeader.value.getVDOCUMENTO());
             detalle.setTotal(responseHeader.value.getVTOTAL());
-            
+
             detalle.setDescladoc(SAPEquivalenceUtils.findClasesDocumentos(responseHeader.value.getVDESCLADOC()));
             detalle.setDescoridoc(SAPEquivalenceUtils.findOrigenDocumentos(responseHeader.value.getVDESORIDOC()));
             detalle.setFechaDoc(responseHeader.value.getVFECDOC());
@@ -63,6 +64,20 @@ public class SAPGetDetailConverter implements Serializable {
             detalle.setTotalDesc(responseHeader.value.getVTOTDSCTO());
             detalle.setFechaLimite(responseHeader.value.getFECHALIMITE());
             detalle.setNorodrad(responseHeader.value.getNRORAD());
+            // Nuevos campos Mayo 29
+            detalle.setInterlocutor(responseHeader.value.getVBP());
+            detalle.setCvPeriodo(responseHeader.value.getVCLAVEPER());
+            detalle.setFechaVencimiento(responseHeader.value.getVFECVOA());
+            detalle.setExpedidoEn(responseHeader.value.getVREGEXPEDIDOEN());
+            detalle.setLiquidacionReferencia(responseHeader.value.getVNUMLIQ());
+            detalle.setTelefono(responseHeader.value.getVTELEFONO());
+            detalle.setValorImpuestoIPP(responseHeader.value.getVTIMPIIPP());
+            detalle.setValorImpuestoCamara(responseHeader.value.getVTIMPCIO());
+            detalle.setValorDescuentoIntereses(responseHeader.value.getVDSCTOINT());
+            detalle.setValorImpuestoSinCuantia(responseHeader.value.getVVALSERINF());
+            detalle.setServicioInfo(responseHeader.value.getVTESTAMPI());
+            detalle.setValorImpuestoEstampilla(responseHeader.value.getVVALESTAMPILLAS());
+            detalle.setValorDescuentoImpuesto(responseHeader.value.getVDSCTOIMP());
 
             // Details
             for (ZPSCDDETACTO loopDetalle : responseDetail.value.getItem()) {
@@ -96,11 +111,14 @@ public class SAPGetDetailConverter implements Serializable {
         }
         return detalle;
     }
+
     /**
-     * Convertor de Holder listado de liquidaciones a estructura list detalle liquidacion.
+     * Convertor de Holder listado de liquidaciones a estructura list detalle
+     * liquidacion.
+     *
      * @param datos
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     public static List<DetalleLiquidacion> convertHoldersListas(ZPSCDTTVURLIST datos) throws Exception {
         List<DetalleLiquidacion> detalles = new ArrayList<>();
@@ -138,6 +156,22 @@ public class SAPGetDetailConverter implements Serializable {
                 detalle.setTotalDesc(detLoop.getVTOTDSCTO());
                 detalle.setFechaLimite(detLoop.getFECHALIMITE());
                 detalle.setNorodrad(detLoop.getNRORAD());
+
+                // Nuevos campos Mayo 29
+                detalle.setInterlocutor(detLoop.getVBP());
+                detalle.setCvPeriodo(detLoop.getVCLAVEPER());
+                detalle.setFechaVencimiento(detLoop.getVFECVOA());
+                detalle.setExpedidoEn(detLoop.getVREGEXPEDIDOEN());
+                detalle.setLiquidacionReferencia(detLoop.getVNUMLIQ());
+                detalle.setTelefono(detLoop.getVTELEFONO());
+                detalle.setValorImpuestoIPP(detLoop.getVTIMPIIPP());
+                detalle.setValorImpuestoCamara(detLoop.getVTIMPCIO());
+                detalle.setValorDescuentoIntereses(detLoop.getVDSCTOINT());
+                detalle.setValorImpuestoSinCuantia(detLoop.getVVALSERINF());
+                detalle.setServicioInfo(detLoop.getVTESTAMPI());
+                detalle.setValorImpuestoEstampilla(detLoop.getVVALESTAMPILLAS());
+                detalle.setValorDescuentoImpuesto(detLoop.getVDSCTOIMP());
+
                 return detalle;
             }).forEach((detalle) -> {
                 detalles.add(detalle);

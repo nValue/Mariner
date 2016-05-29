@@ -51,6 +51,15 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="V_TOT_DSCTO" type="{urn:sap-com:document:sap:rfc:functions}curr15.2"/>
  *         &lt;element name="FECHALIMITE" type="{urn:sap-com:document:sap:rfc:functions}date10"/>
  *         &lt;element name="NRORAD" type="{urn:sap-com:document:sap:rfc:functions}numeric20"/>
+ *         &lt;element name="V_TELEFONO" type="{urn:sap-com:document:sap:rfc:functions}char10"/>
+ *         &lt;element name="V_BP" type="{urn:sap-com:document:sap:rfc:functions}char10"/>
+ *         &lt;element name="V_FEC_VOA" type="{urn:sap-com:document:sap:rfc:functions}date10"/>
+ *         &lt;element name="V_REG_EXPEDIDO_EN" type="{urn:sap-com:document:sap:rfc:functions}char1"/>
+ *         &lt;element name="V_TIMPIIPP" type="{urn:sap-com:document:sap:rfc:functions}curr15.2"/>
+ *         &lt;element name="V_TIMPCIO" type="{urn:sap-com:document:sap:rfc:functions}curr15.2"/>
+ *         &lt;element name="V_TESTAMPI" type="{urn:sap-com:document:sap:rfc:functions}curr15.2"/>
+ *         &lt;element name="V_VAL_SERINF" type="{urn:sap-com:document:sap:rfc:functions}curr15.2"/>
+ *         &lt;element name="V_VAL_ESTAMPILLAS" type="{urn:sap-com:document:sap:rfc:functions}curr15.2"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -93,7 +102,16 @@ import javax.xml.bind.annotation.XmlType;
     "vdsctoimp",
     "vtotdscto",
     "fechalimite",
-    "nrorad"
+    "nrorad",
+    "vtelefono",
+    "vbp",
+    "vfecvoa",
+    "vregexpedidoen",
+    "vtimpiipp",
+    "vtimpcio",
+    "vtestampi",
+    "vvalserinf",
+    "vvalestampillas"
 })
 public class ZPSCDPRNCAB {
 
@@ -163,6 +181,24 @@ public class ZPSCDPRNCAB {
     protected String fechalimite;
     @XmlElement(name = "NRORAD", required = true)
     protected String nrorad;
+    @XmlElement(name = "V_TELEFONO", required = true)
+    protected String vtelefono;
+    @XmlElement(name = "V_BP", required = true)
+    protected String vbp;
+    @XmlElement(name = "V_FEC_VOA", required = true)
+    protected String vfecvoa;
+    @XmlElement(name = "V_REG_EXPEDIDO_EN", required = true)
+    protected String vregexpedidoen;
+    @XmlElement(name = "V_TIMPIIPP", required = true)
+    protected BigDecimal vtimpiipp;
+    @XmlElement(name = "V_TIMPCIO", required = true)
+    protected BigDecimal vtimpcio;
+    @XmlElement(name = "V_TESTAMPI", required = true)
+    protected BigDecimal vtestampi;
+    @XmlElement(name = "V_VAL_SERINF", required = true)
+    protected BigDecimal vvalserinf;
+    @XmlElement(name = "V_VAL_ESTAMPILLAS", required = true)
+    protected BigDecimal vvalestampillas;
 
     /**
      * Obtiene el valor de la propiedad vnumero.
@@ -954,6 +990,222 @@ public class ZPSCDPRNCAB {
      */
     public void setNRORAD(String value) {
         this.nrorad = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad vtelefono.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getVTELEFONO() {
+        return vtelefono;
+    }
+
+    /**
+     * Define el valor de la propiedad vtelefono.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setVTELEFONO(String value) {
+        this.vtelefono = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad vbp.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getVBP() {
+        return vbp;
+    }
+
+    /**
+     * Define el valor de la propiedad vbp.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setVBP(String value) {
+        this.vbp = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad vfecvoa.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getVFECVOA() {
+        return vfecvoa;
+    }
+
+    /**
+     * Define el valor de la propiedad vfecvoa.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setVFECVOA(String value) {
+        this.vfecvoa = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad vregexpedidoen.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getVREGEXPEDIDOEN() {
+        return vregexpedidoen;
+    }
+
+    /**
+     * Define el valor de la propiedad vregexpedidoen.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setVREGEXPEDIDOEN(String value) {
+        this.vregexpedidoen = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad vtimpiipp.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getVTIMPIIPP() {
+        return vtimpiipp;
+    }
+
+    /**
+     * Define el valor de la propiedad vtimpiipp.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setVTIMPIIPP(BigDecimal value) {
+        this.vtimpiipp = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad vtimpcio.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getVTIMPCIO() {
+        return vtimpcio;
+    }
+
+    /**
+     * Define el valor de la propiedad vtimpcio.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setVTIMPCIO(BigDecimal value) {
+        this.vtimpcio = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad vtestampi.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getVTESTAMPI() {
+        return vtestampi;
+    }
+
+    /**
+     * Define el valor de la propiedad vtestampi.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setVTESTAMPI(BigDecimal value) {
+        this.vtestampi = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad vvalserinf.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getVVALSERINF() {
+        return vvalserinf;
+    }
+
+    /**
+     * Define el valor de la propiedad vvalserinf.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setVVALSERINF(BigDecimal value) {
+        this.vvalserinf = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad vvalestampillas.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getVVALESTAMPILLAS() {
+        return vvalestampillas;
+    }
+
+    /**
+     * Define el valor de la propiedad vvalestampillas.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setVVALESTAMPILLAS(BigDecimal value) {
+        this.vvalestampillas = value;
     }
 
 }

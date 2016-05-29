@@ -65,7 +65,21 @@ public class LiquidacionMarshaller implements Serializable {
         sap.setRdeTotalDesc(detalle.getTotalDesc());
         sap.setRdeFechaLimite(detalle.getFechaLimite());
         sap.setRdeNorodrad(detalle.getNorodrad());
-
+        // nuevos elementos versin 29 Mayo de 2016
+        sap.setRdeInterlocutor(detalle.getInterlocutor());
+        sap.setRdeCvPeriodo(detalle.getCvPeriodo());
+        sap.setRdeFechaVencimiento(detalle.getFechaVencimiento());
+        sap.setRdeExpedidoEn(detalle.getExpedidoEn());
+        sap.setRdeLiquidacionRef(detalle.getLiquidacionReferencia());
+        sap.setRdeTelefono(detalle.getTelefono());
+        sap.setRdeValorImpIpp(detalle.getValorImpuestoIPP());
+        sap.setRdeValorImpCamara(detalle.getValorImpuestoCamara());
+        sap.setRdeValorDescIntereses(detalle.getValorDescuentoIntereses());
+        sap.setRdeServicioInfo(detalle.getServicioInfo());
+        sap.setRdeValorImpSinCuan(detalle.getValorImpuestoSinCuantia());
+        sap.setRdeValorImpEstampilla(detalle.getValorImpuestoEstampilla());
+        sap.setRdeValorDescImpuesto(detalle.getValorDescuentoImpuesto());
+        
         // Valores del objeto radicacion        
         radicacion.setRadValorLiq(detalle.getTotalDesc());
         radicacion.setRadLiquidacion(detalle.getLiqNumero());

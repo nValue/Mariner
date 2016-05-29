@@ -13,7 +13,7 @@ import java.util.List;
  * @since JDK1.8
  */
 public class DetalleLiquidacion implements Serializable {
-    
+
     private String liqNumero;
     private String otoNombre;
     private String benNombre;
@@ -44,7 +44,23 @@ public class DetalleLiquidacion implements Serializable {
     private BigDecimal descImp;
     private BigDecimal totalDesc;
     private String fechaLimite;
-    private String norodrad;    
+    private String norodrad;
+
+    private String interlocutor;
+    private String cvPeriodo;
+    private String fechaVencimiento;
+    private String expedidoEn;
+    private String liquidacionReferencia;
+    private String telefono;
+    private BigDecimal valorImpuestoIPP;
+    private BigDecimal valorImpuestoCamara;
+    private BigDecimal valorDescuentoIntereses;
+    private BigDecimal servicioInfo;
+    private BigDecimal valorImpuestoSinCuantia;
+    private BigDecimal valorImpuestoEstampilla;
+    private BigDecimal valorDescuentoImpuesto;
+    private String expando;
+
     private List<DetalleLiquidacionItem> itemsDetalle = new ArrayList<>();
 
     public DetalleLiquidacion() {
@@ -306,5 +322,116 @@ public class DetalleLiquidacion implements Serializable {
         this.itemsDetalle = itemsDetalle;
     }
 
-    
+    public String getInterlocutor() {
+        return interlocutor;
+    }
+
+    public void setInterlocutor(String interlocutor) {
+        this.interlocutor = interlocutor;
+    }
+
+    public String getCvPeriodo() {
+        return cvPeriodo;
+    }
+
+    public void setCvPeriodo(String cvPeriodo) {
+        this.cvPeriodo = cvPeriodo;
+    }
+
+    public String getFechaVencimiento() {
+        return fechaVencimiento;
+    }
+
+    public void setFechaVencimiento(String fechaVencimiento) {
+        this.fechaVencimiento = fechaVencimiento;
+    }
+
+    public String getExpedidoEn() {
+        return expedidoEn;
+    }
+
+    public void setExpedidoEn(String expedidoEn) {
+        this.expedidoEn = expedidoEn;
+    }
+
+    public String getLiquidacionReferencia() {
+        return liquidacionReferencia;
+    }
+
+    public void setLiquidacionReferencia(String liquidacionReferencia) {
+        this.liquidacionReferencia = liquidacionReferencia;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public BigDecimal getValorImpuestoIPP() {
+        return valorImpuestoIPP;
+    }
+
+    public void setValorImpuestoIPP(BigDecimal valorImpuestoIPP) {
+        this.valorImpuestoIPP = valorImpuestoIPP;
+    }
+
+    public BigDecimal getValorImpuestoCamara() {
+        return valorImpuestoCamara;
+    }
+
+    public void setValorImpuestoCamara(BigDecimal valorImpuestoCamara) {
+        this.valorImpuestoCamara = valorImpuestoCamara;
+    }
+
+    public BigDecimal getValorDescuentoIntereses() {
+        return valorDescuentoIntereses;
+    }
+
+    public void setValorDescuentoIntereses(BigDecimal valorDescuentoIntereses) {
+        this.valorDescuentoIntereses = valorDescuentoIntereses;
+    }
+
+    public BigDecimal getServicioInfo() {
+        return servicioInfo;
+    }
+
+    public void setServicioInfo(BigDecimal servicioInfo) {
+        this.servicioInfo = servicioInfo;
+    }
+
+    public BigDecimal getValorImpuestoSinCuantia() {
+        return valorImpuestoSinCuantia;
+    }
+
+    public void setValorImpuestoSinCuantia(BigDecimal valorImpuestoSinCuantia) {
+        this.valorImpuestoSinCuantia = valorImpuestoSinCuantia;
+    }
+
+    public BigDecimal getValorImpuestoEstampilla() {
+        return valorImpuestoEstampilla;
+    }
+
+    public void setValorImpuestoEstampilla(BigDecimal valorImpuestoEstampilla) {
+        this.valorImpuestoEstampilla = valorImpuestoEstampilla;
+    }
+
+    public BigDecimal getValorDescuentoImpuesto() {
+        return valorDescuentoImpuesto;
+    }
+
+    public void setValorDescuentoImpuesto(BigDecimal valorDescuentoImpuesto) {
+        this.valorDescuentoImpuesto = valorDescuentoImpuesto;
+    }
+
+    public String getExpando() {
+        return expando;
+    }
+
+    public void setExpando(String expando) {
+        this.expando = expando;
+    }
+
 }

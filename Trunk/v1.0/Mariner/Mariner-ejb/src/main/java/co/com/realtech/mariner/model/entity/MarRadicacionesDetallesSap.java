@@ -70,7 +70,21 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarRadicacionesDetallesSap.findByRdeNorodrad", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.rdeNorodrad = :rdeNorodrad"),
     @NamedQuery(name = "MarRadicacionesDetallesSap.findByAudFecha", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.audFecha = :audFecha"),
     @NamedQuery(name = "MarRadicacionesDetallesSap.findByAudUsuario", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.audUsuario = :audUsuario"),
-    @NamedQuery(name = "MarRadicacionesDetallesSap.findByColumn3", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.column3 = :column3")})
+    @NamedQuery(name = "MarRadicacionesDetallesSap.findByRdeInterlocutor", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.rdeInterlocutor = :rdeInterlocutor"),
+    @NamedQuery(name = "MarRadicacionesDetallesSap.findByRdeCvPeriodo", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.rdeCvPeriodo = :rdeCvPeriodo"),
+    @NamedQuery(name = "MarRadicacionesDetallesSap.findByRdeFechaVencimiento", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.rdeFechaVencimiento = :rdeFechaVencimiento"),
+    @NamedQuery(name = "MarRadicacionesDetallesSap.findByRdeExpedidoEn", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.rdeExpedidoEn = :rdeExpedidoEn"),
+    @NamedQuery(name = "MarRadicacionesDetallesSap.findByRdeLiquidacionRef", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.rdeLiquidacionRef = :rdeLiquidacionRef"),
+    @NamedQuery(name = "MarRadicacionesDetallesSap.findByRdeTelefono", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.rdeTelefono = :rdeTelefono"),
+    @NamedQuery(name = "MarRadicacionesDetallesSap.findByRdeValorImpIpp", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.rdeValorImpIpp = :rdeValorImpIpp"),
+    @NamedQuery(name = "MarRadicacionesDetallesSap.findByRdeValorImpCamara", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.rdeValorImpCamara = :rdeValorImpCamara"),
+    @NamedQuery(name = "MarRadicacionesDetallesSap.findByRdeValorDescIntereses", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.rdeValorDescIntereses = :rdeValorDescIntereses"),
+    @NamedQuery(name = "MarRadicacionesDetallesSap.findByRdeServicioInfo", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.rdeServicioInfo = :rdeServicioInfo"),
+    @NamedQuery(name = "MarRadicacionesDetallesSap.findByRdeValorImpSinCuan", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.rdeValorImpSinCuan = :rdeValorImpSinCuan"),
+    @NamedQuery(name = "MarRadicacionesDetallesSap.findByRdeValorImpEstampilla", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.rdeValorImpEstampilla = :rdeValorImpEstampilla"),
+    @NamedQuery(name = "MarRadicacionesDetallesSap.findByRdeValorDescImpuesto", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.rdeValorDescImpuesto = :rdeValorDescImpuesto"),
+    @NamedQuery(name = "MarRadicacionesDetallesSap.findByRdeExpando", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.rdeExpando = :rdeExpando"),
+    @NamedQuery(name = "MarRadicacionesDetallesSap.findByColumn15", query = "SELECT m FROM MarRadicacionesDetallesSap m WHERE m.column15 = :column15")})
 public class MarRadicacionesDetallesSap implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -175,9 +189,44 @@ public class MarRadicacionesDetallesSap implements Serializable {
     @Size(max = 60)
     @Column(name = "AUD_USUARIO", length = 60)
     private String audUsuario;
+    @Size(max = 100)
+    @Column(name = "RDE_INTERLOCUTOR", length = 100)
+    private String rdeInterlocutor;
+    @Size(max = 100)
+    @Column(name = "RDE_CV_PERIODO", length = 100)
+    private String rdeCvPeriodo;
+    @Size(max = 20)
+    @Column(name = "RDE_FECHA_VENCIMIENTO", length = 20)
+    private String rdeFechaVencimiento;
+    @Size(max = 80)
+    @Column(name = "RDE_EXPEDIDO_EN", length = 80)
+    private String rdeExpedidoEn;
+    @Size(max = 200)
+    @Column(name = "RDE_LIQUIDACION_REF", length = 200)
+    private String rdeLiquidacionRef;
+    @Size(max = 20)
+    @Column(name = "RDE_TELEFONO", length = 20)
+    private String rdeTelefono;
+    @Column(name = "RDE_VALOR_IMP_IPP", precision = 16, scale = 4)
+    private BigDecimal rdeValorImpIpp;
+    @Column(name = "RDE_VALOR_IMP_CAMARA", precision = 16, scale = 4)
+    private BigDecimal rdeValorImpCamara;
+    @Column(name = "RDE_VALOR_DESC_INTERESES", precision = 16, scale = 4)
+    private BigDecimal rdeValorDescIntereses;
+    @Column(name = "RDE_SERVICIO_INFO", precision = 16, scale = 4)
+    private BigDecimal rdeServicioInfo;
+    @Column(name = "RDE_VALOR_IMP_SIN_CUAN", precision = 16, scale = 4)
+    private BigDecimal rdeValorImpSinCuan;
+    @Column(name = "RDE_VALOR_IMP_ESTAMPILLA", precision = 16, scale = 4)
+    private BigDecimal rdeValorImpEstampilla;
+    @Column(name = "RDE_VALOR_DESC_IMPUESTO", precision = 16, scale = 4)
+    private BigDecimal rdeValorDescImpuesto;
+    @Size(max = 500)
+    @Column(name = "RDE_EXPANDO", length = 500)
+    private String rdeExpando;
     @Size(max = 20)
     @Column(length = 20)
-    private String column3;
+    private String column15;
     @JoinColumn(name = "RAD_ID", referencedColumnName = "RAD_ID")
     @OneToOne
     private MarRadicaciones radId;
@@ -463,12 +512,124 @@ public class MarRadicacionesDetallesSap implements Serializable {
         this.audUsuario = audUsuario;
     }
 
-    public String getColumn3() {
-        return column3;
+    public String getRdeInterlocutor() {
+        return rdeInterlocutor;
     }
 
-    public void setColumn3(String column3) {
-        this.column3 = column3;
+    public void setRdeInterlocutor(String rdeInterlocutor) {
+        this.rdeInterlocutor = rdeInterlocutor;
+    }
+
+    public String getRdeCvPeriodo() {
+        return rdeCvPeriodo;
+    }
+
+    public void setRdeCvPeriodo(String rdeCvPeriodo) {
+        this.rdeCvPeriodo = rdeCvPeriodo;
+    }
+
+    public String getRdeFechaVencimiento() {
+        return rdeFechaVencimiento;
+    }
+
+    public void setRdeFechaVencimiento(String rdeFechaVencimiento) {
+        this.rdeFechaVencimiento = rdeFechaVencimiento;
+    }
+
+    public String getRdeExpedidoEn() {
+        return rdeExpedidoEn;
+    }
+
+    public void setRdeExpedidoEn(String rdeExpedidoEn) {
+        this.rdeExpedidoEn = rdeExpedidoEn;
+    }
+
+    public String getRdeLiquidacionRef() {
+        return rdeLiquidacionRef;
+    }
+
+    public void setRdeLiquidacionRef(String rdeLiquidacionRef) {
+        this.rdeLiquidacionRef = rdeLiquidacionRef;
+    }
+
+    public String getRdeTelefono() {
+        return rdeTelefono;
+    }
+
+    public void setRdeTelefono(String rdeTelefono) {
+        this.rdeTelefono = rdeTelefono;
+    }
+
+    public BigDecimal getRdeValorImpIpp() {
+        return rdeValorImpIpp;
+    }
+
+    public void setRdeValorImpIpp(BigDecimal rdeValorImpIpp) {
+        this.rdeValorImpIpp = rdeValorImpIpp;
+    }
+
+    public BigDecimal getRdeValorImpCamara() {
+        return rdeValorImpCamara;
+    }
+
+    public void setRdeValorImpCamara(BigDecimal rdeValorImpCamara) {
+        this.rdeValorImpCamara = rdeValorImpCamara;
+    }
+
+    public BigDecimal getRdeValorDescIntereses() {
+        return rdeValorDescIntereses;
+    }
+
+    public void setRdeValorDescIntereses(BigDecimal rdeValorDescIntereses) {
+        this.rdeValorDescIntereses = rdeValorDescIntereses;
+    }
+
+    public BigDecimal getRdeServicioInfo() {
+        return rdeServicioInfo;
+    }
+
+    public void setRdeServicioInfo(BigDecimal rdeServicioInfo) {
+        this.rdeServicioInfo = rdeServicioInfo;
+    }
+
+    public BigDecimal getRdeValorImpSinCuan() {
+        return rdeValorImpSinCuan;
+    }
+
+    public void setRdeValorImpSinCuan(BigDecimal rdeValorImpSinCuan) {
+        this.rdeValorImpSinCuan = rdeValorImpSinCuan;
+    }
+
+    public BigDecimal getRdeValorImpEstampilla() {
+        return rdeValorImpEstampilla;
+    }
+
+    public void setRdeValorImpEstampilla(BigDecimal rdeValorImpEstampilla) {
+        this.rdeValorImpEstampilla = rdeValorImpEstampilla;
+    }
+
+    public BigDecimal getRdeValorDescImpuesto() {
+        return rdeValorDescImpuesto;
+    }
+
+    public void setRdeValorDescImpuesto(BigDecimal rdeValorDescImpuesto) {
+        this.rdeValorDescImpuesto = rdeValorDescImpuesto;
+    }
+
+    public String getRdeExpando() {
+        return rdeExpando;
+    }
+
+    public void setRdeExpando(String rdeExpando) {
+        this.rdeExpando = rdeExpando;
+    }
+
+    public String getColumn15() {
+        return column15;
+    }
+
+    public void setColumn15(String column15) {
+        this.column15 = column15;
     }
 
     public MarRadicaciones getRadId() {

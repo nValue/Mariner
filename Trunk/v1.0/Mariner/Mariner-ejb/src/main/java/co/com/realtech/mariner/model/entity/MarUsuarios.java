@@ -45,7 +45,10 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarUsuarios.findByAudFecha", query = "SELECT m FROM MarUsuarios m WHERE m.audFecha = :audFecha"),
     @NamedQuery(name = "MarUsuarios.findByUsuUltimoIngreso", query = "SELECT m FROM MarUsuarios m WHERE m.usuUltimoIngreso = :usuUltimoIngreso"),
     @NamedQuery(name = "MarUsuarios.findByUsuTipo", query = "SELECT m FROM MarUsuarios m WHERE m.usuTipo = :usuTipo"),
-    @NamedQuery(name = "MarUsuarios.findByUsuAliasSap", query = "SELECT m FROM MarUsuarios m WHERE m.usuAliasSap = :usuAliasSap")})
+    @NamedQuery(name = "MarUsuarios.findByUsuAliasSap", query = "SELECT m FROM MarUsuarios m WHERE m.usuAliasSap = :usuAliasSap"),
+    @NamedQuery(name = "MarUsuarios.findByUsuEsLiquidador", query = "SELECT m FROM MarUsuarios m WHERE m.usuEsLiquidador = :usuEsLiquidador"),
+    @NamedQuery(name = "MarUsuarios.findByUsuEsNotario", query = "SELECT m FROM MarUsuarios m WHERE m.usuEsNotario = :usuEsNotario"),
+    @NamedQuery(name = "MarUsuarios.findByUsuEsAprobador", query = "SELECT m FROM MarUsuarios m WHERE m.usuEsAprobador = :usuEsAprobador")})
 public class MarUsuarios implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -86,6 +89,15 @@ public class MarUsuarios implements Serializable {
     @Size(max = 60)
     @Column(name = "USU_ALIAS_SAP", length = 60)
     private String usuAliasSap;
+    @Size(max = 2)
+    @Column(name = "USU_ES_LIQUIDADOR", length = 2)
+    private String usuEsLiquidador;
+    @Size(max = 2)
+    @Column(name = "USU_ES_NOTARIO", length = 2)
+    private String usuEsNotario;
+    @Size(max = 2)
+    @Column(name = "USU_ES_APROBADOR", length = 2)
+    private String usuEsAprobador;
     @OneToMany(mappedBy = "usuId")
     private List<MarNotificaciones> marNotificacionesList;
     @OneToMany(mappedBy = "usuId")
@@ -188,6 +200,30 @@ public class MarUsuarios implements Serializable {
 
     public void setUsuAliasSap(String usuAliasSap) {
         this.usuAliasSap = usuAliasSap;
+    }
+
+    public String getUsuEsLiquidador() {
+        return usuEsLiquidador;
+    }
+
+    public void setUsuEsLiquidador(String usuEsLiquidador) {
+        this.usuEsLiquidador = usuEsLiquidador;
+    }
+
+    public String getUsuEsNotario() {
+        return usuEsNotario;
+    }
+
+    public void setUsuEsNotario(String usuEsNotario) {
+        this.usuEsNotario = usuEsNotario;
+    }
+
+    public String getUsuEsAprobador() {
+        return usuEsAprobador;
+    }
+
+    public void setUsuEsAprobador(String usuEsAprobador) {
+        this.usuEsAprobador = usuEsAprobador;
     }
 
     public List<MarNotificaciones> getMarNotificacionesList() {
