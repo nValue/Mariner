@@ -1,5 +1,6 @@
 package co.com.realtech.mariner.model.ejb.ws.sap;
 
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.cambio_estado.DetalleCambioEstado;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.get_detail_method.DetalleLiquidacion;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.payment.DetallePago;
 import java.math.BigDecimal;
@@ -21,5 +22,7 @@ public interface WSSAPConsumerBeanLocal {
     public DetallePago aplicarPagoSAP(String codigoLiquidacion, String fechaRecaudo, String horaRecaudo, BigDecimal valor) throws Exception;
     
     public List<DetalleLiquidacion> getListLiquidaciones(String fecha) throws Exception ;
+    
+    public DetalleCambioEstado actualizarEstadoLiquidacion(String liquidacion, String estado) throws Exception ;
     
 }

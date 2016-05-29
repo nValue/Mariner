@@ -3,11 +3,13 @@ package co.com.realtech.mariner.model.ejb.ws.sap;
 import co.com.realtech.mariner.model.ejb.ws.sap.converters.SAPGetDetailConverter;
 import co.com.realtech.mariner.model.ejb.ws.sap.implementations.SAPWSGetDetailsImplementation;
 import co.com.realtech.mariner.model.ejb.ws.sap.implementations.SAPWSListLiquidacionesImplementation;
+import co.com.realtech.mariner.model.ejb.ws.sap.implementations.SAPWSVURChangeStatusImplementation;
 import co.com.realtech.mariner.model.ejb.ws.sap.implementations.SAPWSVURPaymentImplementation;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.get_detail_method.DetalleLiquidacion;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDDETACTOT;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_detail_method.ZPSCDPRNCAB;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.get_list_method.ZPSCDTTVURLIST;
+import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.cambio_estado.DetalleCambioEstado;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.payment.DetallePago;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import java.math.BigDecimal;
@@ -69,7 +71,7 @@ public class WSSAPConsumerBean implements WSSAPConsumerBeanLocal {
             detallePago.setNumeroCuenta(codigoBanco);
             detallePago.setValor(valor);
             detallePago.setEstadoSalida(eRETURN.value.toString());
-            detallePago.setMensajeSalida("SAP Message: "+eMESSAGE.value);
+            detallePago.setMensajeSalida("SAP Message: " + eMESSAGE.value);
         } catch (Exception e) {
             throw e;
         }
@@ -89,6 +91,32 @@ public class WSSAPConsumerBean implements WSSAPConsumerBeanLocal {
             SAPWSListLiquidacionesImplementation impWS = SAPWSListLiquidacionesImplementation.create();
             ZPSCDTTVURLIST datos = impWS.zpscdfmVURGETLIST(fecha);
             return SAPGetDetailConverter.convertHoldersListas(datos);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    /**
+     * Ejecucion de metodo para cambio de estado de la liquidacion.
+     *
+     * @param liquidacion
+     * @param estado
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public DetalleCambioEstado actualizarEstadoLiquidacion(String liquidacion, String estado) throws Exception {
+        try {
+            DetalleCambioEstado cambioEstado = new DetalleCambioEstado();
+            Holder<String> eMESSAGE = new Holder<>();
+            Holder<Integer> eRETURN = new Holder<>();
+            SAPWSVURChangeStatusImplementation sap = SAPWSVURChangeStatusImplementation.create();
+            sap.cambiarEstadoLiquidacion(liquidacion, estado, eMESSAGE, eRETURN);
+            cambioEstado.setLiquidacion(liquidacion);
+            cambioEstado.setEstadoDestino(estado);
+            cambioEstado.setEstadoRespuesta(eRETURN.value.toString());
+            cambioEstado.setMensaje(eMESSAGE.value);
+            return cambioEstado;
         } catch (Exception e) {
             throw e;
         }

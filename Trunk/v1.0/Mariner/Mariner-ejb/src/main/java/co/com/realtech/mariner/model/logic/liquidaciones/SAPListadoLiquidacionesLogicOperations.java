@@ -5,7 +5,6 @@ import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.ws.sap.WSSAPConsumerBean;
 import co.com.realtech.mariner.model.ejb.ws.sap.WSSAPConsumerBeanLocal;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.get_detail_method.DetalleLiquidacion;
-import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.util.jdni.JDNIUtils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

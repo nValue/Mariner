@@ -1,5 +1,6 @@
 package co.com.realtech.mariner.model.ejb.dao.procedure_based;
 
+import java.math.BigDecimal;
 import javax.ejb.Local;
 
 /**
@@ -14,5 +15,7 @@ import javax.ejb.Local;
 public interface ProcedureBasedBeanLocal {
     
     public String cargarConstante(String llave);
+    
+    public String vincularArchivoSAP(BigDecimal radId);
     
 }

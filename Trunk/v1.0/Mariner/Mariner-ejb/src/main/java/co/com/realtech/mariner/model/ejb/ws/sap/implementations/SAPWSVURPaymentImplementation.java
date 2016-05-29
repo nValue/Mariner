@@ -34,8 +34,8 @@ public class SAPWSVURPaymentImplementation implements Serializable {
     private ZwsvurPayment loadServiceDefinition() throws Exception {
         // Constante con URL del servicio web
         String urlWS = ConstantesUtils.cargarConstante("WS-SAP-PAYMENT");
-        String userWS = ConstantesUtils.cargarConstante("WS-SAP-USER");
-        String claveWS = ConstantesUtils.cargarConstante("WS-SAP-PASSWORD");
+        String userWS = ConstantesUtils.cargarConstante("WS-SAP-USER-PAYMENT");
+        String claveWS = ConstantesUtils.cargarConstante("WS-SAP-PASSWORD-PAYMENT");
 
         try {
             if (urlWS == null || urlWS.equals("")) {
