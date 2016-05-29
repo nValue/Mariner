@@ -135,7 +135,6 @@
                     <div align="center" style="padding-top: 10px">
                         <h:panelGrid columns="3">
                             <p:commandButton value="Realizar Pago" update="@form" action="#{paymentManagedBean.realizarTransaccion()}" disabled="#{paymentManagedBean.transaccion.traEstado != 'T'}"/>
-                            <p:commandButton value="Descargar Recibo" action="#{paymentManagedBean.descargarRecibo()}" rendered="#{paymentManagedBean.transaccion.traId != null and paymentManagedBean.tipoPago eq 'RECIBO'}" immediate="true" ajax="false"/>
                             <p:commandButton value="Cancelar" oncomplete="PF('dialogTransaccion').hide();" immediate="true"/>
                         </h:panelGrid>                        
                     </div>

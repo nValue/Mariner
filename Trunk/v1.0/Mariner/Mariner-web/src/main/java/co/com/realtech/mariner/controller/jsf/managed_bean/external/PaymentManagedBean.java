@@ -14,11 +14,13 @@ import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.model.logic.pagos.SAPPagosLogicOperations;
 import co.com.realtech.mariner.util.cdf.CDFFileDispatcher;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
+import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import co.com.realtech.mariner.util.session.SessionUtils;
 import co.com.realtech.mariner.util.string.BusinessStringUtils;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -29,8 +31,10 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import org.primefaces.context.RequestContext;
 
 /**
  * ManagedBean encargado de la logica de pagos.
@@ -288,13 +292,21 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                     // Redireccionar a la pasarela de pagos.
                     FacesContext.getCurrentInstance().getExternalContext().redirect(urlServletRedireccionPasarela);
                 } else {
-                    PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Recibo de Pago generado correctamente, presione Descargar para proceder obtener este documento.", true, false);
+                    if (getRadicacion().getArcIdReciboPago() == null || getRadicacion().getArcIdBoletaFiscal() == null) {
+                        PrimeFacesPopup.lanzarDialog(Effects.Puff, "Error validacion", "Lo sentimos pero la Radicacion no tiene Archivo de Boleta Fiscal y Recibo, por favor contacte al administrador de la plataforma.", true, false);
+                    } else {
+                        // Redireccionar a la descarga.
+                        ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+                        String contextPath = servletContext.getContextPath();
+                        String urlRecibo = contextPath + "/static/fileDispatcher/" + getRadicacion().getArcIdReciboPago().getArcId() + "-" + getRadicacion().getArcIdReciboPago().getArcHash() + "." + getRadicacion().getArcIdReciboPago().getArcExtension();
+                        RequestContext.getCurrentInstance().execute("window.open('" + urlRecibo + "');");
+                        PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Se ha descargado el recibo de pago para realizar el pago en ventanilla de banco.", true, false);
+                    }
                 }
             } else {
                 PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", "Lo sentimos pero la radicacion seleccionada ya no se encuentra en proceso pendiente de pago.", true, false);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (MarinerPersistanceException | IOException e) {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero ha ocurrido un error iniciando la transaccion, por favor intente nuevamente.", true, false);
             logger.error("Error realizando inicio de transaccion, causado por " + e);
         }

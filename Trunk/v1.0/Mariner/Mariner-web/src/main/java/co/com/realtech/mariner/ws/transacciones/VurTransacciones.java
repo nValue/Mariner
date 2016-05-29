@@ -65,7 +65,7 @@ public class VurTransacciones {
                     transaccion.setTelefono(transaccionBD.getTraTelefono());
                     transaccion.setCodigoTransaccion(codigoTransaccion);
                     transaccion.setCus(transaccionBD.getTraCus());
-                    transaccion.setDescripcionTransaccion("Pago de Derechos de Registro Valle del Cauca");
+                    transaccion.setDescripcionTransaccion("Pago de Impuestos de Registro Valle del Cauca");
                     transaccion.setReferencia(transaccionBD.getTraReferencia());
                     transaccion.setTipoMedioPago(transaccionBD.getTraTipoPago());
                     transaccion.setFechaTransaccion(transaccionBD.getTraFechaInicio());
@@ -117,7 +117,7 @@ public class VurTransacciones {
                     transaccion.setNumeroDocumento(transaccionBD.getTraDocumento());
                     transaccion.setTelefono(transaccionBD.getTraTelefono());
                     transaccion.setCus(transaccionBD.getTraCus());
-                    transaccion.setDescripcionTransaccion("Pago de Derechos de Registro Valle del Cauca");
+                    transaccion.setDescripcionTransaccion("Pago de Impuestos de Registro Valle del Cauca");
                     transaccion.setReferencia(transaccionBD.getTraReferencia());
                     transaccion.setTipoMedioPago(transaccionBD.getTraTipoPago());
                     transaccion.setFechaTransaccion(transaccionBD.getTraFechaInicio());
