@@ -4,6 +4,7 @@ import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBean;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
+import co.com.realtech.mariner.util.string.BusinessStringUtils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -182,7 +183,7 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
             }else if(tipo.equals("RA")){
                 sql = sql.replace("1 = 1", " r.rad_numero = '" + campoBusqueda + "'");
             }else if(tipo.equals("LI")){
-                sql = sql.replace("1 = 1", " r.rad_liquidacion = '" + campoBusqueda + "'");
+                sql = sql.replace("1 = 1", " r.rad_liquidacion = '" + BusinessStringUtils.convertNumeroLiquidacion(campoBusqueda) + "'");
             }else if(tipo.equals("OT")){
                 sql = sql.replace("1 = 1", " r.rad_doc_otorgante = '" + campoBusqueda + "'");
             }else if(tipo.equals("RE")){
