@@ -48,7 +48,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarUsuarios.findByUsuAliasSap", query = "SELECT m FROM MarUsuarios m WHERE m.usuAliasSap = :usuAliasSap"),
     @NamedQuery(name = "MarUsuarios.findByUsuEsLiquidador", query = "SELECT m FROM MarUsuarios m WHERE m.usuEsLiquidador = :usuEsLiquidador"),
     @NamedQuery(name = "MarUsuarios.findByUsuEsNotario", query = "SELECT m FROM MarUsuarios m WHERE m.usuEsNotario = :usuEsNotario"),
-    @NamedQuery(name = "MarUsuarios.findByUsuEsAprobador", query = "SELECT m FROM MarUsuarios m WHERE m.usuEsAprobador = :usuEsAprobador")})
+    @NamedQuery(name = "MarUsuarios.findByUsuEsAprobador", query = "SELECT m FROM MarUsuarios m WHERE m.usuEsAprobador = :usuEsAprobador"),
+    @NamedQuery(name = "MarUsuarios.findByUsuEsCalificador", query = "SELECT m FROM MarUsuarios m WHERE m.usuEsCalificador = :usuEsCalificador")})
 public class MarUsuarios implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -98,6 +99,9 @@ public class MarUsuarios implements Serializable {
     @Size(max = 2)
     @Column(name = "USU_ES_APROBADOR", length = 2)
     private String usuEsAprobador;
+    @Size(max = 2)
+    @Column(name = "USU_ES_CALIFICADOR", length = 2)
+    private String usuEsCalificador;
     @OneToMany(mappedBy = "usuId")
     private List<MarNotificaciones> marNotificacionesList;
     @OneToMany(mappedBy = "usuId")
@@ -224,6 +228,14 @@ public class MarUsuarios implements Serializable {
 
     public void setUsuEsAprobador(String usuEsAprobador) {
         this.usuEsAprobador = usuEsAprobador;
+    }
+
+    public String getUsuEsCalificador() {
+        return usuEsCalificador;
+    }
+
+    public void setUsuEsCalificador(String usuEsCalificador) {
+        this.usuEsCalificador = usuEsCalificador;
     }
 
     public List<MarNotificaciones> getMarNotificacionesList() {
