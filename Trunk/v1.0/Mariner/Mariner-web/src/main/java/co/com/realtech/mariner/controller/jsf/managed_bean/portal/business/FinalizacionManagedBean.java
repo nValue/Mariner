@@ -191,7 +191,7 @@ public class FinalizacionManagedBean extends GenericManagedBean{
             radicacionSel.setRadEstado("F");
             auditSessionUtils.setAuditReflectedValues(radicacionSel);
             genericDAOBean.merge(radicacionSel);
-            obtenerRadicacionesPendientes();
+            buscarRadicaciones();
         } catch (Exception e) {
             String mensaje = "No se puede guardar la aprobación, causado por " + e.getMessage();
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Finalización pendiente", mensaje, true, false);
@@ -220,7 +220,7 @@ public class FinalizacionManagedBean extends GenericManagedBean{
             radicacionSel.setRadEstado("R");
             auditSessionUtils.setAuditReflectedValues(radicacionSel);
             genericDAOBean.merge(radicacionSel);
-            obtenerRadicacionesPendientes();
+            buscarRadicaciones();
         } catch (Exception e) {
             String mensaje = "No se puede guardar el rechazo, causado por " + e.getMessage();
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Finalización pendiente", mensaje, true, false);

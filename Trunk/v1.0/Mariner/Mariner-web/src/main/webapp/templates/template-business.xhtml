@@ -31,13 +31,15 @@
                             </h:panelGrid>
                             <div>
                                 <div style="width: 320px;" align="center">
+                                    
                                     <p:captcha label="Captcha" language="es" required="true"/>
+                                    
                                 </div>                                
                             </div>
                             <div align="center" style="padding: 12px;">
                                 <p:commandButton value="Entrar" action="#{indexManagedBean.autenticar()}" update="@this :panelHome" ajax="false"/>
                                 <p:commandButton value="Registrarme" action="#{indexManagedBean.activarRegistro()}" update=":modalRegistro" oncomplete="PF('dialogRegistro').show()" process="@this" rendered="false" />
-                                <p:commandButton value="Olvidé la clave" />
+                                <p:commandButton value="Olvidé la clave" disabled="true" />
                             </div>
                         </div> 
                         <div id="panelOpcionesExternas">

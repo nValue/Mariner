@@ -5,6 +5,7 @@ import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFase
 import co.com.realtech.mariner.model.ejb.dao.entity_based.usuarios.UsuariosDAOBeanLocal;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
+import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import java.math.BigDecimal;
@@ -44,7 +45,8 @@ public class AsignacionesManagedBean extends GenericManagedBean{
     private String rol;
     private String codigosPendientes;
     private String usuariosPendientes;
-    private String idModulo;
+    private boolean permiteAsignar;
+    private String estadoAsignacion;
 
     @Override
     public void init() {
@@ -57,19 +59,23 @@ public class AsignacionesManagedBean extends GenericManagedBean{
         } else {
             rol = especialidadObject.toString();
         }
+        estadoAsignacion = "";
+        permiteAsignar = true;
         codigosPendientes = "";
         usuariosPendientes = "";
-        idModulo = "";
         if (rol.equals("NOT")) {
-            codigosPendientes = "'I-P'";
-            usuariosPendientes = "'G-P'";
-            idModulo = "1";
+            permiteAsignar = false;
+            codigosPendientes = "'I-R'";
+            usuariosPendientes = "'I-R'";
         } else if (rol.equals("LIQ")) {
             codigosPendientes = "'I-P'";
-            usuariosPendientes = "'G-P','G-S'";
-            idModulo = "10";
+            usuariosPendientes = "'G-P'";
+            estadoAsignacion = "G-P";
+        } else if (rol.equals("APR")) {
+            codigosPendientes = "'G-A'";
+            usuariosPendientes = "'R-P'";
+            estadoAsignacion = "R-P";
         }
-        System.out.println("rol = " + rol);
         obtenerRadicacionesDisponibles();
         obtenerUsuariosConModulo();
     }
@@ -95,7 +101,7 @@ public class AsignacionesManagedBean extends GenericManagedBean{
      */
     public void obtenerUsuariosConModulo(){
         try {
-            usuarios = usuariosDAOBean.obtenerAsociadosAModulo(idModulo);
+            usuarios = usuariosDAOBean.obtenerAsociadosAModulo(rol);
             usuariosReasigs = usuarios;
             if(!usuarios.isEmpty()){
                 usuarioSel = usuarios.get(0);
@@ -158,7 +164,7 @@ public class AsignacionesManagedBean extends GenericManagedBean{
             if (rfe.getRfeId().equals(radFaseEstadoDisponible.getRfeId())) {
                 
                 BigDecimal BDsalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radFaseEstadoDisponible.getRadId().getRadId(),
-                        "G-P", "A", usuarioSel.getUsuId(), "", null);
+                        estadoAsignacion, "A", usuarioSel.getUsuId(), "", null);
                 Integer salida = BDsalida.intValue();
                 if (salida == -999) {
                     PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo.", true, false);
@@ -182,20 +188,22 @@ public class AsignacionesManagedBean extends GenericManagedBean{
     public void reAsignarRadicacion(){
         try {
             //Primero valida que el proceso no haya sido asignado a un usuario.
-            MarRadicacionesFasesEstados rfe = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radFaseEstadoDisponible.getRadId());
-            if(rfe.getRfeId().equals(radFaseEstadoDisponible.getRfeId())){
+            MarRadicacionesFasesEstados rfe = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radFaseEstadoUsuario.getRadId());
+            if(rfe.getRfeId().equals(radFaseEstadoUsuario.getRfeId())){
                 //Ahora valida que el estado actual del proceso no lo haya obtenido otro usuario mientras el asignador cambiaba la radicación a otro usuario.
                 MarUsuarios usuNuevo = rfe.getUsuId();
-                if(radFaseEstadoDisponible.getUsuId().getUsuId() != usuNuevo.getUsuId()){
+                if(!radFaseEstadoUsuario.getUsuId().getUsuId().equals(usuNuevo.getUsuId())){
                     PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación cargada externamente", "Mientras usted realizaba la operación de asignación, esta radicación fue colocada al usuario " + usuNuevo.getUsuLogin(), true, false);
                     return;
                 }
                 //Si la radicación no ha cambiado estados mientras se procesaba si se puede cambiar el usuario.
-                radFaseEstadoDisponible.setUsuId(usuarioReasigSel);
-                auditSessionUtils.setAuditReflectedValues(radFaseEstadoDisponible);
-                genericDAOBean.merge(radFaseEstadoDisponible);
-                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación asignada", "La radicación número <b>" + radFaseEstadoDisponible.getRadId().getRadNumero()+"</b>, se ha reasignado al usuario <b>" + usuarioReasigSel.getUsuLogin() + "</b>" , true, false);
+                radFaseEstadoUsuario.setUsuId(usuarioReasigSel);
+                auditSessionUtils.setAuditReflectedValues(radFaseEstadoUsuario);
+                genericDAOBean.merge(radFaseEstadoUsuario);
+                PrimeFacesContext.execute("PF('dialogRadicUsuario').hide()");
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación asignada", "La radicación número <b>" + radFaseEstadoUsuario.getRadId().getRadNumero()+"</b>, se ha reasignado al usuario <b>" + usuarioReasigSel.getUsuLogin() + "</b>" , true, false);
                 obtenerRadicacionesDisponibles();
+                obtenerUsuariosConModulo();
             }else{
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación ya procesada", "Esta radicación disponible acaba de ser procesada por un usuario y no puede ser asignada", true, false);
             }
@@ -291,6 +299,14 @@ public class AsignacionesManagedBean extends GenericManagedBean{
 
     public void setUsuarioReasigSel(MarUsuarios usuarioReasigSel) {
         this.usuarioReasigSel = usuarioReasigSel;
+    }
+
+    public boolean isPermiteAsignar() {
+        return permiteAsignar;
+    }
+
+    public void setPermiteAsignar(boolean permiteAsignar) {
+        this.permiteAsignar = permiteAsignar;
     }
     
     

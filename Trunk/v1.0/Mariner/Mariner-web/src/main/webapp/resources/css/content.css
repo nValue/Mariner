@@ -99,6 +99,24 @@
     margin: 5px;
 }
 
+.contLabelTextValor{
+    width: 150px;
+    display: inline-block;
+    vertical-align: top;
+    height: 38px;
+    margin: 5px;
+}
+
+.labelTextValor{
+    border: 1px solid #d6d6d6;
+    width: 150px;
+    display: block;
+    padding: 3px 0px;
+    text-align: center;
+    min-height: 18px;
+    border-radius: 4px;
+}
+
 #leftLiq {
     float:left;
     display: inline-block;
