@@ -92,6 +92,13 @@
                                     <f:selectItem itemValue="N" itemLabel="No"/>
                                     <f:selectItem itemValue="S" itemLabel="Si"/>
                                 </p:selectOneMenu>
+                                <h:outputLabel class="labelLittle" value="Es Calificador" /> 
+                                <h:inputHidden/>
+                                <p:selectOneMenu value="#{usuariosManagedBean.usuarioSel.usuEsCalificador}" style="width: 200px">
+                                    <f:selectItem itemValue="N" itemLabel="No"/>
+                                    <f:selectItem itemValue="S" itemLabel="Si"/>
+                                </p:selectOneMenu>
+                                <h:inputHidden/>
                             </h:panelGrid>
                             <div id="rightDiv" style="padding: 20px;display: inline-block;width: 40%;vertical-align: top">
                                 <p:dataTable id="tableRolesUsuario" value="#{usuariosManagedBean.rolesUsuarios}" selection="#{usuariosManagedBean.rolUsuarioSel}" var="rUsu" emptyMessage="No se han encontrado Roles">

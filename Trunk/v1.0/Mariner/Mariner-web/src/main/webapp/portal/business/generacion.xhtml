@@ -174,7 +174,7 @@
                         <p:selectOneMenu value="#{generacionManagedBean.codigoLiquidacion}" style="width: 322px" >
                             <f:selectItems value="#{generacionManagedBean.detallesLiquidaciones}" var="liq" itemLabel="#{liq.liqNumero} - #{liq.fechaLiquidacion} - #{liq.documento}" itemValue="#{liq.liqNumero}"/>
                         </p:selectOneMenu>
-                        <p:commandButton value="Consular en SAP" action="#{generacionManagedBean.obtenerInformacionSAP()}" update="formLiquidacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();"/>
+                        <p:commandButton value="Consultar en SAP" action="#{generacionManagedBean.obtenerInformacionSAP()}" update="formLiquidacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();"/>
                     </h:panelGrid>                   
                 </div>
                 <h:panelGroup rendered="#{generacionManagedBean.detalleLiquidacion != null and generacionManagedBean.detalleLiquidacion.liqNumero != ''}" >

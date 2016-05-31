@@ -137,7 +137,7 @@
                     <div align="center" style="padding-top: 10px">
                         <h:panelGrid columns="3">
                             <p:commandButton value="Realizar Pago" update="@form" action="#{paymentManagedBean.realizarTransaccion()}" disabled="#{paymentManagedBean.transaccion.traEstado != 'T'}"/>
-                            <p:commandButton value="Cancelar" oncomplete="PF('dialogTransaccion').hide();" immediate="true"/>
+                            <p:commandButton value="Salir" oncomplete="PF('dialogTransaccion').hide();" immediate="true"/>
                         </h:panelGrid>                        
                     </div>
                 </h:form>
