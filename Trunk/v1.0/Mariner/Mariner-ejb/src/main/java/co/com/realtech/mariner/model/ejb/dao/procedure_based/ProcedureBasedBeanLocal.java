@@ -16,6 +16,6 @@ public interface ProcedureBasedBeanLocal {
     
     public String cargarConstante(String llave);
     
-    public String vincularArchivoSAP(BigDecimal radId);
+    public void vincularArchivoSAP(BigDecimal radId) throws Exception;
     
 }

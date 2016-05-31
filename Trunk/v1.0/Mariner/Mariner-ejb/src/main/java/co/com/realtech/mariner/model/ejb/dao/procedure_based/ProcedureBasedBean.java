@@ -31,20 +31,19 @@ public class ProcedureBasedBean extends GenericDAOBean implements ProcedureBased
         }
         return valor;
     }
+
     /**
      * Vincular archivos SAP, llamado a funcion.
+     *
      * @param radId
-     * @return 
+     * @throws java.lang.Exception
      */
     @Override
-    public String vincularArchivoSAP(BigDecimal radId) {
-        String salida;
+    public void vincularArchivoSAP(BigDecimal radId) throws Exception {
         try {
-            salida = callGenericFunction("PKG_VUR_NEGOCIO.FN_VINCULAR_ARCHIVOS_RAD", radId).toString();
+            callGenericProcedure("PKG_VUR_NEGOCIO.PL_VINCULAR_ARCHIVOS_RAD", radId);
         } catch (Exception e) {
-            salida = "ERROR: No se pudo vincular el archivo SAP, error interno " + e;
+            throw e;
         }
-        return salida;
     }
-
 }

@@ -32,10 +32,10 @@ public class SAPFilesUtils {
      * Vincular archivos de SAP con la Radicacion.
      *
      * @param radId
-     * @return
+     * @throws java.lang.Exception
      */
-    public static String vincularArchivosSAP(BigDecimal radId) {
-        return procedureBasedBean.vincularArchivoSAP(radId);
+    public static void vincularArchivosSAP(BigDecimal radId) throws Exception{
+        procedureBasedBean.vincularArchivoSAP(radId);
     }
     
 }
