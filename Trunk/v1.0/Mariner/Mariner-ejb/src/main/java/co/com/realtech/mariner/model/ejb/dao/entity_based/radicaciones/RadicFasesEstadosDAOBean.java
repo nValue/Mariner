@@ -136,7 +136,8 @@ public class RadicFasesEstadosDAOBean extends GenericDAOBean implements RadicFas
                     + "SELECT rfe.* FROM mar_radicaciones_fases_estados rfe \n"
                     + "INNER JOIN ultEstado u ON rfe.rfe_id = u.rfe_id\n"
                     + "INNER JOIN mar_fases_estados fe ON rfe.fes_id = fe.fes_id\n"
-                    + "WHERE fe.fes_codigo IN (%ESTADOS%)";
+                    + "WHERE fe.fes_codigo IN (%ESTADOS%)\n"
+                    + "ORDER BY rfe.rfe_id ASC";
             sql = sql.replace("%ESTADOS%", fases);
             Query q = getEntityManager().createNativeQuery(sql,MarRadicacionesFasesEstados.class);
             rads = q.getResultList();

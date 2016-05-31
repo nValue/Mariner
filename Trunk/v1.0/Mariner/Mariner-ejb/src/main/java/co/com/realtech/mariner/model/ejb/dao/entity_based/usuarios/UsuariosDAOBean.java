@@ -85,18 +85,26 @@ public class UsuariosDAOBean extends GenericDAOBean implements UsuariosDAOBeanLo
         return validacion;
     }
     
-    /**
-     * Obtiene los usuarios asociados a un módulo específico.
-     * @param idModulo
-     * @return
-     * @throws MarinerPersistanceException 
-     */
+    
     @Override
-    public List<MarUsuarios> obtenerAsociadosAModulo(String idModulo) throws MarinerPersistanceException {
+    public List<MarUsuarios> obtenerAsociadosAModulo(String labor) throws MarinerPersistanceException {
         List<MarUsuarios> usuarios = null;
         try {
-            Query q = getEntityManager().createQuery("SELECT rul.usuId FROM MarRolesModulos rm INNER JOIN rm.rolId.marRolesUsuariosList rul WHERE rm.modId.modId = :modId ");
-            q.setParameter("modId", BigDecimal.valueOf(Long.parseLong(idModulo)));
+            String sql = "SELECT * FROM mar_usuarios WHERE ";
+            switch (labor) {
+            case "LIQ":
+                sql = sql + " usu_es_liquidador = 'S'";
+                break;
+            case "APR":
+                sql = sql + " usu_es_aprobador = 'S'";
+                break;
+            case "NOT":
+                sql = sql + " usu_es_notario = 'S'";
+                break;
+            default:
+                return usuarios;
+        }
+            Query q = getEntityManager().createNativeQuery(sql,MarUsuarios.class);
             usuarios = q.getResultList();
         } catch (Exception e) {
             throw e;

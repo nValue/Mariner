@@ -19,7 +19,13 @@ public interface UsuariosDAOBeanLocal {
     
     public boolean validacionCreacionUsuario(MarUsuarios usuario, MarPersonas persona) throws Exception;
     
-    public List<MarUsuarios> obtenerAsociadosAModulo(String idModulo) throws MarinerPersistanceException;
+    /**
+     * Obtiene los usuarios asociados a una labor específica LIQ,NOT,APR.
+     * @param 
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    public List<MarUsuarios> obtenerAsociadosAModulo(String labor) throws MarinerPersistanceException;
     
     public int obtenerCantPendientesDeUsuario(MarUsuarios usuario, String fase) throws MarinerPersistanceException;
     
