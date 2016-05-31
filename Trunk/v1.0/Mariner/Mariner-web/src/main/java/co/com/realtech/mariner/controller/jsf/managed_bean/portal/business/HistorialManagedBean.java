@@ -10,6 +10,7 @@ import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFase
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicacionesDAOBeanLocal;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
+import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.model.entity.generic.ClaveValor;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
@@ -60,7 +61,10 @@ public class HistorialManagedBean extends GenericManagedBean {
         fechaFiltroFin = new Date();
         estadosProcesos = new ArrayList<>();
         estadosProcesos.add(new ClaveValor("A", "Aprobados"));
-        estadosProcesos.add(new ClaveValor("R", "Rechazados"));
+        //Valida que el usuario sea calificador para no mostrarle los rechazados.
+        if(!usuarioSesion.getUsuEsCalificador().equals("S")){
+            estadosProcesos.add(new ClaveValor("R", "Rechazados"));
+        }
         
         //Crea la lista con los filtros de búsqueda para el SelectOneMenu.
         filtrosBusqueda = new ArrayList<>();
@@ -133,7 +137,11 @@ public class HistorialManagedBean extends GenericManagedBean {
             if(filtroBusquedaSel.getClave().equals("ES")){
                 campoBusqueda = estadoProcesoSel.getClave();
             }
-            radicaciones = radicacionesDAOBean.obtenerRadicacionesFinalizacionPorFechasYParametro(filtroBusquedaSel.getClave(), campoBusqueda, fechaFiltroInic, fechaFiltroFin,usuarioSesion);    
+            MarUsuarios usuarioSel = usuarioSesion;
+            if(usuarioSesion.getUsuEsCalificador().equals("S")){
+                usuarioSel = null;
+            }
+            radicaciones = radicacionesDAOBean.obtenerRadicacionesFinalizacionPorFechasYParametro(filtroBusquedaSel.getClave(), campoBusqueda, fechaFiltroInic, fechaFiltroFin,usuarioSel);    
             if(!radicaciones.isEmpty()){
                 radicacionSel = radicaciones.get(0);
             }
