@@ -20,6 +20,8 @@
             #modalDepartamento{top: 40px !important;}
 
             #modalCiudad{top: 40px !important;}
+            
+            #modalCausales{top: 40px !important;}
         </style>
 
         <div id="paperMain">
@@ -193,7 +195,34 @@
                                     </div>
                                 </div>
                             </h:form>                            
-                        </p:tab>                        
+                        </p:tab>
+                        <p:tab title="Causales de Rechazo">
+                            <h:form id="formCausalesRechazo">
+                                <div>
+                                    <div style="padding: 12px;padding-top: 0px !important;">
+                                        <p:dataTable id="causales" var="causal" value="#{causalesRechazoManagedBean.causales}" selectionMode="single" selection="#{causalesRechazoManagedBean.causal}" rowKey="#{causal.rcaId}" emptyMessage="No se han encontrado causales de rechazo configuradas" rowIndexVar="idx">
+                                            <p:ajax event="rowSelect" oncomplete="PF('dialogCausales').show();" update=":modalCausales"/>                        
+                                            <p:column headerText="#" width="40" styleClass="colCenter">
+                                                <h:outputText value="#{idx+1}" />
+                                            </p:column> 
+                                            <p:column headerText="Causal" styleClass="colCenter">
+                                                <h:outputText value="#{causal.rcaNombres}" />
+                                            </p:column>                                            
+                                            <p:column headerText="X" width="20" styleClass="colCenter">
+                                                <p:commandLink update="causales" title="Presione para eliminar esta Causal" action="#{causalesRechazoManagedBean.eliminarCausal()}">                                    
+                                                    <f:setPropertyActionListener target="#{causalesRechazoManagedBean.causal}" value="#{causal}" />
+                                                    <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                                    <p:confirm header="Confirmacion" message="Esta seguro de eliminar la Causal seleccionado?" icon="ui-icon-alert" />
+                                                </p:commandLink>
+                                            </p:column>
+                                        </p:dataTable>
+                                        <div align="right" style="padding-top: 4px;">
+                                            <p:commandButton value="Agregar" action="#{causalesRechazoManagedBean.agregarCausal()}" oncomplete="PF('dialogCausales').show();" update=":modalCausales"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:form>                            
+                        </p:tab>
                     </p:tabView>
                 </div>
             </div>
@@ -295,6 +324,22 @@
                     <div align="center" style="padding-top: 10px">
                         <p:commandButton value="Guardar" action="#{ciudadesManagedBean.guardarCiudad()}" update="@form :tabContainer:formCiudades"/>
                         <p:commandButton value="Cancelar" oncomplete="PF('dialogCiudad').hide();" immediate="true"/>
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
+
+        <!-- Dialog de modificacion causal de rechazo -->        
+        <p:dialog id="modalCausales" widgetVar="dialogCausales" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Causal de Rechazo" modal="true">
+            <div>
+                <h:form id="formModalCausales">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Nombres"/>
+                        <p:inputText value="#{causalesRechazoManagedBean.causal.rcaNombres}" required="true" size="30"/>                        
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{causalesRechazoManagedBean.guardarCausalRechazo()}" update="@form :tabContainer:formCausalesRechazo"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogCausales').hide();" immediate="true"/>
                     </div>
                 </h:form>
             </div>            
