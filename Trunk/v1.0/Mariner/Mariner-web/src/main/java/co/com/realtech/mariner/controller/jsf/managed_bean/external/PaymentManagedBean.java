@@ -124,7 +124,19 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                     MarTransacciones transaccionBD = getRadicacion().getMarTransacciones();
                     MarRadicacionesFasesEstados estado = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(transaccionBD.getRadId());
 
-                    if (estado.getFesId().getFesCodigo().equals("R-A")) {
+                    String estadosValidosPago = ConstantesUtils.cargarConstante("VUR-ESTADOS-VALIDOS-PAGO");
+                    boolean validacionEstados = false;
+
+                    System.out.println("Pasarela de pagos: Estados validos " + estadosValidosPago + ": Estado Proceso (" + getRadicacion().getRadId() + ")" + estado.getFesId().getFesCodigo());
+
+                    for (String splitedEstado : estadosValidosPago.split(",")) {
+                        if (splitedEstado.equalsIgnoreCase(estado.getFesId().getFesCodigo())) {
+                            validacionEstados = true;
+                            break;
+                        }
+                    }
+
+                    if (validacionEstados) {
                         // verificamos la fecha de la transaccion sea dd/MM/yyyy HH:mm:ss
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 

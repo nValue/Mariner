@@ -12,6 +12,7 @@ import co.com.realtech.mariner.model.logic.liquidaciones.SAPListadoLiquidaciones
 import co.com.realtech.mariner.model.logic.radicaciones_sap.SAPRadicacionesLogicOperations;
 import co.com.realtech.mariner.model.sdo.estandar.EntidadLiquidacionResultado;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
+import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
@@ -177,7 +178,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
             radicacionUsuarioSel = radObtenida;
             obtenerFasesEstadosDeRadicacion();
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación encontrada", "Se ha asignado la radicación <b> -" + radObtenida.getRadNumero() + "- </b> a sus pendientes, puede verificarla en la lista desplegable de radicaciones", true, false);
-        } catch (Exception e) {
+        } catch (NumberFormatException | MarinerPersistanceException e) {
             logger.error("Error asignando una radicación disponible, causado por: " + e, e);
         }
     }
@@ -365,9 +366,16 @@ public class GeneracionManagedBean extends GenericManagedBean {
         if (getCodigoLiquidacion().isEmpty()) {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Liquidación requerida", "Debe seleccionar un número de liquidación para poder validarla en SAP", true, false);
         } else {
-            sapRadicacionesLogicOperations = SAPRadicacionesLogicOperations.create();
             try {
-                setDetalleLiquidacion(sapRadicacionesLogicOperations.consultarLiquidacionSAP(getCodigoLiquidacion()));
+                // Verificamos que esa liquidacion tenga Archivo y Boleta Fiscal en VUR
+                String contieneArchivos = genericDAOBean.callGenericFunction("PKG_VUR_NEGOCIO.FL_VERIFICAR_ARCHIVOS_LIQUI", getCodigoLiquidacion()).toString();
+
+                if (contieneArchivos.equals("S")) {
+                    sapRadicacionesLogicOperations = SAPRadicacionesLogicOperations.create();
+                    setDetalleLiquidacion(sapRadicacionesLogicOperations.consultarLiquidacionSAP(getCodigoLiquidacion()));
+                } else {
+                    PrimeFacesPopup.lanzarDialog(Effects.Explode, "Archivos Requeridos", "Lo sentimos pero la liquidacion <b>" + getCodigoLiquidacion() + "</b> no tiene Boleta Fiscal y/o Recibo, por favor presione el Boton Generar PDF's en SAP.", true, false);
+                }
             } catch (Exception e) {
                 String msj = "No se pueden extraer los datos de SAP, causado por: " + e;
                 PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error en SAP", msj, true, false);
@@ -380,20 +388,19 @@ public class GeneracionManagedBean extends GenericManagedBean {
      * Dada la información de detalle liquidación, la vincula al proceso actual.
      */
     public void vincularInformacionSAP() {
-        EntidadLiquidacionResultado salida = sapRadicacionesLogicOperations.vincularRadicacionSAP(radicacionUsuarioSel, getCodigoLiquidacion());
-        if (salida.getEstado().equals("OK")) {
-            String salidaArchivos = SAPFilesUtils.vincularArchivosSAP(radicacionUsuarioSel.getRadId());
-            radicacionUsuarioSel = null;
-            obtenerRadicacionesPendientes();
-            PrimeFacesContext.execute("PF('dialogLiquidacion').hide();");
-            if (salidaArchivos.equals("OK")) {
+        try {
+            EntidadLiquidacionResultado salida = sapRadicacionesLogicOperations.vincularRadicacionSAP(radicacionUsuarioSel, getCodigoLiquidacion());
+            if (salida.getEstado().equals("OK")) {
+                SAPFilesUtils.vincularArchivosSAP(radicacionUsuarioSel.getRadId());
+                radicacionUsuarioSel = null;
+                obtenerRadicacionesPendientes();
+                PrimeFacesContext.execute("PF('dialogLiquidacion').hide();");
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso finalizado", "Vinculación realizada correctamente y cambiada a validación por aprobador.", true, false);
             } else {
-                logger.error(salidaArchivos);
-                PrimeFacesPopup.lanzarDialog(Effects.Pulsate, "Notificacion", "Vinculación realizada correctamente y cambiada a validación por aprobador, el archivo de SAP no se ha podido vincular.", true, false);
+                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error vinculacion", salida.getLog().getMensaje(), true, false);
             }
-        } else {
-            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error vinculacion", salida.getLog().getMensaje(), true, false);
+        } catch (Exception e) {
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Error interno realizando vinculacion de Radicacion, codigo de error:" + e, true, false);
         }
     }
 

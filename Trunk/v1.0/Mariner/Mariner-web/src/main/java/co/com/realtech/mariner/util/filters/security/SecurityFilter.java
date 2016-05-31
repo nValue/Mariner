@@ -2,9 +2,6 @@ package co.com.realtech.mariner.util.filters.security;
 
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -53,8 +50,8 @@ public class SecurityFilter implements Filter {
                     List<String> paths = (List<String>) req.getSession().getValue("marinerpaths");
 
                     boolean valContext = false;
-                    for (String mod : paths) {                        
-                        if (mod.equalsIgnoreCase(path)) {
+                    for (String mod : paths) {
+                        if (path.startsWith(mod)) {
                             valContext = true;
                         }
                     }

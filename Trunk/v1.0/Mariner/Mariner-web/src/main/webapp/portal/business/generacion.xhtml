@@ -165,20 +165,17 @@
                     </div>
                 </div>
                 <div align="center">
-                    <h:panelGrid columns="4">
+                    <h:panelGrid columns="5">
                         <p:outputLabel value="Fecha" />
                         <p:calendar styleClass="calendarSmall" id="fechaLiq" value="#{generacionManagedBean.fechaLiquidaciones}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}" >
                             <p:ajax event="dateSelect" listener="#{generacionManagedBean.obtenerLiqPendientes()}" update="formLiquidacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                         </p:calendar>
                         <p:outputLabel value="Número de liquidación" />
-                        <p:selectOneMenu value="#{generacionManagedBean.codigoLiquidacion}" style="width: 350px" >
+                        <p:selectOneMenu value="#{generacionManagedBean.codigoLiquidacion}" style="width: 322px" >
                             <f:selectItems value="#{generacionManagedBean.detallesLiquidaciones}" var="liq" itemLabel="#{liq.liqNumero} - #{liq.fechaLiquidacion} - #{liq.documento}" itemValue="#{liq.liqNumero}"/>
                         </p:selectOneMenu>
-                    </h:panelGrid>
-                    <div align="center" style="display: block;margin: 10px;">
-                        <p:commandButton value="Verificar" action="#{generacionManagedBean.obtenerInformacionSAP()}" update="formLiquidacion"
-                                         onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();"/>
-                    </div>
+                        <p:commandButton value="Consular en SAP" action="#{generacionManagedBean.obtenerInformacionSAP()}" update="formLiquidacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();"/>
+                    </h:panelGrid>                   
                 </div>
                 <h:panelGroup rendered="#{generacionManagedBean.detalleLiquidacion != null and generacionManagedBean.detalleLiquidacion.liqNumero != ''}" >
                     <div style="margin: 10px;">
