@@ -51,7 +51,7 @@ public class SecurityFilter implements Filter {
 
                     boolean valContext = false;
                     for (String mod : paths) {
-                        if (path.startsWith(mod)) {
+                        if (mod.startsWith(path)) {
                             valContext = true;
                         }
                     }
