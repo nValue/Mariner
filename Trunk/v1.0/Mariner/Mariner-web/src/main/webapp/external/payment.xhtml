@@ -43,7 +43,7 @@
                                 <p:commandButton value="Buscar" action="#{paymentManagedBean.buscarRadicacion()}" update="@form" rendered="#{paymentManagedBean.autenticado != 'S'}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                                 <h:outputLabel value="Radicaciones pendientes de pago" rendered="#{paymentManagedBean.autenticado eq 'S'}"/>  
                                 <p:selectOneMenu styleClass="inputModal" value="#{paymentManagedBean.radicacion}" converter="MarRadicacionesConverter" style="width: 222px;" rendered="#{paymentManagedBean.autenticado eq 'S'}">
-                                    <f:selectItems value="#{paymentManagedBean.radicaciones}" var="radicacion" itemLabel="#{radicacion.radNumero}" itemValue="#{radicacion}"/>
+                                    <f:selectItems value="#{paymentManagedBean.radicaciones}" var="radicacion" itemLabel="#{radicacion.radNumero} #{radicacion.radTurno eq null ? '' : '- Turno'} #{radicacion.radTurno}" itemValue="#{radicacion}"/>
                                     <p:ajax update="panelRadicacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                                 </p:selectOneMenu>
                             </h:panelGrid>

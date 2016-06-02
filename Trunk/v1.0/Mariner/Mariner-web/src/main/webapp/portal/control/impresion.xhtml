@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/template-business-external.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="negocio">
+        <style type="text/css">
+            #modalTransaccion{
+                top: 44px !important;
+            }
+        </style>
+        <div id="contenedorPayments">
+            <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
+            <link rel="stylesheet" type="text/css" href="#{resource['css/payment.css']}" />
+            <div id="paperMain">
+                <div class="tituloCont" align="center">
+                    <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                    <div style="display: inline-block">
+                        <h:outputLabel styleClass="titleMain" value="Impresión" />
+                        <h:outputLabel styleClass="subtitleMain" value="Impresión de radicaciones para la gobernación"/>
+                    </div>
+                </div>
+                <div class="contenidoPrinc" align="center">
+                    <div class="descripcion" align="center">
+                        <div class="descText">
+                            Use los filtros para buscar entre procesos pendientes o ya impresos.
+                        </div>                        
+                    </div>
+                    <div align="left">
+                        <h:form id="formPayment">
+                            <h:panelGrid columns="8">
+                                <h:outputLabel value="Tipo de Busqueda" />
+                                <p:selectOneMenu styleClass="inputModal" value="#{impresionManagedBean.tipoBusqueda}" style="width: 122px;" >
+                                    <p:ajax update="formPayment" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" listener="#{impresionManagedBean.seleccionarTipo()}"/>
+                                    <f:selectItem itemLabel="Pendientes" itemValue="P" />
+                                    <f:selectItem itemLabel="Impresos" itemValue="I" />
+                                </p:selectOneMenu>
+                                <h:outputLabel value="Radicaciones" /> 
+                                <p:selectOneMenu styleClass="inputModal" value="#{impresionManagedBean.radicacionEstadoSel}" converter="MarRadicacionesFasesEstadosConverter" style="width: 222px;" >
+                                    <f:selectItems value="#{impresionManagedBean.radicacionesEstados}" var="radicacion" itemLabel="#{radicacion.radId.radNumero} #{radicacion.radId.radTurno eq null ? '' : '- Turno'} #{radicacion.radId.radTurno}" itemValue="#{radicacion}"/>
+                                    <p:ajax update="panelRadicacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                                </p:selectOneMenu>
+                                <h:outputLabel value="Fecha Desde" />
+                                <p:calendar styleClass="calendarSmall" id="inputFecha1" value="#{impresionManagedBean.fechaInicial}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}" >
+                                    <p:ajax event="dateSelect" listener="#{impresionManagedBean.seleccionarTipo()}" update="formPayment" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();"/>
+                                </p:calendar>
+                                <h:outputLabel value="Fecha Hasta" />
+                                <p:calendar styleClass="calendarSmall" id="inputFecha2" value="#{impresionManagedBean.fechaFinal}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}" >
+                                    <p:ajax event="dateSelect" listener="#{impresionManagedBean.seleccionarTipo()}" update="formPayment" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                                </p:calendar>
+                            </h:panelGrid>
+                            <hr/>
+                            <!-- Panel de informacion de la radicacion seleccionada -->
+                            <h:panelGroup id="panelRadicacion">
+                                <h:panelGroup rendered="#{impresionManagedBean.radicacionEstadoSel!=null}">
+                                    <div id="payment-panel">
+                                        <div class="payment-title">
+                                            <span>
+                                                Informacion de la liquidacion
+                                            </span>                                            
+                                        </div>
+                                        <div class="payment-detail">
+                                            <h:panelGrid columns="6">
+                                                <h:outputLabel class="labelMiddle" value="Numero Radicacion" />
+                                                <p:outputLabel class="labelText" value="#{impresionManagedBean.radicacionEstadoSel.radId.radNumero}" />
+                                                <h:outputLabel class="labelMiddle" value="Liquidacion" />
+                                                <p:outputLabel class="labelText" value="#{impresionManagedBean.radicacionEstadoSel.radId.radLiquidacion}" />
+                                                <h:outputLabel class="labelMiddle" value="Escritura" />
+                                                <p:outputLabel class="labelText" value="#{impresionManagedBean.radicacionEstadoSel.radId.escId.escNumero}" />
+                                                <h:outputLabel class="labelMiddle" value="Fecha Liquidacion" />
+                                                <p:outputLabel class="labelText" value="#{impresionManagedBean.radicacionEstadoSel.radId.marRadicacionesDetallesSap.rdeFechaLiquidacion}" >
+                                                    <f:convertDateTime timeZone="#{utilManagedBean.timeZone}" pattern="dd/MM/yyyy HH:mm" />
+                                                </p:outputLabel>
+                                                <h:outputLabel class="labelMiddle" value="Fecha Límite de Pago" />
+                                                <p:outputLabel class="labelText" value="#{impresionManagedBean.radicacionEstadoSel.radId.marRadicacionesDetallesSap.rdeFechaLimite}" >
+                                                    <f:convertDateTime timeZone="#{utilManagedBean.timeZone}" pattern="dd/MM/yyyy HH:mm" />
+                                                </p:outputLabel>
+                                                <h:outputLabel class="labelMiddle" value="Valor a Pagar" />
+                                                <p:outputLabel class="labelText" value="#{impresionManagedBean.radicacionEstadoSel.radId.radValorLiq}" />                                                
+                                            </h:panelGrid>                                            
+                                        </div>
+                                    </div>            
+                                    <div>
+                                        <div class="payment-title">
+                                            <span>
+                                                Seleccion de medios de pago
+                                            </span>                                            
+                                        </div>
+                                        <div>
+                                            <div class="payment-methods">
+                                                <p:commandLink styleClass="payment-button" action="#{impresionManagedBean.descargarRecibo()}" title="Presione para realizar el pago mediante Consignacion en Ventanilla de Banco" >
+                                                    <img src="#{resource['images/icons/logo-codigo-barras.png']}" alt="Pago mediante consignacion en Ventanilla"/><br/>
+                                                    <span>
+                                                        Pago en Ventanilla
+                                                    </span>
+                                                </p:commandLink>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div align="center">
+                                        <p:commandButton value="Validar Entrega" action="#{impresionManagedBean.validarEntrega()}" rendered="#{!(impresionManagedBean.radicacionEstadoSel.radId.radEsImpresion eq 'S')}" 
+                                                          onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" >
+                                            <p:confirm header="Confirmación" message="¿Esta seguro de que desea validar la entrega?" icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                    </div>
+                                </h:panelGroup>
+                            </h:panelGroup>
+                        </h:form>
+                    </div>
+                </div>
+            </div>            
+        </div>   
+
+        
+    </ui:define>
+
+</ui:composition>

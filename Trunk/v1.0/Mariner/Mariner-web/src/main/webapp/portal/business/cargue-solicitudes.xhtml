@@ -28,11 +28,12 @@
                         <h:outputLabel value="Rechazados "/>
                         <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" converter="MarRadicacionesConverter" value="#{cargueSolicitudesManagedBean.radicacionSel}" >
                             <f:selectItem itemLabel=" - " itemValue="" />
-                            <f:selectItems value="#{cargueSolicitudesManagedBean.radicaciones}" var="radPend" itemLabel="#{(cargueSolicitudesManagedBean.esRechazo(radPend))}" itemValue="#{radPend}"/>
+                            <f:selectItems value="#{cargueSolicitudesManagedBean.radicaciones}" var="radPend" itemLabel="#{(cargueSolicitudesManagedBean.esRechazo(radPend))} - Turno #{radPend.radTurno}" itemValue="#{radPend}"/>
                             <p:ajax listener="#{cargueSolicitudesManagedBean.seleccionarRadicacion()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" update="formRadicacion"/>
                         </p:selectOneMenu>
                         <p:commandButton style="vertical-align: top" value="Crear Radicación" action="#{cargueSolicitudesManagedBean.solicitarRadicacion()}" update="formRadicacion formFiltroRadicaciones" disabled="#{((cargueSolicitudesManagedBean.radicacionSel != null) and (cargueSolicitudesManagedBean.radicacionSel.radId == null))}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
-                        <p:commandButton style="vertical-align: top" value="Historial" oncomplete="PF('dialogHistorial').show();" update="modalHistorial"/>
+                        <p:commandButton style="vertical-align: top" value="Historial" action="#{cargueSolicitudesManagedBean.obtenerRadicacionesProcesadas()}" 
+                                         onstart="PF('loadingDialog').show()" oncomplete="PF('dialogHistorial').show();PF('loadingDialog').hide()" update="modalHistorial"/>
                     </div>
                 </h:form>
 
@@ -54,6 +55,8 @@
                                 <h:outputText value="Motivo Rechazo" rendered="#{cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-R'}"/>
                                 <p:inputTextarea readonly="true" value="#{cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.rcaId.rcaNombres}" style="width: 100%"
                                                  rendered="#{cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-R'}" rows="2"/>
+                                <h:outputLabel value="Turno" rendered="#{cargueSolicitudesManagedBean.radicacionSel.notId.notEsGobernacion eq 'S'}"/>
+                                <p:inputMask value="#{cargueSolicitudesManagedBean.radicacionSel.radTurno}" mask="999?-9" rendered="#{cargueSolicitudesManagedBean.radicacionSel.notId.notEsGobernacion eq 'S'}"/>
                                 <h:outputText value="Observaciones"/>
                                 <p:inputTextarea value="#{cargueSolicitudesManagedBean.observacionesProceso}" style="width: 100%"/>
                                 
@@ -81,7 +84,7 @@
                                 </p:column>
                             </p:dataTable>
                         </div>
-                        <div style="margin: 20px">
+                        <div style="margin: 5px">
                             <p:commandButton value="Guardar" action="#{cargueSolicitudesManagedBean.guardarRadicacion()}" rendered="#{(cargueSolicitudesManagedBean.radicacionSel.radId eq null || cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-R')}" update="formRadicacion :formFiltroRadicaciones"
                                               onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()">
                                 <p:confirm header="Confirmación" message="¿Esta seguro de que desea guardar la radicación?" icon="ui-icon-alert" />
@@ -135,8 +138,8 @@
                     <p:column headerText="Estado">
                         <h:outputLabel value="#{radPro.fesId.fesNombre}" />
                     </p:column>
-                    <p:column headerText="Observaciones">
-                        <h:outputLabel value="#{radPro.rfeObservaciones}" />
+                    <p:column headerText="Turno" width="70">
+                        <h:outputLabel value="#{radPro.radId.radTurno}" />
                     </p:column>
                 </p:dataTable>
                 <div align="center" style="margin: 20px;">

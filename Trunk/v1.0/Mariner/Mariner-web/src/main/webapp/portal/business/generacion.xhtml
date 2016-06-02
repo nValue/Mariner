@@ -29,7 +29,7 @@
                         <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" converter="MarRadicacionesConverter" value="#{generacionManagedBean.radicacionUsuarioSel}">
                             <p:ajax listener="#{generacionManagedBean.obtenerFasesEstadosDeRadicacion()}" update="formTurnos" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                             <f:selectItem itemLabel=" - " itemValue="" />
-                            <f:selectItems value="#{generacionManagedBean.radicacionesUsuario}" var="rads" itemLabel="#{(generacionManagedBean.esRechazo(rads))}" itemValue="#{rads}"/>
+                            <f:selectItems value="#{generacionManagedBean.radicacionesUsuario}" var="rads" itemLabel="#{(generacionManagedBean.esRechazo(rads))} #{rads.radTurno eq null ? '' : '- Turno'} #{rads.radTurno}" itemValue="#{rads}"/>
                         </p:selectOneMenu>
                         <p:commandButton style="vertical-align: top" value="Obtener Radicación" action="#{generacionManagedBean.asignarNuevaRadicacion()}" update="formTurnos" process="@this" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                         <p:commandButton style="vertical-align: top" value="Ver Historial" action="#{generacionManagedBean.obtenerRadicacionesProcesadas()}" update="modalHistorial" process="@this" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogHistorial').show()"/>
@@ -38,10 +38,13 @@
                     <div align="center" style="padding: 20px;">
                         <h:panelGroup rendered="#{generacionManagedBean.radicacionUsuarioSel != null}">
                             <div style="margin: 20px;padding: 20px 0px;display: inline-block;vertical-align: top; width: 50%;border: solid 1px #e0e0e0;">
-                                <h:outputLabel class="labelLittle" value="Radicación No" style="display: block"/>
-                                <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radNumero}"/>
+                                
                                 <h:panelGrid columns="2" >
-
+                                    <h:outputLabel class="labelLittle" value="Radicación No" />
+                                    <h:outputLabel class="labelLittle" value="Turno"/>
+                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radNumero}"/> 
+                                    <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radTurno}"/>
+                                    
                                     <h:outputText class="labelLittle" value="Código SAP"/>
                                     <h:outputLabel class="labelLittle" value="Notaria"/>
                                     <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.radId}" />
@@ -129,8 +132,8 @@
                     <p:column headerText="Estado">
                         <h:outputLabel value="#{radPro.fesId.fesNombre}" />
                     </p:column>
-                    <p:column headerText="Observaciones">
-                        <h:outputLabel value="#{radPro.rfeObservaciones}" />
+                    <p:column headerText="Turno" width="70">
+                        <h:outputLabel value="#{radPro.radId.radTurno}" />
                     </p:column>
                 </p:dataTable>
                 <div align="center" style="margin: 20px;">

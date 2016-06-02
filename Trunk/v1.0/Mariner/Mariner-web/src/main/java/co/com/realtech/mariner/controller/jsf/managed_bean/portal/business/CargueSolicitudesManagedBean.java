@@ -14,6 +14,7 @@ import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarTiposDocumentos;
 import co.com.realtech.mariner.util.cdf.CDFFileUploader;
 import co.com.realtech.mariner.util.consecutives.NumeracionesManager;
+import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import co.com.realtech.mariner.util.io.file.FileUtilidades;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
@@ -223,6 +224,11 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
      */
     public void solicitarRadicacion() {
         try {
+            String permiteCrear = ConstantesUtils.cargarConstante("VUR-CREAR-RADIC");
+            if(permiteCrear.equals("N")){
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación deshabilitada","La plataforma no se encuentra disponible para crear más radicaciones, si desea más información puede comunicarse con la Gobernación para validar este proceso.", true, false);
+                return;
+            }
             radicaciones = null;
             MarEscrituras escrituraNueva = new MarEscrituras();
             escrituraNueva.setEscFecha(new Date());
@@ -284,7 +290,10 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Documento faltante", "Necesita adjuntar la escritura para guardar el proceso", true, false);
                 return;
             }
-
+            if(!radicacionesDAOBean.esTurnoValido(radicacionSel.getRadTurno())){
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Turno inválido", "El turno (" + radicacionSel.getRadTurno() + ") ya se encuentra asignado para el día de hoy, por favor intente con otro", true, false);
+                return;
+            }
             //Valida que la radicación actual no haya sido cambiada de fase para guardar los cambios.
             if (radicacionSel.getRadId() != null) {
                 MarRadicacionesFasesEstados rfe = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radicacionSel);

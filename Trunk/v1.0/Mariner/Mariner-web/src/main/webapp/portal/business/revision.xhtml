@@ -30,7 +30,7 @@
                         <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" converter="MarRadicacionesConverter" value="#{revisionManagedBean.radicacionPendienteSel}">
                             <p:ajax listener="#{revisionManagedBean.obtenerFasesEstadosDeRadicacion()}" update="formTurnos" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                             <f:selectItem itemLabel=" - " itemValue="" />
-                            <f:selectItems value="#{revisionManagedBean.radicacionesPendientes}" var="rads" itemLabel="#{rads.radNumero} - #{rads.radLiquidacion}" itemValue="#{rads}"/>
+                            <f:selectItems value="#{revisionManagedBean.radicacionesPendientes}" var="rads" itemLabel="#{(generacionManagedBean.esRechazo(rads))} #{rads.radTurno eq null ? '' : '- Turno'} #{rads.radTurno}" itemValue="#{rads}"/>
                         </p:selectOneMenu>
                         <p:commandButton style="vertical-align: top" value="Obtener Liquidación" action="#{revisionManagedBean.asignarNuevaRadicacion()}" update="formTurnos" process="@this" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                         <p:commandButton style="vertical-align: top" value="Ver Historial" action="#{revisionManagedBean.obtenerHistorialRadicaciones()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogHistorial').show()" update="modalHistorial" process="@this"/>
@@ -39,9 +39,13 @@
                     <div align="center" style="padding: 20px;">
                         <h:panelGroup rendered="#{revisionManagedBean.radicacionPendienteSel != null}">
                             <div style="margin: 20px;padding: 20px 0px;display: inline-block;vertical-align: top; width: 50%;border: solid 1px #e0e0e0;">
-                                <h:outputLabel class="labelLittle" value="Radicación No" style="display: block"/>
-                                <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.radNumero}"/>
+                                
                                 <h:panelGrid columns="2" >
+                                    <h:outputLabel class="labelLittle" value="Radicación No" />
+                                    <h:outputLabel class="labelLittle" value="Turno"/>
+                                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.radNumero}"/> 
+                                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.radTurno}"/>
+                                    
                                     <h:outputLabel class="labelLittle" value="Notaria"/>
                                     <h:outputText class="labelLittle" value="Liquidación"/>
                                     <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.notId.notNombre}" />
@@ -78,10 +82,11 @@
                                 </p:dataTable>
                             </div>
                             <div>
-                                <p:commandButton style="vertical-align: top" value="Aprobar" action="#{revisionManagedBean.validarRadicacion()}" update="formTurnos" rendered="#{(revisionManagedBean.radicacionFaseEstadoSel.fesId.fesCodigo eq 'R-P')}" >
+                                <p:commandButton style="vertical-align: top" value="Aprobar" action="#{revisionManagedBean.validarRadicacion()}" update="formTurnos" rendered="#{(revisionManagedBean.radicacionFaseEstadoSel.fesId.fesCodigo eq 'R-P')}" 
+                                                 onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()">
                                     <p:confirm header="Confirmación" message="¿Esta seguro de que desea validar la radicación?" icon="ui-icon-alert" />
                                 </p:commandButton>
-                                <p:commandButton style="vertical-align: top" value="Rechazar" oncomplete="PF('dialogRechazo').show()" update="formTurnos :formRechazo" rendered="#{(revisionManagedBean.radicacionFaseEstadoSel.fesId.fesCodigo eq 'R-P')}" >
+                                <p:commandButton style="vertical-align: top" value="Rechazar" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogRechazo').show()" update="formTurnos :formRechazo" rendered="#{(revisionManagedBean.radicacionFaseEstadoSel.fesId.fesCodigo eq 'R-P')}" >
                                     <p:confirm header="Confirmación" message="¿Esta seguro de que desea rechazar esta radicación?" icon="ui-icon-alert" />
                                 </p:commandButton>
                                 <p:commandButton style="vertical-align: top" value="Desvincular" action="#{revisionManagedBean.desvincularLiquidacion()}" update="formTurnos" rendered="#{(revisionManagedBean.radicacionFaseEstadoSel.fesId.fesCodigo eq 'R-P')}" 
@@ -126,8 +131,8 @@
                     <p:column headerText="Estado">
                         <h:outputLabel value="#{radPro.fesId.fesNombre}" />
                     </p:column>
-                    <p:column headerText="Observaciones">
-                        <h:outputLabel value="#{radPro.rfeObservaciones}" />
+                    <p:column headerText="Turno" width="70">
+                        <h:outputLabel value="#{radPro.radId.radTurno}" />
                     </p:column>
                 </p:dataTable>
                 <div align="center" style="margin: 20px;">
@@ -203,12 +208,6 @@
                     <h:outputLabel class="labelLittle" value="Expedido En: "/>
                     <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeExpedidoEn}" style="width: 150px"/>
                 </div>
-                <!--
-                <div class="contLabelText">
-                    <h:outputLabel class="labelLittle" value="Fecha de Pago"/>
-                    <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap}" />
-                </div>
-                -->
                 <div class="contLabelText" style="width: 150px">
                     <h:outputLabel class="labelLittle" value="Clase Documento"/>
                     <p:outputLabel class="labelText" value="#{revisionManagedBean.radicacionPendienteSel.marRadicacionesDetallesSap.rdeDescladoc}" style="width: 150px"/>
@@ -261,8 +260,8 @@
                     <p:column headerText="TipoPer" width="40">
                         <h:outputLabel value="#{act.rdsTipoPer}" />
                     </p:column>
-                    <p:column headerText="BaseIpp" width="50">
-                        <h:outputLabel value="#{act.rdsBaseIpp}" />
+                    <p:column headerText="BaseIpp" width="90">
+                        <h:outputLabel value="#{act.rdsBaseIpp}" converter="CurrencyConverter" />
                     </p:column>
                     <p:column headerText="BaseCio" width="50">
                         <h:outputLabel value="#{act.rdsBaseCio}" />

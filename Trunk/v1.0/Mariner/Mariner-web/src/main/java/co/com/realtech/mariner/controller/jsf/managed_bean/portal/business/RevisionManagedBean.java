@@ -265,6 +265,8 @@ public class RevisionManagedBean extends GenericManagedBean{
      */
     public void seleccionarRadicacionHistorial(){
         radicacionPendienteSel = radicacionFaseEstadoSel.getRadId();
+        radicacionHistorialSel = radicacionFaseEstadoSel;
+        obtenerFasesEstadosDeRadicacion();
     }
     
     /**
@@ -286,6 +288,11 @@ public class RevisionManagedBean extends GenericManagedBean{
      */
     public void obtenerActosDeRadicacion(){
         try {
+            //Si es nulo es porque se está consultando desde el historial y debe traer los campos
+            if(radicacionPendienteSel == null){
+                radicacionPendienteSel = radicacionHistorialSel.getRadId();
+            }
+            System.out.println("radicacionPendienteSel = " + radicacionPendienteSel);
             radicacionesActos = (List<MarRadicacionesActosSap>)genericDAOBean.findAllByColumn(MarRadicacionesActosSap.class, "rdeId", radicacionPendienteSel.getMarRadicacionesDetallesSap(), true, "rdsId");
         } catch (Exception e) {
             String msj = "No se pueden obtener los actos de la radicación, causado por: " + e;
