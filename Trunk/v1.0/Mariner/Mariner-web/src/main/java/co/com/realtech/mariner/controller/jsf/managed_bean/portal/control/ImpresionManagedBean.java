@@ -76,6 +76,7 @@ public class ImpresionManagedBean extends GenericManagedBean implements Serializ
                 if (dispatcher.getFileContent() == null) {
                     PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero no se ha encontrado el Recibo en el Sistema, por favor intente nuevamente.", true, false);
                 } else {
+                    System.out.println("Descargando archivo...");
                     descargarArhivoFacesContext(FacesContext.getCurrentInstance(), dispatcher.getFileContent(), "comprobantePagoLiquidacion" + radicacionEstadoSel.getRadId().getRadLiquidacion() + ".pdf");
                 }
             }
@@ -118,6 +119,7 @@ public class ImpresionManagedBean extends GenericManagedBean implements Serializ
      *
      */
     public boolean validarTransaccion() {
+        System.out.println("Validando transaccion");
         try {
             // verificar que la transaccion no tenga una en curso.
             MarTransacciones transVerificacion = (MarTransacciones) genericDAOBean.findByColumn(MarTransacciones.class, "radId", radicacionEstadoSel.getRadId());
@@ -139,6 +141,7 @@ public class ImpresionManagedBean extends GenericManagedBean implements Serializ
                 transVerificacion.setTdcId(usuarioSesion.getPerId().getTdcId());
                 auditSessionUtils.setAuditReflectedValues(transVerificacion);
                 genericDAOBean.save(transVerificacion);
+                System.out.println("Transaccion " + transVerificacion.getTraId() + " guardada");
             }
             return true;
         } catch (Exception e) {
@@ -153,6 +156,7 @@ public class ImpresionManagedBean extends GenericManagedBean implements Serializ
      */
     public void validarEntrega(){
         try {
+            System.out.println("Validando entrega...");
             MarTransacciones transVerificacion = (MarTransacciones) genericDAOBean.findByColumn(MarTransacciones.class, "radId", radicacionEstadoSel.getRadId());
             if(transVerificacion == null){
                 PrimeFacesPopup.lanzarDialog(Effects.Explode, "Impresión requerida", "Antes de validar la entrega debe descargar el recibo de pago.", true, false);
@@ -163,6 +167,7 @@ public class ImpresionManagedBean extends GenericManagedBean implements Serializ
             genericDAOBean.merge(radicacionEstadoSel.getRadId());
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Proceso completado", "Se ha marcado el proceso con el estado de impresión de recibo de pago satisfactoriamente", true, false);
             seleccionarTipo();
+            System.out.println("Entrega validada...");
         } catch (Exception e) {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero ha ocurrido un error validando la entrega", true, false);
             logger.error("Error validando entrega de impresión, causado por " + e);

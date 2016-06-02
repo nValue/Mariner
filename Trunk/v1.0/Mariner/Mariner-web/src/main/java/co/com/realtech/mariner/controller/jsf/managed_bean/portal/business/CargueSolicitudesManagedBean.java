@@ -290,7 +290,8 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Documento faltante", "Necesita adjuntar la escritura para guardar el proceso", true, false);
                 return;
             }
-            if(!radicacionesDAOBean.esTurnoValido(radicacionSel.getRadTurno())){
+            if(radicacionSel.getRadTurno() == null){
+            } else if(!radicacionesDAOBean.esTurnoValido(radicacionSel.getRadTurno())){
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Turno inválido", "El turno (" + radicacionSel.getRadTurno() + ") ya se encuentra asignado para el día de hoy, por favor intente con otro", true, false);
                 return;
             }
