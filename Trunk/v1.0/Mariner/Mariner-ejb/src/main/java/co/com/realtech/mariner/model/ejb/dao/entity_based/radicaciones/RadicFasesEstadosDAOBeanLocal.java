@@ -52,4 +52,6 @@ public interface RadicFasesEstadosDAOBeanLocal {
     public List<MarRadicacionesFasesEstados> obtenerPorUltimaFaseUsuario(String fase, MarUsuarios usuario) throws MarinerPersistanceException;
     
     
+    
+    
 }

@@ -44,6 +44,10 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarNotarias.findByAudUsuario", query = "SELECT m FROM MarNotarias m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarNotarias.findByAudFecha", query = "SELECT m FROM MarNotarias m WHERE m.audFecha = :audFecha")})
 public class MarNotarias implements Serializable {
+
+    @Size(max = 1)
+    @Column(name = "NOT_ES_GOBERNACION")
+    private String notEsGobernacion;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -185,6 +189,14 @@ public class MarNotarias implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarNotarias[ notId=" + notId + " ]";
+    }
+
+    public String getNotEsGobernacion() {
+        return notEsGobernacion;
+    }
+
+    public void setNotEsGobernacion(String notEsGobernacion) {
+        this.notEsGobernacion = notEsGobernacion;
     }
     
 }

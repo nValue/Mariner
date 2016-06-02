@@ -54,6 +54,10 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarRadicaciones.findByRadEstado", query = "SELECT m FROM MarRadicaciones m WHERE m.radEstado = :radEstado"),
     @NamedQuery(name = "MarRadicaciones.findByRadLiquidacion", query = "SELECT m FROM MarRadicaciones m WHERE m.radLiquidacion = :radLiquidacion")})
 public class MarRadicaciones implements Serializable {
+
+    @Size(max = 20)
+    @Column(name = "RAD_TURNO")
+    private String radTurno;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -316,6 +320,14 @@ public class MarRadicaciones implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarRadicaciones[ radId=" + radId + " ]";
+    }
+
+    public String getRadTurno() {
+        return radTurno;
+    }
+
+    public void setRadTurno(String radTurno) {
+        this.radTurno = radTurno;
     }
     
 }

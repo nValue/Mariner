@@ -31,4 +31,13 @@ public interface RadicacionesDAOBeanLocal {
     
     public List<MarRadicaciones> obtenerRadsAtendidasYFaseFinal(MarUsuarios usuario, String fasesAtendidas, String fasesFinales) throws MarinerPersistanceException;
     
+    
+    /**
+     * Verifica que un turno no haya sido asignado el día de hoy.
+     * @param turno
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    public boolean esTurnoValido(String turno) throws MarinerPersistanceException;
+    
 }

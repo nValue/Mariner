@@ -5,6 +5,7 @@ import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
 import co.com.realtech.mariner.util.string.BusinessStringUtils;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -244,5 +245,23 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
         return radicaciones;
     }
     
+    
+    @Override
+    public boolean esTurnoValido(String turno) throws MarinerPersistanceException{
+        int cant = 0;
+        try {
+            String sql = "SELECT COUNT(*) FROM mar_radicaciones \n"
+                    + "WHERE 1 = 1\n"
+                    + "AND rad_turno = '%TURNO%'\n"
+                    + "AND TRUNC(rad_fecha) = TRUNC(SYSDATE)";
+            sql = sql.replace("%TURNO%", turno);
+            Query q = getEntityManager().createNativeQuery(sql);
+            q.setMaxResults(1);
+            cant = ((BigDecimal)q.getSingleResult()).intValue();
+        } catch (Exception e) {
+            throw e;
+        }
+        return (cant == 0);
+    }
     
 }
