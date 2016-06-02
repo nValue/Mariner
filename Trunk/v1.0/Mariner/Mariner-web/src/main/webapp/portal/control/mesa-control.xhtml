@@ -1,0 +1,289 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/template-business.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="negocio">
+        <!-- Estilos personalizados pagina -->
+        <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
+        <script type="text/javascript" src="#{resource['js/primefaces.spanish.js']}"/>
+        <style type="text/css">
+            *.calendarVUR>input{
+                width: 98px !important;
+            }
+
+            #modalRadicacion{
+                top: 10px !important;
+            }
+        </style>
+
+        <div id="paperMain">
+            <div class="tituloCont" align="center">
+                <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                <div style="display: inline-block">
+                    <h:outputLabel styleClass="titleMain" value="Mesa de Control" />
+                    <h:outputLabel styleClass="subtitleMain" value="Funcionalidades de Mesa de control, Proceso VUR Valle del Cauca"/>
+                </div>
+            </div>
+            <div class="contenidoPrinc" align="left">
+                <h:form id="formMesaControl">
+                    <div>
+                        <table style="width: 100%;">
+                            <tr>
+                                <td>
+                                    <div align="left">
+                                        <h:panelGrid columns="5">
+                                            <h:outputLabel value="Tipo Filtro"/>
+                                            <p:selectOneMenu styleClass="inputModal" value="#{mesaControlManagedBean.filtro}" style="width: 122px;">
+                                                <p:ajax listener="#{mesaControlManagedBean.limpiarFiltros()}" update="@form" />
+                                                <f:selectItem itemLabel="Radicacion" itemValue="RAD-NUMERO,TEXT" />
+                                                <f:selectItem itemLabel="Liquidacion" itemValue="RAD-LIQUIDACION,TEXT" />
+                                                <f:selectItem itemLabel="Turno" itemValue="RAD-TURNO,TEXT" />
+                                                <f:selectItem itemLabel="Escritura" itemValue="RAD-ESCRITURA,TEXT" />
+                                                <f:selectItem itemLabel="Todos" itemValue="TODOS,TEXT" />
+                                            </p:selectOneMenu>
+                                            <h:outputLabel value="Valor"/>
+                                            <p:inputText value="#{mesaControlManagedBean.valorFiltro}" style="width: 222px !important;"/>
+                                            <p:commandButton value="Buscar" action="#{mesaControlManagedBean.filtrarMesaControl()}" update="panelMesaControl @form" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();"/>
+                                        </h:panelGrid>
+                                    </div>
+                                </td>
+                                <td width="444">
+                                    <div align="right">
+                                        <h:panelGrid columns="4">
+                                            <h:outputLabel value="Fecha Inicial"/>
+                                            <p:calendar styleClass="calendarVUR" value="#{mesaControlManagedBean.fechaInicial}" showOn="button" locale="es" pattern="dd/MM/yyyy" >
+                                                <p:ajax event="dateSelect" listener="#{mesaControlManagedBean.filtrarMesaControl()}" update="panelMesaControl" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                                            </p:calendar>
+                                            <h:outputLabel value="Fecha Final"/>
+                                            <p:calendar styleClass="calendarVUR" value="#{mesaControlManagedBean.fechaFinal}" showOn="button" locale="es" pattern="dd/MM/yyyy">
+                                                <p:ajax event="dateSelect" listener="#{mesaControlManagedBean.filtrarMesaControl()}" update="panelMesaControl" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                                            </p:calendar>
+                                        </h:panelGrid>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <hr style="border: 1px solid rgba(192, 192, 192, 0.22);"/>
+                        <h:panelGroup id="panelMesaControl">
+                            <h:panelGroup rendered="#{mesaControlManagedBean.radicaciones.size()>0}">
+                                <p:dataTable id="radicaciones" var="radicacion" value="#{mesaControlManagedBean.radicaciones}" selectionMode="single" selection="#{mesaControlManagedBean.radicacion}" rowKey="#{radicacion.radId}" emptyMessage="No se han encontrado radicaciones vinculadas al filtro seleccionado." rowIndexVar="idx" filteredValue="#{mesaControlManagedBean.radicacionesFiltrado}" paginator="true" rows="18" paginatorPosition="bottom" widgetVar="wvRadicaciones">
+                                    <p:ajax event="rowSelect" update=":modalRadicacion" oncomplete="PF('dialogRadicacion').show();" listener="#{mesaControlManagedBean.cargarDetalleRadicacion()}"/>                        
+                                    <p:column headerText="#" width="40" styleClass="colCenter">
+                                        <h:outputText value="#{idx+1}" />
+                                    </p:column>
+                                    <p:column headerText="Radicacion" width="90" filterBy="#{radicacion.radNumero}" filterMatchMode="contains" styleClass="colCenter">
+                                        <h:outputText value="#{radicacion.radNumero}" />
+                                    </p:column>
+                                    <p:column headerText="Liquidacion" filterBy="#{radicacion.radLiquidacion}" filterMatchMode="contains" styleClass="colCenter">
+                                        <h:outputText value="#{radicacion.radLiquidacion}" />
+                                    </p:column>
+                                    <p:column headerText="Valor" filterBy="#{radicacion.radValorLiq}" filterMatchMode="contains" styleClass="colCenter">
+                                        <h:outputText value="#{radicacion.radValorLiq}" converter="CurrencyConverter" />
+                                    </p:column>
+                                    <p:column headerText="Fecha" width="87" filterBy="#{radicacion.radFecha}" filterMatchMode="contains" styleClass="colCenter">
+                                        <h:outputText value="#{radicacion.radFecha}" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Notaria" filterBy="#{radicacion.notId.notNombre}" filterMatchMode="contains" styleClass="colCenter">
+                                        <h:outputText value="#{radicacion.notId.notNombre}" />
+                                    </p:column>
+                                    <p:column headerText="Estado" styleClass="colCenter">
+                                        <h:outputText value="#{mesaControlManagedBean.cargarDescripcionUltimoEstado(radicacion)}" />
+                                    </p:column>
+                                    <p:column headerText=".." width="20">
+                                        <p:commandLink title="Presione para ver mas informacion de la radicacion" update=":modalRadicacion" oncomplete="PF('dialogRadicacion').show();" action="#{mesaControlManagedBean.cargarDetalleRadicacion()}">                                    
+                                            <f:setPropertyActionListener target="#{mesaControlManagedBean.radicacion}" value="#{radicacion}" />
+                                            <img src="#{resource['/images/icons/icon-search.png']}" width="16"/>                                    
+                                        </p:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGroup>
+                        </h:panelGroup>
+                    </div>    
+                </h:form>                
+            </div>
+        </div>
+
+        <!-- Dialog informacion detallada de la Radicacion -->        
+        <p:dialog id="modalRadicacion" widgetVar="dialogRadicacion" closeOnEscape="true" draggable="true" resizable="false" header="Informacion detalle radicacion" modal="true">
+            <div style="width: 980px;max-height: 760px;min-height: 380px;">
+                <p:tabView orientation="left" id="tabContainer">
+                    <p:tab title="General">
+                        <h:form id="formInformacionGeneral">
+                            <div style="padding: 2px;">
+                                <div class="contLabelText">
+                                    <h:outputLabel class="labelLittle" value="Número Liquidación"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeLiqNumero}" />
+                                </div>
+                                <div class="contLabelText">
+                                    <h:outputLabel class="labelLittle" value="Interlocutor Comercial"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeInterlocutor}" />
+                                </div>
+                                <div class="contLabelText" style="width: 100px">
+                                    <h:outputLabel class="labelLittle" value="Lugar de Expedición"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeMunicipio}" style="width: 100px" />
+                                </div>
+                                <div class="contLabelText" style="width: 150px">
+                                    <h:outputLabel class="labelLittle" value="Fecha Liquidación"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeFechaLiquidacion}" style="width: 150px"/>
+                                </div>
+                                <div class="contLabelText" style="width: 150px">
+                                    <h:outputLabel class="labelLittle" value="Fecha Límite de Pago"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeFechaLdp}" style="width: 150px"/>
+                                </div>
+                                <div class="contLabelText" style="width: 100px">
+                                    <h:outputLabel class="labelLittle" value="Cv Periodo"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeCvPeriodo}" style="width: 100px" />
+                                </div>
+                                <div class="contLabelText" style="width: 150px">
+                                    <h:outputLabel class="labelLittle" value="Fecha Vencimiento Otros Actos"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeFechaVencimiento}" style="width: 150px"/>
+                                </div>
+                                <div class="contLabelText" style="width: 150px">
+                                    <h:outputLabel class="labelLittle" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeBenCc eq 'X'? 'Cédula' : 'NIT'} Beneficiario" />
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeBenNum}" style="width: 150px"/>
+                                </div>
+                                <div class="contLabelText">
+                                    <h:outputLabel class="labelLittle" value="Nombre Beneficiario"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeBenNombre}" />
+                                </div>
+                                <div class="contLabelText" style="width: 150px">
+                                    <h:outputLabel class="labelLittle" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeOtoCc eq 'X'? 'Cédula' : 'NIT'} Otorgante" />
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeOtoNum}" style="width: 150px"/>
+                                </div>
+                                <div class="contLabelText">
+                                    <h:outputLabel class="labelLittle" value="Nombre Otorgante"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeOtoNombre}" />
+                                </div>
+                                <div class="contLabelText" style="width: 150px">
+                                    <h:outputLabel class="labelLittle" value="Expedido En: "/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeExpedidoEn}" style="width: 150px"/>
+                                </div>
+
+                                <div class="contLabelText" style="width: 150px">
+                                    <h:outputLabel class="labelLittle" value="Número Documento"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeDocumento}" style="width: 150px"/>
+                                </div>
+                                <div class="contLabelText" style="width: 150px">
+                                    <h:outputLabel class="labelLittle" value="Orígen del Documento"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeDescoridoc}" style="width: 150px"/>
+                                </div>
+                                <div class="contLabelText" style="width: 150px">
+                                    <h:outputLabel class="labelLittle" value="Código Orig Documento"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeNotaria}" style="width: 150px"/>
+                                </div>
+
+                                <div class="contLabelText"  style="width: 80px">
+                                    <h:outputLabel class="labelLittle" value="Clase Liq."/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeClase}"  style="width: 80px"/>
+                                </div>
+                                <div class="contLabelText">
+                                    <h:outputLabel class="labelLittle" value="Matrícula Inmobiliaria"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeMatricula}" />
+                                </div>
+                                <div class="contLabelText">
+                                    <h:outputLabel class="labelLittle" value="Fecha Documento"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeFechaDoc}" />
+                                </div>
+                                <div class="contLabelText">
+                                    <h:outputLabel class="labelLittle" value="Teléfono"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeTelefono}" />
+                                </div>
+                                <div class="contLabelText" style="width: 700px">
+                                    <h:outputLabel class="labelLittle" value="Texto"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeTexto}" style="width: 700px;"/>
+                                </div>
+                            </div>
+                            <div align="center">
+                                <h:panelGrid columns="2">
+
+                                </h:panelGrid>
+                            </div>
+                        </h:form>
+                    </p:tab>
+                    <p:tab title="Estados">
+                        <h:form id="formInformacionEstados">
+                            <div style="padding: 2px;">
+                            </div>
+                        </h:form>
+                    </p:tab>
+                    <p:tab title="Pago / Transaccion" disabled="#{mesaControlManagedBean.transaccion eq null}">
+                        <h:form id="formInformacionPago">
+                            <div style="padding: 2px;">
+                                <div class="contLabelText" style="min-width: 310px;">
+                                    <h:outputLabel class="labelLittle" value="Codigo Transaccion"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.transaccion.traId}" style="min-width: 310px;"/>
+                                </div>
+                                <div class="contLabelText" style="min-width: 310px;">
+                                    <h:outputLabel class="labelLittle" value="Referencia"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.transaccion.traReferencia}" style="min-width: 310px;"/>
+                                </div>
+                                <div class="contLabelText" style="min-width: 310px;">
+                                    <h:outputLabel class="labelLittle" value="Nombres"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.transaccion.traNombres}" style="min-width: 310px;"/>
+                                </div>
+                                <div class="contLabelText" style="min-width: 310px;">
+                                    <h:outputLabel class="labelLittle" value="Apellidos"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.transaccion.traApellidos}" style="min-width: 310px;"/>
+                                </div>
+                                <div class="contLabelText" style="min-width: 310px;">
+                                    <h:outputLabel class="labelLittle" value="Telefono"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.transaccion.traTelefono}" style="min-width: 310px;"/>
+                                </div>
+                                <div class="contLabelText" style="min-width: 310px;">
+                                    <h:outputLabel class="labelLittle" value="Correo"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.transaccion.traCorreo}" style="min-width: 310px;"/>
+                                </div>
+                                <div class="contLabelText" style="min-width: 310px;">
+                                    <h:outputLabel class="labelLittle" value="Valor"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.transaccion.traValor}" style="min-width: 310px;"/>
+                                </div>
+                                <div class="contLabelText" style="min-width: 310px;">
+                                    <h:outputLabel class="labelLittle" value="Valor Pagado"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.transaccion.traValorPagadoPse}" style="min-width: 310px;"/>
+                                </div>
+                                <div class="contLabelText" style="min-width: 310px;">
+                                    <h:outputLabel class="labelLittle" value="Fecha Inicio"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.transaccion.traFechaInicio}" style="min-width: 310px;">
+                                        <f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+                                    </p:outputLabel>
+                                </div>
+                                <div class="contLabelText" style="min-width: 310px;">
+                                    <h:outputLabel class="labelLittle" value="Fecha Finalizacion"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.transaccion.traFechaFinalizacion}" style="min-width: 310px;">
+                                        <f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+                                    </p:outputLabel>
+                                </div>
+                                <div class="contLabelText" style="min-width: 310px;">
+                                    <h:outputLabel class="labelLittle" value="Estado"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.transaccion.traEstado eq 'T'?'Iniciada':(mesaControlManagedBean.transaccion.traEstado eq 'A'?'Aceptada':'Cancelada')}" style="min-width: 310px;"/>
+                                </div>
+                                <div class="contLabelText" style="min-width: 310px;">
+                                    <h:outputLabel class="labelLittle" value="Estado SAP"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.transaccion.traPagoSapEstado} - #{mesaControlManagedBean.transaccion.traPagoSapMensaje}" style="min-width: 310px;"/>
+                                </div>
+                            </div>
+                            <div align="center">
+                                <p:commandButton value="Confirmar Pago" disabled="#{mesaControlManagedBean.transaccion.traEstado !='T'}" title="Presione aqui confirmar el pago de este proceso">
+                                    <p:confirm header="Confirmación" message="¿Esta seguro de confirmar la transaccion, este proceso no puede ser deshecho y contabilizara en SAP?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                            </div>
+                        </h:form>
+                    </p:tab>
+                </p:tabView>
+                <div align="left">
+                    <div style="margin-left: 70px;">
+                        <p:commandButton value="Cerrar" title="Presione aqui para cerrar esta Ventana" immediate="true" oncomplete="PF('dialogRadicacion').hide();"/>
+                    </div>                    
+                </div>
+            </div>            
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>
