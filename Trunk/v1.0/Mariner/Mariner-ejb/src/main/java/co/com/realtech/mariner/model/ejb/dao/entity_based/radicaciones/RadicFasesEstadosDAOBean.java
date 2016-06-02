@@ -197,5 +197,45 @@ public class RadicFasesEstadosDAOBean extends GenericDAOBean implements RadicFas
         return radicacionesLibres;
     }
     
+    @Override
+    public List<MarRadicacionesFasesEstados> obtenerUltimaFaseFechaImpreso(String fase, Date fechaInicial, Date fechaFinal, boolean fueImpreso){
+        List<MarRadicacionesFasesEstados> radicacionesLibres = new ArrayList<>();
+        try {
+            String sql = "WITH maximos AS (\n"
+                    + "  SELECT MAX(rfes.rfe_id) AS rfe_id, rfes.rad_id\n"
+                    + "  FROM mar_radicaciones_fases_estados rfes\n"
+                    + "  INNER JOIN mar_fases_estados fe ON rfes.fes_id = fe.fes_id\n"
+                    + "  INNER JOIN mar_radicaciones r ON rfes.rad_id = r.rad_id\n"
+                    + "  WHERE 1 = 1\n"
+                    + "    AND r.rad_estado = 'A'\n"
+                    + "    GROUP BY rfes.rad_id\n"
+                    + ")\n"
+                    + "SELECT rfes.* FROM maximos m \n"
+                    + "INNER JOIN mar_radicaciones_fases_estados rfes ON m.rfe_id = rfes.rfe_id\n"
+                    + "INNER JOIN mar_radicaciones r ON rfes.rad_id = r.rad_id\n"
+                    + "INNER JOIN mar_fases_estados fes ON rfes.fes_id = fes.fes_id\n"
+                    + "WHERE 2 = 2\n"
+                    + "  AND fes.fes_codigo IN (:fase)\n"
+                    + "  AND 3 = 3\n"
+                    + "ORDER BY r.rad_fecha";
+            if (fechaInicial != null){
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                sql = sql.replace("2 = 2", "TRUNC(r.rad_fecha) BETWEEN TO_DATE('"+ sdf.format(fechaInicial) +"','dd-MM-yyyy') AND TO_DATE('"+ sdf.format(fechaFinal) +"','dd-MM-yyyy')\n");
+            }
+            if(fueImpreso){
+                sql = sql.replace("3 = 3", "r.rad_es_impresion = 'S'");
+            }else{
+                sql = sql.replace("3 = 3", "(r.rad_es_impresion IS NULL OR r.rad_es_impresion = 'N')");
+            }
+            sql = sql.replace(":fase", fase);
+            System.out.println("sql = " + sql);
+            Query q = getEntityManager().createNativeQuery(sql,MarRadicacionesFasesEstados.class);
+            radicacionesLibres = q.getResultList();
+        } catch (Exception e) {
+            throw e;
+        }
+        return radicacionesLibres;
+    }
+    
 
 }
