@@ -9,6 +9,7 @@
             <property name="hibernate.format_sql" value="false"/>
             <property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.SunOneJtaPlatform"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect" />
+            <property name="hibernate.connection.release_mode" value="on_close"/>  
         </properties>
     </persistence-unit>
 </persistence>
