@@ -45,7 +45,13 @@
                                         </p:column> 
                                         <p:column headerText="ORIP" filterBy="#{notaria.morId.morNombre}" filterMatchMode="contains" width="222" styleClass="colCenter">
                                             <h:outputText value="#{notaria.morId.morNombre}"  styleClass="colCenter"/>
-                                        </p:column> 
+                                        </p:column>
+                                        <p:column headerText="Es Gob." filterBy="#{notaria.notEsGobernacion}" filterMatchMode="contains" width="100" styleClass="colCenter">
+                                            <h:outputText value="#{notaria.notEsGobernacion}"  styleClass="colCenter"/>
+                                        </p:column>
+                                        <p:column headerText="Max. Turnos" filterBy="#{notaria.notTurnos}" filterMatchMode="contains" width="100" styleClass="colCenter">
+                                            <h:outputText value="#{notaria.notTurnos}"  styleClass="colCenter"/>
+                                        </p:column>
                                         <p:column headerText="Estado" styleClass="colCenter" width="64" filterBy="#{notaria.notEstado}" filterMatchMode="contains">
                                             <h:outputText value="#{notaria.notEstado eq 'A'?'Activo':'Inactivo'}" />
                                         </p:column> 
@@ -118,6 +124,13 @@
                         <h:outputLabel value="Oficina de Registro"/>
                         <p:selectOneMenu styleClass="inputModal" value="#{notariasManagedBean.notaria.morId}" converter="MarOficinasRegistroConverter" style="width: 350px;" required="true">
                             <f:selectItems value="#{notariasManagedBean.oficinasRegistro}" var="oficinas" itemValue="#{oficinas}" itemLabel="#{oficinas.morNombre}"/>
+                        </p:selectOneMenu>
+                        <h:outputLabel value="Máximo de Turnos"/>
+                        <p:inputText value="#{notariasManagedBean.notaria.notTurnos}" required="true" style="width: 380px;"/>
+                        <h:outputLabel value="Es Gobernación"/>
+                        <p:selectOneMenu styleClass="inputModal" value="#{notariasManagedBean.notaria.notEsGobernacion}" style="width: 350px;">
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
                         </p:selectOneMenu>
                         <h:outputLabel value="Estado"/>
                         <p:selectOneMenu styleClass="inputModal" value="#{notariasManagedBean.notaria.notEstado}" style="width: 350px;">

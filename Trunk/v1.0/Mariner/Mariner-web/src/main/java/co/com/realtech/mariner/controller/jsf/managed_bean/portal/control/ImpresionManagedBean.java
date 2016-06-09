@@ -18,8 +18,10 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import org.primefaces.context.RequestContext;
 
 /**
  * ManagedBean encargado de la impresión de los recibos de caja.
@@ -70,50 +72,15 @@ public class ImpresionManagedBean extends GenericManagedBean implements Serializ
     public void descargarRecibo() {
         try {
             if (validarTransaccion()) {
-                // Descargar recibo de pago de SAP.
-                CDFFileDispatcher dispatcher = CDFFileDispatcher.create();
-                dispatcher.findFile(radicacionEstadoSel.getRadId().getArcIdReciboPago().getArcId());
-                if (dispatcher.getFileContent() == null) {
-                    PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero no se ha encontrado el Recibo en el Sistema, por favor intente nuevamente.", true, false);
-                } else {
-                    System.out.println("Descargando archivo...");
-                    descargarArhivoFacesContext(FacesContext.getCurrentInstance(), dispatcher.getFileContent(), "comprobantePagoLiquidacion" + radicacionEstadoSel.getRadId().getRadLiquidacion() + ".pdf");
-                }
+                ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+                String contextPath = servletContext.getContextPath();
+                String urlRecibo = contextPath + "/static/fileDispatcher/" + radicacionEstadoSel.getRadId().getArcIdReciboPago().getArcId() + "-" + radicacionEstadoSel.getRadId().getArcIdReciboPago().getArcHash() + "." + radicacionEstadoSel.getRadId().getArcIdReciboPago().getArcExtension();
+                RequestContext.getCurrentInstance().execute("window.open('" + urlRecibo + "');");
             }
         } catch (Exception e) {
         }
     }
 
-    /**
-     * Descargar archivo a través del FacesContext.
-     *
-     * @param context
-     * @param bytes
-     * @param nombreArchivo
-     */
-    private void descargarArhivoFacesContext(FacesContext context, byte[] bytes, String nombreArchivo) {
-        if (validarTransaccion()) {
-            ExternalContext externalContext = context.getExternalContext();
-            HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-            try {
-                if (bytes == null) {
-                    System.out.println("Bytes nullos en respyesta de PDF");
-                } else {
-                    try (ServletOutputStream servletOutputStream = response.getOutputStream()) {
-                        response.addHeader("Content-Type", "application/pdf");
-                        response.addHeader("Content-Disposition", "attachment; filename=" + nombreArchivo + ".pdf");
-                        response.setContentLength(bytes.length);
-                        response.setContentType("application/pdf");
-                        servletOutputStream.write(bytes);
-                        servletOutputStream.flush();
-                        context.responseComplete();
-                    }
-                }
-            } catch (Exception e) {
-                System.out.println("Error enviando archivo PDF, error causado por " + e);
-            }
-        }
-    }
     /**
      * Ingresa la transacción para pago en bancos si no está creada.
      *

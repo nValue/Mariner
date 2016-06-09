@@ -27,19 +27,22 @@
                     <h:panelGroup rendered="#{asignacionesManagedBean.permiteAsignar}">
                         <div align="center" style="width: 400px;display: inline-block; vertical-align: top">
                             <p:dataTable styleClass="tableMaterial" value="#{asignacionesManagedBean.radFasesEstadosDisponibles}" selection="#{asignacionesManagedBean.radFaseEstadoDisponible}"
-                                         var="disp" emptyMessage="No hay radicaciones en espera" rowKey="#{disp.rfeId}" paginator="true" rows="7" paginatorPosition="bottom"
+                                         var="disp" emptyMessage="No hay radicaciones en espera" rowKey="#{disp.rfeId}" paginator="true" rows="9" paginatorPosition="bottom"
                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
-                                         selectionMode="single">
+                                         selectionMode="single" filteredValue="#{asignacionesManagedBean.radFasesEstadosUsuarioFiltro}" widgetVar="wvDisponibles">
                                 <f:facet name="header">
                                     Procesos Pendientes
                                 </f:facet>
-                                <p:column headerText="Radicación" width="100">
+                                <p:column headerText="Radicación" width="70" filterBy="#{disp.radId.radNumero}" styleClass="colCenter">
                                     <h:outputLabel value="#{disp.radId.radNumero}"/>
                                 </p:column>
-                                <p:column headerText="Escritura">
+                                <p:column headerText="Turno" width="65" filterBy="#{disp.radId.radTurno}" styleClass="colCenter">
+                                    <h:outputLabel value="#{disp.radId.radTurno}"/>
+                                </p:column>
+                                <p:column headerText="Escritura" width="65" filterBy="#{disp.radId.escId.escNumero}" styleClass="colCenter">
                                     <h:outputLabel value="#{disp.radId.escId.escNumero}"/>
                                 </p:column>
-                                <p:column headerText="Fecha">
+                                <p:column headerText="Fecha" filterBy="#{disp.rfeFechaInicio}" styleClass="colCenter">
                                     <h:outputLabel value="#{disp.rfeFechaInicio}">
                                         <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
                                     </h:outputLabel>
@@ -49,7 +52,7 @@
                     </h:panelGroup>
                     <div align="center" style="width: 400px;display: inline-block; vertical-align: top">
                         <p:dataTable styleClass="tableMaterial" value="#{asignacionesManagedBean.usuarios}" selection="#{asignacionesManagedBean.usuarioSel}"
-                                     var="usu" emptyMessage="No hay usuarios configurados para atender los procesos" rowKey="#{usu.usuId}" paginator="true" rows="7" paginatorPosition="bottom"
+                                     var="usu" emptyMessage="No hay usuarios configurados para atender los procesos" rowKey="#{usu.usuId}" paginator="true" rows="9" paginatorPosition="bottom"
                                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
                                      selectionMode="single">
                             <f:facet name="header">
@@ -57,9 +60,6 @@
                             </f:facet>
                             <p:column headerText="Nombres">
                                 <h:outputLabel value="#{usu.perId.perNombres} #{usu.perId.perApellidos}"/>
-                            </p:column>
-                            <p:column headerText="Oficina" width="95">
-                                <h:outputLabel value="#{usu.notId.notNombre}"/>
                             </p:column>
                             <p:column headerText="Cant." width="50" sortBy="#{asignacionesManagedBean.traerPendientesDeUsuario(usu)}" styleClass="colCenter">
                                 <h:outputLabel value="#{asignacionesManagedBean.traerPendientesDeUsuario(usu)}" />
@@ -73,7 +73,7 @@
                         </p:dataTable>
                     </div>
                     <div align="center" style="margin: 20px;">
-                        <p:commandButton value="Asignar Radicación" oncomplete="PF('loadingDialog').hide();PF('dialogConfAsig').show()" update=":formConfAsig" rendered="#{asignacionesManagedBean.permiteAsignar}"/>
+                        <p:commandButton value="Asignar Radicación" oncomplete="PF('loadingDialog').hide();PF('dialogConfAsig').show();PF('wvDisponibles').clearFilters()" update=":formConfAsig" rendered="#{asignacionesManagedBean.permiteAsignar}"/>
                     </div>
                 </h:form>
             </div>
@@ -102,15 +102,18 @@
                 </div>
                 <div align="center" style="margin: 20px;">
                     <p:dataTable styleClass="tableMaterial" emptyMessage="No hay procesos pendientes para este usuario" value="#{asignacionesManagedBean.radFasesEstadosUsuario}" selection="#{asignacionesManagedBean.radFaseEstadoUsuario}"
-                                 var="asigUsu" rowKey="#{asigUsu.rfeId}" selectionMode="single">
+                                 var="asigUsu" rowKey="#{asigUsu.rfeId}" selectionMode="single" >
                         <f:facet name="header">
                             Procesos pendientes del usuario
                         </f:facet>
                         <p:column headerText="Radicación" width="100" class="colCenter">
                             <h:outputLabel value="#{asigUsu.radId.radNumero}"/>
                         </p:column>
-                        <p:column headerText="Escritura" class="colCenter">
-                            <h:outputLabel value="#{asigUsu.radId.escId.escNumero}"/>
+                        <p:column headerText="Turno" width="100" class="colCenter">
+                            <h:outputLabel value="#{asigUsu.radId.radTurno}"/>
+                        </p:column>
+                        <p:column headerText="Escritura" class="colCenter" >
+                            <h:outputLabel value="#{asigUsu.radId.escId.escNumero}" />
                         </p:column>
                         <p:column headerText="Fecha" class="colCenter">
                             <h:outputLabel value="#{asigUsu.rfeFechaInicio}" >

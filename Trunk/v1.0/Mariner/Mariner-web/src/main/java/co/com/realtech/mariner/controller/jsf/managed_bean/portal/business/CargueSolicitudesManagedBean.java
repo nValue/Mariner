@@ -10,6 +10,7 @@ import co.com.realtech.mariner.model.entity.MarFasesEstados;
 import co.com.realtech.mariner.model.entity.MarNotarias;
 import co.com.realtech.mariner.model.entity.MarPuntosMontajes;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
+import co.com.realtech.mariner.model.entity.MarRadicacionesAgrupamientos;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarTiposDocumentos;
 import co.com.realtech.mariner.util.cdf.CDFFileUploader;
@@ -23,6 +24,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -55,6 +58,8 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
     private List<MarTiposDocumentos> tiposDocumentosOtorga;
     private List<MarTiposDocumentos> tiposDocumentosRecibe;
 
+    private List<String> turnosActuales;
+
     private List<MarRadicacionesFasesEstados> radicacionesFasesEstProcesadas;
     private MarRadicacionesFasesEstados radicacionFaseEstProcesadaSel;
 
@@ -66,6 +71,11 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
 
     private List<MarRadicacionesFasesEstados> radicacionesFasesEstados;
 
+    private List<MarRadicaciones> radicacionesEscrituras;
+    private MarRadicaciones radicacionEscrituraSel;
+
+    private MarRadicacionesAgrupamientos radicacionAgrupamiento;
+
     @Override
     public void init() {
         fechaFiltroInic = new Date();
@@ -74,6 +84,7 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
         obtenerTiposDocumentos();
         obtenerFasesEstados();
         obtenerRadicacionesPendientes();
+        turnosActuales = new ArrayList<>();
     }
 
     /**
@@ -200,17 +211,29 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
             logger.error("Error al obtener las notarias, causado por " + e, e);
         }
     }
-    
+
     /**
-     * Pregunta si la radicacion actual es un rechazo (Sirve para colocar el (R) en la lista de los pendientes)
-     * @param radSel
-     * @return 
+     * Realiza la validación del complete de los turnos.
      */
-    public String esRechazo(MarRadicaciones radSel){
+    public List<String> completeTurnos(String str) {
+        List<String> turnos = new ArrayList<>();
+        Predicate<String> predi = (String x) -> x.startsWith(str);
+        turnos = turnosActuales.stream().filter(predi).collect(Collectors.toList());
+        return turnos;
+    }
+
+    /**
+     * Pregunta si la radicacion actual es un rechazo (Sirve para colocar el (R)
+     * en la lista de los pendientes)
+     *
+     * @param radSel
+     * @return
+     */
+    public String esRechazo(MarRadicaciones radSel) {
         String valor = radSel.getRadNumero();
         try {
             MarRadicacionesFasesEstados ultimo = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radSel);
-            if(ultimo.getFesId().getFesCodigo().equals("I-R")){
+            if (ultimo.getFesId().getFesCodigo().equals("I-R")) {
                 valor = "(R) " + valor;
             }
         } catch (Exception e) {
@@ -225,22 +248,35 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
     public void solicitarRadicacion() {
         try {
             String permiteCrear = ConstantesUtils.cargarConstante("VUR-CREAR-RADIC");
-            if(permiteCrear.equals("N")){
-                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación deshabilitada","La plataforma no se encuentra disponible para crear más radicaciones, si desea más información puede comunicarse con la Gobernación para validar este proceso.", true, false);
+            if (permiteCrear.equals("N")) {
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación deshabilitada", "La plataforma no se encuentra disponible para crear más radicaciones, si desea más información puede comunicarse con la Gobernación para validar este proceso.", true, false);
                 return;
             }
+            radicacionAgrupamiento = new MarRadicacionesAgrupamientos();
+            radicacionesEscrituras = new ArrayList<>();
             radicaciones = null;
             MarEscrituras escrituraNueva = new MarEscrituras();
             escrituraNueva.setEscFecha(new Date());
             radicacionSel = new MarRadicaciones();
             radicacionSel.setEscId(escrituraNueva);
-            radicacionSel.setNotId(notarias.get(0));
-            //radicacionSel.setTdcIdReceptor(tiposDocumentosRecibe.get(0));
-            //radicacionSel.setTdcIdOtorgante(tiposDocumentosOtorga.get(0));
+            radicacionSel.setNotId(usuarioSesion.getNotId());
             radicacionSel.setRadEstado("A");
             observacionesProceso = "";
             radicacionesFasesEstados = null;
             radicacionFaseEstProcesadaSel = null;
+
+            if (usuarioSesion.getNotId().getNotTurnos() != null) {
+                BigDecimal dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_obtener_turno", usuarioSesion.getNotId());
+                Integer inicio = dbSalida.intValue();
+                Integer fin = usuarioSesion.getNotId().getNotTurnos().intValue();
+                turnosActuales = new ArrayList<>();
+                for (int i = inicio + 1; i < fin; i++) {
+                    turnosActuales.add(String.valueOf(i));
+                }
+                radicacionSel.setRadTurno(String.valueOf(inicio + 1));
+            } else {
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Recomendación", "La notaría a la que usted se encuentra asociado no tiene turnos habilitados, le recomendamos configurarlos antes de continuar, si usted no maneja turnos haga caso omiso a este mensaje", true, false);
+            }
         } catch (Exception e) {
             logger.error("Error creando nueva Radicación, causado por " + e, e);
         }
@@ -283,27 +319,53 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
     /**
      * Guarda la radicación actual.
      */
-    public void guardarRadicacion() {
-        try {
-            MarEscrituras escrituraActual = radicacionSel.getEscId();
-            if (escrituraActual.getArcId() == null) {
-                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Documento faltante", "Necesita adjuntar la escritura para guardar el proceso", true, false);
-                return;
-            }
+    public void guardarRadicaciones() {
+
+        MarEscrituras escrituraActual = radicacionSel.getEscId();
+        if (escrituraActual.getArcId() == null) {
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Documento faltante", "Necesita adjuntar la escritura para guardar el proceso", true, false);
+            return;
+        }
+        /* Validación de turno en pendiente mientras se valida el autocomplete de turnos
             if(radicacionSel.getRadTurno() == null){
             } else if(!radicacionesDAOBean.esTurnoValido(radicacionSel.getRadTurno())){
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Turno inválido", "El turno (" + radicacionSel.getRadTurno() + ") ya se encuentra asignado para el día de hoy, por favor intente con otro", true, false);
                 return;
-            }
+            }*/
+
+        guardarRadicacion(radicacionSel);
+        for (MarRadicaciones radicacionEscritura : radicacionesEscrituras) {
+            guardarRadicacion(radicacionEscritura);
+        }
+
+        MarRadicaciones radicacionGuardada = radicacionSel;
+        obtenerRadicacionesPendientes();
+        radicacionSel = radicacionGuardada;
+        obtenerFasesEstadosDeRadicacion();
+        String msj = "Se ha creado una radicación con número " + radicacionGuardada.getRadNumero();
+        for (MarRadicaciones radicacionEscritura : radicacionesEscrituras) {
+            msj = msj + ", " + radicacionEscritura.getRadNumero();
+        }
+        PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso realizado", msj , true, false);
+    }
+
+    /**
+     * Guarda la radicación que se pase
+     *
+     * @param radicacion
+     */
+    public void guardarRadicacion(MarRadicaciones radicacion) {
+        try {
+            MarEscrituras escrituraActual = radicacion.getEscId();
+
             //Valida que la radicación actual no haya sido cambiada de fase para guardar los cambios.
-            if (radicacionSel.getRadId() != null) {
-                MarRadicacionesFasesEstados rfe = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radicacionSel);
+            if (radicacion.getRadId() != null) {
+                MarRadicacionesFasesEstados rfe = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radicacion);
                 if (!rfe.getRfeId().equals(radicacionesFasesEstados.get(radicacionesFasesEstados.size() - 1).getRfeId())) {
                     PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación ya procesada", "Lo sentimos pero esta radicación ya ha sido procesada por la siguiente parte del proceso y no puede ser editada.", true, false);
                     return;
                 }
             }
-
             //Se guarda la escritura primero.
             auditSessionUtils.setAuditReflectedValues(escrituraActual);
             if (escrituraActual.getEscId() == null) {
@@ -311,17 +373,32 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
             } else {
                 genericDAOBean.merge(escrituraActual);
             }
+            
+            if (!radicacionesEscrituras.isEmpty()) {
+                //Si hay un agrupamiento se guarda después
+                if (radicacionAgrupamiento.getRaaId() == null) {
+                    radicacionAgrupamiento.setAudFecha(new Date());
+                    radicacionAgrupamiento.setAudUsuario(usuarioSesion.getUsuLogin());
+                    genericDAOBean.save(radicacionAgrupamiento);
+                } else {
+                    auditSessionUtils.setAuditReflectedValues(radicacionAgrupamiento);
+                    genericDAOBean.merge(radicacionAgrupamiento);
+                }
+            }
 
             //Luego se guarda la radicación usando la numeración correspondiente
-            auditSessionUtils.setAuditReflectedValues(radicacionSel);
-            if (radicacionSel.getRadId() == null) {
+            auditSessionUtils.setAuditReflectedValues(radicacion);
+            if (radicacion.getRadId() == null) {
                 NumeracionesManager nm = new NumeracionesManager();
-                String siguienteNum = nm.loadNextConsecutiveRad("RAD01", radicacionSel);
-                radicacionSel.setRadNumero(siguienteNum);
-                radicacionSel.setRadFecha(new Date());
-                genericDAOBean.save(radicacionSel);
+                String siguienteNum = nm.loadNextConsecutiveRad("RAD01", radicacion);
+                radicacion.setRadNumero(siguienteNum);
+                radicacion.setRadFecha(new Date());
+                if (!radicacionesEscrituras.isEmpty()) {
+                    radicacion.setRaaId(radicacionAgrupamiento);
+                }
+                genericDAOBean.save(radicacion);
             } else {
-                genericDAOBean.merge(radicacionSel);
+                genericDAOBean.merge(radicacion);
             }
 
             //Si la fase corresponde a un rechazo anterior o es nueva, crea el estado I-P
@@ -329,14 +406,14 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
             Integer salida = -999;
             //Si las fases-estados está vacia, es una nueva radicación y se crea el estado I-P
             if (radicacionesFasesEstados == null || radicacionesFasesEstados.isEmpty()) {
-                dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionSel.getRadId(),
+                dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacion.getRadId(),
                         "I-P", "A", usuarioSesion.getUsuId(), observacionesProceso, null);
                 salida = dbSalida.intValue();
             } else {
                 MarRadicacionesFasesEstados rfes = radicacionesFasesEstados.get(radicacionesFasesEstados.size() - 1);
                 //Si la última fase-estado es de rechazo, vuelve a crear el estado I-P
                 if (rfes.getFesId().getFesCodigo().equals("I-R")) {
-                    dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionSel.getRadId(),
+                    dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacion.getRadId(),
                             "I-P", "A", usuarioSesion.getUsuId(), observacionesProceso, null);
                     salida = dbSalida.intValue();
                     //Si la última fase-estado es I-P solo actualiza la información
@@ -348,13 +425,10 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
                 return;
             }
-            MarRadicaciones radicacionGuardada = radicacionSel;
-            obtenerRadicacionesPendientes();
-            radicacionSel = radicacionGuardada;
-            obtenerFasesEstadosDeRadicacion();
-            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso realizado", "Se ha creado una nueva radicación con número: " + radicacionGuardada.getRadNumero(), true, false);
         } catch (Exception e) {
-            logger.error("Error guardando la radicación, causado por " + e, e);
+            String msj = "Error guardando la radicacion, causado por: " + e;
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso incomplet", msj, true, false);
+            logger.error(msj, e);
         }
     }
 
@@ -366,7 +440,102 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
         radicacionSel = null;
     }
 
-    public CargueSolicitudesManagedBean() {
+    /**
+     * Obtiene todas las radicaciones agrupadas a esta principal.
+     */
+    public void obtenerRadicacionesAgrupamientos() {
+        if (radicacionSel.getRaaId() == null) {
+            radicacionAgrupamiento = new MarRadicacionesAgrupamientos();
+            radicacionAgrupamiento.setRaaAgrupaEscs("S");
+            radicacionAgrupamiento.setRaaAgrupaLiqs("N");
+        } else {
+            radicacionAgrupamiento = radicacionSel.getRaaId();
+            try {
+                //Trae todas las radicaciones agrupadas y quita la que tiene actualmente en pantalla.
+                List<MarRadicaciones> rads = (List<MarRadicaciones>) genericDAOBean.findAllByColumn(MarRadicaciones.class, "raaId", radicacionAgrupamiento, true, "radId");
+                Predicate<MarRadicaciones> pred = x -> !x.getRadId().equals(radicacionSel.getRadId());
+                radicacionesEscrituras = rads.stream().filter(pred).collect(Collectors.toList());
+                if (!radicacionesEscrituras.isEmpty()) {
+                    radicacionEscrituraSel = radicacionesEscrituras.get(0);
+                }
+            } catch (Exception e) {
+                String msj = "No se pueden obtener las otras escrituras asociadas al proceso, causado por : " + e;
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Escrituras no encontradas", msj, true, false);
+                logger.error(msj, e);
+            }
+        }
+    }
+
+    /**
+     * Crea una nueva radicación asociada con la actual.
+     */
+    public void agregarNuevaRadicacionEscritura() {
+        radicacionEscrituraSel = new MarRadicaciones();
+        MarEscrituras escrituraNueva = new MarEscrituras();
+        escrituraNueva.setEscFecha(new Date());
+        radicacionEscrituraSel = new MarRadicaciones();
+        radicacionEscrituraSel.setEscId(escrituraNueva);
+        radicacionEscrituraSel.setNotId(usuarioSesion.getNotId());
+        radicacionEscrituraSel.setRadEstado("A");
+        radicacionEscrituraSel.setRadTurno(radicacionSel.getRadTurno());
+        radicacionEscrituraSel.setRaaId(radicacionAgrupamiento);
+    }
+
+    /**
+     * Adjunta un archivo pdf para la escritura adicional
+     *
+     * @param event
+     */
+    public void adjuntarEscrituraAdicional(FileUploadEvent event) {
+        try {
+            CDFFileUploader fileUploader = CDFFileUploader.create(true);
+            MarArchivos archivo;
+            String fileName = event.getFile().getFileName();
+            byte[] bytes = IOUtils.toByteArray(event.getFile().getInputstream());
+            Long size = event.getFile().getSize();
+            String mimeType = event.getFile().getContentType();
+            if (FileUtilidades.invalidFile(mimeType)) {
+                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error Upload.!", "Este tipo de archivo no es permitido por la aplicación", true, false);
+                return;
+            }
+            boolean visibleCDN = false;
+            MarPuntosMontajes puntoMontaje;
+            puntoMontaje = (MarPuntosMontajes) genericDAOBean.findByColumn(MarPuntosMontajes.class, "pmoNombre", "Principal");
+            if (puntoMontaje == null) {
+                String msj = "No hay un punto de montaje de nombre 'Principal', por favor configúrelo";
+                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error Upload.!", msj, true, false);
+                throw new Exception(msj);
+            }
+            archivo = fileUploader.saveFile(puntoMontaje, fileName, bytes, size, mimeType, usuarioSesion.getUsuLogin(), visibleCDN);
+            radicacionEscrituraSel.getEscId().setArcId(archivo);
+            PrimeFacesContext.execute("PF('fileUploadDialogMore').hide();");
+        } catch (Exception e) {
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Archivo no es válido", e.getLocalizedMessage(), true, false);
+            logger.error("No se puede cargar el archivo, causado por: " + e.getLocalizedMessage(), e);
+        }
+    }
+
+    /**
+     * Agrega la escritura al agrupamiento, si ya existe, la modifica.
+     */
+    public void guardarEscrituraAdicional() {
+        if (radicacionEscrituraSel.getEscId().getArcId() == null) {
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Escritura faltante", "Debe cargar la escritura antes de guardar.", true, false);
+            return;
+        }
+        boolean existe = false;
+        int i = 0;
+        for (MarRadicaciones radicacionEscritura : radicacionesEscrituras) {
+            if (radicacionEscritura.getEscId().getArcId().getArcId().equals(radicacionEscrituraSel.getEscId().getArcId().getArcId())) {
+                existe = true;
+                radicacionesEscrituras.set(i, radicacionEscrituraSel);
+            }
+            i++;
+        }
+        if (!existe) {
+            radicacionesEscrituras.add(radicacionEscrituraSel);
+        }
+        PrimeFacesContext.execute("PF('dialogNuevaEscritura').hide()");
     }
 
     public List<MarRadicaciones> getRadicaciones() {
@@ -463,6 +632,30 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
 
     public void setFechaFiltroFin(Date fechaFiltroFin) {
         this.fechaFiltroFin = fechaFiltroFin;
+    }
+
+    public List<String> getTurnosActuales() {
+        return turnosActuales;
+    }
+
+    public void setTurnosActuales(List<String> turnosActuales) {
+        this.turnosActuales = turnosActuales;
+    }
+
+    public List<MarRadicaciones> getRadicacionesEscrituras() {
+        return radicacionesEscrituras;
+    }
+
+    public void setRadicacionesEscrituras(List<MarRadicaciones> radicacionesEscrituras) {
+        this.radicacionesEscrituras = radicacionesEscrituras;
+    }
+
+    public MarRadicaciones getRadicacionEscrituraSel() {
+        return radicacionEscrituraSel;
+    }
+
+    public void setRadicacionEscrituraSel(MarRadicaciones radicacionEscrituraSel) {
+        this.radicacionEscrituraSel = radicacionEscrituraSel;
     }
 
 }

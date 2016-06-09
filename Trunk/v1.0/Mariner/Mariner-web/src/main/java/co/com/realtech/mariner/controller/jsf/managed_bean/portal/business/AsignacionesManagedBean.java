@@ -36,6 +36,8 @@ public class AsignacionesManagedBean extends GenericManagedBean{
     private List<MarRadicacionesFasesEstados> radFasesEstadosUsuario;
     private MarRadicacionesFasesEstados radFaseEstadoUsuario;
     
+    private List<MarRadicacionesFasesEstados> radFasesEstadosUsuarioFiltro;
+    
     private List<MarUsuarios> usuarios;
     private MarUsuarios usuarioSel;
     
@@ -307,6 +309,14 @@ public class AsignacionesManagedBean extends GenericManagedBean{
 
     public void setPermiteAsignar(boolean permiteAsignar) {
         this.permiteAsignar = permiteAsignar;
+    }
+
+    public List<MarRadicacionesFasesEstados> getRadFasesEstadosUsuarioFiltro() {
+        return radFasesEstadosUsuarioFiltro;
+    }
+
+    public void setRadFasesEstadosUsuarioFiltro(List<MarRadicacionesFasesEstados> radFasesEstadosUsuarioFiltro) {
+        this.radFasesEstadosUsuarioFiltro = radFasesEstadosUsuarioFiltro;
     }
     
     

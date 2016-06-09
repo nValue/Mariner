@@ -103,7 +103,7 @@
                                     </div>
                                     <div align="center">
                                         <p:commandButton value="Validar Entrega" action="#{impresionManagedBean.validarEntrega()}" rendered="#{!(impresionManagedBean.radicacionEstadoSel.radId.radEsImpresion eq 'S')}" 
-                                                          onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" >
+                                                         onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" update="formPayment">
                                             <p:confirm header="Confirmación" message="¿Esta seguro de que desea validar la entrega?" icon="ui-icon-alert" />
                                         </p:commandButton>
                                     </div>

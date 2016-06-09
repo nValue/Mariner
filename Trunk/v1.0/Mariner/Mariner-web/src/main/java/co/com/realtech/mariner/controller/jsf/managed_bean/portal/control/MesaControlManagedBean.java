@@ -42,6 +42,8 @@ public class MesaControlManagedBean extends GenericManagedBean implements Serial
     private MarRadicaciones radicacion;
     private List<MarRadicaciones> radicaciones;
     private List<MarRadicaciones> radicacionesFiltrado;
+    
+    private List<MarRadicacionesFasesEstados> radicacionesFasesEstados;
     private MarTransacciones transaccion;
 
     @Override
@@ -96,8 +98,22 @@ public class MesaControlManagedBean extends GenericManagedBean implements Serial
             // Cargar detalle de la transaccion
             setTransaccion(getRadicacion().getMarTransacciones());
             // Cargar estados de la radicacion.
+            obtenerFasesEstados();
         } catch (Exception e) {
             logger.error("Error cargando detalle de la radicacion, cuasado por " + e);
+        }
+    }
+    
+    /**
+     * Trae todos los estados asociados a la radicación actual.
+     */
+    public void obtenerFasesEstados(){
+        try {
+            radicacionesFasesEstados = (List<MarRadicacionesFasesEstados>)genericDAOBean.findAllByColumn(MarRadicacionesFasesEstados.class, "radId", radicacion, true, "rfeId");
+        } catch (Exception e) {
+            String msj = "No se pueden traer las fases-estados de la radicación, causado por: " + e.getMessage();
+             PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", msj, true, false);
+             logger.error(msj,e);
         }
     }
 
@@ -182,4 +198,14 @@ public class MesaControlManagedBean extends GenericManagedBean implements Serial
         this.transaccion = transaccion;
     }
 
+    public List<MarRadicacionesFasesEstados> getRadicacionesFasesEstados() {
+        return radicacionesFasesEstados;
+    }
+
+    public void setRadicacionesFasesEstados(List<MarRadicacionesFasesEstados> radicacionesFasesEstados) {
+        this.radicacionesFasesEstados = radicacionesFasesEstados;
+    }
+
+    
+    
 }

@@ -55,16 +55,18 @@
                                 <h:outputText value="Motivo Rechazo" rendered="#{cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-R'}"/>
                                 <p:inputTextarea readonly="true" value="#{cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.rcaId.rcaNombres}" style="width: 100%"
                                                  rendered="#{cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-R'}" rows="2"/>
+                                
                                 <h:outputLabel value="Turno" rendered="#{cargueSolicitudesManagedBean.radicacionSel.notId.notEsGobernacion eq 'S'}"/>
-                                <p:inputMask value="#{cargueSolicitudesManagedBean.radicacionSel.radTurno}" mask="999?-9" rendered="#{cargueSolicitudesManagedBean.radicacionSel.notId.notEsGobernacion eq 'S'}"/>
+                                <p:autoComplete rendered="#{cargueSolicitudesManagedBean.radicacionSel.notId.notEsGobernacion eq 'S'}" forceSelection="true"  
+                                                value="#{cargueSolicitudesManagedBean.radicacionSel.radTurno}" completeMethod="#{cargueSolicitudesManagedBean.completeTurnos}" />
                                 <h:outputText value="Observaciones"/>
                                 <p:inputTextarea value="#{cargueSolicitudesManagedBean.observacionesProceso}" style="width: 100%"/>
-                                
                             </h:panelGrid>
                             <div align="center" style="margin: 10px;">
                                 <p:commandButton value="Cargar Escritura" oncomplete="PF('fileUploadDialog').show()" rendered="#{(cargueSolicitudesManagedBean.radicacionSel.radId eq null || cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-P' || cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-R')}"/>
                                 <p:button value="Descargar Escritura" target="_new" href="/static/fileDispatcher/#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId.arcId}-#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId.arcHash}.#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId.arcExtension}"
                                           rendered="#{cargueSolicitudesManagedBean.radicacionSel.escId.arcId != null}"/>
+                                <p:commandButton value="+ Escrituras" action="#{cargueSolicitudesManagedBean.obtenerRadicacionesAgrupamientos()}" rendered="#{!((cargueSolicitudesManagedBean.radicacionSel.radId != null) and (cargueSolicitudesManagedBean.radicacionSel.raaId == null))}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogEscrituras').show()" update=":modalEscrituras" />
                             </div>
                         </div>
                         <div style="margin: 20px;display: inline-block; vertical-align: top; width: 40%;border: solid 1px #e0e0e0;">
@@ -85,7 +87,7 @@
                             </p:dataTable>
                         </div>
                         <div style="margin: 5px">
-                            <p:commandButton value="Guardar" action="#{cargueSolicitudesManagedBean.guardarRadicacion()}" rendered="#{(cargueSolicitudesManagedBean.radicacionSel.radId eq null || cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-R')}" update="formRadicacion :formFiltroRadicaciones"
+                            <p:commandButton value="Guardar" action="#{cargueSolicitudesManagedBean.guardarRadicaciones()}" rendered="#{(cargueSolicitudesManagedBean.radicacionSel.radId eq null || cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-R')}" update="formRadicacion :formFiltroRadicaciones"
                                               onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()">
                                 <p:confirm header="Confirmación" message="¿Esta seguro de que desea guardar la radicación?" icon="ui-icon-alert" />
                             </p:commandButton>
@@ -97,11 +99,21 @@
             </div>
         </div>
 
-        <!-- Panel cargue de archivos -->
+        <!-- Panel cargue de archivos radicación principal -->
         <p:dialog id="modalFileUpload" widgetVar="fileUploadDialog" header="Cargue de Escritura en formato PDF" modal="true" draggable="false" closable="true" resizable="false" appendTo="@(body)" closeOnEscape="true">
             <div class="minDivPopup" style="width: 450px;">
                 <h:form enctype="multipart/form-data">
                     <p:fileUpload fileUploadListener="#{cargueSolicitudesManagedBean.handleFileUpload}" mode="advanced" dragDropSupport="true" update=":formRadicacion" allowTypes="/(\.|\/)(pdf)$/"
+                                  auto="true" cancelLabel="Cancelar" invalidFileMessage="Archivo inválido, por favor verifique que sea PDF" uploadLabel="Cargar" label="Seleccionar"/>
+                </h:form>
+            </div>
+        </p:dialog>
+        
+        <!-- Panel cargue de archivos radicaciones adjuntas -->
+        <p:dialog id="modalFileUploadMore" widgetVar="fileUploadDialogMore" header="Cargue de Escritura Adicional en formato PDF" modal="true" draggable="false" closable="true" resizable="false" appendTo="@(body)" closeOnEscape="true">
+            <div class="minDivPopup" style="width: 450px;">
+                <h:form enctype="multipart/form-data">
+                    <p:fileUpload fileUploadListener="#{cargueSolicitudesManagedBean.adjuntarEscrituraAdicional}" mode="advanced" dragDropSupport="true" update=":formNuevaEscritura" allowTypes="/(\.|\/)(pdf)$/"
                                   auto="true" cancelLabel="Cancelar" invalidFileMessage="Archivo inválido, por favor verifique que sea PDF" uploadLabel="Cargar" label="Seleccionar"/>
                 </h:form>
             </div>
@@ -145,6 +157,56 @@
                 <div align="center" style="margin: 20px;">
                     <p:commandButton id="btnDetalle" value="Ver Detalle" action="#{cargueSolicitudesManagedBean.verDetalleRadSel()}" update=":formRadicacion :formFiltroRadicaciones"/>
                     <p:commandButton value="Cancelar" oncomplete="PF('dialogHistorial').hide()"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        
+        <p:dialog id="modalEscrituras" widgetVar="dialogEscrituras" styleClass="modalTop" resizable="false" header="Creación de dos o más escrituras" modal="true" width="700" minHeight="600"
+                  onShow="$(document.activeElement).blur()" >
+            <h:form id="formEscrituras">
+                <p:dataTable style="margin: 20px;" value="#{cargueSolicitudesManagedBean.radicacionesEscrituras}" 
+                             selection="#{cargueSolicitudesManagedBean.radicacionEscrituraSel}" var="radEsc" selectionMode="single" rowKey="#{radEsc.escId.arcId.arcId}" 
+                             emptyMessage="No hay escrituras adicionales">
+                    <p:ajax event="rowSelect" update="formNuevaEscritura" oncomplete="PF('dialogNuevaEscritura').show()" />
+                    <p:column headerText="Número" width="100" >
+                        <h:outputLabel value="#{radEsc.radNumero}"/>
+                    </p:column>
+                    <p:column headerText="Escritura" width="100">
+                        <h:outputLabel value="#{radEsc.escId.escNumero}"/>
+                    </p:column>
+                    <p:column headerText="Fecha" width="120">
+                        <h:outputLabel value="#{radEsc.escId.escFecha}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column headerText="Estado" width="100">
+                        <h:outputLabel value="#{radEsc.radEstado}" />
+                    </p:column>
+                </p:dataTable>
+                <div align="center" style="margin: 20px;">
+                    <p:commandButton value="Nueva Escritura" action="#{cargueSolicitudesManagedBean.agregarNuevaRadicacionEscritura}" update="modalNuevaEscritura" oncomplete="PF('dialogNuevaEscritura').show()"/>
+                    <p:commandButton value="Cerrar" oncomplete="PF('dialogEscrituras').hide()"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog id="modalNuevaEscritura" widgetVar="dialogNuevaEscritura" styleClass="modalTop" resizable="false" header="Edición de escritura" modal="true" width="500" minHeight="400">
+            <h:form id="formNuevaEscritura">
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Número Escritura" />
+                    <p:inputText value="#{cargueSolicitudesManagedBean.radicacionEscrituraSel.escId.escNumero}" />
+                    <h:outputLabel value="Fecha Escritura" />
+                    <p:calendar value="#{cargueSolicitudesManagedBean.radicacionEscrituraSel.escId.escFecha}" pattern="dd-MM-yyyy" locale="es" required="true" navigator="true" yearRange="c-60:c+1"/>
+                </h:panelGrid>
+                <div style="margin: 10px;" align="center">
+                    <p:commandButton value="Cargar Escritura" oncomplete="PF('fileUploadDialogMore').show()" />
+                    <p:button value="Descargar Escritura" target="_new" href="/static/fileDispatcher/#{cargueSolicitudesManagedBean.radicacionEscrituraSel.escId.arcId.arcId}-#{cargueSolicitudesManagedBean.radicacionEscrituraSel.escId.arcId.arcHash}.#{cargueSolicitudesManagedBean.radicacionEscrituraSel.escId.arcId.arcExtension}"
+                              rendered="#{cargueSolicitudesManagedBean.radicacionEscrituraSel.escId.arcId != null}"/>
+                </div>
+                <div style="margin: 20px;" align="center">
+                    <p:commandButton value="Guardar" action="#{cargueSolicitudesManagedBean.guardarEscrituraAdicional()}" update=":formEscrituras"/>
+                    <p:commandButton value="Cancelar" oncomplete="PF('dialogNuevaEscritura').hide()"/>
                 </div>
             </h:form>
         </p:dialog>

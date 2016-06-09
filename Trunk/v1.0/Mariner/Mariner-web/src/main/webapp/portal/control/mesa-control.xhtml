@@ -79,10 +79,10 @@
                                     <p:column headerText="Radicacion" width="90" filterBy="#{radicacion.radNumero}" filterMatchMode="contains" styleClass="colCenter">
                                         <h:outputText value="#{radicacion.radNumero}" />
                                     </p:column>
-                                    <p:column headerText="Liquidacion" filterBy="#{radicacion.radLiquidacion}" filterMatchMode="contains" styleClass="colCenter">
+                                    <p:column headerText="Liquidacion" filterBy="#{radicacion.radLiquidacion}" width="180" filterMatchMode="contains" styleClass="colCenter">
                                         <h:outputText value="#{radicacion.radLiquidacion}" />
                                     </p:column>
-                                    <p:column headerText="Valor" filterBy="#{radicacion.radValorLiq}" filterMatchMode="contains" styleClass="colCenter">
+                                    <p:column headerText="Valor" filterBy="#{radicacion.radValorLiq}" width="100" filterMatchMode="contains" styleClass="colCenter">
                                         <h:outputText value="#{radicacion.radValorLiq}" converter="CurrencyConverter" />
                                     </p:column>
                                     <p:column headerText="Fecha" width="87" filterBy="#{radicacion.radFecha}" filterMatchMode="contains" styleClass="colCenter">
@@ -90,8 +90,14 @@
                                             <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"/>
                                         </h:outputText>
                                     </p:column>
-                                    <p:column headerText="Notaria" filterBy="#{radicacion.notId.notNombre}" filterMatchMode="contains" styleClass="colCenter">
+                                    <p:column headerText="Notaria" filterBy="#{radicacion.notId.notNombre}" width="140" filterMatchMode="contains" styleClass="colCenter">
                                         <h:outputText value="#{radicacion.notId.notNombre}" />
+                                    </p:column>
+                                    <p:column headerText="Turno" filterBy="#{radicacion.radTurno}" width="70" filterMatchMode="contains" styleClass="colCenter">
+                                        <h:outputText value="#{radicacion.radTurno}" />
+                                    </p:column>
+                                    <p:column headerText="Impresión" filterBy="#{radicacion.radEsImpresion}" styleClass="colCenter" width="70">
+                                        <h:outputText value="#{radicacion.radEsImpresion}" />
                                     </p:column>
                                     <p:column headerText="Estado" styleClass="colCenter">
                                         <h:outputText value="#{mesaControlManagedBean.cargarDescripcionUltimoEstado(radicacion)}" />
@@ -114,7 +120,32 @@
         <p:dialog id="modalRadicacion" widgetVar="dialogRadicacion" closeOnEscape="true" draggable="true" resizable="false" header="Informacion detalle radicacion" modal="true">
             <div style="width: 980px;max-height: 760px;min-height: 380px;">
                 <p:tabView orientation="left" id="tabContainer">
-                    <p:tab title="General">
+                    
+                    <p:tab title="Estados">
+                        <h:form id="formInformacionEstados">
+                            <div style="padding: 2px;">
+
+                                <p:dataTable value="#{mesaControlManagedBean.radicacionesFasesEstados}" emptyMessage="No hay fases-estados asociados al proceso actual" 
+                                             disabledSelection="true" var="rfes">
+                                    <p:column headerText="Fecha Inicio" >
+                                        <h:outputText value="#{rfes.rfeFechaInicio}" styleClass="colCenter">
+                                            <f:convertDateTime pattern="dd/MM/yyyy hh:mm" timeZone="#{utilManagedBean.timeZone}"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Fase">
+                                        <h:outputText value="#{rfes.fesId.fesNombre}" />
+                                    </p:column>
+                                    <p:column headerText="Observaciones">
+                                        <h:outputText value="#{rfes.rfeObservaciones}" />
+                                    </p:column>
+                                    <p:column headerText="Usuario">
+                                        <h:outputText value="#{rfes.usuId.perId.perNombres} #{rfes.usuId.perId.perApellidos}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </h:form>
+                    </p:tab>
+                    <p:tab title="Boleta Fiscal">
                         <h:form id="formInformacionGeneral">
                             <div style="padding: 2px;">
                                 <div class="contLabelText">
@@ -199,17 +230,6 @@
                                     <h:outputLabel class="labelLittle" value="Texto"/>
                                     <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeTexto}" style="width: 700px;"/>
                                 </div>
-                            </div>
-                            <div align="center">
-                                <h:panelGrid columns="2">
-
-                                </h:panelGrid>
-                            </div>
-                        </h:form>
-                    </p:tab>
-                    <p:tab title="Estados">
-                        <h:form id="formInformacionEstados">
-                            <div style="padding: 2px;">
                             </div>
                         </h:form>
                     </p:tab>
