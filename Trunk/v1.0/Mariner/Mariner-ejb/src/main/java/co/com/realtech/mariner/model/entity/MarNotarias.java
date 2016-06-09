@@ -7,6 +7,7 @@ package co.com.realtech.mariner.model.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.GeneratedValue;
@@ -44,6 +45,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarNotarias.findByAudUsuario", query = "SELECT m FROM MarNotarias m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarNotarias.findByAudFecha", query = "SELECT m FROM MarNotarias m WHERE m.audFecha = :audFecha")})
 public class MarNotarias implements Serializable {
+
+    @Column(name = "NOT_TURNOS")
+    private BigInteger notTurnos;
 
     @Size(max = 1)
     @Column(name = "NOT_ES_GOBERNACION")
@@ -197,6 +201,14 @@ public class MarNotarias implements Serializable {
 
     public void setNotEsGobernacion(String notEsGobernacion) {
         this.notEsGobernacion = notEsGobernacion;
+    }
+
+    public BigInteger getNotTurnos() {
+        return notTurnos;
+    }
+
+    public void setNotTurnos(BigInteger notTurnos) {
+        this.notTurnos = notTurnos;
     }
     
 }
