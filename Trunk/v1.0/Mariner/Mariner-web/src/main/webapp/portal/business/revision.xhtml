@@ -134,6 +134,9 @@
                     <p:column headerText="Turno" width="70">
                         <h:outputLabel value="#{radPro.radId.radTurno}" />
                     </p:column>
+                    <p:column headerText="Usuario" width="100">
+                        <h:outputLabel value="#{radPro.usuId.usuLogin}" />
+                    </p:column>
                 </p:dataTable>
                 <div align="center" style="margin: 20px;">
                     <p:commandButton id="btnDetalle" value="Ver Detalle" update=":formTurnos" action="#{revisionManagedBean.seleccionarRadicacionHistorial()}" oncomplete="PF('dialogHistorial').hide()"/>

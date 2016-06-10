@@ -26,7 +26,7 @@
                 <h:form id="formAsignaciones">
                     <h:panelGroup rendered="#{asignacionesManagedBean.permiteAsignar}">
                         <div align="center" style="width: 400px;display: inline-block; vertical-align: top">
-                            <p:dataTable styleClass="tableMaterial" value="#{asignacionesManagedBean.radFasesEstadosDisponibles}" selection="#{asignacionesManagedBean.radFaseEstadoDisponible}"
+                            <p:dataTable id="tblAsignaciones" styleClass="tableMaterial" value="#{asignacionesManagedBean.radFasesEstadosDisponibles}" selection="#{asignacionesManagedBean.radFaseEstadoDisponible}"
                                          var="disp" emptyMessage="No hay radicaciones en espera" rowKey="#{disp.rfeId}" paginator="true" rows="9" paginatorPosition="bottom"
                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
                                          selectionMode="single" filteredValue="#{asignacionesManagedBean.radFasesEstadosUsuarioFiltro}" widgetVar="wvDisponibles">
@@ -73,7 +73,7 @@
                         </p:dataTable>
                     </div>
                     <div align="center" style="margin: 20px;">
-                        <p:commandButton value="Asignar Radicación" oncomplete="PF('loadingDialog').hide();PF('dialogConfAsig').show();PF('wvDisponibles').clearFilters()" update=":formConfAsig" rendered="#{asignacionesManagedBean.permiteAsignar}"/>
+                        <p:commandButton value="Asignar Radicación" oncomplete="PF('loadingDialog').hide();PF('dialogConfAsig').show();" update=":formConfAsig" rendered="#{asignacionesManagedBean.permiteAsignar}"/>
                     </div>
                 </h:form>
             </div>
@@ -86,7 +86,7 @@
                     <h:outputText value='Esta seguro de que desea vincular la radicación #{asignacionesManagedBean.radFaseEstadoDisponible.radId.radNumero} al usuario #{asignacionesManagedBean.usuarioSel.usuLogin}?'/>
                 </div>
                 <div align="center">
-                    <p:commandButton value="Si" action="#{asignacionesManagedBean.asignarRadicacion()}" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogConfAsig').hide()" update=":formAsignaciones"/>
+                    <p:commandButton value="Si" action="#{asignacionesManagedBean.asignarRadicacion()}" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogConfAsig').hide();PF('wvDisponibles').clearFilters()" update=":formAsignaciones:tblAsignaciones"/>
                     <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" oncomplete="PF('dialogConfAsig').hide();"/>
                 </div>
             </h:form>
@@ -153,7 +153,7 @@
                     </p:column>
                 </p:dataTable>
                 <div align="center" style="margin: 10px">
-                    <p:commandButton value="Reasignar" update="formRadicUsuario :formAsignaciones" action="#{asignacionesManagedBean.reAsignarRadicacion}" oncomplete="PF('dialogUsuariosDisp').hide()"/>
+                    <p:commandButton value="Reasignar" update="formRadicUsuario :formAsignaciones:tblAsignaciones" action="#{asignacionesManagedBean.reAsignarRadicacion}" oncomplete="PF('dialogUsuariosDisp').hide()"/>
                 </div>
             </h:form>
         </p:dialog>

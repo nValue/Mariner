@@ -71,29 +71,32 @@
                         <hr style="border: 1px solid rgba(192, 192, 192, 0.22);"/>
                         <h:panelGroup id="panelMesaControl">
                             <h:panelGroup rendered="#{mesaControlManagedBean.radicaciones.size()>0}">
-                                <p:dataTable id="radicaciones" var="radicacion" value="#{mesaControlManagedBean.radicaciones}" selectionMode="single" selection="#{mesaControlManagedBean.radicacion}" rowKey="#{radicacion.radId}" emptyMessage="No se han encontrado radicaciones vinculadas al filtro seleccionado." rowIndexVar="idx" filteredValue="#{mesaControlManagedBean.radicacionesFiltrado}" paginator="true" rows="18" paginatorPosition="bottom" widgetVar="wvRadicaciones">
+                                <p:dataTable id="radicaciones" var="radicacion" value="#{mesaControlManagedBean.radicaciones}" selectionMode="single" selection="#{mesaControlManagedBean.radicacion}" 
+                                             rowKey="#{radicacion.radId}" emptyMessage="No se han encontrado radicaciones vinculadas al filtro seleccionado." rowIndexVar="idx" 
+                                             filteredValue="#{mesaControlManagedBean.radicacionesFiltrado}" paginator="true" rows="18" paginatorPosition="bottom" widgetVar="wvRadicaciones"
+                                             styleClass="tableSmall">
                                     <p:ajax event="rowSelect" update=":modalRadicacion" oncomplete="PF('dialogRadicacion').show();" listener="#{mesaControlManagedBean.cargarDetalleRadicacion()}"/>                        
-                                    <p:column headerText="#" width="40" styleClass="colCenter">
+                                    <p:column headerText="#" width="30" styleClass="colCenter">
                                         <h:outputText value="#{idx+1}" />
                                     </p:column>
                                     <p:column headerText="Radicacion" width="90" filterBy="#{radicacion.radNumero}" filterMatchMode="contains" styleClass="colCenter">
                                         <h:outputText value="#{radicacion.radNumero}" />
                                     </p:column>
-                                    <p:column headerText="Liquidacion" filterBy="#{radicacion.radLiquidacion}" width="180" filterMatchMode="contains" styleClass="colCenter">
+                                    <p:column headerText="Liquidacion" filterBy="#{radicacion.radLiquidacion}" width="160" filterMatchMode="contains" styleClass="colCenter">
                                         <h:outputText value="#{radicacion.radLiquidacion}" />
                                     </p:column>
-                                    <p:column headerText="Valor" filterBy="#{radicacion.radValorLiq}" width="100" filterMatchMode="contains" styleClass="colCenter">
+                                    <p:column headerText="Valor" filterBy="#{radicacion.radValorLiq}" width="90" filterMatchMode="contains" styleClass="colCenter">
                                         <h:outputText value="#{radicacion.radValorLiq}" converter="CurrencyConverter" />
                                     </p:column>
-                                    <p:column headerText="Fecha" width="87" filterBy="#{radicacion.radFecha}" filterMatchMode="contains" styleClass="colCenter">
+                                    <p:column headerText="Fecha" width="80" filterBy="#{radicacion.radFecha}" filterMatchMode="contains" styleClass="colCenter">
                                         <h:outputText value="#{radicacion.radFecha}" >
                                             <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"/>
                                         </h:outputText>
                                     </p:column>
-                                    <p:column headerText="Notaria" filterBy="#{radicacion.notId.notNombre}" width="140" filterMatchMode="contains" styleClass="colCenter">
+                                    <p:column headerText="Notaria" filterBy="#{radicacion.notId.notNombre}" width="130" filterMatchMode="contains" styleClass="colCenter">
                                         <h:outputText value="#{radicacion.notId.notNombre}" />
                                     </p:column>
-                                    <p:column headerText="Turno" filterBy="#{radicacion.radTurno}" width="70" filterMatchMode="contains" styleClass="colCenter">
+                                    <p:column headerText="Turno" filterBy="#{radicacion.radTurno}" width="50" filterMatchMode="contains" styleClass="colCenter">
                                         <h:outputText value="#{radicacion.radTurno}" />
                                     </p:column>
                                     <p:column headerText="Impresión" filterBy="#{radicacion.radEsImpresion}" styleClass="colCenter" width="70">

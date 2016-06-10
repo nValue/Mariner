@@ -88,6 +88,9 @@ public class AsignacionesManagedBean extends GenericManagedBean{
     public void obtenerRadicacionesDisponibles(){
         try {
             radFasesEstadosDisponibles = radicFasesEstadosDAOBean.obtenerPendientesConCodigos(codigosPendientes);
+            for (MarRadicacionesFasesEstados radFasesEstadosDisponible : radFasesEstadosDisponibles) {
+                System.out.println("radFasesEstadosDisponible.getRadId().getRadNumero() = " + radFasesEstadosDisponible.getRadId().getRadNumero());
+            }
             if(!radFasesEstadosDisponibles.isEmpty()){
                 radFaseEstadoDisponible = radFasesEstadosDisponibles.get(0);
             }

@@ -85,6 +85,7 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
         obtenerFasesEstados();
         obtenerRadicacionesPendientes();
         turnosActuales = new ArrayList<>();
+        radicacionesEscrituras = new ArrayList<>();
     }
 
     /**
@@ -252,6 +253,22 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación deshabilitada", "La plataforma no se encuentra disponible para crear más radicaciones, si desea más información puede comunicarse con la Gobernación para validar este proceso.", true, false);
                 return;
             }
+            String maximo;
+            String esGobernacion;
+            if(usuarioSesion.getNotId().getNotEsGobernacion().equals("S")){
+                maximo = ConstantesUtils.cargarConstante("VUR-MAX-RAD-GOB");
+                esGobernacion = "S";
+            }else{
+                maximo = ConstantesUtils.cargarConstante("VUR-MAX-RAD-NOT");
+                esGobernacion = "N";
+            }
+            Integer max = Integer.parseInt(maximo);
+            BigDecimal decCantidad = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_cantidad_radicaciones_hoy", esGobernacion);
+            if(decCantidad.intValue() > max){
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación deshabilitada", "Lo sentimos. La plataforma no se encuentra disponible para crear más radicaciones.", true, false);
+                return;
+            }
+            
             radicacionAgrupamiento = new MarRadicacionesAgrupamientos();
             radicacionesEscrituras = new ArrayList<>();
             radicaciones = null;
@@ -275,7 +292,7 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
                 }
                 radicacionSel.setRadTurno(String.valueOf(inicio + 1));
             } else {
-                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Recomendación", "La notaría a la que usted se encuentra asociado no tiene turnos habilitados, le recomendamos configurarlos antes de continuar, si usted no maneja turnos haga caso omiso a este mensaje", true, false);
+                //PrimeFacesPopup.lanzarDialog(Effects.Slide, "Recomendación", "La notaría a la que usted se encuentra asociado no tiene turnos habilitados, le recomendamos configurarlos antes de continuar, si usted no maneja turnos haga caso omiso a este mensaje", true, false);
             }
         } catch (Exception e) {
             logger.error("Error creando nueva Radicación, causado por " + e, e);
