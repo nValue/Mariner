@@ -52,7 +52,7 @@ public class MesaControlBean extends GenericDAOBean implements MesaControlBeanLo
 
             query += (tipoFiltro.equals("TODOS") ? "" : " and ") + " trunc(m.radFecha) between trunc(:inicio) and trunc(:fin)";
             query += " order by m.radId desc";
-
+            System.out.println("query = " + query);
             Query q = getEntityManager().createQuery(query);
 
             if (!tipoFiltro.equals("TODOS")) {
