@@ -123,6 +123,7 @@ public class MesaControlManagedBean extends GenericManagedBean implements Serial
      * @param radId
      * @return
      */
+    /*
     public String cargarDescripcionUltimoEstado(MarRadicaciones radId) {
         String salida;
         try {
@@ -132,7 +133,7 @@ public class MesaControlManagedBean extends GenericManagedBean implements Serial
             salida = "Error..";
         }
         return salida;
-    }
+    }*/
 
     public Date getFechaInicial() {
         return fechaInicial;

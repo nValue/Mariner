@@ -102,9 +102,6 @@
                                     <p:column headerText="Impresión" filterBy="#{radicacion.radEsImpresion}" styleClass="colCenter" width="70">
                                         <h:outputText value="#{radicacion.radEsImpresion}" />
                                     </p:column>
-                                    <p:column headerText="Estado" styleClass="colCenter">
-                                        <h:outputText value="#{mesaControlManagedBean.cargarDescripcionUltimoEstado(radicacion)}" />
-                                    </p:column>
                                     <p:column headerText=".." width="20">
                                         <p:commandLink title="Presione para ver mas informacion de la radicacion" update=":modalRadicacion" oncomplete="PF('dialogRadicacion').show();" action="#{mesaControlManagedBean.cargarDetalleRadicacion()}">                                    
                                             <f:setPropertyActionListener target="#{mesaControlManagedBean.radicacion}" value="#{radicacion}" />
