@@ -55,6 +55,10 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarRadicaciones.findByRadLiquidacion", query = "SELECT m FROM MarRadicaciones m WHERE m.radLiquidacion = :radLiquidacion")})
 public class MarRadicaciones implements Serializable {
 
+    @JoinColumn(name = "PRI_ID", referencedColumnName = "PRI_ID")
+    @ManyToOne
+    private MarPrioridades priId;
+
     @JoinColumn(name = "RAA_ID", referencedColumnName = "RAA_ID")
     @ManyToOne
     private MarRadicacionesAgrupamientos raaId;
@@ -352,6 +356,14 @@ public class MarRadicaciones implements Serializable {
 
     public void setRaaId(MarRadicacionesAgrupamientos raaId) {
         this.raaId = raaId;
+    }
+
+    public MarPrioridades getPriId() {
+        return priId;
+    }
+
+    public void setPriId(MarPrioridades priId) {
+        this.priId = priId;
     }
     
 }

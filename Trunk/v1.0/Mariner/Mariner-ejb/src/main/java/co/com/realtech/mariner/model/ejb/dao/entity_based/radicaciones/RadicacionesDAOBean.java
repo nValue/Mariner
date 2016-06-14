@@ -53,13 +53,6 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
         return radicacionesFiltradas;
     }
     
-    /**
-     * Obtiene las radicaciones cuya ultima fase sea la ingresada y para un usuario específico si se envía
-     * @param fase El código de la fase, si quiere varias fases, escríbalas con coma y entre comillas simples ej: 'I-P','G-P'
-     * @param usuario
-     * @return
-     * @throws MarinerPersistanceException 
-     */
     @Override
     public List<MarRadicaciones> obtenerRadicacionesPorUltimaFase(String fase, MarUsuarios usuario) throws MarinerPersistanceException{
         List<MarRadicaciones> radicacionesLibres = new ArrayList<>();
@@ -77,13 +70,20 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
                     + "INNER JOIN mar_radicaciones_fases_estados rfes ON m.rfe_id = rfes.rfe_id\n"
                     + "INNER JOIN mar_radicaciones r ON rfes.rad_id = r.rad_id\n"
                     + "INNER JOIN mar_fases_estados fes ON rfes.fes_id = fes.fes_id\n"
+                    + "INNER JOIN mar_notarias n ON r.not_id = n.not_id\n"
                     + "WHERE 2 = 2\n"
-                    + "  AND fes.fes_codigo IN (:fase)\n"
-                    + "ORDER BY r.rad_fecha";
+                    + "  AND (fes.fes_codigo IN (:fase) AND 3 = 3)\n"
+                    + "ORDER BY fes.fes_orden, r.rad_id";
             if (usuario != null){
                 sql = sql.replace("2 = 2", "rfes.usu_id = " + usuario.getUsuId());
             }
             sql = sql.replace(":fase", fase);
+            //Validación necesaria para agregar los pendientes por imprimir de la gobernación.
+            if(fase.contains("R-A")){
+                sql = sql.replace("R-A", "NADA");
+                sql = sql.replace("AND 3 = 3", "OR (fes.fes_codigo = 'R-A' AND n.not_es_gobernacion = 'S' AND NVL(r.rad_es_impresion,'N') != 'S')");
+            }
+            System.out.println("sql = " + sql);
             Query q = getEntityManager().createNativeQuery(sql,MarRadicaciones.class);
             radicacionesLibres = q.getResultList();
         } catch (Exception e) {
