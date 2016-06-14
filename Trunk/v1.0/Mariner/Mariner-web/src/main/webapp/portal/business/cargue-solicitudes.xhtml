@@ -28,7 +28,7 @@
                         <h:outputLabel value="Rechazados "/>
                         <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" converter="MarRadicacionesConverter" value="#{cargueSolicitudesManagedBean.radicacionSel}" >
                             <f:selectItem itemLabel=" - " itemValue="" />
-                            <f:selectItems value="#{cargueSolicitudesManagedBean.radicaciones}" var="radPend" itemLabel="#{(cargueSolicitudesManagedBean.esRechazo(radPend))} - Turno #{radPend.radTurno}" itemValue="#{radPend}"/>
+                            <f:selectItems value="#{cargueSolicitudesManagedBean.radicaciones}" var="radPend" itemLabel="#{(cargueSolicitudesManagedBean.esRechazo(radPend))} #{radPend.radTurno eq null ? '' : '- Turno'} #{radPend.radTurno}" itemValue="#{radPend}" />
                             <p:ajax listener="#{cargueSolicitudesManagedBean.seleccionarRadicacion()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" update="formRadicacion"/>
                         </p:selectOneMenu>
                         <p:commandButton style="vertical-align: top" value="Crear Radicación" action="#{cargueSolicitudesManagedBean.solicitarRadicacion()}" update="formRadicacion formFiltroRadicaciones" disabled="#{((cargueSolicitudesManagedBean.radicacionSel != null) and (cargueSolicitudesManagedBean.radicacionSel.radId == null))}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>

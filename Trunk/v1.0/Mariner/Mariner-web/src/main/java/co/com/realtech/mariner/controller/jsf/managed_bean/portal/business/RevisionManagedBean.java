@@ -8,17 +8,31 @@ import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesActosSap;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarRechazosCausales;
+import co.com.realtech.mariner.model.entity.MarTransacciones;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.model.logic.estados.SAPEstadosLogicOperations;
+import co.com.realtech.mariner.util.cdf.CDFFileDispatcher;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
+import co.com.realtech.mariner.util.files.PDFUtils;
+import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
+import java.io.File;
+import java.io.FileInputStream;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -66,7 +80,7 @@ public class RevisionManagedBean extends GenericManagedBean{
      */
     public void obtenerRadicacionesPendientes(){
         try {
-            radicacionesPendientes = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'R-P'", usuarioSesion);
+            radicacionesPendientes = radicacionesDAOBean.obtenerRadicacionesPorUltimaFase("'R-P','R-A'", usuarioSesion);
             if(!radicacionesPendientes.isEmpty()){
                 radicacionPendienteSel = radicacionesPendientes.get(0);
                 obtenerFasesEstadosDeRadicacion();
@@ -298,6 +312,131 @@ public class RevisionManagedBean extends GenericManagedBean{
             String msj = "No se pueden obtener los actos de la radicación, causado por: " + e;
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Actos no realizado", msj, true, false);
             logger.error(msj, e);
+        }
+    }
+    
+    
+    /**
+     * Ingresa la transacción para pago en bancos si no está creada.
+     *
+     */
+    public boolean validarTransaccion() {
+        try {
+            // verificar que la transaccion no tenga una en curso.
+            MarTransacciones transVerificacion = (MarTransacciones) genericDAOBean.findByColumn(MarTransacciones.class, "radId", radicacionPendienteSel);
+            if (transVerificacion == null) {
+                transVerificacion = new MarTransacciones();
+                transVerificacion.setTraTipoPago("RECIBO");
+                transVerificacion.setRadId(radicacionPendienteSel);
+                transVerificacion.setTraReferencia(radicacionPendienteSel.getRadLiquidacion());
+                transVerificacion.setTraValor(radicacionPendienteSel.getRadValorLiq());
+                transVerificacion.setTraCuantia(radicacionPendienteSel.getRadCuantia());
+                transVerificacion.setTraFechaInicio(new Date());
+                transVerificacion.setTraEstado("T");
+                transVerificacion.setUsuId(usuarioSesion);
+                transVerificacion.setTraApellidos("Gobernación");
+                transVerificacion.setTraNombres("Robot");
+                transVerificacion.setTraTelefono("7777777");
+                transVerificacion.setTraCorreo("robotgobernacion@valledelcauca.gov.co");
+                transVerificacion.setTraDocumento("99999999");
+                transVerificacion.setTdcId(usuarioSesion.getPerId().getTdcId());
+                auditSessionUtils.setAuditReflectedValues(transVerificacion);
+                genericDAOBean.save(transVerificacion);
+                System.out.println("Transaccion " + transVerificacion.getTraId() + " guardada");
+            }
+            return true;
+        } catch (Exception e) {
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero ha ocurrido un error seleccionando el medio de pago.", true, false);
+            logger.error("Error realizando validación en impresión, causado por " + e);
+        }
+        return false;
+    }
+    
+    /**
+     * Coloca el estado S a la columna de radicacion-impresion.
+     */
+    public void validarEntrega(){
+        try {
+            MarTransacciones transVerificacion = (MarTransacciones) genericDAOBean.findByColumn(MarTransacciones.class, "radId", radicacionPendienteSel);
+            if(transVerificacion == null){
+                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Impresión requerida", "Antes de validar la entrega debe descargar el recibo de pago.", true, false);
+                return;
+            }
+            radicacionPendienteSel.setRadEsImpresion("S");
+            auditSessionUtils.setAuditReflectedValues(radicacionPendienteSel);
+            genericDAOBean.merge(radicacionPendienteSel);
+            
+            radicacionPendienteSel = null;
+            obtenerRadicacionesPendientes();
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Proceso completado", "Se ha marcado el proceso con el estado de impresión de recibo de pago satisfactoriamente", true, false);
+            PrimeFacesContext.execute("PF('dialogImpresion').hide()");
+        } catch (Exception e) {
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero ha ocurrido un error validando la entrega", true, false);
+            logger.error("Error validando entrega de impresión, causado por " + e);
+        }
+    }
+    
+    /**
+     * Descargar recibo de pago.
+     */
+    public void descargarRecibo() {
+        try {
+            if (validarTransaccion()) {
+                //ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+                //String contextPath = servletContext.getContextPath();
+                //String urlRecibo = contextPath + "/static/fileDispatcher/" + radicacionPendienteSel.getArcIdReciboPago().getArcId() + "-" +  radicacionPendienteSel.getArcIdReciboPago().getArcHash() + "." + radicacionPendienteSel.getArcIdReciboPago().getArcExtension();
+                //RequestContext.getCurrentInstance().execute("window.open('" + urlRecibo + "');");
+
+                CDFFileDispatcher dispatcher = CDFFileDispatcher.create();
+                dispatcher.findFile(radicacionPendienteSel.getArcIdReciboPago().getArcId());
+                File archivo = PDFUtils.agregarTexto(dispatcher.getFileContent(), "Turno: " + radicacionPendienteSel.getRadTurno() + " - " + radicacionPendienteSel.getRadNumero());
+                if(archivo.exists()){
+                    byte[] bytes = IOUtils.toByteArray(new FileInputStream(archivo));
+                    descargarArchivoFacesContext(FacesContext.getCurrentInstance(), bytes, archivo.getName() + ".pdf");
+                }else{
+                    PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "No se encuentra el archivo con la impresión de turno", true, false);
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+    
+    /**
+     * Descargar archivo a través del FacesContext.
+     *
+     * @param context
+     * @param bytes
+     * @param nombreArchivo
+     */
+    private void descargarArchivoFacesContext(FacesContext context, byte[] bytes, String nombreArchivo) {
+        ExternalContext externalContext = context.getExternalContext();
+        HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+        try {
+            if (bytes == null) {
+                System.out.println("Bytes nulos en respuesta de PDF");
+            } else {
+                try (ServletOutputStream servletOutputStream = response.getOutputStream()) {
+                    response.addHeader("Content-Type", "application/pdf");
+                    response.addHeader("Content-Disposition", "attachment; filename=" + nombreArchivo + ".pdf");
+                    response.setContentLength(bytes.length);
+                    response.setContentType("application/pdf");
+                    servletOutputStream.write(bytes);
+                    servletOutputStream.flush();
+                    context.responseComplete();
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error enviando archivo PDF, error causado por " + e);
+        }
+    }
+    
+    /**
+     * Obtiene los datos de la impresión.
+     */
+    public void obtenerImpresion() {
+        //Si es nulo es porque se está consultando desde el historial y debe traer los campos
+        if (radicacionPendienteSel == null) {
+            radicacionPendienteSel = radicacionHistorialSel.getRadId();
         }
     }
 

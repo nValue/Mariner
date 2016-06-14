@@ -8,6 +8,7 @@ import co.com.realtech.mariner.model.entity.MarArchivos;
 import co.com.realtech.mariner.model.entity.MarEscrituras;
 import co.com.realtech.mariner.model.entity.MarFasesEstados;
 import co.com.realtech.mariner.model.entity.MarNotarias;
+import co.com.realtech.mariner.model.entity.MarPrioridades;
 import co.com.realtech.mariner.model.entity.MarPuntosMontajes;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesAgrupamientos;
@@ -75,6 +76,10 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
     private MarRadicaciones radicacionEscrituraSel;
 
     private MarRadicacionesAgrupamientos radicacionAgrupamiento;
+    
+    private MarPrioridades prioridadGobernacion;
+    private MarPrioridades prioridadVencimiento;
+    private MarPrioridades prioridadDiscapacidad;
 
     @Override
     public void init() {
@@ -86,6 +91,22 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
         obtenerRadicacionesPendientes();
         turnosActuales = new ArrayList<>();
         radicacionesEscrituras = new ArrayList<>();
+        obtenerPrioridades();
+    }
+    
+    /**
+     * Obtiene las prioridades del sistema para el motor de asignaciones.
+     */
+    public void obtenerPrioridades(){
+        try {
+            prioridadGobernacion = (MarPrioridades)genericDAOBean.findByColumn(MarPrioridades.class, "priCodigo", "GOB");
+            prioridadVencimiento = (MarPrioridades)genericDAOBean.findByColumn(MarPrioridades.class, "priCodigo", "VEN");
+            prioridadDiscapacidad = (MarPrioridades)genericDAOBean.findByColumn(MarPrioridades.class, "priCodigo", "DIS");
+        } catch (Exception e) {
+            String msj = "No se pueden obtener las prioridades del sistema para la asignación automática, sin embargo el sistema puede seguir funcionando";
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Prioridades requeridas", msj, true, false);
+            logger.error(msj,e);
+        }
     }
 
     /**
@@ -281,7 +302,9 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
             observacionesProceso = "";
             radicacionesFasesEstados = null;
             radicacionFaseEstProcesadaSel = null;
-
+            if (esGobernacion.equals("S")) {
+                radicacionSel.setPriId(prioridadGobernacion);
+            }
             if (usuarioSesion.getNotId().getNotTurnos() != null) {
                 BigDecimal dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_obtener_turno", usuarioSesion.getNotId());
                 Integer inicio = dbSalida.intValue();

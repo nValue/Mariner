@@ -102,6 +102,9 @@ public class GeneracionManagedBean extends GenericManagedBean {
             if (!radicacionesUsuario.isEmpty()) {
                 radicacionUsuarioSel = radicacionesUsuario.get(0);
                 obtenerFasesEstadosDeRadicacion();
+            }else{
+                //Si la persona no tiene algo pendiente le trae automáticamente una radicación usando el motor de asignaciones.
+                asignarNuevaRadicacion();
             }
         } catch (Exception e) {
             logger.error("Error obteniendo las radicaciones, causado por : " + e, e);

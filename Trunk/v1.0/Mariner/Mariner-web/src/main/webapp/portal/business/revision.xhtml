@@ -9,6 +9,7 @@
 
     <ui:define name="negocio">
         <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
+        <link rel="stylesheet" type="text/css" href="#{resource['css/payment.css']}" />
         <div id="paperMain">
             <div class="tituloCont" align="center">
                 <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
@@ -93,6 +94,7 @@
                                                  onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogRechazo').hide()">
                                     <p:confirm header="Confirmación" message="Esta seguro de que desea desvincular esta radicación?, este proceso será devuelto al liquidador nuevamente" icon="ui-icon-alert" />
                                 </p:commandButton>
+                                <p:commandButton style="vertical-align: top" value="Impresión" action="#{revisionManagedBean.obtenerImpresion()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogImpresion').show()" update=":formImpresion" rendered="#{(revisionManagedBean.radicacionFaseEstadoSel.fesId.fesCodigo eq 'R-A')}" />
                             </div>
                         </h:panelGroup>
                     </div>
@@ -131,6 +133,9 @@
                     <p:column headerText="Estado">
                         <h:outputLabel value="#{radPro.fesId.fesNombre}" />
                     </p:column>
+                    <p:column headerText="Impreso" width="70">
+                        <h:outputLabel value="#{radPro.radId.radEsImpresion}" />
+                    </p:column>
                     <p:column headerText="Turno" width="70">
                         <h:outputLabel value="#{radPro.radId.radTurno}" />
                     </p:column>
@@ -158,6 +163,28 @@
                 <p:commandButton value="Rechazar" action="#{revisionManagedBean.rechazarRadicacion()}" update="formTurnos"  
                                  onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogRechazo').hide()"/>
                 <p:commandButton value="Cancelar" oncomplete="PF('dialogRechazo').hide()" />
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog id="modalImpresion" widgetVar="dialogImpresion" styleClass="modalTop" resizable="false" header="Impresión" modal="true" width="500" minHeight="300">
+            <h:form id="formImpresion">
+                <div>
+                    <div class="payment-methods">
+                        <p:commandLink styleClass="payment-button" action="#{revisionManagedBean.descargarRecibo()}" title="Presione para descargar el recibo" ajax="false" target="_blank">
+                            <img src="#{resource['images/icons/logo-codigo-barras.png']}" alt="Pago gobernación"/><br/>
+                            <span>
+                                Pago en Ventanilla
+                            </span>
+                        </p:commandLink>
+                    </div>
+                    <div align="center">
+                        <p:commandButton value="Validar Impresión" action="#{revisionManagedBean.validarEntrega()}" rendered="#{!(revisionManagedBean.radicacionPendienteSel.radEsImpresion eq 'S')}" 
+                                         onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" update="formImpresion :formTurnos">
+                            <p:confirm header="Confirmación" message="¿Esta seguro de que desea validar la impresión?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                        <p:commandButton value="Cerrar" oncomplete="PF('dialogImpresion').hide()" />
+                    </div>
+                </div>
             </h:form>
         </p:dialog>
         

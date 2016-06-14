@@ -53,7 +53,6 @@ public class ImpresionManagedBean extends GenericManagedBean implements Serializ
      * Selecciona el tipo de filtro para la impresión de los pagos.
      */
     public void seleccionarTipo(){
-        System.out.println("tipoBusqueda = " + tipoBusqueda);
         radicacionesEstados = radicFasesEstadosDAOBean.obtenerUltimaFaseFechaImpreso("'R-A'", fechaInicial, fechaFinal, tipoBusqueda.equals("I"));
         if(!radicacionesEstados.isEmpty()){
             radicacionEstadoSel = radicacionesEstados.get(0);
