@@ -1,11 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones;
 
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
+import co.com.realtech.mariner.model.entity.MarRadicacionesAgrupamientos;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
 import java.util.Date;
@@ -47,5 +43,13 @@ public interface RadicacionesDAOBeanLocal {
      * @throws MarinerPersistanceException 
      */
     public boolean esTurnoValido(String turno) throws MarinerPersistanceException;
+    
+    /**
+     * Obtiene las radicaciones activas por agrupamiento
+     * @param radAgrup
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    public List<MarRadicaciones> obtenerRadicacionesActivasPorAgrupacion(MarRadicacionesAgrupamientos radAgrup) throws MarinerPersistanceException;
     
 }

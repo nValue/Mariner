@@ -61,5 +61,15 @@ public interface RadicFasesEstadosDAOBeanLocal {
      */
     public List<MarRadicacionesFasesEstados> obtenerUltimaFaseFechaImpreso(String fase, Date fechaInicial, Date fechaFinal, boolean fueImpreso);
     
+    /**
+     * Obtiene la ultima radicacion-fase-estado cuya fase-estado sea la ingresada, en la fecha seleccionada.
+     * @param usuario
+     * @param faseEstado
+     * @param fechaIn
+     * @param fechaFin
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    public List<MarRadicacionesFasesEstados> obtenerRadicFasEstXUsuFasEstYFechasFase(MarUsuarios usuario, String faseEstado, Date fechaIn, Date fechaFin) throws MarinerPersistanceException;
     
 }

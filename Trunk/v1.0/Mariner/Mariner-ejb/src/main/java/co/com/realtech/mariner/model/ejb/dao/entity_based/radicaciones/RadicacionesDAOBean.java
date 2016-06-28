@@ -2,6 +2,7 @@ package co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones;
 
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBean;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
+import co.com.realtech.mariner.model.entity.MarRadicacionesAgrupamientos;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
 import co.com.realtech.mariner.util.string.BusinessStringUtils;
@@ -262,6 +263,19 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
             throw e;
         }
         return (cant == 0);
+    }
+    
+    @Override
+    public List<MarRadicaciones> obtenerRadicacionesActivasPorAgrupacion(MarRadicacionesAgrupamientos radAgrup) throws MarinerPersistanceException{
+        List<MarRadicaciones> radicaciones = null;
+        try {
+            Query q = getEntityManager().createQuery("FROM MarRadicaciones r WHERE r.raaId = :raaId AND r.radEstado = 'A'");
+            q.setParameter("raaId", radAgrup);
+            radicaciones = (List<MarRadicaciones>)q.getResultList();
+        } catch (Exception e) {
+            throw e;
+        }
+        return radicaciones;
     }
     
 }

@@ -77,11 +77,11 @@ public class SAPRadicacionesLogicOperations implements Serializable {
      * @param codigoLiquidacion
      * @return
      */
-    public EntidadLiquidacionResultado vincularRadicacionSAP(MarRadicaciones radicacion, String codigoLiquidacion) {
+    public EntidadLiquidacionResultado vincularRadicacionSAP(MarRadicaciones radicacion, String codigoLiquidacion, boolean cambiaEstado) {
         EntidadLiquidacionResultado salida = new EntidadLiquidacionResultado();
         try {
             if (radicacion != null) {
-                // Verificamos que la radiacion este en estado Pendiente SAP G-S
+                // Verificamos que la radicacion este en estado Pendiente SAP G-S
                 MarRadicacionesFasesEstados estado = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radicacion);
 
                 if (estado.getFesId().getFesCodigo().equals("G-S")) {
@@ -116,24 +116,27 @@ public class SAPRadicacionesLogicOperations implements Serializable {
                                 genericDAOBean.delete(actoBD, actoBD.getRdsId());
                             }
                         }
-
                         // Guardamos los actos de la liquidacion
                         for (MarRadicacionesActosSap actoSap : actosSAP) {
                             actoSap.setRdeId(detalleSAP);
                             actoSap.setAudFecha(new Date());
                             genericDAOBean.save(actoSap);
                         }
-                        // Guardamos la nueva fase estado del proceso.
-                        MarUsuarios usuarioSistema = ((MarUsuarios) genericDAOBean.findByColumn(MarUsuarios.class, "usuLogin", "MARINER"));
-                        BigDecimal regEstado = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacion, "G-A", "A", usuarioSistema, "", null);
-
-                        if (regEstado.intValue() != -999) {
-                            salida.setEstado("OK");
-                            salida.setCodigoConfirmacion(regEstado.longValue());
-                            salida.setLog(new EntidadLog("1000", "OK", "Proceso de liquidacion recibida en la plataforma", "El proceso de liquidacion No." + codigoLiquidacion + " ha sido recibido por la plataforma."));
+                        if (cambiaEstado) {
+                            // Guardamos la nueva fase estado del proceso.
+                            MarUsuarios usuarioSistema = ((MarUsuarios) genericDAOBean.findByColumn(MarUsuarios.class, "usuLogin", "MARINER"));
+                            BigDecimal regEstado = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacion, "G-A", "A", usuarioSistema, "", null);
+                            if (regEstado.intValue() != -999) {
+                                salida.setEstado("OK");
+                                salida.setCodigoConfirmacion(regEstado.longValue());
+                                salida.setLog(new EntidadLog("1000", "OK", "Proceso de liquidacion recibida en la plataforma", "El proceso de liquidacion No." + codigoLiquidacion + " ha sido recibido por la plataforma."));
+                            } else {
+                                salida.setEstado("ERROR");
+                                salida.setLog(new EntidadLog("1005", "ERROR", "Error registrando estado Fase en sistema", "Se obtuvieron los datos de SAP, pero no fue posible vincular el Estado Fase G-A"));
+                            }
                         } else {
-                            salida.setEstado("ERROR");
-                            salida.setLog(new EntidadLog("1005", "ERROR", "Error registrando estado Fase en sistema", "Se obtubieron los datos de SAP, pero no fue posible vincular el Estado Fase G-A"));
+                            salida.setEstado("OK");
+                            salida.setLog(new EntidadLog("1000", "OK", "Proceso de liquidacion recibida en la plataforma", "El proceso de liquidacion No." + codigoLiquidacion + " ha sido recibido por la plataforma."));
                         }
                     } else {
                         salida.setEstado("ERROR");

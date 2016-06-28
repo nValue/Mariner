@@ -8,6 +8,7 @@ package co.com.realtech.mariner.model.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.GeneratedValue;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
@@ -19,6 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -40,6 +42,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarEscrituras.findByAudUsuario", query = "SELECT m FROM MarEscrituras m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarEscrituras.findByAudFecha", query = "SELECT m FROM MarEscrituras m WHERE m.audFecha = :audFecha")})
 public class MarEscrituras implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escId")
+    private List<MarRadicaciones> marRadicacionesList;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -65,8 +70,6 @@ public class MarEscrituras implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @OneToOne(mappedBy = "escId")
-    private MarRadicaciones marRadicaciones;
     @JoinColumn(name = "ARC_ID", referencedColumnName = "ARC_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarArchivos arcId;
@@ -124,14 +127,6 @@ public class MarEscrituras implements Serializable {
         this.audFecha = audFecha;
     }
 
-    public MarRadicaciones getMarRadicaciones() {
-        return marRadicaciones;
-    }
-
-    public void setMarRadicaciones(MarRadicaciones marRadicaciones) {
-        this.marRadicaciones = marRadicaciones;
-    }
-
     public MarArchivos getArcId() {
         return arcId;
     }
@@ -163,6 +158,14 @@ public class MarEscrituras implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarEscrituras[ escId=" + escId + " ]";
+    }
+
+    public List<MarRadicaciones> getMarRadicacionesList() {
+        return marRadicacionesList;
+    }
+
+    public void setMarRadicacionesList(List<MarRadicaciones> marRadicacionesList) {
+        this.marRadicacionesList = marRadicacionesList;
     }
     
 }

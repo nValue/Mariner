@@ -124,7 +124,7 @@ public class MarRadicaciones implements Serializable {
     @ManyToOne
     private MarArchivos arcIdBoletaFiscal;
     @JoinColumn(name = "ESC_ID", referencedColumnName = "ESC_ID", nullable = false)
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     private MarEscrituras escId;
     @JoinColumn(name = "NOT_ID", referencedColumnName = "NOT_ID", nullable = false)
     @ManyToOne(optional = false)
