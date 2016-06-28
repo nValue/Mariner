@@ -2,15 +2,19 @@ package co.com.realtech.mariner.controller.jsf.managed_bean.portal.business;
 
 import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBean;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFasesEstadosDAOBeanLocal;
+import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicacionesDAOBean;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicacionesDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.get_detail_method.DetalleLiquidacion;
+import co.com.realtech.mariner.model.entity.MarEscrituras;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
+import co.com.realtech.mariner.model.entity.MarRadicacionesAgrupamientos;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarRechazosCausales;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.model.logic.liquidaciones.SAPListadoLiquidacionesLogicOperations;
 import co.com.realtech.mariner.model.logic.radicaciones_sap.SAPRadicacionesLogicOperations;
 import co.com.realtech.mariner.model.sdo.estandar.EntidadLiquidacionResultado;
+import co.com.realtech.mariner.util.consecutives.NumeracionesManager;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
@@ -19,11 +23,17 @@ import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import co.com.realtech.mariner.util.sap_files.SAPFilesUtils;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import org.primefaces.push.EventBus;
+import org.primefaces.push.EventBusFactory;
 
 /**
  * ManagedBean encargado de asignar las radicaciones a los liquidadores y enviar
@@ -66,6 +76,11 @@ public class GeneracionManagedBean extends GenericManagedBean {
     private SAPRadicacionesLogicOperations sapRadicacionesLogicOperations;
     private SAPListadoLiquidacionesLogicOperations sapLLO;
     private Date fechaLiquidaciones;
+    
+    private List<MarRadicaciones> radicacionesAdicionales;
+    private MarRadicaciones radicacionAdicionalSel;
+    
+    private MarRadicacionesAgrupamientos radicacionAgrupamiento;
 
     @Override
     public void init() {
@@ -75,6 +90,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
         numeroLiquidacion = "";
         obtenerRadicacionesPendientes();
         obtenerRechazos();
+        radicacionesAdicionales = new ArrayList<>();
     }
 
     /**
@@ -102,6 +118,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
             if (!radicacionesUsuario.isEmpty()) {
                 radicacionUsuarioSel = radicacionesUsuario.get(0);
                 obtenerFasesEstadosDeRadicacion();
+                obtenerRadicacionesAgrupamientos();
             }else{
                 //Si la persona no tiene algo pendiente le trae automáticamente una radicación usando el motor de asignaciones.
                 asignarNuevaRadicacion();
@@ -116,7 +133,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
      */
     public void obtenerRadicacionesProcesadas() {
         try {
-            radicacionesFasesEstProcesadas = radicFasesEstadosDAOBean.obtenerRadicFasesEstadosPorUsuarioFaseEstadoYFechas(usuarioSesion, null, fechaFiltroInic, fechaFiltroFin);
+            radicacionesFasesEstProcesadas = radicFasesEstadosDAOBean.obtenerRadicFasEstXUsuFasEstYFechasFase(usuarioSesion, "G-S", fechaFiltroInic, fechaFiltroFin);
             if (!radicacionesFasesEstProcesadas.isEmpty()) {
                 radicacionFaseEstProcesadaSel = radicacionesFasesEstProcesadas.get(0);
             }
@@ -233,6 +250,11 @@ public class GeneracionManagedBean extends GenericManagedBean {
             MarRadicacionesFasesEstados rfeNuevo = (MarRadicacionesFasesEstados) genericDAOBean.findByColumn(MarRadicacionesFasesEstados.class, "rfeId.rfeId", BDsalida);
             rfeNuevo.setRcaId(rechazoSel);
             genericDAOBean.merge(rfeNuevo);
+            
+            //Notifica a la persona a través de Push el rechazo correspondiente
+            EventBus eventBus = EventBusFactory.getDefault().eventBus();
+            eventBus.publish("/estados/"+usuarioAsignado.getUsuId(), new FacesMessage("Radicacion rechazada", "La radicacion " + radicacionUsuarioSel.getRadNumero() + " ha sido rechazada. Motivo: " + observaciones));
+            
             obtenerRadicacionesPendientes();
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo realizado", "Proceso rechazado correctamente", true, false);
         } catch (Exception e) {
@@ -388,22 +410,183 @@ public class GeneracionManagedBean extends GenericManagedBean {
     }
 
     /**
-     * Dada la información de detalle liquidación, la vincula al proceso actual.
+     * Dada la información de detalle liquidación, la vincula al proceso actual y cambia el estado de todas las adicionales.
      */
     public void vincularInformacionSAP() {
         try {
-            EntidadLiquidacionResultado salida = sapRadicacionesLogicOperations.vincularRadicacionSAP(radicacionUsuarioSel, getCodigoLiquidacion());
+            EntidadLiquidacionResultado salida = sapRadicacionesLogicOperations.vincularRadicacionSAP(radicacionUsuarioSel, getCodigoLiquidacion(),true);
             if (salida.getEstado().equals("OK")) {
                 SAPFilesUtils.vincularArchivosSAP(radicacionUsuarioSel.getRadId());
                 radicacionUsuarioSel = null;
+                //Si hay radicaciones adicionales, les cambia el estado a todas.
+                for (MarRadicaciones radicacionAdicional : radicacionesAdicionales) {
+                    BigDecimal dbSalida;
+                    Integer salidaInt = -999;
+                    dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionAdicional.getRadId(),
+                            "G-A", "A", usuarioSesion.getUsuId(), observaciones, null);
+                    salidaInt = dbSalida.intValue();
+                    if (salidaInt == -999) {
+                        PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
+                        return;
+                    }
+                    radicacionesAdicionales = new ArrayList<>();
+                    radicacionAdicionalSel = null;
+                }
                 obtenerRadicacionesPendientes();
                 PrimeFacesContext.execute("PF('dialogLiquidacion').hide();");
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso finalizado", "Vinculación realizada correctamente y cambiada a validación por aprobador.", true, false);
+
             } else {
                 PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error vinculacion", salida.getLog().getMensaje(), true, false);
             }
         } catch (Exception e) {
-            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Error interno realizando vinculacion de Radicacion, codigo de error:" + e, true, false);
+            String msj = "Error interno realizando vinculacion de Radicacion, codigo de error:" + e;
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", msj, true, false);
+            logger.error(msj,e);
+        }
+    }
+    
+    /**
+     * Crea una nueva radicación y la lleva hasta el estado de liquidación.
+     */
+    public void crearNuevaRadicacion(){
+        try {
+            //Primero guarda la radicacion agrupamiento si no se ha hecho
+            if(radicacionAgrupamiento.getRaaId() == null){
+                radicacionAgrupamiento.setAudFecha(new Date());
+                radicacionAgrupamiento.setAudUsuario(usuarioSesion.getUsuLogin());
+                genericDAOBean.save(radicacionAgrupamiento);
+            }
+            //Primero crea la nueva radicación y la guarda
+            radicacionAdicionalSel = new MarRadicaciones();
+            radicacionAdicionalSel.setEscId(radicacionUsuarioSel.getEscId());
+            radicacionAdicionalSel.setNotId(radicacionUsuarioSel.getNotId());
+            radicacionAdicionalSel.setPriId(radicacionUsuarioSel.getPriId());
+            radicacionAdicionalSel.setRaaId(radicacionAgrupamiento);
+            radicacionAdicionalSel.setRadEstado(radicacionUsuarioSel.getRadEstado());
+            radicacionAdicionalSel.setRadFecha(new Date());
+            radicacionAdicionalSel.setRadTurno(radicacionUsuarioSel.getRadTurno());
+            NumeracionesManager nm = new NumeracionesManager();
+            String siguienteNum = nm.loadNextConsecutiveRad("RAD01", radicacionUsuarioSel);
+            radicacionAdicionalSel.setRadNumero(siguienteNum);
+            radicacionAdicionalSel.setAudFecha(new Date());
+            radicacionAdicionalSel.setAudUsuario(usuarioSesion.getUsuLogin());
+            genericDAOBean.save(radicacionAdicionalSel);
+            
+            //Obtiene el usuario que creó la radicación para colocarselo a la que se va a crear
+            MarUsuarios usuarioCrea = new MarUsuarios();
+            for (MarRadicacionesFasesEstados radicacionFaseEstado : radicacionesFasesEstados) {
+                if(radicacionFaseEstado.getFesId().getFesCodigo().equals("I-P")){
+                    usuarioCrea = radicacionFaseEstado.getUsuId();
+                }
+            }
+            
+            //Ahora se crea el estado de ingreso
+            BigDecimal dbSalida;
+            Integer salida = -999;
+            dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionAdicionalSel.getRadId(),
+                    "I-P", "A", usuarioCrea.getUsuId(), "Fase creada automáticamente - Múltiples liquidaciones", null);
+            salida = dbSalida.intValue();
+            if (salida == -999) {
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
+                return;
+            }
+            
+            //Luego se crea el estado de asignado a liquidador
+            dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionAdicionalSel.getRadId(),
+                    "G-P", "A", usuarioSesion.getUsuId(), "Fase creada automáticamente - Múltiples liquidaciones", null);
+            salida = dbSalida.intValue();
+            if (salida == -999) {
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
+                return;
+            }
+            
+            //Luego crea el estado de proceso en liquidación SAP
+            dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionAdicionalSel.getRadId(),
+                    "G-S", "A", usuarioSesion.getUsuId(), "Fase creada automáticamente - Múltiples liquidaciones", null);
+            salida = dbSalida.intValue();
+            if (salida == -999) {
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
+                return;
+            }
+            
+            //Le coloca el agrupamiento a la actual también
+            radicacionUsuarioSel.setRaaId(radicacionAgrupamiento);
+            genericDAOBean.merge(radicacionUsuarioSel);
+            
+            //Al final vincula esta radicación con la liquidación actual.
+            vincularNuevaLiquidacion();
+            
+            //Se agrega a la lista de radicacionesAdicionales
+            radicacionesAdicionales.add(radicacionAdicionalSel);
+        } catch (Exception e) {
+            String msj = "Ocurrió un error al crear una nueva radicación, causado por: " + e;
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", msj, true, false);
+            logger.error(msj,e);
+        }
+    }
+    
+    /**
+     * Vincula la radicación recién creada a la liquidación seleccionada pero sin cambiar el estado.
+     */
+    public void vincularNuevaLiquidacion(){
+        try {
+            EntidadLiquidacionResultado salida = sapRadicacionesLogicOperations.vincularRadicacionSAP(radicacionAdicionalSel, getCodigoLiquidacion(),false);
+            if (salida.getEstado().equals("OK")) {
+                SAPFilesUtils.vincularArchivosSAP(radicacionAdicionalSel.getRadId());
+                PrimeFacesContext.execute("PF('dialogLiquidacion').hide();");
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso finalizado", "Se ha creado una nueva radicación con el número " + radicacionAdicionalSel.getRadNumero() + ", y se ha vinculado la liquidación de SAP con código: " + codigoLiquidacion, true, false);
+            } else {
+                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error vinculación", salida.getLog().getMensaje(), true, false);
+            }
+        } catch (Exception e) {
+            String msj = "No se puede vincular esta liquidación a la radicación recién creada, causado por: " + e;
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", msj, true, false);
+            logger.error(msj, e);
+        }
+    }
+    
+    /**
+     * Obtiene todas las radicaciones agrupadas a esta principal.
+     */
+    public void obtenerRadicacionesAgrupamientos() {
+        if (radicacionUsuarioSel.getRaaId() == null) {
+            radicacionAgrupamiento = new MarRadicacionesAgrupamientos();
+            radicacionAgrupamiento.setRaaAgrupaEscs("N");
+            radicacionAgrupamiento.setRaaAgrupaLiqs("S");
+        } else {
+            radicacionAgrupamiento = radicacionUsuarioSel.getRaaId();
+            try {
+                //Trae todas las radicaciones agrupadas y quita la que tiene actualmente en pantalla.
+                List<MarRadicaciones> rads = radicacionesDAOBean.obtenerRadicacionesActivasPorAgrupacion(radicacionAgrupamiento);
+                Predicate<MarRadicaciones> pred = x -> !x.getRadId().equals(radicacionUsuarioSel.getRadId());
+                radicacionesAdicionales = rads.stream().filter(pred).collect(Collectors.toList());
+                if (!radicacionesAdicionales.isEmpty()) {
+                    radicacionAdicionalSel = radicacionesAdicionales.get(0);
+                }
+            } catch (Exception e) {
+                String msj = "No se pueden obtener las otras liquidaciones asociadas al proceso, causado por : " + e;
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicaciones adicionales no encontradas", msj, true, false);
+                logger.error(msj, e);
+            }
+        }
+    }
+    
+    /**
+     * Desvincula una liquidación de SAP asociada a una radicación.
+     */
+    public void anularRadicacion(){
+        try {
+            radicacionAdicionalSel.setRadEstado("R");
+            auditSessionUtils.setAuditReflectedValues(radicacionAdicionalSel);
+            genericDAOBean.merge(radicacionAdicionalSel);
+            radicacionAdicionalSel = null;
+            obtenerRadicacionesAgrupamientos();
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Eliminación realizada", "La radicación se ha eliminado y su liquidación esta libre para ser asignada", true, false);
+        } catch (Exception e) {
+            String msj = "Error desvinculando la radicación, causado por: " + e;
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Desvinculación incompleta", msj, true, false);
+            logger.error(msj , e);
         }
     }
 
@@ -534,5 +717,23 @@ public class GeneracionManagedBean extends GenericManagedBean {
     public void setDetalleLiquidacion(DetalleLiquidacion detalleLiquidacion) {
         this.detalleLiquidacion = detalleLiquidacion;
     }
+
+    public List<MarRadicaciones> getRadicacionesAdicionales() {
+        return radicacionesAdicionales;
+    }
+
+    public void setRadicacionesAdicionales(List<MarRadicaciones> radicacionesAdicionales) {
+        this.radicacionesAdicionales = radicacionesAdicionales;
+    }
+
+    public MarRadicaciones getRadicacionAdicionalSel() {
+        return radicacionAdicionalSel;
+    }
+
+    public void setRadicacionAdicionalSel(MarRadicaciones radicacionAdicionalSel) {
+        this.radicacionAdicionalSel = radicacionAdicionalSel;
+    }
+    
+    
 
 }

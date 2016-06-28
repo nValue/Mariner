@@ -191,7 +191,7 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
      */
     public void obtenerRadicacionesProcesadas() {
         try {
-            radicacionesFasesEstProcesadas = radicFasesEstadosDAOBean.obtenerRadicFasesEstadosPorUsuarioFaseEstadoYFechas(usuarioSesion, null, fechaFiltroInic, fechaFiltroFin);
+            radicacionesFasesEstProcesadas = radicFasesEstadosDAOBean.obtenerRadicFasEstXUsuFasEstYFechasFase(usuarioSesion, "I-P", fechaFiltroInic, fechaFiltroFin);
             if (!radicacionesFasesEstProcesadas.isEmpty()) {
                 radicacionFaseEstProcesadaSel = radicacionesFasesEstProcesadas.get(radicacionesFasesEstProcesadas.size() - 1);
             }
@@ -467,7 +467,7 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
             }
         } catch (Exception e) {
             String msj = "Error guardando la radicacion, causado por: " + e;
-            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso incomplet", msj, true, false);
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso incompleto", msj, true, false);
             logger.error(msj, e);
         }
     }
@@ -478,6 +478,24 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
     public void cancelarRadicacion() {
         obtenerRadicacionesPendientes();
         radicacionSel = null;
+    }
+    
+    /**
+     * Coloca la radicación en estado (R) que significa que está rechazada.
+     */
+    public void anularRadicacion(){
+        try {
+            radicacionSel.setRadEstado("R");
+            auditSessionUtils.setAuditReflectedValues(radicacionSel);
+            genericDAOBean.merge(radicacionSel);
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso realizado", "La radicación ahora se encuentra en estado Anulada", true, false);
+            obtenerRadicacionesPendientes();
+        } catch (Exception e) {
+            String msj = "No se puede anular la radicación, causado por: " + e;
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso incompleto", msj, true, false);
+            logger.error(msj,e);
+        }
+        
     }
 
     /**

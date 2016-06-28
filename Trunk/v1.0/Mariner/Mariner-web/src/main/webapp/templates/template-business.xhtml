@@ -30,9 +30,11 @@
                                 <p:password id="idCont" value="#{indexManagedBean.usuario.usuPassword}" required="true" label="Password" size="30"/>
                             </h:panelGrid>
                             <div>
-                                <div style="width: 320px;" align="center">
-                                    <p:captcha label="Captcha" language="es" required="true"/>
-                                </div>                                
+                                <h:panelGroup rendered="#{indexManagedBean.tieneCaptcha}">
+                                    <div style="width: 320px;" align="center">
+                                        <p:captcha label="Captcha" language="es" required="true"/>
+                                    </div>                                
+                                </h:panelGroup>
                             </div>
                             <div align="center" style="padding: 12px;">
                                 <p:commandButton value="Entrar" action="#{indexManagedBean.autenticar()}" update="@this :panelHome" ajax="false"/>
@@ -109,7 +111,7 @@
                                                                 }
                                                             </script>
                                                             <ui:repeat value="#{notificacionesManagedBean.notificaciones}" var="notificacion" varStatus="status">
-                                                                <p:commandLink styleClass="btnNotificacion_#{notificacion.ntfId}" update="@(.notificacionesCounter) @this" action="#{notificacionesManagedBean.actualizarEstadoLecturaNotificacion(notificacion)}" onmouseover="fl_execute_button('btnNotificacion_#{notificacion.ntfId}', '#{notificacion.ntfEstado}');">
+                                                                <p:commandLink styleClass="btnNotificacion_#{notificacion.ntfId}" update="@(.notificacionesCounter) @this" action="#{notificacionesManagedBean.actualizarEstadoLecturaNotificacion(notificacion)}" onmouseup="fl_execute_button('btnNotificacion_#{notificacion.ntfId}', '#{notificacion.ntfEstado}');">
                                                                     <div class="componente-notificacion-#{notificacion.ntfEstado}" title="#{notificacion.nftFecha}">
                                                                         <div>
                                                                             <table style="width: 100%">
@@ -166,7 +168,11 @@
                             </table>                            
                         </div>
                     </div>
+                    <p:growl widgetVar="growl" showDetail="true" sticky="true" severity="error"/> 
+                    <p:socket onMessage="handleMessage" channel="/estados/#{indexManagedBean.usuario.usuId}" /> 
                 </h:form>
+
+                
                 <div class="contentMain" align="center">
                     <ui:insert name="negocio"/>
                 </div>

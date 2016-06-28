@@ -91,8 +91,12 @@
                                               onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()">
                                 <p:confirm header="Confirmación" message="¿Esta seguro de que desea guardar la radicación?" icon="ui-icon-alert" />
                             </p:commandButton>
-                            <p:commandButton value="Cancelar" action="#{cargueSolicitudesManagedBean.cancelarRadicacion()}"  onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                            <p:commandButton value="Cancelar" action="#{cargueSolicitudesManagedBean.cancelarRadicacion()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
                                              update="formRadicacion :formFiltroRadicaciones" process="@this"/>
+                            <p:commandButton value="Anular Proceso" action="#{cargueSolicitudesManagedBean.anularRadicacion()}" rendered="#{cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-R'}"
+                                             onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" update="formRadicacion :formFiltroRadicaciones">
+                                <p:confirm header="Confirmación" message="¿Está seguro que desea anular esta radicación? Este proceso no se puede deshacer" icon="ui-icon-alert" />
+                            </p:commandButton>
                         </div>
                     </h:panelGroup>
                 </h:form>

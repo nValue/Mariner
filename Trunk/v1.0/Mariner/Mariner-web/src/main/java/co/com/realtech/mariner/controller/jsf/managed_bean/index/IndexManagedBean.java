@@ -8,6 +8,7 @@ import co.com.realtech.mariner.model.entity.MarModulos;
 import co.com.realtech.mariner.model.entity.MarPersonas;
 import co.com.realtech.mariner.model.entity.MarTiposDocumentos;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
+import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import co.com.realtech.mariner.util.crypto.CryptoUtils;
 import co.com.realtech.mariner.util.html.DynamicHTMLMenuGenerator;
 import co.com.realtech.mariner.util.jsf.JSFUtils;
@@ -55,6 +56,7 @@ public class IndexManagedBean implements Serializable {
     private String claveNueva;
     private String claveNuevaRep;
     
+    private boolean tieneCaptcha;
 
     private MarUsuarios usuario;
     private List<MarTiposDocumentos> tiposDocumento;
@@ -69,6 +71,7 @@ public class IndexManagedBean implements Serializable {
         contextPath = JSFUtils.getCurrentContext();
         auditSessionUtils = AuditSessionUtils.create();
         limpiarCampos();
+        traerCaptcha();
     }
 
     /**
@@ -78,9 +81,11 @@ public class IndexManagedBean implements Serializable {
         try {
             boolean logged = false;
             //Busca el usuario con el Login registrado
+            System.out.println("Buscando usuario...");
             MarUsuarios usuarioALoguear = (MarUsuarios)genericDAOBean.findByColumn(MarUsuarios.class, "usuLogin", usuario.getUsuLogin());
             if(usuarioALoguear != null){
                 //Valida si el password coincide
+                System.out.println("Validando contraseña...");
                 String passDec = CryptoUtils.decrypt(usuarioALoguear.getUsuPassword());
                 if (passDec.equals(usuario.getUsuPassword())) {
                     logged = true;
@@ -89,10 +94,12 @@ public class IndexManagedBean implements Serializable {
                     usuario.setUsuUltimoIngreso(new Date());
                     genericDAOBean.merge(usuario);
                     //El usuario es correcto, se cargan las variables de sesión
+                    System.out.println("Colocando variables...");
                     SessionUtils.asignarValor("marineruser", getUsuario());
                     SessionUtils.asignarValor("marinerpersona", getUsuario().getPerId());
                     SessionUtils.asignarValor("auth", "S");
                     // Cargamos el menu de opciones del usuario.
+                    System.out.println("Cargando menú...");
                     List<MarModulos> modulos = modulosDAOBean.obtenerModulosDeUsuario(usuario);
                     DynamicHTMLMenuGenerator dynaHtml = new DynamicHTMLMenuGenerator();
                     dynaHtml.buildMenu(getUsuario(), modulos, 0, contextPath);
@@ -100,6 +107,7 @@ public class IndexManagedBean implements Serializable {
                     // cargamos a session las URL a las que tiene permiso el usuario
                     SessionUtils.asignarValor("marinerpaths", dynaHtml.getValidPaths());
                     redireccionar(null);
+                    System.out.println("Usuario logueado...");
                 }
             }
             if(!logged){
@@ -107,8 +115,22 @@ public class IndexManagedBean implements Serializable {
                 PrimeFacesPopup.lanzarDialog(Effects.Explode, "Notificacion", "Usuario o contraseña incorrectos", true, false);
             }
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error("No se puede validar el usuario, causado por: " + e);
+        }
+    }
+    
+    /**
+     * Valida si debe o no mostrar el captcha en la pantalla principal.
+     */
+    public void traerCaptcha(){
+        try {
+            tieneCaptcha = false;
+            String valor = (ConstantesUtils.cargarConstante("VUR-USA-CAPTCHA"));
+            if(valor != null && valor.equals("S")){
+                tieneCaptcha = true;
+            }
+        } catch (Exception e) {
+            logger.error("Error obteniendo el captcha, causado por " + e, e);
         }
     }
 
@@ -292,6 +314,15 @@ public class IndexManagedBean implements Serializable {
     public void setClaveNuevaRep(String claveNuevaRep) {
         this.claveNuevaRep = claveNuevaRep;
     }
+
+    public boolean isTieneCaptcha() {
+        return tieneCaptcha;
+    }
+
+    public void setTieneCaptcha(boolean tieneCaptcha) {
+        this.tieneCaptcha = tieneCaptcha;
+    }
+    
     
     
 

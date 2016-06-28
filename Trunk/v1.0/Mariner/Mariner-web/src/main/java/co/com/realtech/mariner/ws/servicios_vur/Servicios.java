@@ -44,7 +44,7 @@ public class Servicios {
             // consulta detalle y vinculacion con el registro en el sistema.
             MarRadicaciones radicacion = (MarRadicaciones) genericDAOBean.findByColumn(MarRadicaciones.class, "radId", new BigDecimal(codigoRadicacion.toString()));
             SAPRadicacionesLogicOperations sapLogic = SAPRadicacionesLogicOperations.create();
-            salida = sapLogic.vincularRadicacionSAP(radicacion, codigoLiquidacion);
+            salida = sapLogic.vincularRadicacionSAP(radicacion, codigoLiquidacion,true);
         } catch (Exception e) {
             salida.setEstado("ERROR");
             salida.setLog(new EntidadLog("1001", "ERROR", "Error interno procesando peticion", "Error interno causado por " + e));

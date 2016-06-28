@@ -24,6 +24,7 @@ import java.net.URLDecoder;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
@@ -33,6 +34,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.primefaces.context.RequestContext;
+import org.primefaces.push.EventBus;
+import org.primefaces.push.EventBusFactory;
 
 /**
  *
@@ -228,8 +231,7 @@ public class RevisionManagedBean extends GenericManagedBean{
             radicacionPendienteSel = null;
             obtenerRadicacionesPendientes();
             
-            
-            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Desvinculación completada", "Disvinculación realizada correctamente, se ha devuelto el proceso al liquidador.", true, false);
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Desvinculación completada", "Desvinculación realizada correctamente, se ha devuelto el proceso al liquidador.", true, false);
         } catch (Exception e) {
             String msj = "Error desvinculando la radicación, causado por: " + e;
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Desvinculación incompleta", msj, true, false);
@@ -266,6 +268,10 @@ public class RevisionManagedBean extends GenericManagedBean{
             rfeNuevo.setRcaId(rechazoSel);
             genericDAOBean.merge(rfeNuevo);
             
+            //Notifica a la persona a través de Push el rechazo correspondiente
+            EventBus eventBus = EventBusFactory.getDefault().eventBus();
+            eventBus.publish("/estados/"+usuarioAsignado.getUsuId(), new FacesMessage("Liquidación rechazada", "La radicacion " + radicacionPendienteSel.getRadNumero() + " ha sido rechazada. Motivo: " + observaciones));
+            
             radicacionPendienteSel = null;
             obtenerRadicacionesPendientes();
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo realizado", "Proceso rechazado correctamente", true, false);
@@ -288,7 +294,7 @@ public class RevisionManagedBean extends GenericManagedBean{
      */
     public void obtenerHistorialRadicaciones(){
         try {
-            radicacionesHistorial = radicFasesEstadosDAOBean.obtenerRadicFasesEstadosPorUsuarioFaseEstadoYFechas(usuarioSesion, null,fechaFiltroInic, fechaFiltroFin);
+            radicacionesHistorial = radicFasesEstadosDAOBean.obtenerRadicFasEstXUsuFasEstYFechasFase(usuarioSesion, "R-A",fechaFiltroInic, fechaFiltroFin);
             if(!radicacionesHistorial.isEmpty()){
                 radicacionHistorialSel = radicacionesHistorial.get(0);
             }

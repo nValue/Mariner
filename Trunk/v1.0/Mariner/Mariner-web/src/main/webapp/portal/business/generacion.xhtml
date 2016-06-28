@@ -66,6 +66,7 @@
                                 <p:inputTextarea value="#{generacionManagedBean.observaciones}" rows="2" style="width: 77%;display: block"/>
                                 <p:button style="margin: 10px;" value="Descargar Escritura" target="_new" href="/static/fileDispatcher/#{generacionManagedBean.radicacionUsuarioSel.escId.arcId.arcId}-#{generacionManagedBean.radicacionUsuarioSel.escId.arcId.arcHash}.#{generacionManagedBean.radicacionUsuarioSel.escId.arcId.arcExtension}"
                                           rendered="#{generacionManagedBean.radicacionUsuarioSel.escId.arcId != null}"/>
+                                <p:commandButton value="Liquidaciones Adicionales" update=":formRadsAdicionales" oncomplete="PF('dialogRadsAdicionales').show()" />
 
                             </div>
                             <div style="margin: 20px;display: inline-block; vertical-align: top; width: 40%;border: solid 1px #e0e0e0;">
@@ -162,6 +163,33 @@
                 <p:commandButton value="Cancelar" oncomplete="PF('dialogRechazo').hide()" />
             </h:form>
         </p:dialog>
+        
+        
+        <p:dialog id="modalRadsAdicionales" widgetVar="dialogRadsAdicionales" styleClass="modalTop" resizable="false" header="Radicaciones Adicionales" modal="true" width="700" minHeight="500">
+            <h:form id="formRadsAdicionales">
+                <p:dataTable emptyMessage="No hay otras radicaciones asociadas a esta" selection="#{generacionManagedBean.radicacionAdicionalSel}" value="#{generacionManagedBean.radicacionesAdicionales}" selectionMode="single" var="radAd" rowKey="#{radAd.radId}">
+                    <p:column headerText="Número Radicación">
+                        <h:outputLabel value="#{radAd.radNumero}" />
+                    </p:column>
+                    <p:column headerText="Liquidación SAP">
+                        <h:outputLabel value="#{radAd.radLiquidacion}" />
+                    </p:column>
+                    <p:column headerText="Valor">
+                        <h:outputLabel value="#{radAd.radValorLiq}" />
+                    </p:column>
+                    <p:column headerText="X" width="20">
+                        <p:commandLink update="formRadsAdicionales" title="Presione para eliminar esta radicación y dejar libre la liquidación asociada" action="#{generacionManagedBean.anularRadicacion()}" >
+                            <f:setPropertyActionListener target="#{generacionManagedBean.radicacionAdicionalSel}" value="#{radAd}" />
+                            <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                            <p:confirm header="Confirmacion" message="Está seguro de anular esta radicación y desvincular la liquidación?" icon="ui-icon-alert" />
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+                <div align="center" style="margin: 10px;">
+                    <p:commandButton value="Cerrar" oncomplete="PF('dialogRadsAdicionales').hide()" />
+                </div>
+            </h:form>
+        </p:dialog>
 
         <p:dialog id="modalLiquidacion" widgetVar="dialogLiquidacion" styleClass="modalTop" resizable="false" header="Número de liquidación a validar" modal="true" width="880" minHeight="500">
             <h:form id="formLiquidacion">
@@ -229,6 +257,9 @@
                     <div align="center" style="margin: 20px">
                         <p:commandButton value="Vincular" action="#{generacionManagedBean.vincularInformacionSAP()}" update=":formTurnos" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();" >
                             <p:confirm header="Confirmación" message="¿Esta seguro de que desea vincular la liquidación número #{generacionManagedBean.detalleLiquidacion.liqNumero} de SAP al proceso de VUR?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                        <p:commandButton value="Vincular en nueva radicación" action="#{generacionManagedBean.crearNuevaRadicacion()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();" >
+                            <p:confirm header="Confirmación" message="Está a punto de vincular la liquidación #{generacionManagedBean.detalleLiquidacion.liqNumero} a una nueva radicación que no es la actual, ¿está seguro de realizar este proceso?" icon="ui-icon-alert" />
                         </p:commandButton>
                         <p:commandButton value="Cerrar" oncomplete="PF('dialogLiquidacion').hide()" />
                     </div>
