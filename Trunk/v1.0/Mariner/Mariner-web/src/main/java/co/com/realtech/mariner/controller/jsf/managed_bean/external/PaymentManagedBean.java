@@ -87,13 +87,21 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                     PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Por favor ingrese el numero de la liquidacion de la cual desea realizar el pago.", true, false);
                 }
             }
-            // Validar si viene un parametro por get en la URL con nombre (CUS)
+
+            // Validar si viene un parametro por get en la URL con nombre (CUS) y si la transaccion ya estaba en progreso.
             try {
+                String enProgresoPSE = SessionUtils.obtenerValor("PSE-EN-PROGRESO");
+
+                if (enProgresoPSE.equals("S")) {
+                    setTipoBusqueda(SessionUtils.obtenerValor("PSE-TIPO"));
+                    setCodigoBusqueda(SessionUtils.obtenerValor("PSE-CODIGO"));
+                }
                 String parametroCUSPasarela = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("CUS");
                 if (parametroCUSPasarela != null && !parametroCUSPasarela.equals("")) {
                     validarPagoPasarela(parametroCUSPasarela);
                 }
             } catch (Exception e) {
+                logger.error("Error realizando validacion de pasarela de pagos, causado por " + e);
             }
         } catch (Exception e) {
             logger.error("Error inicializando PaymentManagedBean, causado por " + e);
@@ -200,11 +208,14 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
     /**
      * Buscar radicacion segun filtro.
      */
-    public
-            void buscarRadicacion() {
+    public void buscarRadicacion() {
         try {
+            System.out.println("Buscando " + getCodigoBusqueda());
+            System.out.println("Tipo " + getTipoBusqueda());
             if (getTipoBusqueda().equals("L")) {
+                setCodigoBusqueda(BusinessStringUtils.convertNumeroLiquidacion(getCodigoBusqueda()));
                 List<MarRadicaciones> radiaciones = (List<MarRadicaciones>) genericDAOBean.findAllByColumn(MarRadicaciones.class, "radLiquidacion", getCodigoBusqueda(), true, "radId desc");
+                System.out.println("Evento....." + radiaciones);
                 if (!radiaciones.isEmpty()) {
                     setRadicacion(radiaciones.get(0));
                 }
@@ -303,6 +314,10 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                     SessionUtils.asignarValor("TRANSACCION_TEMPORAL", getTransaccion().getTraId());
                     // Redireccionar a la pasarela de pagos.
                     FacesContext.getCurrentInstance().getExternalContext().redirect(urlServletRedireccionPasarela);
+                    // Guardamos en session el ultimo ID de busqueda.
+                    SessionUtils.asignarValor("PSE-EN-PROGRESO", "S");
+                    SessionUtils.asignarValor("PSE-TIPO", getTipoBusqueda());
+                    SessionUtils.asignarValor("PSE-CODIGO", getCodigoBusqueda());
                 } else {
                     if (getRadicacion().getArcIdReciboPago() == null || getRadicacion().getArcIdBoletaFiscal() == null) {
                         PrimeFacesPopup.lanzarDialog(Effects.Puff, "Error validacion", "Lo sentimos pero la Radicacion no tiene Archivo de Boleta Fiscal y Recibo, por favor contacte al administrador de la plataforma.", true, false);
@@ -368,6 +383,16 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
         } catch (Exception e) {
             System.out.println("Error enviando archivo PDF, error causado por " + e);
         }
+    }
+
+    /**
+     * Finalizar transaccion PSE.
+     */
+    public void finalizarTransaccion() {
+        // Guardamos en session el ultimo ID de busqueda.
+        SessionUtils.asignarValor("PSE-EN-PROGRESO", null);
+        SessionUtils.asignarValor("PSE-TIPO", null);
+        SessionUtils.asignarValor("PSE-CODIGO", null);
     }
 
     public String getAutenticado() {
