@@ -1,6 +1,7 @@
 package co.com.realtech.mariner.util.files;
 
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Utilidades de acceso a disco.
@@ -60,6 +61,25 @@ public class FileUtils {
             return null;
         }
         return ext;
+    }
+    
+    /**
+     * Pregunta si el tipo de archivo es válido para ser ingresado al CDF
+     * @param mimeType
+     * @return 
+     */
+    public static boolean invalidFile(String mimeType) {
+        ArrayList<String> extensionesInv = new ArrayList<>();
+        extensionesInv.add("x-sh");
+        extensionesInv.add("script.sh");
+        //extensionesInv.add("octet-stream");
+        extensionesInv.add("java");
+        for (String ext : extensionesInv) {
+            if (mimeType.contains(ext)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

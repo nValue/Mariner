@@ -95,7 +95,7 @@ public class MarArchivos implements Serializable {
     private List<MarRadicacionesArchivosSap> marRadicacionesArchivosSapList;
     @OneToMany(mappedBy = "arcIdRecibo")
     private List<MarRadicacionesArchivosSap> marRadicacionesArchivosSapList1;
-    @OneToMany(mappedBy = "arcId")
+    @OneToMany(mappedBy = "arcIdReporte")
     private List<MarReportes> marReportesList;
     @OneToMany(mappedBy = "arcId")
     private List<MarEscrituras> marEscriturasList;
