@@ -278,5 +278,54 @@ public class RadicFasesEstadosDAOBean extends GenericDAOBean implements RadicFas
         return radicacionesLibres;
     }
     
+    @Override
+    public List<MarRadicacionesFasesEstados> obtenerRadicFasEstXFiltroValorFechas(String filtro, String valor, Date fechaIn, Date fechaFin) throws MarinerPersistanceException {
+        List<MarRadicacionesFasesEstados> radicacionesLibres = new ArrayList<>();
+        try {
+            String sql = "WITH procesosInvolucrados AS\n"
+                    + "(\n"
+                    + "  SELECT DISTINCT r.rad_id FROM mar_radicaciones r\n"
+                    + "  INNER JOIN mar_radicaciones_fases_estados rfe ON r.rad_id = rfe.rad_id\n"
+                    + "  INNER JOIN mar_fases_estados fe ON rfe.fes_id = fe.fes_id\n"
+                    + "  INNER JOIN mar_escrituras e ON r.esc_id = e.esc_id\n"
+                    + "  WHERE 1 = 1\n"
+                    + "     AND 2 = 2\n"
+                    + "     AND 4 = 4\n"
+                    + "), ultimasFases AS (\n"
+                    + "  SELECT DISTINCT rfe.rad_id, MAX(rfe.rfe_id) OVER(PARTITION BY rfe.rad_id) AS rfe_id\n"
+                    + "  FROM procesosInvolucrados r \n"
+                    + "  INNER JOIN mar_radicaciones_fases_estados rfe ON r.rad_id = rfe.rad_id\n"
+                    + "    \n"
+                    + ") SELECT rfe.* \n"
+                    + "FROM mar_radicaciones_fases_estados rfe\n"
+                    + "INNER JOIN ultimasFases uf ON rfe.rfe_id = uf.rfe_id\n"
+                    + " AND 3 = 3\n"
+                    + "ORDER BY rfe.rfe_fecha_inicio DESC";
+            if (filtro.equalsIgnoreCase("RAD-NUMERO")) {
+                sql = sql.replace("1 = 1", "r.rad_numero = '" + valor + "'");
+            } else if (filtro.equalsIgnoreCase("RAD-LIQUIDACION")) {
+                sql = sql.replace("1 = 1", "r.rad_liquidacion = '" + valor + "'");
+            } else if (filtro.equalsIgnoreCase("RAD-TURNO")) {
+                sql = sql.replace("1 = 1", "r.rad_turno = '" + valor + "'");
+            } else if (filtro.equalsIgnoreCase("RAD-ESCRITURA")){ 
+                sql = sql.replace("1 = 1", "e.esc_numero = '" + valor + "'");
+            } else if (filtro.equalsIgnoreCase("RAD-RECHAZOS")){
+                sql = sql.replace("3 = 3", "rfe.rfe_estado = 'R'");
+            }
+            if (fechaIn != null) {
+                sql = sql.replace("2 = 2", "TRUNC(r.rad_fecha) BETWEEN TO_DATE(':fechaIn','dd-MM-yyyy') AND TO_DATE(':fechaFin','dd-MM-yyyy')");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                sql = sql.replace(":fechaIn", sdf.format(fechaIn));
+                sql = sql.replace(":fechaFin", sdf.format(fechaFin));
+            }
+            System.out.println("sql = " + sql);
+            Query q = getEntityManager().createNativeQuery(sql, MarRadicacionesFasesEstados.class);
+            radicacionesLibres = (List<MarRadicacionesFasesEstados>)q.getResultList();
+        } catch (Exception e) {
+            throw e;
+        }
+        return radicacionesLibres;
+    }
+    
 
 }

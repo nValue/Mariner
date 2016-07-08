@@ -42,6 +42,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarOficinasRegistros.findByAudFecha", query = "SELECT m FROM MarOficinasRegistros m WHERE m.audFecha = :audFecha"),
     @NamedQuery(name = "MarOficinasRegistros.findByAudUsuario", query = "SELECT m FROM MarOficinasRegistros m WHERE m.audUsuario = :audUsuario")})
 public class MarOficinasRegistros implements Serializable {
+
+    @OneToMany(mappedBy = "morId")
+    private List<MarCiudades> marCiudadesList;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -187,6 +190,14 @@ public class MarOficinasRegistros implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarOficinasRegistros[ morId=" + morId + " ]";
+    }
+
+    public List<MarCiudades> getMarCiudadesList() {
+        return marCiudadesList;
+    }
+
+    public void setMarCiudadesList(List<MarCiudades> marCiudadesList) {
+        this.marCiudadesList = marCiudadesList;
     }
     
 }

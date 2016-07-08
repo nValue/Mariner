@@ -72,4 +72,15 @@ public interface RadicFasesEstadosDAOBeanLocal {
      */
     public List<MarRadicacionesFasesEstados> obtenerRadicFasEstXUsuFasEstYFechasFase(MarUsuarios usuario, String faseEstado, Date fechaIn, Date fechaFin) throws MarinerPersistanceException;
     
+    /**
+     * Obtiene todas las radicaciones por el filtro deseado, y unas fechas indicadas, trayendo el último estado de cada uno
+     * @param filtro
+     * @param valor
+     * @param fechaIn
+     * @param fechaFin
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    public List<MarRadicacionesFasesEstados> obtenerRadicFasEstXFiltroValorFechas(String filtro, String valor, Date fechaIn, Date fechaFin) throws MarinerPersistanceException;
+    
 }

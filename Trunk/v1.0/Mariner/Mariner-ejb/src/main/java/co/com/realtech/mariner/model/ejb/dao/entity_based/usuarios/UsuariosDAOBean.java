@@ -93,17 +93,18 @@ public class UsuariosDAOBean extends GenericDAOBean implements UsuariosDAOBeanLo
             String sql = "SELECT * FROM mar_usuarios WHERE ";
             switch (labor) {
             case "LIQ":
-                sql = sql + " usu_es_liquidador = 'S'";
+                sql = sql + " usu_es_liquidador = 'S'\n";
                 break;
             case "APR":
-                sql = sql + " usu_es_aprobador = 'S'";
+                sql = sql + " usu_es_aprobador = 'S'\n";
                 break;
             case "NOT":
-                sql = sql + " usu_es_notario = 'S'";
+                sql = sql + " usu_es_notario = 'S'\n";
                 break;
             default:
                 return usuarios;
         }
+            sql = sql + " ORDER BY mor_id, usu_login";
             Query q = getEntityManager().createNativeQuery(sql,MarUsuarios.class);
             usuarios = q.getResultList();
         } catch (Exception e) {
