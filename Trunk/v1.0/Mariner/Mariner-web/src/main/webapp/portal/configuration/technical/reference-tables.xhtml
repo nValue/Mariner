@@ -180,6 +180,9 @@
                                                 <p:column headerText="Codigo Numeracion">
                                                     <h:outputText value="#{ciudad.ciuCodigoNumeracion}" />
                                                 </p:column>
+                                                <p:column headerText="Oficina Registral">
+                                                    <h:outputText value="#{ciudad.morId.morNombre}" />
+                                                </p:column>
                                                 <p:column headerText="X" width="20">
                                                     <p:commandLink update="ciudades" title="Presione para eliminar esta ciudad" action="#{ciudadesManagedBean.borrarCiudad()}">                                    
                                                         <f:setPropertyActionListener target="#{ciudadesManagedBean.ciudad}" value="#{ciudad}" />
@@ -320,6 +323,10 @@
                         <p:inputText value="#{ciudadesManagedBean.ciudad.ciuCodigoDane}" required="true" size="30"/>  
                         <h:outputLabel value="Codigo Numeracion"/>
                         <p:inputText value="#{ciudadesManagedBean.ciudad.ciuCodigoNumeracion}" required="false" size="30"/> 
+                        <h:outputText value="Oficina Registral"/>
+                        <p:selectOneMenu converter="MarOficinasRegistroConverter" value="#{ciudadesManagedBean.ciudad.morId}">
+                            <f:selectItems value="#{ciudadesManagedBean.oficinasRegistros}" var="ores" itemLabel="#{ores.morNombre}" itemValue="#{ores}"/> 
+                        </p:selectOneMenu>
                     </h:panelGrid>
                     <div align="center" style="padding-top: 10px">
                         <p:commandButton value="Guardar" action="#{ciudadesManagedBean.guardarCiudad()}" update="@form :tabContainer:formCiudades"/>

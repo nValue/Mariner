@@ -220,7 +220,9 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                     setRadicacion(radiaciones.get(0));
                 }
             } else {
-                List<MarRadicaciones> radiaciones = (List<MarRadicaciones>) genericDAOBean.findAllByColumn(MarRadicaciones.class, "radNumero", getCodigoBusqueda(), true, "radId desc");
+                //Se reemplaza la consulta exacta con un LIKE
+                List<MarRadicaciones> radiaciones = (List<MarRadicaciones>) genericDAOBean.findAllByColumnLike(MarRadicaciones.class, "radNumero",true,"radId desc", getCodigoBusqueda());
+                //List<MarRadicaciones> radiaciones = (List<MarRadicaciones>) genericDAOBean.findAllByColumn(MarRadicaciones.class, "radNumero", getCodigoBusqueda(), true, "radId desc");
                 if (!radiaciones.isEmpty()) {
                     setRadicacion(radiaciones.get(0));
                 }
@@ -262,6 +264,14 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                     PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos esta radicacion ya tiene un proceso de pago en el sistema, si tiene dudas por favor contacte al administrador del sistema.", true, false);
                 }
             } else {
+                if(radicacion.getRaaId() != null){
+                    BigDecimal BDsalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_verificar_impresion_masiva", radicacion.getRaaId().getRaaId());
+                    Integer salida = BDsalida.intValue();
+                    if(salida == 0){
+                        PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Esta radicación hace parte de un grupo, debe esperar que todas se encuentren en estado de pago para poder descargarlas.", true, false);
+                        return;
+                    }
+                }
                 setTransaccion(new MarTransacciones());
                 getTransaccion().setTraTipoPago(ttPago);
                 getTransaccion().setRadId(getRadicacion());

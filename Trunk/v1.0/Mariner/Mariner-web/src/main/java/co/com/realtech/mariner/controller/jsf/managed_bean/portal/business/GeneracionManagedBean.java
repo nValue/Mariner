@@ -2,10 +2,8 @@ package co.com.realtech.mariner.controller.jsf.managed_bean.portal.business;
 
 import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBean;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFasesEstadosDAOBeanLocal;
-import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicacionesDAOBean;
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicacionesDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.get_detail_method.DetalleLiquidacion;
-import co.com.realtech.mariner.model.entity.MarEscrituras;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesAgrupamientos;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
@@ -164,7 +162,10 @@ public class GeneracionManagedBean extends GenericManagedBean {
      */
     public void asignarNuevaRadicacion() {
         try {
-
+            if(usuarioSesion.getUsuEsLiquidador() == null || !usuarioSesion.getUsuEsLiquidador().equals("S")){
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "No es liquidador", "No se le pueden asignar radicaciones ya que usted no posee el permiso para ello", true, false);
+                return;
+            }
             Integer maxRads = Integer.parseInt(ConstantesUtils.cargarConstante("MAX-LIQUID-USER"));
             if (radicacionesUsuario != null && (radicacionesUsuario.size() >= maxRads)) {
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Máximo encontrado", "El usuario tiene el máximo de radicaciones permitidas para el proceso ( " + maxRads + " )", true, false);

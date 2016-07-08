@@ -3,6 +3,7 @@ package co.com.realtech.mariner.controller.jsf.managed_bean.portal.configuration
 import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBean;
 import co.com.realtech.mariner.model.entity.MarCiudades;
 import co.com.realtech.mariner.model.entity.MarDepartamentos;
+import co.com.realtech.mariner.model.entity.MarOficinasRegistros;
 import co.com.realtech.mariner.model.entity.MarPaises;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
@@ -31,6 +32,8 @@ public class CiudadesManagedBean extends GenericManagedBean implements Serializa
     private MarDepartamentos departamento;
     private List<MarDepartamentos> departamentos;
     
+    private List<MarOficinasRegistros> oficinasRegistros;
+    
     public CiudadesManagedBean() {
     }
     
@@ -45,8 +48,20 @@ public class CiudadesManagedBean extends GenericManagedBean implements Serializa
                 setDepartamento(null);
                 setCiudades(new ArrayList<>());
             }
+            obtenerOficinas();
         } catch (Exception e) {
             logger.error("Error inicializando CiudadesManagedBean causado por " + e, e);
+        }
+    }
+    
+    /**
+     * Obtiene las oficinas registrales disponibles.
+     */
+    public void obtenerOficinas(){
+        try {
+            oficinasRegistros = (List<MarOficinasRegistros>)genericDAOBean.loadAllForEntity(MarOficinasRegistros.class, "morNombre");
+        } catch (Exception e) {
+            logger.error("Error obteniendo las oficinas registrales, causado por " + e, e);
         }
     }
 
@@ -168,5 +183,15 @@ public class CiudadesManagedBean extends GenericManagedBean implements Serializa
     public void setCiudades(List<MarCiudades> ciudades) {
         this.ciudades = ciudades;
     }
+
+    public List<MarOficinasRegistros> getOficinasRegistros() {
+        return oficinasRegistros;
+    }
+
+    public void setOficinasRegistros(List<MarOficinasRegistros> oficinasRegistros) {
+        this.oficinasRegistros = oficinasRegistros;
+    }
+    
+    
     
 }

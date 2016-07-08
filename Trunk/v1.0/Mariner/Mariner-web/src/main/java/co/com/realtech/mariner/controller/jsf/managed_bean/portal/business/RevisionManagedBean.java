@@ -20,7 +20,6 @@ import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import java.io.File;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
-import java.net.URLDecoder;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -29,11 +28,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
-import org.primefaces.context.RequestContext;
 import org.primefaces.push.EventBus;
 import org.primefaces.push.EventBusFactory;
 
@@ -150,6 +147,10 @@ public class RevisionManagedBean extends GenericManagedBean{
      */
     public void asignarNuevaRadicacion() {
         try {
+            if(usuarioSesion.getUsuEsAprobador()== null || !usuarioSesion.getUsuEsAprobador().equals("S")){
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "No es aprobador", "No se le pueden asignar radicaciones para validar ya que usted no posee el permiso para ello", true, false);
+                return;
+            }
             //Carga la constante del número máximo de radicaciones que puede tener un validador.
             Integer maxRads = Integer.parseInt(ConstantesUtils.cargarConstante("MAX-VALID-USER"));
             if(radicacionesPendientes != null && (radicacionesPendientes.size() >= maxRads)){

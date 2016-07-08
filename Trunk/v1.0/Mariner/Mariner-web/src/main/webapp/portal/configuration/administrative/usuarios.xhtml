@@ -67,13 +67,14 @@
                                     <f:selectItem itemValue="A" itemLabel="Activo"/>
                                     <f:selectItem itemValue="I" itemLabel="Inactivo" />
                                 </p:selectOneMenu>
-                                <h:outputLabel class="labelLittle" value="Notaria" />
                                 <h:outputLabel class="labelLittle" value="Oficina de Registro" />
-                                <p:selectOneMenu value="#{usuariosManagedBean.usuarioSel.notId}" converter="MarNotariasConverter" style="width: 200px">
-                                    <f:selectItems value="#{usuariosManagedBean.notarias}" var="notaria" itemLabel="#{notaria.notNombre eq null?'':notaria.notNombre}" itemValue="#{notaria}" />
-                                </p:selectOneMenu>
+                                <h:outputLabel class="labelLittle" value="Notaria" />
                                 <p:selectOneMenu value="#{usuariosManagedBean.usuarioSel.morId}" converter="MarOficinasRegistroConverter" style="width: 200px">
+                                    <p:ajax listener="#{usuariosManagedBean.obtenerNotarias}" update="listaNotarias"/>
                                     <f:selectItems value="#{usuariosManagedBean.oficinas}" var="oficina" itemLabel="#{oficina.morNombre eq null ?'':oficina.morNombre}" itemValue="#{oficina}" />
+                                </p:selectOneMenu>
+                                <p:selectOneMenu id="listaNotarias" value="#{usuariosManagedBean.usuarioSel.notId}" converter="MarNotariasConverter" style="width: 200px">
+                                    <f:selectItems value="#{usuariosManagedBean.notarias}" var="notaria" itemLabel="#{notaria.notNombre eq null?'':notaria.notNombre}" itemValue="#{notaria}" />
                                 </p:selectOneMenu>
                                 <h:outputLabel class="labelLittle" value="Alias SAP" /> 
                                 <h:outputLabel class="labelLittle" value="Es Notario" /> 

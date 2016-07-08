@@ -25,18 +25,21 @@
                 </div>
                 <h:form id="formAsignaciones">
                     <h:panelGroup rendered="#{asignacionesManagedBean.permiteAsignar}">
-                        <div align="center" style="width: 400px;display: inline-block; vertical-align: top">
-                            <p:dataTable id="tblAsignaciones" styleClass="tableMaterial" value="#{asignacionesManagedBean.radFasesEstadosDisponibles}" selection="#{asignacionesManagedBean.radFaseEstadoDisponible}"
-                                         var="disp" emptyMessage="No hay radicaciones en espera" rowKey="#{disp.rfeId}" paginator="true" rows="9" paginatorPosition="bottom"
+                        <div align="center" style="width: 450px;display: inline-block; vertical-align: top">
+                            <p:dataTable id="tblAsignaciones" styleClass="tableMaterial" value="#{asignacionesManagedBean.radFasesEstadosDisponibles}" selection="#{asignacionesManagedBean.radFaseEstadosDisponiblesSelec}"
+                                         var="disp" emptyMessage="No hay radicaciones en espera" rowKey="#{disp.rfeId}" paginator="true" rows="20" paginatorPosition="bottom" rowIndexVar="idx"
                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
-                                         selectionMode="single" filteredValue="#{asignacionesManagedBean.radFasesEstadosUsuarioFiltro}" widgetVar="wvDisponibles">
+                                         selectionMode="multiple" filteredValue="#{asignacionesManagedBean.radFasesEstadosUsuarioFiltro}" widgetVar="wvDisponibles">
                                 <f:facet name="header">
                                     Procesos Pendientes
                                 </f:facet>
+                                <p:column headerText="#" width="30" styleClass="colCenter">
+                                    <h:outputText value="#{idx+1}" />
+                                </p:column>
                                 <p:column headerText="Radicación" width="70" filterBy="#{disp.radId.radNumero}" styleClass="colCenter">
                                     <h:outputLabel value="#{disp.radId.radNumero}"/>
                                 </p:column>
-                                <p:column headerText="Turno" width="65" filterBy="#{disp.radId.radTurno}" styleClass="colCenter">
+                                <p:column headerText="Turno" width="50" filterBy="#{disp.radId.radTurno}" styleClass="colCenter">
                                     <h:outputLabel value="#{disp.radId.radTurno}"/>
                                 </p:column>
                                 <p:column headerText="Escritura" width="65" filterBy="#{disp.radId.escId.escNumero}" styleClass="colCenter">
@@ -52,7 +55,7 @@
                     </h:panelGroup>
                     <div align="center" style="width: 400px;display: inline-block; vertical-align: top">
                         <p:dataTable styleClass="tableMaterial" value="#{asignacionesManagedBean.usuarios}" selection="#{asignacionesManagedBean.usuarioSel}"
-                                     var="usu" emptyMessage="No hay usuarios configurados para atender los procesos" rowKey="#{usu.usuId}" paginator="true" rows="9" paginatorPosition="bottom"
+                                     var="usu" emptyMessage="No hay usuarios configurados para atender los procesos" rowKey="#{usu.usuId}" paginator="true" rows="20" paginatorPosition="bottom"
                                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
                                      selectionMode="single">
                             <f:facet name="header">
@@ -64,7 +67,10 @@
                             <p:column headerText="Cant." width="50" sortBy="#{asignacionesManagedBean.traerPendientesDeUsuario(usu)}" styleClass="colCenter">
                                 <h:outputLabel value="#{asignacionesManagedBean.traerPendientesDeUsuario(usu)}" />
                             </p:column>
-                            <p:column headerText="Ver" styleClass="colCenter" width="25" >
+                            <p:column headerText="Orip" width="80" sortBy="#{usu.morId.morNombre}" styleClass="colCenter">
+                                <h:outputLabel value="#{usu.morId.morNombre}" />
+                            </p:column>
+                            <p:column headerText="Ver" styleClass="colCenter" width="20" >
                                 <p:commandLink title="Puede ver las radicaciones actuales que tiene el funcionario" action="#{asignacionesManagedBean.obtenerPendientesUsuario()}" update=":modalRadicUsuario" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogRadicUsuario').show();">
                                     <img src="#{resource['/images/icons/icon-search.png']}" width="16"/>
                                     <f:setPropertyActionListener target="#{asignacionesManagedBean.usuarioSel}" value="#{usu}"/>
@@ -83,10 +89,10 @@
         <p:dialog id="modalConfAsig" widgetVar="dialogConfAsig" styleClass="modalTop" resizable="false" header="Confirmación" modal="true" width="700" minHeight="350">
             <h:form id="formConfAsig">
                 <div align="center" style="margin: 10px">
-                    <h:outputText value='Esta seguro de que desea vincular la radicación #{asignacionesManagedBean.radFaseEstadoDisponible.radId.radNumero} al usuario #{asignacionesManagedBean.usuarioSel.usuLogin}?'/>
+                    <h:outputText value='Esta seguro de que desea vincular las radicaciónes seleccionadas al usuario #{asignacionesManagedBean.usuarioSel.usuLogin}?'/>
                 </div>
                 <div align="center">
-                    <p:commandButton value="Si" action="#{asignacionesManagedBean.asignarRadicacion()}" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogConfAsig').hide();PF('wvDisponibles').clearFilters()" update=":formAsignaciones:tblAsignaciones"/>
+                    <p:commandButton value="Si" action="#{asignacionesManagedBean.asignarRadicacion()}" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogConfAsig').hide();PF('wvDisponibles').clearFilters()" update=":formAsignaciones"/>
                     <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" oncomplete="PF('dialogConfAsig').hide();"/>
                 </div>
             </h:form>
@@ -131,7 +137,7 @@
             </h:form>
         </p:dialog>
         
-        <p:dialog id="modalUsuariosDisp" widgetVar="dialogUsuariosDisp" styleClass="modalTop" header="Usuarios disponibles para asignación" modal="true" width="500" minHeight="500" >
+        <p:dialog id="modalUsuariosDisp" widgetVar="dialogUsuariosDisp" styleClass="modalTop" header="Usuarios disponibles para asignación" modal="true" width="700" minHeight="600" >
             <h:form>
                 <div class="descripcion" align="center">
                     <div class="descText">
@@ -139,7 +145,7 @@
                     </div>
                 </div>
                 <p:dataTable styleClass="tableMaterial" value="#{asignacionesManagedBean.usuariosReasigs}" selection="#{asignacionesManagedBean.usuarioReasigSel}"
-                             var="usuR" emptyMessage="No hay usuarios disponibles para reasignar una radicacion" rowKey="#{usuR.usuId}" paginator="true" rows="7" paginatorPosition="bottom"
+                             var="usuR" emptyMessage="No hay usuarios disponibles para reasignar una radicacion" rowKey="#{usuR.usuId}" paginator="true" rows="15" paginatorPosition="bottom"
                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
                              selectionMode="single">
                     <p:column headerText="Nombres" class="colCenter">
@@ -151,14 +157,14 @@
                     <p:column headerText="Cantidad" width="80" class="colCenter">
                         <h:outputLabel value="#{asignacionesManagedBean.traerPendientesDeUsuario(usuR)}" />
                     </p:column>
+                    <p:column headerText="Orip" width="100" class="colCenter">
+                        <h:outputLabel value="#{usuR.morId.morNombre}" />
+                    </p:column>
                 </p:dataTable>
                 <div align="center" style="margin: 10px">
                     <p:commandButton value="Reasignar" update="formRadicUsuario :formAsignaciones:tblAsignaciones" action="#{asignacionesManagedBean.reAsignarRadicacion}" oncomplete="PF('dialogUsuariosDisp').hide()"/>
                 </div>
             </h:form>
         </p:dialog>
-
-
-        
     </ui:define>
 </ui:composition>

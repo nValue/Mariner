@@ -38,12 +38,13 @@
                                     <div align="left">
                                         <h:panelGrid columns="5">
                                             <h:outputLabel value="Tipo Filtro"/>
-                                            <p:selectOneMenu styleClass="inputModal" value="#{mesaControlManagedBean.filtro}" style="width: 122px;">
+                                            <p:selectOneMenu styleClass="inputModal" value="#{mesaControlManagedBean.filtro}" style="width: 122px;" >
                                                 <p:ajax listener="#{mesaControlManagedBean.limpiarFiltros()}" update="@form" />
                                                 <f:selectItem itemLabel="Radicacion" itemValue="RAD-NUMERO,TEXT" />
                                                 <f:selectItem itemLabel="Liquidacion" itemValue="RAD-LIQUIDACION,TEXT" />
                                                 <f:selectItem itemLabel="Turno" itemValue="RAD-TURNO,TEXT" />
                                                 <f:selectItem itemLabel="Escritura" itemValue="RAD-ESCRITURA,TEXT" />
+                                                <f:selectItem itemLabel="Rechazados" itemValue="RAD-RECHAZOS,TEXT" />
                                                 <f:selectItem itemLabel="Todos" itemValue="TODOS,TEXT" />
                                             </p:selectOneMenu>
                                             <h:outputLabel value="Valor"/>
@@ -76,33 +77,42 @@
                                              filteredValue="#{mesaControlManagedBean.radicacionesFiltrado}" paginator="true" rows="18" paginatorPosition="bottom" widgetVar="wvRadicaciones"
                                              styleClass="tableSmall">
                                     <p:ajax event="rowSelect" update=":modalRadicacion" oncomplete="PF('dialogRadicacion').show();" listener="#{mesaControlManagedBean.cargarDetalleRadicacion()}"/>                        
-                                    <p:column headerText="#" width="30" styleClass="colCenter">
+                                    <p:column headerText="#" width="25" styleClass="colCenter">
                                         <h:outputText value="#{idx+1}" />
                                     </p:column>
-                                    <p:column headerText="Radicacion" width="90" filterBy="#{radicacion.radNumero}" filterMatchMode="contains" styleClass="colCenter">
-                                        <h:outputText value="#{radicacion.radNumero}" />
+                                    <p:column headerText="Radicacion" width="80" filterBy="#{radicacion.radId.radNumero}" filterMatchMode="contains" styleClass="colCenter">
+                                        <h:outputText value="#{radicacion.radId.radNumero}" />
                                     </p:column>
-                                    <p:column headerText="Liquidacion" filterBy="#{radicacion.radLiquidacion}" width="160" filterMatchMode="contains" styleClass="colCenter">
-                                        <h:outputText value="#{radicacion.radLiquidacion}" />
+                                    <p:column headerText="Liquidacion" filterBy="#{radicacion.radId.radLiquidacion}" width="120" filterMatchMode="contains" styleClass="colCenter">
+                                        <h:outputText value="#{radicacion.radId.radLiquidacion}" />
                                     </p:column>
-                                    <p:column headerText="Valor" filterBy="#{radicacion.radValorLiq}" width="90" filterMatchMode="contains" styleClass="colCenter">
-                                        <h:outputText value="#{radicacion.radValorLiq}" converter="CurrencyConverter" />
+                                    <p:column headerText="Valor" filterBy="#{radicacion.radId.radValorLiq}" width="80" filterMatchMode="contains" styleClass="colCenter">
+                                        <h:outputText value="#{radicacion.radId.radValorLiq}" converter="CurrencyConverter" />
                                     </p:column>
-                                    <p:column headerText="Fecha" width="80" filterBy="#{radicacion.radFecha}" filterMatchMode="contains" styleClass="colCenter">
-                                        <h:outputText value="#{radicacion.radFecha}" >
+                                    <p:column headerText="Fecha" width="70" filterBy="#{radicacion.radId.radFecha}" filterMatchMode="contains" styleClass="colCenter">
+                                        <h:outputText value="#{radicacion.radId.radFecha}" >
                                             <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"/>
                                         </h:outputText>
                                     </p:column>
-                                    <p:column headerText="Notaria" filterBy="#{radicacion.notId.notNombre}" width="130" filterMatchMode="contains" styleClass="colCenter">
-                                        <h:outputText value="#{radicacion.notId.notNombre}" />
+                                    <p:column headerText="Notaria" filterBy="#{radicacion.radId.notId.notNombre}" width="130" filterMatchMode="contains" styleClass="colCenter">
+                                        <h:outputText value="#{radicacion.radId.notId.notNombre}" />
                                     </p:column>
-                                    <p:column headerText="Turno" filterBy="#{radicacion.radTurno}" width="50" filterMatchMode="contains" styleClass="colCenter">
-                                        <h:outputText value="#{radicacion.radTurno}" />
+                                    <p:column headerText="Ult Estado" filterBy="#{radicacion.fesId.fesNombre}" filterMatchMode="contains" styleClass="colCenter">
+                                        <h:outputText value="#{radicacion.fesId.fesNombre}" />
                                     </p:column>
-                                    <p:column headerText="Impresión" filterBy="#{radicacion.radEsImpresion}" styleClass="colCenter" width="70">
-                                        <h:outputText value="#{radicacion.radEsImpresion}" />
+                                    <p:column headerText="Ult Usuario" filterBy="#{radicacion.usuId.usuLogin}" filterMatchMode="contains" styleClass="colCenter" width="80">
+                                        <h:outputText value="#{radicacion.usuId.usuLogin}" />
                                     </p:column>
-                                    <p:column headerText=".." width="20">
+                                    <p:column headerText="Turno" filterBy="#{radicacion.radId.radTurno}" width="30" filterMatchMode="contains" styleClass="colCenter">
+                                        <h:outputText value="#{radicacion.radId.radTurno}" />
+                                    </p:column>
+                                    <p:column headerText="Impres." filterBy="#{radicacion.radId.radEsImpresion}" styleClass="colCenter" width="40">
+                                        <h:outputText value="#{radicacion.radId.radEsImpresion}" />
+                                    </p:column>
+                                    <p:column headerText="Estado" filterBy="#{radicacion.radId.radEstado}" styleClass="colCenter" width="40">
+                                        <h:outputText value="#{radicacion.radId.radEstado == 'A'? 'Activo' : radicacion.radId.radEstado == 'R'? 'Anulado' : 'Finalizado'}" />
+                                    </p:column>
+                                    <p:column headerText=".." width="15">
                                         <p:commandLink title="Presione para ver mas informacion de la radicacion" update=":modalRadicacion" oncomplete="PF('dialogRadicacion').show();" action="#{mesaControlManagedBean.cargarDetalleRadicacion()}">                                    
                                             <f:setPropertyActionListener target="#{mesaControlManagedBean.radicacion}" value="#{radicacion}" />
                                             <img src="#{resource['/images/icons/icon-search.png']}" width="16"/>                                    
@@ -127,7 +137,7 @@
 
                                 <p:dataTable value="#{mesaControlManagedBean.radicacionesFasesEstados}" emptyMessage="No hay fases-estados asociados al proceso actual" 
                                              disabledSelection="true" var="rfes">
-                                    <p:column headerText="Fecha Inicio" >
+                                    <p:column headerText="Fecha Inicio" width="110">
                                         <h:outputText value="#{rfes.rfeFechaInicio}" styleClass="colCenter">
                                             <f:convertDateTime pattern="dd/MM/yyyy hh:mm" timeZone="#{utilManagedBean.timeZone}"/>
                                         </h:outputText>
@@ -156,85 +166,85 @@
                             <div style="padding: 2px;">
                                 <div class="contLabelText">
                                     <h:outputLabel class="labelLittle" value="Número Liquidación"/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeLiqNumero}" />
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeLiqNumero}" />
                                 </div>
                                 <div class="contLabelText">
                                     <h:outputLabel class="labelLittle" value="Interlocutor Comercial"/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeInterlocutor}" />
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeInterlocutor}" />
                                 </div>
                                 <div class="contLabelText" style="width: 100px">
                                     <h:outputLabel class="labelLittle" value="Lugar de Expedición"/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeMunicipio}" style="width: 100px" />
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeMunicipio}" style="width: 100px" />
                                 </div>
                                 <div class="contLabelText" style="width: 150px">
                                     <h:outputLabel class="labelLittle" value="Fecha Liquidación"/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeFechaLiquidacion}" style="width: 150px"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeFechaLiquidacion}" style="width: 150px"/>
                                 </div>
                                 <div class="contLabelText" style="width: 150px">
                                     <h:outputLabel class="labelLittle" value="Fecha Límite de Pago"/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeFechaLdp}" style="width: 150px"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeFechaLdp}" style="width: 150px"/>
                                 </div>
                                 <div class="contLabelText" style="width: 100px">
                                     <h:outputLabel class="labelLittle" value="Cv Periodo"/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeCvPeriodo}" style="width: 100px" />
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeCvPeriodo}" style="width: 100px" />
                                 </div>
                                 <div class="contLabelText" style="width: 150px">
                                     <h:outputLabel class="labelLittle" value="Fecha Vencimiento Otros Actos"/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeFechaVencimiento}" style="width: 150px"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeFechaVencimiento}" style="width: 150px"/>
                                 </div>
                                 <div class="contLabelText" style="width: 150px">
-                                    <h:outputLabel class="labelLittle" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeBenCc eq 'X'? 'Cédula' : 'NIT'} Beneficiario" />
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeBenNum}" style="width: 150px"/>
+                                    <h:outputLabel class="labelLittle" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeBenCc eq 'X'? 'Cédula' : 'NIT'} Beneficiario" />
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeBenNum}" style="width: 150px"/>
                                 </div>
                                 <div class="contLabelText">
                                     <h:outputLabel class="labelLittle" value="Nombre Beneficiario"/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeBenNombre}" />
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeBenNombre}" />
                                 </div>
                                 <div class="contLabelText" style="width: 150px">
-                                    <h:outputLabel class="labelLittle" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeOtoCc eq 'X'? 'Cédula' : 'NIT'} Otorgante" />
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeOtoNum}" style="width: 150px"/>
+                                    <h:outputLabel class="labelLittle" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeOtoCc eq 'X'? 'Cédula' : 'NIT'} Otorgante" />
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeOtoNum}" style="width: 150px"/>
                                 </div>
                                 <div class="contLabelText">
                                     <h:outputLabel class="labelLittle" value="Nombre Otorgante"/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeOtoNombre}" />
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeOtoNombre}" />
                                 </div>
                                 <div class="contLabelText" style="width: 150px">
                                     <h:outputLabel class="labelLittle" value="Expedido En: "/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeExpedidoEn}" style="width: 150px"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeExpedidoEn}" style="width: 150px"/>
                                 </div>
 
                                 <div class="contLabelText" style="width: 150px">
                                     <h:outputLabel class="labelLittle" value="Número Documento"/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeDocumento}" style="width: 150px"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeDocumento}" style="width: 150px"/>
                                 </div>
                                 <div class="contLabelText" style="width: 150px">
                                     <h:outputLabel class="labelLittle" value="Orígen del Documento"/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeDescoridoc}" style="width: 150px"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeDescoridoc}" style="width: 150px"/>
                                 </div>
                                 <div class="contLabelText" style="width: 150px">
                                     <h:outputLabel class="labelLittle" value="Código Orig Documento"/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeNotaria}" style="width: 150px"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeNotaria}" style="width: 150px"/>
                                 </div>
 
                                 <div class="contLabelText"  style="width: 80px">
                                     <h:outputLabel class="labelLittle" value="Clase Liq."/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeClase}"  style="width: 80px"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeClase}"  style="width: 80px"/>
                                 </div>
                                 <div class="contLabelText">
                                     <h:outputLabel class="labelLittle" value="Matrícula Inmobiliaria"/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeMatricula}" />
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeMatricula}" />
                                 </div>
                                 <div class="contLabelText">
                                     <h:outputLabel class="labelLittle" value="Fecha Documento"/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeFechaDoc}" />
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeFechaDoc}" />
                                 </div>
                                 <div class="contLabelText">
                                     <h:outputLabel class="labelLittle" value="Teléfono"/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeTelefono}" />
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeTelefono}" />
                                 </div>
                                 <div class="contLabelText" style="width: 700px">
                                     <h:outputLabel class="labelLittle" value="Texto"/>
-                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.marRadicacionesDetallesSap.rdeTexto}" style="width: 700px;"/>
+                                    <p:outputLabel class="labelText" value="#{mesaControlManagedBean.radicacion.radId.marRadicacionesDetallesSap.rdeTexto}" style="width: 700px;"/>
                                 </div>
                             </div>
                         </h:form>

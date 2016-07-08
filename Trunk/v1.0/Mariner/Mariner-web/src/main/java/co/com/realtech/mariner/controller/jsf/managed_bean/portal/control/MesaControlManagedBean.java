@@ -44,9 +44,11 @@ public class MesaControlManagedBean extends GenericManagedBean implements Serial
     private String valorFiltro;
     private Date fechaInicial;
     private Date fechaFinal;
-    private MarRadicaciones radicacion;
-    private List<MarRadicaciones> radicaciones;
-    private List<MarRadicaciones> radicacionesFiltrado;
+    private MarRadicacionesFasesEstados radicacion;
+    //private List<MarRadicaciones> radicaciones;
+    //private List<MarRadicaciones> radicacionesFiltrado;
+    private List<MarRadicacionesFasesEstados> radicaciones;
+    private List<MarRadicacionesFasesEstados> radicacionesFiltrado;
     
     private List<MarRadicacionesFasesEstados> radicacionesFasesEstados;
     private MarTransacciones transaccion;
@@ -82,8 +84,8 @@ public class MesaControlManagedBean extends GenericManagedBean implements Serial
             if (nombre.equals("RAD-LIQUIDACION")) {
                 setValorFiltro(BusinessStringUtils.convertNumeroLiquidacion(getValorFiltro()));
             }
-
-            setRadicaciones(mesaControlBeanLocal.filtrarRadicacionesMesaControl(nombre, getValorFiltro(), tipoDato, getFechaInicial(), getFechaFinal()));
+            radicaciones = radicFasesEstadosDAOBean.obtenerRadicFasEstXFiltroValorFechas(nombre, valorFiltro, fechaInicial, fechaFinal);
+            //setRadicaciones(mesaControlBeanLocal.filtrarRadicacionesMesaControl(nombre, getValorFiltro(), tipoDato, getFechaInicial(), getFechaFinal()));
 
             if (getRadicaciones().isEmpty()) {
                 PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", "No se han encontrado radicaciones vinculadas al filtro seleccionado.", true, false);
@@ -101,7 +103,7 @@ public class MesaControlManagedBean extends GenericManagedBean implements Serial
     public void cargarDetalleRadicacion() {
         try {
             // Cargar detalle de la transaccion
-            setTransaccion(getRadicacion().getMarTransacciones());
+            setTransaccion(getRadicacion().getRadId().getMarTransacciones());
             // Cargar estados de la radicacion.
             obtenerFasesEstados();
         } catch (Exception e) {
@@ -114,7 +116,7 @@ public class MesaControlManagedBean extends GenericManagedBean implements Serial
      */
     public void obtenerFasesEstados(){
         try {
-            radicacionesFasesEstados = (List<MarRadicacionesFasesEstados>)genericDAOBean.findAllByColumn(MarRadicacionesFasesEstados.class, "radId", radicacion, true, "rfeId");
+            radicacionesFasesEstados = (List<MarRadicacionesFasesEstados>)genericDAOBean.findAllByColumn(MarRadicacionesFasesEstados.class, "radId", radicacion.getRadId(), true, "rfeId");
         } catch (Exception e) {
             String msj = "No se pueden traer las fases-estados de la radicación, causado por: " + e.getMessage();
              PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", msj, true, false);
@@ -150,7 +152,7 @@ public class MesaControlManagedBean extends GenericManagedBean implements Serial
                 }
                 //Notifica a la persona a través de Push el rechazo correspondiente
                 EventBus eventBus = EventBusFactory.getDefault().eventBus();
-                eventBus.publish("/estados/"+radFaseEstado.getUsuId().getUsuId(), new FacesMessage("Radicacion rechazada", "La radicacion " + radicacion.getRadNumero() + " que ya habia sido validada, se ha retornado a su mesa de validación por el usuario: " + usuarioSesion.getUsuLogin()));
+                eventBus.publish("/estados/"+radFaseEstado.getUsuId().getUsuId(), new FacesMessage("Radicacion rechazada", "La radicacion " + radicacion.getRadId().getRadNumero() + " que ya habia sido validada, se ha retornado a su mesa de validación por el usuario: " + usuarioSesion.getUsuLogin()));
 
                 obtenerFasesEstados();
                 PrimeFacesPopup.lanzarDialog(Effects.Clip, "Proceso realizado", "La radicación ahora se encuentra en la mesa de aprobación del usuario " + radFaseEstado.getUsuId().getPerId().getPerNombres() + " " + radFaseEstado.getUsuId().getPerId().getPerApellidos(), true, false);
@@ -198,22 +200,14 @@ public class MesaControlManagedBean extends GenericManagedBean implements Serial
         this.fechaFinal = fechaFinal;
     }
 
-    public MarRadicaciones getRadicacion() {
+    public MarRadicacionesFasesEstados getRadicacion() {
         return radicacion;
     }
 
-    public void setRadicacion(MarRadicaciones radicacion) {
+    public void setRadicacion(MarRadicacionesFasesEstados radicacion) {
         this.radicacion = radicacion;
     }
-
-    public List<MarRadicaciones> getRadicaciones() {
-        return radicaciones;
-    }
-
-    public void setRadicaciones(List<MarRadicaciones> radicaciones) {
-        this.radicaciones = radicaciones;
-    }
-
+    
     public String getFiltro() {
         return filtro;
     }
@@ -230,16 +224,24 @@ public class MesaControlManagedBean extends GenericManagedBean implements Serial
         this.valorFiltro = valorFiltro;
     }
 
-    public List<MarRadicaciones> getRadicacionesFiltrado() {
+    public MarTransacciones getTransaccion() {
+        return transaccion;
+    }
+
+    public List<MarRadicacionesFasesEstados> getRadicaciones() {
+        return radicaciones;
+    }
+
+    public void setRadicaciones(List<MarRadicacionesFasesEstados> radicaciones) {
+        this.radicaciones = radicaciones;
+    }
+
+    public List<MarRadicacionesFasesEstados> getRadicacionesFiltrado() {
         return radicacionesFiltrado;
     }
 
-    public void setRadicacionesFiltrado(List<MarRadicaciones> radicacionesFiltrado) {
+    public void setRadicacionesFiltrado(List<MarRadicacionesFasesEstados> radicacionesFiltrado) {
         this.radicacionesFiltrado = radicacionesFiltrado;
-    }
-
-    public MarTransacciones getTransaccion() {
-        return transaccion;
     }
 
     public void setTransaccion(MarTransacciones transaccion) {

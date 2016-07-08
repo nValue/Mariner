@@ -1,0 +1,406 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/template-business.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="negocio">
+        <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
+
+        <div id="paperMain">
+            <div class="tituloCont" align="center">
+                <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                <div style="display: inline-block">
+                    <h:outputLabel styleClass="titleMain" value="Administración de Reportes" />
+                    <h:outputLabel styleClass="subtitleMain" value="Configura todos los tipos de reportes que posee la aplicación"/>
+                </div>
+            </div>
+            <div class="contenidoPrinc" align="center">
+                <div class="descripcion" align="center">
+                    <div class="descText">
+                        Navegue por las pestañas para configurar el tipo de reporte que necesita
+                    </div>
+                </div>
+                <div>
+                    <p:tabView orientation="top" id="tabContainer" dynamic="true" cache="true">
+                        <p:tab title="Motor de reportes" >
+                            <h:form id="formMotor">
+                                <h:panelGrid columns="2" style="margin-top: 10px">
+                                    <h:outputText value="Reporte" styleClass="text" />
+                                    <p:selectOneMenu value="#{motorReportesManagedBean.reporteTipoSel}" converter="MarReportesTiposConverter" style="width: 280px;">
+                                        <p:ajax update="reportes" listener="#{motorReportesManagedBean.obtenerReportes}"/>
+                                        <f:selectItems value="#{motorReportesManagedBean.reportesTipos}" var="rt" itemValue="#{rt}" itemLabel="#{rt.rtiNombre}"/>
+                                    </p:selectOneMenu>
+                                </h:panelGrid>
+                                <hr/>
+                                <div style="padding: 6px;">
+                                    <p:dataTable id="reportes" value="#{motorReportesManagedBean.reportes}" selection="#{motorReportesManagedBean.reporteSel}" rowKey="#{reps.repId}" selectionMode="single" var="reps" emptyMessage="No se han encontrado reportes configurados para este tipo de reporte" rowIndexVar="indexVar" paginator="true" paginatorPosition="bottom">
+                                        <p:ajax event="rowSelect" update=":modalReporte" oncomplete="PF('reporteDialog').show();"/>
+                                        <p:column headerText="#" width="52" styleClass="colCenter">
+                                            <h:outputText value="#{indexVar+1}" title="#{reps.repId}"/>
+                                        </p:column>
+                                        <p:column headerText="Código" style="white-space: nowrap;  overflow: hidden;  text-overflow: ellipsis;" width="150">
+                                            <h:outputText value="#{reps.repCodigo}" title="#{reps.repCodigo}"/>
+                                        </p:column>    
+                                        <p:column headerText="Nombre" style="white-space: nowrap;  overflow: hidden;  text-overflow: ellipsis;">
+                                            <h:outputText value="#{reps.repNombre}" title="#{reps.repNombre}"/>
+                                        </p:column> 
+                                        <p:column headerText="Consulta" style="white-space: nowrap;  overflow: hidden;  text-overflow: ellipsis;">
+                                            <h:outputText value="#{reps.repConsulta}"/>
+                                        </p:column> 
+                                        <p:column headerText="Extension" styleClass="colCenter" width="60">
+                                            <h:outputText value="#{reps.repExtension}"/>
+                                        </p:column>        
+                                        <p:column headerText="Estado" styleClass="colCenter" width="60">
+                                            <h:outputText value="#{reps.repEstado}"/>
+                                        </p:column> 
+
+                                        <!-- Cargar un reporte -->
+                                        <p:column headerText=":U:" styleClass="colCenter" width="16">
+                                            <p:commandLink title="Presione para cargar un reporte asociado a esta configuración" update=":modalFileUpload" oncomplete="PF('fileUploadDialog').show();">                                    
+                                                <img src="#{resource['/images/icons/icon-upload.png']}" style="width: 16px;" />
+                                                <f:setPropertyActionListener target="#{motorReportesManagedBean.reporteSel}" value="#{reps}"/>
+                                            </p:commandLink>
+                                        </p:column>               
+
+                                        <!--Descargar el reporte-->
+                                        <p:column headerText=":D:" styleClass="colCenter"  width="16" >
+                                            <h:panelGroup rendered="#{!(reps.arcIdReporte eq null)}">
+                                                <a title="Presione aqui para descargar el reporte" target="_new" href="#{request.contextPath}/static/fileDispatcher/#{reps.arcIdReporte.arcId}-#{reps.arcIdReporte.arcHash}.#{reps.arcIdReporte.arcExtension}">
+                                                    <img src="#{resource['/images/icons/icon-download.png']}"/>
+                                                </a>
+                                            </h:panelGroup>
+                                        </p:column>  
+
+                                        <!-- Ejecutar Reporte -->
+                                        <p:column headerText=":E:" styleClass="colCenter" width="16">
+                                            <p:commandLink title="Presione para Ejecutar este Reporte" oncomplete="PF('ejecucionReporteDialog').show();" update=":modalEjecucionReporte">                                    
+                                                <img src="#{resource['/images/icons/icon-generate.png']}" style="width: 16px;" />
+                                                <f:setPropertyActionListener target="#{motorReportesManagedBean.reporteSel}" value="#{reps}"/>
+                                            </p:commandLink>
+                                        </p:column> 
+
+                                        <!-- Eliminar reporte-->
+                                        <p:column headerText=".x." styleClass="colCenter" width="22">
+                                            <p:commandLink update="reportes @this" title="Presione para Eliminar este Reporte" action="#{motorReportesManagedBean.eliminarReporte()}" >
+                                                <f:setPropertyActionListener target="#{motorReportesManagedBean.reporteSel}" value="#{reps}" />
+                                                <img src="#{resource['/images/icons/delete-icon.png']}" />
+                                                <p:confirm header="Confirmacion" message="Esta seguro de eliminar este Reporte? Este cambio puede afectar el funcionamiento de la aplicacion" icon="ui-icon-alert" />                                            
+                                            </p:commandLink>
+                                        </p:column>
+
+                                    </p:dataTable>
+                                    <div align="right" style="padding-top: 2px;">
+                                        <p:commandButton value="Nuevo reporte" update=":modalReporte" action="#{motorReportesManagedBean.crearNuevoReporte}" oncomplete="PF('reporteDialog').show();" rendered="#{!(motorReportesManagedBean.reporteTipoSel eq null)}"/>
+                                    </div>
+                                </div>
+
+                            </h:form>                            
+                        </p:tab>
+                        <p:tab title="Tipos de reportes">
+                            <h:form id="formTiposReportes">
+                                <div  style="margin-top: 10px">                                
+                                    <p:dataTable id="tiposreporte" value="#{reportesTiposManagedBean.reportesTipos}" var="repT" selectionMode="single" selection="#{reportesTiposManagedBean.reporteTipoSel}" rowKey="#{repT.rtiId}" emptyMessage="No se han encontrado tipos de reportes configurados" rowIndexVar="indexVar">
+                                        <p:ajax event="rowSelect" update=":modalTipoReporte" oncomplete="PF('tipoReporteDialog').show();"/>
+                                        <p:column headerText="#" width="52" styleClass="colCenter">
+                                            <h:outputText value="#{indexVar+1}"/>
+                                        </p:column>
+                                        <p:column headerText="Código">
+                                            <h:outputText value="#{repT.rtiCodigo}"/>
+                                        </p:column>                                                                        
+                                        <p:column headerText="Nombre" styleClass="colCenter">
+                                            <h:outputText value="#{repT.rtiNombre}"/>
+                                        </p:column> 
+                                        <p:column headerText=".X." styleClass="colCenter" width="22">
+                                            <p:commandLink update="tiposreporte :tabContainer:formMotor" title="Presione para eliminar este tipo de reporte" action="#{reportesTiposManagedBean.eliminarTipoReporte()}">                                    
+                                                <f:setPropertyActionListener target="#{reportesTiposManagedBean.reporteTipoSel}" value="#{repT}" />
+                                                <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                                <p:confirm header="Confirmacion" message="Esta seguro de eliminar el tipo de rocumento seleccionado?" icon="ui-icon-alert" />
+                                            </p:commandLink>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <div style="padding-top: 4px;" align="right">
+                                        <p:commandButton value="Agregar" action="#{reportesTiposManagedBean.nuevoTipoReporte()}" update=":modalTipoReporte" oncomplete="PF('tipoReporteDialog').show();"/>
+                                    </div>
+                                </div>
+                            </h:form>                            
+                        </p:tab>
+                        <p:tab title="Graficos Reportes">
+                            <h:form id="formGraficosReportes">
+                                <div style="margin-top: 10px">                                
+                                    <p:dataTable id="tiposreporte" value="#{reportesGraficosManagedBean.reportesGraficos}" var="repG" selectionMode="single" selection="#{reportesGraficosManagedBean.reporteGraficoSel}" rowKey="#{repG.rgrId}" emptyMessage="No se han encontrado gráficos de reportes configurados" rowIndexVar="indexVar2">
+                                        <p:ajax event="rowSelect" update=":modalGraficoReporte" oncomplete="PF('graficoReporteDialog').show();"/>
+                                        <p:column headerText="#" width="52" styleClass="colCenter">
+                                            <h:outputText value="#{indexVar2+1}"/>
+                                        </p:column>
+                                        <p:column headerText="Reporte">
+                                            <h:outputText value="#{repG.repId.repNombre}"/>
+                                        </p:column>  
+                                        <p:column headerText="Tipo">
+                                            <h:outputText value="#{repG.rgrTipo}"/>
+                                        </p:column>                                                                        
+                                        <p:column headerText="Propiedades" styleClass="colCenter">
+                                            <h:outputText value="#{repG.rgrPropiedades}"/>
+                                        </p:column>                                                            
+                                        <p:column headerText="Adiciones" styleClass="colCenter">
+                                            <h:outputText value="#{repG.rgrAdiciones}"/>
+                                        </p:column>
+                                        <p:column headerText=".X." styleClass="colCenter" width="22">
+                                            <p:commandLink update="tiposreporte" title="Presione para eliminar este gráfico de reporte" action="#{reportesGraficosManagedBean.eliminarGraficoReporte()}">                                    
+                                                <f:setPropertyActionListener target="#{reportesGraficosManagedBean.reporteGraficoSel}" value="#{repG}" />
+                                                <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                                <p:confirm header="Confirmacion" message="Esta seguro de eliminar el gráfico de documento seleccionado?" icon="ui-icon-alert" />
+                                            </p:commandLink>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <div style="padding-top: 4px;" align="right">
+                                        <p:commandButton value="Agregar" action="#{reportesGraficosManagedBean.nuevoGraficoReporte()}" update=":modalGraficoReporte" oncomplete="PF('graficoReporteDialog').show();"/>
+                                    </div>
+                                </div>
+                            </h:form>                            
+                        </p:tab>                                            
+                        <p:tab title="Reportes Parámetros">
+                            <div style="margin-top: 10px">
+                                <div style="display: inline-block;width: 24%;height: 500px;box-shadow: 0 1px 2px rgba(151, 151, 151, 0.58);border: 1px solid rgb(223, 223, 223);vertical-align: top" >
+                                    <h:form id="formReportes">
+                                        <div align="center" style="height: 30px;width: 100%;margin-bottom: 20px">
+                                            Reportes
+                                        </div>
+                                        <div align="center" >
+                                            <p:selectOneListbox value="#{reportesParametrosManagedBean.reporteSel}" converter="MarReportesConverter"
+                                                                var="rep" style="width: 95%;">
+                                                <f:selectItems value="#{reportesParametrosManagedBean.reportes}" />
+                                                <p:ajax listener="#{reportesParametrosManagedBean.obtenerParametrosReporte()}" update="tabContainer:formParamsReportes"/>
+                                                <p:column>
+                                                    <h:outputText value="#{rep.repNombre}" style="font-size: 12px"/>
+                                                </p:column>
+                                            </p:selectOneListbox>
+                                        </div>
+                                    </h:form>
+                                </div>
+                                <div style="display: inline-block;width: 72%;height: 500px;box-shadow: 0 1px 2px rgba(151, 151, 151, 0.58);border: 1px solid rgb(223, 223, 223);vertical-align: top" >
+                                    <h:form id="formParamsReportes">
+                                        <div align="center" style="height: 30px;width: 100%;margin-bottom: 20px">
+                                            Configuración
+                                        </div>
+                                        <div align="center" >
+                                            <p:dataTable value="#{reportesParametrosManagedBean.reportesParametros}" selection="#{reportesParametrosManagedBean.reporteParametrosSel}"
+                                                         var="repPa" rowKey="#{repPa.rpaId}" emptyMessage="No se encuentran parametros asociados a este reporte" selectionMode="single" style="width: 95%">
+                                                <p:column headerText="Nombre" styleClass="colCenter">
+                                                    <h:outputText value="#{repPa.rpaNombre}" />
+                                                </p:column>
+                                                <p:column headerText="Requerido" styleClass="colCenter">
+                                                    <h:outputText value="#{repPa.rpaRequerido}" />
+                                                </p:column>
+                                                <p:column headerText="Tipo" styleClass="colCenter">
+                                                    <h:outputText value="#{repPa.rpaTipo}" />
+                                                </p:column>
+                                                <p:column headerText="Query" styleClass="colCenter">
+                                                    <h:outputText value="#{repPa.rpaQueryLista}" />
+                                                </p:column>
+                                                <p:column headerText="Alias" styleClass="colCenter">
+                                                    <h:outputText value="#{repPa.rpaAlias}" />
+                                                </p:column>
+                                            </p:dataTable>
+                                            <div align="center" style="margin: 20px">
+                                                <p:commandButton value="Nuevo" update="modalParametros" oncomplete="PF('widgetParametros').show()" actionListener="#{reportesParametrosManagedBean.nuevoParametro()}"/>
+                                                <p:commandButton value="Editar" update="modalParametros" oncomplete="PF('widgetParametros').show()"/>
+                                                <p:commandButton value="Eliminar" action="#{reportesParametrosManagedBean.eliminarParametro()}" update="formParamsReportes">
+                                                    <p:confirm header="Eliminación sin reversión" message="Esta seguro de eliminar este parámetro? Esta acción no puede ser revertida" />
+                                                </p:commandButton>
+                                            </div>
+                                        </div>
+                                    </h:form>
+                                </div> 
+                            </div>
+                        </p:tab>
+                    </p:tabView>
+                </div>
+            </div>
+        </div> 
+
+        <!-- Popup de edicion de Reporte -->
+        <p:dialog id="modalReporte" widgetVar="reporteDialog" header="Configuracion de reporte" modal="true" draggable="false" closable="true" resizable="false" appendTo="@(body)" closeOnEscape="true">
+            <div class="minDivPopup" style="width: 600px;height: 450px;" align="center">
+                <h:form id="formModalReporte">
+                    <div class="descripcion" align="center">
+                        <div class="descText">
+                            A continuación configure el tipo de reporte, si se trata de un reporte con parámetros para la pantalla de reportes específicos debe llenar el campo de Consulta en cuyo caso al ingresar los parámetros en el WHERE no olvide las comillas simples si se trata de un String, ej '%FECHA%', de igual manera evite extraer columnas con nombres iguales, para ello recurra a los alias.
+                        </div>
+                    </div>
+                    <h:panelGrid columns="2" width="500">
+                        <h:outputText value="Código" styleClass="text" />
+                        <p:inputText value="#{motorReportesManagedBean.reporteSel.repCodigo}" styleClass="inputModal" required="true" style="width: 300px !important;"/>
+                        <h:outputText value="Nombre" styleClass="text" />
+                        <p:inputText value="#{motorReportesManagedBean.reporteSel.repNombre}" styleClass="inputModal" required="true" style="width: 300px !important;"/>
+                        <h:outputText value="Extensión" styleClass="text" />
+                        <p:selectOneMenu styleClass="inputModal" value="#{motorReportesManagedBean.reporteSel.repExtension}" style="width: 270px !important;">
+                            <f:selectItem itemLabel="Pdf" itemValue="pdf" />
+                            <f:selectItem itemLabel="Excel" itemValue="xls" />
+                        </p:selectOneMenu>
+                        <h:outputText value="Reporte Principal (JRXML)" styleClass="text" />
+                        <p:inputText value="#{motorReportesManagedBean.reporteSel.repJasperNombre}" styleClass="inputModal" required="true" style="width: 300px !important;" title="Ingrese el nombre sin Extension JRXML o JASPER"/>
+                        <h:outputText value="Estado" styleClass="text" />
+                        <p:selectOneMenu styleClass="inputModal" value="#{motorReportesManagedBean.reporteSel.repEstado}" style="width: 270px !important;">
+                            <f:selectItem itemLabel="Activo" itemValue="A" />
+                            <f:selectItem itemLabel="Inactivo" itemValue="I" />
+                        </p:selectOneMenu>  
+                        <h:outputText value="Consulta o query" styleClass="text" />
+                        <h:inputTextarea value="#{motorReportesManagedBean.reporteSel.repConsulta}" styleClass="inputModal" rows="6" style="width: 300px !important"/>
+                    </h:panelGrid>
+                    <div align="center" class="commansPanel" style="margin-top: 20px;">
+                        <p:commandButton value="Guardar" styleClass="ui-priority-primary" action="#{motorReportesManagedBean.guardarReporte}" update="formModalReporte tabContainer:formMotor"/>
+                        <p:commandButton value="Cancelar" styleClass="ui-priority-primary" oncomplete="PF('reporteDialog').hide();" update=":modalReporte"/>
+                    </div>
+                </h:form>
+            </div>
+        </p:dialog>
+
+        <!-- Panel cargue de archivos vinculados al reporte -->
+        <p:dialog id="modalFileUpload" widgetVar="fileUploadDialog" header="Cargue de Reporte en comprimido ZIP" modal="true" draggable="false" closable="true" resizable="false" appendTo="@(body)" closeOnEscape="true">
+            <div class="minDivPopup" style="width: 450px;">
+                <h:form enctype="multipart/form-data">
+                    <p:fileUpload fileUploadListener="#{motorReportesManagedBean.handleFileUploadReport}" mode="advanced" dragDropSupport="true" sizeLimit="2000000" update="tabContainer:formMotor" allowTypes="/(\.|\/)(zip)$/"
+                                  auto="true" cancelLabel="Cancelar" invalidFileMessage="Archivo Invalido, por favor verifique que sea ZIP" uploadLabel="Cargar" label="Seleccionar"/>
+
+                </h:form>
+            </div>
+        </p:dialog>
+
+        <!-- Popup de Ejecucion del Reporte -->
+        <p:dialog id="modalEjecucionReporte" widgetVar="ejecucionReporteDialog" header="Configuracion de reporte a Ejecutar" modal="true" draggable="false" closable="true" resizable="false" appendTo="@(body)" closeOnEscape="true">
+            <div class="minDivPopup" style="min-width: 150px;min-height: 100px;">
+                <h:form id="formModalEjecucionReporte">
+                    <div style="width: 500px;">
+                        <div class="subtitleContainter">
+                            Parametros a enviar al Reporte
+                        </div>
+                        <div>
+                            <p:dataTable id="parametros" var="parametro" value="#{motorReportesManagedBean.parametros}" emptyMessage="No se han encontrado parametros configurados.">
+                                <p:column headerText="Llave" styleClass="colCenter">
+                                    <h:inputText  value="#{parametro.clave}" style="text-align: center;font-size: 13px;" />
+                                </p:column> 
+                                <p:column headerText="Valor" styleClass="colCenter">
+                                    <h:inputText  value="#{parametro.valor}" style="text-align: center;font-size: 13px;"/>
+                                </p:column> 
+                                <p:column headerText=".x." styleClass="colCenter" width="22">
+                                    <p:commandLink update="parametros" title="Presione para Eliminar Parametro" action="#{motorReportesManagedBean.eliminarParametro()}">                                    
+                                        <f:setPropertyActionListener target="#{motorReportesManagedBean.parametroSel}" value="#{parametro}" />
+                                        <img src="#{resource['/images/icons/delete-icon.png']}" />
+                                    </p:commandLink>
+                                </p:column>
+                            </p:dataTable>
+                            <div align="right">
+                                <p:commandButton value="Agregar" action="#{motorReportesManagedBean.agregarParametro()}" update="parametros"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div align="center" class="commansPanel" style="margin-top: 20px;">
+                        <p:commandButton value="Ejecutar" styleClass="ui-priority-primary" action="#{motorReportesManagedBean.ejecutarReporte()}" update="formModalEjecucionReporte" ajax="false"/>
+                        <p:commandButton value="Cancelar" styleClass="ui-priority-primary" oncomplete="PF('ejecucionReporteDialog').hide();" update=":modalReporte"/>
+                    </div>
+                </h:form>
+            </div>
+        </p:dialog>
+
+
+        <!-- Dialog de configuracion de Tipo de Reporte -->
+        <p:dialog id="modalTipoReporte" widgetVar="tipoReporteDialog" header="Configuracion de Tipo de Reporte" minHeight="40" appendTo="@(body)" closable="true" closeOnEscape="true" draggable="true" modal="true" resizable="false">
+            <div>
+                <h:form id="formModalTipoReporte">
+                    <div align="center" style="margin: 10px">
+                        <h:panelGrid columns="2">                                
+                            <h:outputText value="Código" styleClass="text" />
+                            <p:inputText value="#{reportesTiposManagedBean.reporteTipoSel.rtiCodigo}" required="true" styleClass="inputModal" style="width: 280px"/>                                                            
+                            <h:outputText value="Nombre" styleClass="text" />
+                            <p:inputTextarea value="#{reportesTiposManagedBean.reporteTipoSel.rtiNombre}" required="true" styleClass="inputModal" style="width: 280px"/> 
+                        </h:panelGrid>
+                        <div align="center" class="commandsPanel">
+                            <h:panelGrid columns="3">
+                                <p:commandButton value="Guardar" update="@form :tabContainer:formTiposReportes :tabContainer:formMotor" action="#{reportesTiposManagedBean.guardarTipoReporte}" />
+                                <p:commandButton value="Cancelar" oncomplete="PF('tipoReporteDialog').hide();" />
+                            </h:panelGrid>
+                        </div>
+                    </div>                    
+                </h:form>
+            </div>
+        </p:dialog>
+
+        <!-- Dialog de configuracion de gráficos de reporte -->
+        <p:dialog id="modalGraficoReporte" widgetVar="graficoReporteDialog" header="Configuracion de Gráfico de Reporte" minHeight="40" appendTo="@(body)" closable="true" closeOnEscape="true" draggable="true" modal="true" resizable="false">
+            <div>
+                <h:form id="formModalGraficoReporte">
+                    <div class="descripcion" align="center">
+                        <div class="descText" >
+                            Ingrese la informacion del gráfico
+                        </div>
+                    </div>
+                    <div align="center">
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Reporte" styleClass="text" />
+                            <p:selectOneMenu value="#{reportesGraficosManagedBean.reporteSel}" converter="MarReportesConverter" style="width: 270px;">
+                                <f:selectItems value="#{reportesGraficosManagedBean.reportes}" var="reps" itemValue="#{reps}" itemLabel="#{reps.repNombre}"/>
+                            </p:selectOneMenu>
+                            <h:outputText value="Tipo" styleClass="text" />
+                            <p:inputText value="#{reportesGraficosManagedBean.reporteGraficoSel.rgrTipo}" required="true" styleClass="inputModal" style="width: 300px"/>                                                            
+                            <h:outputText value="Propiedades" styleClass="text" />
+                            <p:inputTextarea value="#{reportesGraficosManagedBean.reporteGraficoSel.rgrPropiedades}" required="true" styleClass="inputModal" style="width: 300px"/> 
+                            <h:outputText value="Adiciones" styleClass="text" />
+                            <p:inputTextarea value="#{reportesGraficosManagedBean.reporteGraficoSel.rgrAdiciones}" required="true" styleClass="inputModal" style="width: 300px"/> 
+                        </h:panelGrid>
+                        <div align="center" class="commandsPanel">
+                            <h:panelGrid columns="3">
+                                <p:commandButton value="Guardar" update="@form tabContainer:formGraficosReportes" action="#{reportesGraficosManagedBean.guardarGraficoReporte}" />
+                                <p:commandButton value="Cancelar" oncomplete="PF('graficoReporteDialog').hide();" />
+                            </h:panelGrid>
+                        </div>
+                    </div>                    
+                </h:form>
+            </div>
+        </p:dialog>
+        
+        <p:dialog id="modalParametros" widgetVar="widgetParametros" header="Edición de parámetros" minHeight="40" width="700" appendTo="@(body)" modal="true" >
+            <h:form id="formModalParametros">
+                <div align="center">
+                    <div class="descripcion" align="center">
+                        <div class="descText">
+                            Seleccione el tipo de parámetro deseado, el campo alias equivale al parámetro que será reemplazado en el query, ej %MES%. Si es una lista desplegable, en el campo query puede escribir la consulta de la lista teniendo en cuenta que solo se permiten dos valores en la consulta, el primero es el valor a mostrar en la lista y el segundo su equivalencia, Ej: USR_LOGIN, USR_ID
+                        </div>
+                    </div>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Nombre" style="font-size: 13px"/>
+                        <p:inputText value="#{reportesParametrosManagedBean.reporteParametrosSel.rpaNombre}" style="width: 400px" styleClass="inputModal"/>
+                        <p:outputLabel value="Requerido" style="font-size: 13px"/>
+                        <p:selectOneMenu value="#{reportesParametrosManagedBean.reporteParametrosSel.rpaRequerido}" style="width: 370px" styleClass="inputModal">
+                            <f:selectItem itemLabel="Si" itemValue="S"/>
+                            <f:selectItem itemLabel="No" itemValue="N"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Tipo" style="font-size: 13px"/>
+                        <p:selectOneMenu value='#{reportesParametrosManagedBean.reporteParametrosSel.rpaTipo}' style="width: 370px" styleClass="inputModal">
+                            <f:selectItem itemLabel="Texto" itemValue="TEXTO"/>
+                            <f:selectItem itemLabel="Fecha" itemValue="UNAFECHA"/>
+                            <f:selectItem itemLabel="Mes" itemValue="MES"/>
+                            <f:selectItem itemLabel="Año" itemValue="ANIO"/>
+                            <f:selectItem itemLabel="Rango de fechas" itemValue="FECHAS"/>
+                            <f:selectItem itemLabel="Lista de valores" itemValue="LISTA"/>
+                            <f:selectItem itemLabel="Usuario Actual" itemValue="USUARIO_ACTUAL"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Alias" style="font-size: 13px"/>
+                        <p:inputText value="#{reportesParametrosManagedBean.reporteParametrosSel.rpaAlias}" style="width: 400px" styleClass="inputModal"/>
+                        <p:outputLabel value="Query" style="font-size: 13px"/>
+                        <p:inputTextarea autoResize="false" rows="5" cols="100" value="#{reportesParametrosManagedBean.reporteParametrosSel.rpaQueryLista}" style="width: 400px" styleClass="inputModal"/>
+                    </h:panelGrid>
+                    <div style="margin: 20px">
+                        <p:commandButton value="Guardar" action="#{reportesParametrosManagedBean.guardarParametro}" update="tabContainer:formParamsReportes"/>
+                        <p:commandButton value="Cerrar" oncomplete="PF('widgetParametros').hide()"/>
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

@@ -305,7 +305,7 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
             if (esGobernacion.equals("S")) {
                 radicacionSel.setPriId(prioridadGobernacion);
             }
-            if (usuarioSesion.getNotId().getNotTurnos() != null) {
+            if (usuarioSesion.getNotId().getNotEsGobernacion().equals("S")) {
                 BigDecimal dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_obtener_turno", usuarioSesion.getNotId());
                 Integer inicio = dbSalida.intValue();
                 Integer fin = usuarioSesion.getNotId().getNotTurnos().intValue();

@@ -17,7 +17,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 /**
- * ManagedBean encargado de la pantalla de asignaciones a los liquidadores
+ * ManagedBean encargado de la pantalla de asignaciones para los notarios, liquidadores y validadores
+ * dependiente el parámetro de entrada.
  * @author fabianagudelo
  */
 @ManagedBean
@@ -31,7 +32,7 @@ public class AsignacionesManagedBean extends GenericManagedBean{
     private UsuariosDAOBeanLocal usuariosDAOBean;
 
     private List<MarRadicacionesFasesEstados> radFasesEstadosDisponibles;
-    private MarRadicacionesFasesEstados radFaseEstadoDisponible;
+    private List<MarRadicacionesFasesEstados> radFaseEstadosDisponiblesSelec;
     
     private List<MarRadicacionesFasesEstados> radFasesEstadosUsuario;
     private MarRadicacionesFasesEstados radFaseEstadoUsuario;
@@ -88,12 +89,10 @@ public class AsignacionesManagedBean extends GenericManagedBean{
     public void obtenerRadicacionesDisponibles(){
         try {
             radFasesEstadosDisponibles = radicFasesEstadosDAOBean.obtenerPendientesConCodigos(codigosPendientes);
-            for (MarRadicacionesFasesEstados radFasesEstadosDisponible : radFasesEstadosDisponibles) {
-                System.out.println("radFasesEstadosDisponible.getRadId().getRadNumero() = " + radFasesEstadosDisponible.getRadId().getRadNumero());
-            }
+            /*
             if(!radFasesEstadosDisponibles.isEmpty()){
                 radFaseEstadoDisponible = radFasesEstadosDisponibles.get(0);
-            }
+            }*/
         } catch (Exception e) {
             String sql = "No se pueden obtener las radicaciones disponibles, causado por: " + e;
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicaciones no disponibles", sql, true, false);
@@ -123,11 +122,8 @@ public class AsignacionesManagedBean extends GenericManagedBean{
      * Obtiene los pendientes que tiene el usuario.
      */
     public void obtenerPendientesUsuario(){
-        System.out.println("Obteniendo...");
         try {
-            System.out.println("usuarioSel = " + usuarioSel);
             radFasesEstadosUsuario = radicFasesEstadosDAOBean.obtenerPorUltimaFaseUsuario(usuariosPendientes, usuarioSel);
-            System.out.println("radFasesEstadosUsuario = " + radFasesEstadosUsuario);
             if(!radFasesEstadosUsuario.isEmpty()){
                 radFaseEstadoUsuario = radFasesEstadosUsuario.get(0);
             }
@@ -161,28 +157,26 @@ public class AsignacionesManagedBean extends GenericManagedBean{
      */
     public void asignarRadicacion(){
         try {
-            //Primero valida que el proceso no haya sido asignado a un usuario.
-            MarRadicacionesFasesEstados rfe = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radFaseEstadoDisponible.getRadId());
-            System.out.println("rfe.getRfeId() = " + rfe.getRfeId());
-            System.out.println("radFaseEstadoDisponible.getRfeId() = " + radFaseEstadoDisponible.getRfeId());
-            
-            if (rfe.getRfeId().equals(radFaseEstadoDisponible.getRfeId())) {
-                
-                BigDecimal BDsalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radFaseEstadoDisponible.getRadId().getRadId(),
-                        estadoAsignacion, "A", usuarioSel.getUsuId(), "", null);
-                Integer salida = BDsalida.intValue();
-                if (salida == -999) {
-                    PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo.", true, false);
-                    return;
+            for (MarRadicacionesFasesEstados faseEstadoDispSel : radFaseEstadosDisponiblesSelec) {
+                //Primero valida que el proceso no haya sido asignado a un usuario.
+                MarRadicacionesFasesEstados rfe = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(faseEstadoDispSel.getRadId());
+                if (rfe.getRfeId().equals(faseEstadoDispSel.getRfeId())) {
+                    BigDecimal BDsalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", faseEstadoDispSel.getRadId().getRadId(),
+                            estadoAsignacion, "A", usuarioSel.getUsuId(), "", null);
+                    Integer salida = BDsalida.intValue();
+                    if (salida == -999) {
+                        PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo.", true, false);
+                        return;
+                    }
+                    PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación asignada", "La radicación número <b>" + faseEstadoDispSel.getRadId().getRadNumero() + "</b>, se ha asignado al usuario <b>" + usuarioSel.getUsuLogin() + "</b>", true, false);
+                    obtenerRadicacionesDisponibles();
+                } else {
+                    PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación ya procesada", "Esta radicación disponible acaba de ser procesada por un usuario y no puede ser asignada", true, false);
                 }
-                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación asignada", "La radicación número <b>" + radFaseEstadoDisponible.getRadId().getRadNumero() + "</b>, se ha asignado al usuario <b>" + usuarioSel.getUsuLogin() + "</b>", true, false);
-                obtenerRadicacionesDisponibles();
-            } else {
-                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación ya procesada", "Esta radicación disponible acaba de ser procesada por un usuario y no puede ser asignada", true, false);
             }
         } catch (Exception e) {
-            String msj = "No se puede asignar la radicación, debido a : " + e;
-            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Asignación no es posible", msj, true, false);
+            String msj = "No se pueden asignar la radicacioes, debido a : " + e;
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Asignaciones no son posibles", msj, true, false);
             logger.error(msj,e);            
         }
     }
@@ -242,12 +236,12 @@ public class AsignacionesManagedBean extends GenericManagedBean{
         this.radFasesEstadosDisponibles = radFasesEstadosDisponibles;
     }
 
-    public MarRadicacionesFasesEstados getRadFaseEstadoDisponible() {
-        return radFaseEstadoDisponible;
+    public List<MarRadicacionesFasesEstados> getRadFaseEstadosDisponiblesSelec() {
+        return radFaseEstadosDisponiblesSelec;
     }
 
-    public void setRadFaseEstadoDisponible(MarRadicacionesFasesEstados radFaseEstadoDisponible) {
-        this.radFaseEstadoDisponible = radFaseEstadoDisponible;
+    public void setRadFaseEstadosDisponiblesSelec(List<MarRadicacionesFasesEstados> radFaseEstadosDisponiblesSelec) {
+        this.radFaseEstadosDisponiblesSelec = radFaseEstadosDisponiblesSelec;
     }
 
     public List<MarRadicacionesFasesEstados> getRadFasesEstadosUsuario() {

@@ -69,12 +69,22 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
      */
     public void obtenerListas() {
         try {
-            setNotarias((List<MarNotarias>) genericDAOBean.findAllByColumn(MarNotarias.class, "notEstado", "A", true, "notNombre asc"));
-            getNotarias().add(0, null);
             setOficinas((List<MarOficinasRegistros>) genericDAOBean.findAllByColumn(MarOficinasRegistros.class, "morEstado", "A", true, "morNombre asc"));
             getOficinas().add(0, null);
         } catch (Exception e) {
             logger.error("Error cargando listas desplegables, causado por :" + e, e);
+        }
+    }
+    
+    /**
+     * Obtiene las notarías de acuerdo a la oficina registral seleccionada.
+     */
+    public void obtenerNotarias(){
+        try {
+            setNotarias((List<MarNotarias>) genericDAOBean.findAllByColumn(MarNotarias.class, "morId", usuarioSel.getMorId(), true, "notNombre asc"));
+            getNotarias().add(0, null);
+        } catch (Exception e) {
+            logger.error("Error obteniendo las notarías, causado por :" + e, e);
         }
     }
 
@@ -178,41 +188,37 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
      */
     public void guardarUsuario() {
         try {
-            if (usuarioSel.getMorId() != null && usuarioSel.getNotId() != null) {
-                PrimeFacesPopup.lanzarDialog(Effects.Fold, "Error validacion", "Lo sentimos pero el usuario no puede Tener una Notaria y una Oficina de registro en Simulatanea", true, false);
-            } else {
-                auditSessionUtils.setAuditReflectedValues(personaSel);
-                auditSessionUtils.setAuditReflectedValues(usuarioSel);
+            auditSessionUtils.setAuditReflectedValues(personaSel);
+            auditSessionUtils.setAuditReflectedValues(usuarioSel);
 
-                if (personaSel.getPerId() == null) {
-                    // Validar que no exista otro usuario con la misma configuracion
-                    String login = personaSel.getTdcId().getTdcSigla() + personaSel.getPerDocumento();
-                    if (usuarioSel.getUsuLogin() == null || usuarioSel.getUsuLogin().equals("")) {
-                        usuarioSel.setUsuLogin(login);
-                    }
-
-                    // Validamos si el usuario existe en la BD
-                    boolean validacion = usuariosDAOBean.validacionCreacionUsuario(usuarioSel, personaSel);
-
-                    if (validacion) {
-                        // Asignar nueva clave de usuario
-                        if (usuarioSel.getUsuPassword() == null || usuarioSel.getUsuPassword().equals("")) {
-                            usuarioSel.setUsuPassword(CryptoUtils.encrypt(claveNueva));
-                        }
-                        genericDAOBean.save(personaSel);
-                        usuarioSel.setPerId(personaSel);
-                        genericDAOBean.save(usuarioSel);
-                        usuarioSeleccion = usuarioSel;
-                        PrimeFacesPopup.lanzarDialog(Effects.Fold, "Notificacion", "Usuario almacenado correctamente en base de datos", true, false);
-                    } else {
-                        PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error de Validacion", "Lo sentimos, pero la informacion ingresada ya se encuentra vinculada a otro usuario en la plataforma.", true, false);
-                    }
-                } else {
-                    genericDAOBean.merge(personaSel);
-                    genericDAOBean.merge(usuarioSel);
-                    usuarioSeleccion = usuarioSel;
-                    PrimeFacesPopup.lanzarDialog(Effects.Fold, "Notificacion", "Usuario actualizado correctamente en base de datos", true, false);
+            if (personaSel.getPerId() == null) {
+                // Validar que no exista otro usuario con la misma configuracion
+                String login = personaSel.getTdcId().getTdcSigla() + personaSel.getPerDocumento();
+                if (usuarioSel.getUsuLogin() == null || usuarioSel.getUsuLogin().equals("")) {
+                    usuarioSel.setUsuLogin(login);
                 }
+
+                // Validamos si el usuario existe en la BD
+                boolean validacion = usuariosDAOBean.validacionCreacionUsuario(usuarioSel, personaSel);
+
+                if (validacion) {
+                    // Asignar nueva clave de usuario
+                    if (usuarioSel.getUsuPassword() == null || usuarioSel.getUsuPassword().equals("")) {
+                        usuarioSel.setUsuPassword(CryptoUtils.encrypt(claveNueva));
+                    }
+                    genericDAOBean.save(personaSel);
+                    usuarioSel.setPerId(personaSel);
+                    genericDAOBean.save(usuarioSel);
+                    usuarioSeleccion = usuarioSel;
+                    PrimeFacesPopup.lanzarDialog(Effects.Fold, "Notificacion", "Usuario almacenado correctamente en base de datos", true, false);
+                } else {
+                    PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error de Validacion", "Lo sentimos, pero la informacion ingresada ya se encuentra vinculada a otro usuario en la plataforma.", true, false);
+                }
+            } else {
+                genericDAOBean.merge(personaSel);
+                genericDAOBean.merge(usuarioSel);
+                usuarioSeleccion = usuarioSel;
+                PrimeFacesPopup.lanzarDialog(Effects.Fold, "Notificacion", "Usuario actualizado correctamente en base de datos", true, false);
             }
         } catch (Exception e) {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Notificacion", "Ha ocurrido un erro al crear el usuario, por favor intente nuevamente.", true, false);
