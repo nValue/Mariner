@@ -9,6 +9,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,7 +26,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author fabianagudelo
+ * @author Andres Rivera
  */
 @Entity
 @Table(name = "MAR_PRIORIDADES")
@@ -37,24 +39,25 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarPrioridades.findByAudUsuario", query = "SELECT m FROM MarPrioridades m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarPrioridades.findByAudFecha", query = "SELECT m FROM MarPrioridades m WHERE m.audFecha = :audFecha")})
 public class MarPrioridades implements Serializable {
-
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
+    @GeneratedValue(generator = "sq_mar_prioridades")
+    @SequenceGenerator(name = "sq_mar_prioridades", sequenceName = "sq_mar_prioridades")
     @Basic(optional = false)
     @NotNull
-    @Column(name = "PRI_ID")
+    @Column(name = "PRI_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal priId;
     @Size(max = 10)
-    @Column(name = "PRI_CODIGO")
+    @Column(name = "PRI_CODIGO", length = 10)
     private String priCodigo;
     @Column(name = "PRI_ORDEN")
     private Short priOrden;
     @Size(max = 100)
-    @Column(name = "PRI_NOMBRE")
+    @Column(name = "PRI_NOMBRE", length = 100)
     private String priNombre;
     @Size(max = 50)
-    @Column(name = "AUD_USUARIO")
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)

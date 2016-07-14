@@ -43,15 +43,10 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarNotarias.findByNotCodigo", query = "SELECT m FROM MarNotarias m WHERE m.notCodigo = :notCodigo"),
     @NamedQuery(name = "MarNotarias.findByNotEstado", query = "SELECT m FROM MarNotarias m WHERE m.notEstado = :notEstado"),
     @NamedQuery(name = "MarNotarias.findByAudUsuario", query = "SELECT m FROM MarNotarias m WHERE m.audUsuario = :audUsuario"),
-    @NamedQuery(name = "MarNotarias.findByAudFecha", query = "SELECT m FROM MarNotarias m WHERE m.audFecha = :audFecha")})
+    @NamedQuery(name = "MarNotarias.findByAudFecha", query = "SELECT m FROM MarNotarias m WHERE m.audFecha = :audFecha"),
+    @NamedQuery(name = "MarNotarias.findByNotEsGobernacion", query = "SELECT m FROM MarNotarias m WHERE m.notEsGobernacion = :notEsGobernacion"),
+    @NamedQuery(name = "MarNotarias.findByNotTurnos", query = "SELECT m FROM MarNotarias m WHERE m.notTurnos = :notTurnos")})
 public class MarNotarias implements Serializable {
-
-    @Column(name = "NOT_TURNOS")
-    private BigInteger notTurnos;
-
-    @Size(max = 1)
-    @Column(name = "NOT_ES_GOBERNACION")
-    private String notEsGobernacion;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -78,6 +73,11 @@ public class MarNotarias implements Serializable {
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
+    @Size(max = 1)
+    @Column(name = "NOT_ES_GOBERNACION", length = 1)
+    private String notEsGobernacion;
+    @Column(name = "NOT_TURNOS")
+    private BigInteger notTurnos;
     @OneToMany(mappedBy = "notId")
     private List<MarRadicaciones> marRadicacionesList;
     @JoinColumn(name = "MOR_ID", referencedColumnName = "MOR_ID")
@@ -146,6 +146,22 @@ public class MarNotarias implements Serializable {
         this.audFecha = audFecha;
     }
 
+    public String getNotEsGobernacion() {
+        return notEsGobernacion;
+    }
+
+    public void setNotEsGobernacion(String notEsGobernacion) {
+        this.notEsGobernacion = notEsGobernacion;
+    }
+
+    public BigInteger getNotTurnos() {
+        return notTurnos;
+    }
+
+    public void setNotTurnos(BigInteger notTurnos) {
+        this.notTurnos = notTurnos;
+    }
+
     public List<MarRadicaciones> getMarRadicacionesList() {
         return marRadicacionesList;
     }
@@ -193,22 +209,6 @@ public class MarNotarias implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarNotarias[ notId=" + notId + " ]";
-    }
-
-    public String getNotEsGobernacion() {
-        return notEsGobernacion;
-    }
-
-    public void setNotEsGobernacion(String notEsGobernacion) {
-        this.notEsGobernacion = notEsGobernacion;
-    }
-
-    public BigInteger getNotTurnos() {
-        return notTurnos;
-    }
-
-    public void setNotTurnos(BigInteger notTurnos) {
-        this.notTurnos = notTurnos;
     }
     
 }

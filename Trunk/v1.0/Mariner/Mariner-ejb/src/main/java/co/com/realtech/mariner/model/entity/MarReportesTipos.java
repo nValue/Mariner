@@ -12,7 +12,6 @@ import java.util.List;
 import javax.persistence.GeneratedValue;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -36,8 +35,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarReportesTipos.findByRtiId", query = "SELECT m FROM MarReportesTipos m WHERE m.rtiId = :rtiId"),
     @NamedQuery(name = "MarReportesTipos.findByRtiCodigo", query = "SELECT m FROM MarReportesTipos m WHERE m.rtiCodigo = :rtiCodigo"),
     @NamedQuery(name = "MarReportesTipos.findByRtiNombre", query = "SELECT m FROM MarReportesTipos m WHERE m.rtiNombre = :rtiNombre"),
-    @NamedQuery(name = "MarReportesTipos.findByAudUsuario", query = "SELECT m FROM MarReportesTipos m WHERE m.audUsuario = :audUsuario"),
-    @NamedQuery(name = "MarReportesTipos.findByAudFecha", query = "SELECT m FROM MarReportesTipos m WHERE m.audFecha = :audFecha")})
+    @NamedQuery(name = "MarReportesTipos.findByAudFecha", query = "SELECT m FROM MarReportesTipos m WHERE m.audFecha = :audFecha"),
+    @NamedQuery(name = "MarReportesTipos.findByAudUsuario", query = "SELECT m FROM MarReportesTipos m WHERE m.audUsuario = :audUsuario")})
 public class MarReportesTipos implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -46,22 +45,20 @@ public class MarReportesTipos implements Serializable {
     @SequenceGenerator(name = "sq_mar_reportes_tipos", sequenceName = "sq_mar_reportes_tipos")
     @Basic(optional = false)
     @NotNull
-    @Column(name = "RTI_ID", nullable = false, precision = 0, scale = -127)
+    @Column(name = "RTI_ID", nullable = false, precision = 38, scale = 0)
     private BigDecimal rtiId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 20)
-    @Column(name = "RTI_CODIGO", nullable = false, length = 20)
+    @Size(max = 20)
+    @Column(name = "RTI_CODIGO", length = 20)
     private String rtiCodigo;
     @Size(max = 200)
     @Column(name = "RTI_NOMBRE", length = 200)
     private String rtiNombre;
-    @Size(max = 50)
-    @Column(name = "AUD_USUARIO", length = 50)
-    private String audUsuario;
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
+    @Size(max = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
+    private String audUsuario;
     @OneToMany(mappedBy = "rtiId")
     private List<MarReportes> marReportesList;
 
@@ -70,11 +67,6 @@ public class MarReportesTipos implements Serializable {
 
     public MarReportesTipos(BigDecimal rtiId) {
         this.rtiId = rtiId;
-    }
-
-    public MarReportesTipos(BigDecimal rtiId, String rtiCodigo) {
-        this.rtiId = rtiId;
-        this.rtiCodigo = rtiCodigo;
     }
 
     public BigDecimal getRtiId() {
@@ -101,20 +93,20 @@ public class MarReportesTipos implements Serializable {
         this.rtiNombre = rtiNombre;
     }
 
-    public String getAudUsuario() {
-        return audUsuario;
-    }
-
-    public void setAudUsuario(String audUsuario) {
-        this.audUsuario = audUsuario;
-    }
-
     public Date getAudFecha() {
         return audFecha;
     }
 
     public void setAudFecha(Date audFecha) {
         this.audFecha = audFecha;
+    }
+
+    public String getAudUsuario() {
+        return audUsuario;
+    }
+
+    public void setAudUsuario(String audUsuario) {
+        this.audUsuario = audUsuario;
     }
 
     public List<MarReportes> getMarReportesList() {

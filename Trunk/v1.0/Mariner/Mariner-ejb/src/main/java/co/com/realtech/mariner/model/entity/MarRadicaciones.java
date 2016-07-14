@@ -36,8 +36,7 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "MAR_RADICACIONES", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"RAD_LIQUIDACION"}),
-    @UniqueConstraint(columnNames = {"ESC_ID"})})
+    @UniqueConstraint(columnNames = {"RAD_LIQUIDACION"})})
 @NamedQueries({
     @NamedQuery(name = "MarRadicaciones.findAll", query = "SELECT m FROM MarRadicaciones m"),
     @NamedQuery(name = "MarRadicaciones.findByRadId", query = "SELECT m FROM MarRadicaciones m WHERE m.radId = :radId"),
@@ -52,24 +51,10 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarRadicaciones.findByRadValorLiq", query = "SELECT m FROM MarRadicaciones m WHERE m.radValorLiq = :radValorLiq"),
     @NamedQuery(name = "MarRadicaciones.findByRadEsExterior", query = "SELECT m FROM MarRadicaciones m WHERE m.radEsExterior = :radEsExterior"),
     @NamedQuery(name = "MarRadicaciones.findByRadEstado", query = "SELECT m FROM MarRadicaciones m WHERE m.radEstado = :radEstado"),
-    @NamedQuery(name = "MarRadicaciones.findByRadLiquidacion", query = "SELECT m FROM MarRadicaciones m WHERE m.radLiquidacion = :radLiquidacion")})
+    @NamedQuery(name = "MarRadicaciones.findByRadLiquidacion", query = "SELECT m FROM MarRadicaciones m WHERE m.radLiquidacion = :radLiquidacion"),
+    @NamedQuery(name = "MarRadicaciones.findByRadTurno", query = "SELECT m FROM MarRadicaciones m WHERE m.radTurno = :radTurno"),
+    @NamedQuery(name = "MarRadicaciones.findByRadEsImpresion", query = "SELECT m FROM MarRadicaciones m WHERE m.radEsImpresion = :radEsImpresion")})
 public class MarRadicaciones implements Serializable {
-
-    @JoinColumn(name = "PRI_ID", referencedColumnName = "PRI_ID")
-    @ManyToOne
-    private MarPrioridades priId;
-
-    @JoinColumn(name = "RAA_ID", referencedColumnName = "RAA_ID")
-    @ManyToOne
-    private MarRadicacionesAgrupamientos raaId;
-
-    @Size(max = 1)
-    @Column(name = "RAD_ES_IMPRESION")
-    private String radEsImpresion;
-
-    @Size(max = 20)
-    @Column(name = "RAD_TURNO")
-    private String radTurno;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -117,6 +102,12 @@ public class MarRadicaciones implements Serializable {
     @Size(max = 100)
     @Column(name = "RAD_LIQUIDACION", length = 100)
     private String radLiquidacion;
+    @Size(max = 20)
+    @Column(name = "RAD_TURNO", length = 20)
+    private String radTurno;
+    @Size(max = 1)
+    @Column(name = "RAD_ES_IMPRESION", length = 1)
+    private String radEsImpresion;
     @JoinColumn(name = "ARC_ID_RECIBO_PAGO", referencedColumnName = "ARC_ID")
     @ManyToOne
     private MarArchivos arcIdReciboPago;
@@ -129,6 +120,12 @@ public class MarRadicaciones implements Serializable {
     @JoinColumn(name = "NOT_ID", referencedColumnName = "NOT_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarNotarias notId;
+    @JoinColumn(name = "PRI_ID", referencedColumnName = "PRI_ID")
+    @ManyToOne
+    private MarPrioridades priId;
+    @JoinColumn(name = "RAA_ID", referencedColumnName = "RAA_ID")
+    @ManyToOne
+    private MarRadicacionesAgrupamientos raaId;
     @OneToOne(mappedBy = "radId")
     private MarRadicacionesDetallesSap marRadicacionesDetallesSap;
     @OneToMany(mappedBy = "radId")
@@ -253,6 +250,22 @@ public class MarRadicaciones implements Serializable {
         this.radLiquidacion = radLiquidacion;
     }
 
+    public String getRadTurno() {
+        return radTurno;
+    }
+
+    public void setRadTurno(String radTurno) {
+        this.radTurno = radTurno;
+    }
+
+    public String getRadEsImpresion() {
+        return radEsImpresion;
+    }
+
+    public void setRadEsImpresion(String radEsImpresion) {
+        this.radEsImpresion = radEsImpresion;
+    }
+
     public MarArchivos getArcIdReciboPago() {
         return arcIdReciboPago;
     }
@@ -283,6 +296,22 @@ public class MarRadicaciones implements Serializable {
 
     public void setNotId(MarNotarias notId) {
         this.notId = notId;
+    }
+
+    public MarPrioridades getPriId() {
+        return priId;
+    }
+
+    public void setPriId(MarPrioridades priId) {
+        this.priId = priId;
+    }
+
+    public MarRadicacionesAgrupamientos getRaaId() {
+        return raaId;
+    }
+
+    public void setRaaId(MarRadicacionesAgrupamientos raaId) {
+        this.raaId = raaId;
     }
 
     public MarRadicacionesDetallesSap getMarRadicacionesDetallesSap() {
@@ -332,38 +361,6 @@ public class MarRadicaciones implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarRadicaciones[ radId=" + radId + " ]";
-    }
-
-    public String getRadTurno() {
-        return radTurno;
-    }
-
-    public void setRadTurno(String radTurno) {
-        this.radTurno = radTurno;
-    }
-
-    public String getRadEsImpresion() {
-        return radEsImpresion;
-    }
-
-    public void setRadEsImpresion(String radEsImpresion) {
-        this.radEsImpresion = radEsImpresion;
-    }
-
-    public MarRadicacionesAgrupamientos getRaaId() {
-        return raaId;
-    }
-
-    public void setRaaId(MarRadicacionesAgrupamientos raaId) {
-        this.raaId = raaId;
-    }
-
-    public MarPrioridades getPriId() {
-        return priId;
-    }
-
-    public void setPriId(MarPrioridades priId) {
-        this.priId = priId;
     }
     
 }

@@ -8,16 +8,16 @@ package co.com.realtech.mariner.model.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author fabianagudelo
+ * @author Andres Rivera
  */
 @Entity
 @Table(name = "MAR_REPORTES_GRAFICOS")
@@ -39,7 +39,6 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarReportesGraficos.findByAudFecha", query = "SELECT m FROM MarReportesGraficos m WHERE m.audFecha = :audFecha"),
     @NamedQuery(name = "MarReportesGraficos.findByAudUsuario", query = "SELECT m FROM MarReportesGraficos m WHERE m.audUsuario = :audUsuario")})
 public class MarReportesGraficos implements Serializable {
-
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -47,24 +46,24 @@ public class MarReportesGraficos implements Serializable {
     @SequenceGenerator(name = "sq_mar_reportes_graficos", sequenceName = "sq_mar_reportes_graficos")
     @Basic(optional = false)
     @NotNull
-    @Column(name = "RGR_ID")
+    @Column(name = "RGR_ID", nullable = false, precision = 38, scale = 0)
     private BigDecimal rgrId;
     @Size(max = 500)
-    @Column(name = "RGR_PROPIEDADES")
+    @Column(name = "RGR_PROPIEDADES", length = 500)
     private String rgrPropiedades;
     @Size(max = 20)
-    @Column(name = "RGR_TIPO")
+    @Column(name = "RGR_TIPO", length = 20)
     private String rgrTipo;
     @Size(max = 50)
-    @Column(name = "RGR_ADICIONES")
+    @Column(name = "RGR_ADICIONES", length = 50)
     private String rgrAdiciones;
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
     @Size(max = 50)
-    @Column(name = "AUD_USUARIO")
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @JoinColumn(name = "REP_ID", referencedColumnName = "REP_ID")
+    @JoinColumn(name = "REP_ID", referencedColumnName = "REP_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarReportes repId;
 

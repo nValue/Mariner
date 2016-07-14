@@ -103,6 +103,8 @@ public class MarUsuarios implements Serializable {
     @Column(name = "USU_ES_CALIFICADOR", length = 2)
     private String usuEsCalificador;
     @OneToMany(mappedBy = "usuId")
+    private List<MarCarguesAsobancaria> marCarguesAsobancariaList;
+    @OneToMany(mappedBy = "usuId")
     private List<MarNotificaciones> marNotificacionesList;
     @OneToMany(mappedBy = "usuId")
     private List<MarRolesUsuarios> marRolesUsuariosList;
@@ -236,6 +238,14 @@ public class MarUsuarios implements Serializable {
 
     public void setUsuEsCalificador(String usuEsCalificador) {
         this.usuEsCalificador = usuEsCalificador;
+    }
+
+    public List<MarCarguesAsobancaria> getMarCarguesAsobancariaList() {
+        return marCarguesAsobancariaList;
+    }
+
+    public void setMarCarguesAsobancariaList(List<MarCarguesAsobancaria> marCarguesAsobancariaList) {
+        this.marCarguesAsobancariaList = marCarguesAsobancariaList;
     }
 
     public List<MarNotificaciones> getMarNotificacionesList() {

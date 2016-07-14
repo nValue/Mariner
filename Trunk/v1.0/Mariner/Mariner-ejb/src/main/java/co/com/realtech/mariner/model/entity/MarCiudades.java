@@ -41,10 +41,6 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarCiudades.findByAudFecha", query = "SELECT m FROM MarCiudades m WHERE m.audFecha = :audFecha"),
     @NamedQuery(name = "MarCiudades.findByCiuCodigoNumeracion", query = "SELECT m FROM MarCiudades m WHERE m.ciuCodigoNumeracion = :ciuCodigoNumeracion")})
 public class MarCiudades implements Serializable {
-
-    @JoinColumn(name = "MOR_ID", referencedColumnName = "MOR_ID")
-    @ManyToOne
-    private MarOficinasRegistros morId;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -72,6 +68,9 @@ public class MarCiudades implements Serializable {
     @JoinColumn(name = "DEP_ID", referencedColumnName = "DEP_ID", nullable = false)
     @ManyToOne(optional = false)
     private MarDepartamentos depId;
+    @JoinColumn(name = "MOR_ID", referencedColumnName = "MOR_ID")
+    @ManyToOne
+    private MarOficinasRegistros morId;
     @OneToMany(mappedBy = "ciuId")
     private List<MarOficinasRegistros> marOficinasRegistrosList;
 
@@ -138,6 +137,14 @@ public class MarCiudades implements Serializable {
         this.depId = depId;
     }
 
+    public MarOficinasRegistros getMorId() {
+        return morId;
+    }
+
+    public void setMorId(MarOficinasRegistros morId) {
+        this.morId = morId;
+    }
+
     public List<MarOficinasRegistros> getMarOficinasRegistrosList() {
         return marOficinasRegistrosList;
     }
@@ -169,14 +176,6 @@ public class MarCiudades implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarCiudades[ ciuId=" + ciuId + " ]";
-    }
-
-    public MarOficinasRegistros getMorId() {
-        return morId;
-    }
-
-    public void setMorId(MarOficinasRegistros morId) {
-        this.morId = morId;
     }
     
 }

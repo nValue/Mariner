@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package co.com.realtech.mariner.model.entity;
 
 import java.io.Serializable;
@@ -7,6 +12,7 @@ import java.util.List;
 import javax.persistence.GeneratedValue;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -34,24 +40,11 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarReportes.findByRepNombre", query = "SELECT m FROM MarReportes m WHERE m.repNombre = :repNombre"),
     @NamedQuery(name = "MarReportes.findByRepEstado", query = "SELECT m FROM MarReportes m WHERE m.repEstado = :repEstado"),
     @NamedQuery(name = "MarReportes.findByRepExtension", query = "SELECT m FROM MarReportes m WHERE m.repExtension = :repExtension"),
-    @NamedQuery(name = "MarReportes.findByAudUsuario", query = "SELECT m FROM MarReportes m WHERE m.audUsuario = :audUsuario"),
-    @NamedQuery(name = "MarReportes.findByAudFecha", query = "SELECT m FROM MarReportes m WHERE m.audFecha = :audFecha")})
+    @NamedQuery(name = "MarReportes.findByRepJasperNombre", query = "SELECT m FROM MarReportes m WHERE m.repJasperNombre = :repJasperNombre"),
+    @NamedQuery(name = "MarReportes.findByRepConsulta", query = "SELECT m FROM MarReportes m WHERE m.repConsulta = :repConsulta"),
+    @NamedQuery(name = "MarReportes.findByAudFecha", query = "SELECT m FROM MarReportes m WHERE m.audFecha = :audFecha"),
+    @NamedQuery(name = "MarReportes.findByAudUsuario", query = "SELECT m FROM MarReportes m WHERE m.audUsuario = :audUsuario")})
 public class MarReportes implements Serializable {
-
-    @JoinColumn(name = "ARC_ID_REPORTE", referencedColumnName = "ARC_ID")
-    @ManyToOne
-    private MarArchivos arcIdReporte;
-
-    @Size(max = 100)
-    @Column(name = "REP_JASPER_NOMBRE")
-    private String repJasperNombre;
-    @Size(max = 4000)
-    @Column(name = "REP_CONSULTA")
-    private String repConsulta;
-    @OneToMany(mappedBy = "repId")
-    private List<MarReportesParametros> marReportesParametrosList;
-    @OneToMany(mappedBy = "repId")
-    private List<MarReportesGraficos> marReportesGraficosList;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -59,32 +52,41 @@ public class MarReportes implements Serializable {
     @SequenceGenerator(name = "sq_mar_reportes", sequenceName = "sq_mar_reportes")
     @Basic(optional = false)
     @NotNull
-    @Column(name = "REP_ID", nullable = false, precision = 0, scale = -127)
+    @Column(name = "REP_ID", nullable = false, precision = 38, scale = 0)
     private BigDecimal repId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
-    @Column(name = "REP_CODIGO", nullable = false, length = 50)
+    @Size(max = 20)
+    @Column(name = "REP_CODIGO", length = 20)
     private String repCodigo;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 100)
-    @Column(name = "REP_NOMBRE", nullable = false, length = 100)
+    @Size(max = 200)
+    @Column(name = "REP_NOMBRE", length = 200)
     private String repNombre;
     @Size(max = 1)
     @Column(name = "REP_ESTADO", length = 1)
     private String repEstado;
-    @Size(max = 10)
-    @Column(name = "REP_EXTENSION", length = 10)
+    @Size(max = 5)
+    @Column(name = "REP_EXTENSION", length = 5)
     private String repExtension;
-    @Size(max = 50)
-    @Column(name = "AUD_USUARIO", length = 50)
-    private String audUsuario;
+    @Size(max = 100)
+    @Column(name = "REP_JASPER_NOMBRE", length = 100)
+    private String repJasperNombre;
+    @Size(max = 4000)
+    @Column(name = "REP_CONSULTA", length = 4000)
+    private String repConsulta;
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
-    @JoinColumn(name = "RTI_ID", referencedColumnName = "RTI_ID", nullable = false)
-    @ManyToOne(optional = false)
+    @Size(max = 50)
+    @Column(name = "AUD_USUARIO", length = 50)
+    private String audUsuario;
+    @OneToMany(mappedBy = "repId")
+    private List<MarReportesGraficos> marReportesGraficosList;
+    @OneToMany(mappedBy = "repId")
+    private List<MarReportesParametros> marReportesParametrosList;
+    @JoinColumn(name = "ARC_ID_REPORTE", referencedColumnName = "ARC_ID")
+    @ManyToOne
+    private MarArchivos arcIdReporte;
+    @JoinColumn(name = "RTI_ID", referencedColumnName = "RTI_ID")
+    @ManyToOne
     private MarReportesTipos rtiId;
 
     public MarReportes() {
@@ -92,12 +94,6 @@ public class MarReportes implements Serializable {
 
     public MarReportes(BigDecimal repId) {
         this.repId = repId;
-    }
-
-    public MarReportes(BigDecimal repId, String repCodigo, String repNombre) {
-        this.repId = repId;
-        this.repCodigo = repCodigo;
-        this.repNombre = repNombre;
     }
 
     public BigDecimal getRepId() {
@@ -140,12 +136,20 @@ public class MarReportes implements Serializable {
         this.repExtension = repExtension;
     }
 
-    public String getAudUsuario() {
-        return audUsuario;
+    public String getRepJasperNombre() {
+        return repJasperNombre;
     }
 
-    public void setAudUsuario(String audUsuario) {
-        this.audUsuario = audUsuario;
+    public void setRepJasperNombre(String repJasperNombre) {
+        this.repJasperNombre = repJasperNombre;
+    }
+
+    public String getRepConsulta() {
+        return repConsulta;
+    }
+
+    public void setRepConsulta(String repConsulta) {
+        this.repConsulta = repConsulta;
     }
 
     public Date getAudFecha() {
@@ -154,6 +158,38 @@ public class MarReportes implements Serializable {
 
     public void setAudFecha(Date audFecha) {
         this.audFecha = audFecha;
+    }
+
+    public String getAudUsuario() {
+        return audUsuario;
+    }
+
+    public void setAudUsuario(String audUsuario) {
+        this.audUsuario = audUsuario;
+    }
+
+    public List<MarReportesGraficos> getMarReportesGraficosList() {
+        return marReportesGraficosList;
+    }
+
+    public void setMarReportesGraficosList(List<MarReportesGraficos> marReportesGraficosList) {
+        this.marReportesGraficosList = marReportesGraficosList;
+    }
+
+    public List<MarReportesParametros> getMarReportesParametrosList() {
+        return marReportesParametrosList;
+    }
+
+    public void setMarReportesParametrosList(List<MarReportesParametros> marReportesParametrosList) {
+        this.marReportesParametrosList = marReportesParametrosList;
+    }
+
+    public MarArchivos getArcIdReporte() {
+        return arcIdReporte;
+    }
+
+    public void setArcIdReporte(MarArchivos arcIdReporte) {
+        this.arcIdReporte = arcIdReporte;
     }
 
     public MarReportesTipos getRtiId() {
@@ -187,46 +223,6 @@ public class MarReportes implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarReportes[ repId=" + repId + " ]";
-    }
-
-    public String getRepJasperNombre() {
-        return repJasperNombre;
-    }
-
-    public void setRepJasperNombre(String repJasperNombre) {
-        this.repJasperNombre = repJasperNombre;
-    }
-
-    public String getRepConsulta() {
-        return repConsulta;
-    }
-
-    public void setRepConsulta(String repConsulta) {
-        this.repConsulta = repConsulta;
-    }
-
-    public List<MarReportesParametros> getMarReportesParametrosList() {
-        return marReportesParametrosList;
-    }
-
-    public void setMarReportesParametrosList(List<MarReportesParametros> marReportesParametrosList) {
-        this.marReportesParametrosList = marReportesParametrosList;
-    }
-
-    public List<MarReportesGraficos> getMarReportesGraficosList() {
-        return marReportesGraficosList;
-    }
-
-    public void setMarReportesGraficosList(List<MarReportesGraficos> marReportesGraficosList) {
-        this.marReportesGraficosList = marReportesGraficosList;
-    }
-
-    public MarArchivos getArcIdReporte() {
-        return arcIdReporte;
-    }
-
-    public void setArcIdReporte(MarArchivos arcIdReporte) {
-        this.arcIdReporte = arcIdReporte;
     }
     
 }

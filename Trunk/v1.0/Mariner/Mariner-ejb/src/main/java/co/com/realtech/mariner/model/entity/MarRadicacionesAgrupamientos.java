@@ -9,15 +9,15 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author fabianagudelo
+ * @author Andres Rivera
  */
 @Entity
 @Table(name = "MAR_RADICACIONES_AGRUPAMIENTOS")
@@ -38,28 +38,27 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarRadicacionesAgrupamientos.findByAudUsuario", query = "SELECT m FROM MarRadicacionesAgrupamientos m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarRadicacionesAgrupamientos.findByAudFecha", query = "SELECT m FROM MarRadicacionesAgrupamientos m WHERE m.audFecha = :audFecha")})
 public class MarRadicacionesAgrupamientos implements Serializable {
-
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(generator = "sq_radicaciones_agrupamientos")
-    @SequenceGenerator(name = "sq_radicaciones_agrupamientos", sequenceName = "sq_radicaciones_agrupamientos")
+    @GeneratedValue(generator = "sq_mar_radicaciones_agrupamien")
+    @SequenceGenerator(name = "sq_mar_radicaciones_agrupamien", sequenceName = "sq_mar_radicaciones_agrupamien")
     @Basic(optional = false)
     @NotNull
-    @Column(name = "RAA_ID")
+    @Column(name = "RAA_ID", nullable = false, precision = 0, scale = -127)
     private BigDecimal raaId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 1)
-    @Column(name = "RAA_AGRUPA_LIQS")
+    @Column(name = "RAA_AGRUPA_LIQS", nullable = false, length = 1)
     private String raaAgrupaLiqs;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 1)
-    @Column(name = "RAA_AGRUPA_ESCS")
+    @Column(name = "RAA_AGRUPA_ESCS", nullable = false, length = 1)
     private String raaAgrupaEscs;
     @Size(max = 50)
-    @Column(name = "AUD_USUARIO")
+    @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
