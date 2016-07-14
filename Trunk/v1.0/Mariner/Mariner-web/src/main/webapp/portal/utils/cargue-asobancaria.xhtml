@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/template-business.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="negocio">
+        <!-- Estilos personalizados pagina -->
+        <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
+        <script type="text/javascript" src="#{resource['js/primefaces.spanish.js']}"/>
+        <style type="text/css">
+            #modalLogs{
+                top: 50px !important;
+            }
+        </style>
+
+        <div id="paperMain">
+            <div class="tituloCont" align="center">
+                <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                <div style="display: inline-block">
+                    <h:outputLabel styleClass="titleMain" value="Utilidades - Cargue Asobancaria" />
+                    <h:outputLabel styleClass="subtitleMain" value="Cargue informacion archivos planos asobancaria"/>
+                </div>
+            </div>
+            <div class="contenidoPrinc" align="left">
+                <h:form id="formCargueAsobancaria">
+                    <h:panelGrid columns="4">
+                        <h:outputLabel value="Numero de Bloque"/>
+                        <p:inputText value="#{cargueAsobancariaManagedBean.bloque}" required="true" style="width: 125px;"/>
+                        <p:commandButton value="Buscar" update="panelContenido" action="#{cargueAsobancariaManagedBean.buscarBloque()}" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();"/>
+                        <p:commandButton value="Cargar Nuevo" immediate="true" oncomplete="PF('fileUploadDialog').show();" update=":modalFileUpload"/>
+                    </h:panelGrid>
+                    <h:panelGroup id="panelContenido">
+                        <h:panelGroup rendered="#{cargueAsobancariaManagedBean.cargues.size() gt 0}">
+                            <hr/>
+                            <div>
+                                <p:dataTable id="cargues" var="cargue" value="#{cargueAsobancariaManagedBean.cargues}" emptyMessage="No se han encontrado registros vinculados al bloque #{cargueAsobancariaManagedBean.bloque}" rowIndexVar="idx" paginator="true" rows="20">
+                                    <p:column headerText="#" width="40" styleClass="colCenter">
+                                        <h:outputText value="#{idx+1}" />
+                                    </p:column>
+                                    <p:column headerText="Referencia" styleClass="colCenter">
+                                        <h:outputText value="#{cargue.casReferencia}" />
+                                    </p:column>
+                                    <p:column headerText="Valor" styleClass="colCenter">
+                                        <h:outputText value="#{cargue.casValor}" />
+                                    </p:column>
+                                    <p:column headerText="Fecha" styleClass="colCenter">
+                                        <h:outputText value="#{cargue.casFecha}" />
+                                    </p:column>
+                                    <p:column headerText="Bloque" styleClass="colCenter">
+                                        <h:outputText value="#{cargue.casBloque}" />
+                                    </p:column>
+                                    <p:column headerText="Estado" styleClass="colCenter">
+                                        <h:outputText value="#{cargue.casEstado eq 'P'?'Pendiente':'Aplicado'}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                            <div align="center">
+                                <h:panelGrid columns="4">
+                                    <p:commandButton value="Aplicar Pagos en VUR" action="#{cargueAsobancariaManagedBean.aplicarPagosVUR()}" update="@form" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();">
+                                        <p:confirm header="Confirmación" message="¿Esta seguro de que desea aplicar todos los pagos de este bloque al sistema VUR y SAP?" icon="ui-icon-alert" />
+                                    </p:commandButton>
+                                    <p:commandButton value="Ver Log" update=":modalLogs" oncomplete="PF('dialogLogs').show();"/>
+                                    <p:commandButton value="Borrar Bloque" action="#{cargueAsobancariaManagedBean.borrarBloque()}" update="@form" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();">
+                                        <p:confirm header="Confirmación" message="¿Esta seguro de que desea borrar el bloque seleccionado?" icon="ui-icon-alert" />
+                                    </p:commandButton>
+                                    <p:commandButton value="Cancelar"  action="#{cargueAsobancariaManagedBean.init()}" update="@form" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();"/>
+                                </h:panelGrid>                                
+                            </div>
+                        </h:panelGroup>                        
+                    </h:panelGroup>
+                </h:form>
+            </div>
+        </div>   
+
+        <!-- Panel cargue de archivos informacion asobancaria -->
+        <p:dialog id="modalFileUpload" widgetVar="fileUploadDialog" header="Cargue de archivo Asobancaria" modal="true" draggable="false" closable="true" resizable="false" appendTo="@(body)" closeOnEscape="true">
+            <div class="minDivPopup" style="width: 450px;">
+                <h:form enctype="multipart/form-data">
+                    <p:fileUpload fileUploadListener="#{cargueAsobancariaManagedBean.handleFileUpload}" mode="advanced" dragDropSupport="true" update=":formCargueAsobancaria"
+                                  auto="true" cancelLabel="Cancelar" invalidFileMessage="Archivo inválido, por favor verifique que sea TXT" uploadLabel="Cargar" label="Seleccionar" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();"/>
+                </h:form>
+            </div>
+        </p:dialog>
+
+        <!-- Panel Para mostrar el log de volcado de la asobancaria -->
+        <p:dialog id="modalLogs" widgetVar="dialogLogs" resizable="false" header="Informacion de logs Bloque de Asobancaria" modal="true" width="950" minHeight="500"
+                  onShow="$(document.activeElement).blur()" >
+            <h:form id="formModalLogs">
+                <div style="width: 920px;min-height: 400px;">
+                    <p:dataTable id="logs" var="log" value="#{cargueAsobancariaManagedBean.cargues}" emptyMessage="No se han encontrado registros vinculados al bloque #{cargueAsobancariaManagedBean.bloque}" rowIndexVar="idx" paginator="true" rows="14">
+                        <p:column headerText="#" width="30" styleClass="colCenter">
+                            <h:outputText value="#{idx+1}" />
+                        </p:column>
+                        <p:column headerText="Referencia" width="100"  styleClass="colCenter">
+                            <h:outputText value="#{log.casReferencia}" />
+                        </p:column>
+                        <p:column headerText="Log">
+                            <h:outputText value="#{log.casLog}" />
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>
