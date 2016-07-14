@@ -8,6 +8,7 @@ import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.payment.DetallePago;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarTransacciones;
+import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.model.logic.pagos.SAPPagosLogicOperations;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
@@ -61,6 +62,7 @@ public class TransactionCore implements Serializable {
     public VURTransaccionConfirmacion confirmarTransaccion(String claveConfirmacion, String fechaPago, Long valorPagado, String referenciaCodigoBarras) {
         VURTransaccionConfirmacion confirmacion = new VURTransaccionConfirmacion();
         try {
+            MarUsuarios usuarioMariner = (MarUsuarios) genericDAOBean.findByColumn(MarUsuarios.class, "usuLogin", "MARINER");
             String claveConfConstante = ConstantesUtils.cargarConstante("WS-PASARELA-CODIGO-CONFIRMACION");
 
             if (claveConfConstante.equals(claveConfirmacion)) {
@@ -79,7 +81,7 @@ public class TransactionCore implements Serializable {
 
                             try {
                                 // Guardamos la nueva fase estado del a transaccion.
-                                BigDecimal salida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacion, "P-A", "A", transaccionBD.getUsuId(), "", null);
+                                BigDecimal salida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacion, "P-A", "A", usuarioMariner, "", null);
 
                                 if (salida.intValue() != -999) {
                                     try {
