@@ -39,7 +39,7 @@
                     
                     <div align="center" style="padding: 20px;">
                         <h:panelGroup rendered="#{revisionManagedBean.radicacionPendienteSel != null}">
-                            <div style="margin: 20px;padding: 20px 0px;display: inline-block;vertical-align: top; width: 50%;border: solid 1px #e0e0e0;">
+                            <div style="margin: 20px;padding: 20px 0px;display: inline-block;vertical-align: top; width: 45%;border: solid 1px #e0e0e0;">
                                 
                                 <h:panelGrid columns="2" >
                                     <h:outputLabel class="labelLittle" value="Radicación No" />
@@ -65,20 +65,23 @@
                                           rendered="#{revisionManagedBean.radicacionPendienteSel.escId.arcId != null}"/>
                                 <p:commandButton value="Boleta Fiscal" action="#{revisionManagedBean.obtenerActosDeRadicacion()}" oncomplete="PF('dialogBoleta').show()" update=":formBoleta"/>
                             </div>
-                            <div style="margin: 20px;display: inline-block; vertical-align: top; width: 40%;border: solid 1px #e0e0e0;">
+                            <div style="margin: 20px;display: inline-block; vertical-align: top; width: 45%;border: solid 1px #e0e0e0;">
                                 <p:dataTable value="#{revisionManagedBean.radicacionesFasesEstados}" var="rfe" paginator="true" rows="7" paginatorPosition="bottom"
                                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                              styleClass="tableSmall">
-                                    <p:column headerText="Fase">
+                                    <p:column headerText="Fase" width="80">
                                         <h:outputLabel value="#{rfe.fesId.fesNombre}"/>
                                     </p:column>
-                                    <p:column headerText="Fecha" width="90">
+                                    <p:column headerText="Fecha" width="60">
                                         <h:outputText value="#{rfe.rfeFechaInicio}">
-                                            <f:convertDateTime pattern="dd/MM/yy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
+                                            <f:convertDateTime pattern="dd/MM/yy HH:mm" timeZone="#{utilManagedBean.timeZone}" />
                                         </h:outputText>
                                     </p:column>
+                                    <p:column headerText="Usuario" width="10,0">
+                                        <h:outputText value="#{rfe.usuId.perId.perNombres} #{rfe.usuId.perId.perApellidos}" />
+                                    </p:column>
                                     <p:column headerText="Comentarios">
-                                        <h:outputText value="#{rfe.rfeObservaciones}"/>
+                                        <h:outputText value="#{rfe.rfeObservaciones}" />
                                     </p:column>
                                 </p:dataTable>
                             </div>

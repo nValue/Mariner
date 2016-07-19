@@ -311,7 +311,9 @@ public class GeneracionManagedBean extends GenericManagedBean {
         try {
             MarRadicacionesFasesEstados ultimo = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radSel);
             if (ultimo.getFesId().getFesCodigo().equals("R-R")) {
-                valor = "(R) " + valor;
+                valor = "(R) - " + valor;
+            }else if(ultimo.getRadId().getPriId() != null && ultimo.getRadId().getPriId().getPriCodigo().equals("DIS")){
+                valor = "(I) - " + valor;
             }
         } catch (Exception e) {
         }

@@ -60,14 +60,15 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
         usuarioSeleccion=null;
         obtenerTiposDocumentos();
         obtenerRoles();
-        obtenerListas();
+        obtenerOficinas();
+        //obtenerNotarias();
         claveNueva = "";
     }
 
     /**
-     * Obtener listas desplegables.
+     * Obtener oficinas de registro desplegables.
      */
-    public void obtenerListas() {
+    public void obtenerOficinas() {
         try {
             setOficinas((List<MarOficinasRegistros>) genericDAOBean.findAllByColumn(MarOficinasRegistros.class, "morEstado", "A", true, "morNombre asc"));
             getOficinas().add(0, null);
@@ -81,6 +82,7 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
      */
     public void obtenerNotarias(){
         try {
+            System.out.println("Obteniendo notarias...");
             setNotarias((List<MarNotarias>) genericDAOBean.findAllByColumn(MarNotarias.class, "morId", usuarioSel.getMorId(), true, "notNombre asc"));
             getNotarias().add(0, null);
         } catch (Exception e) {
@@ -90,7 +92,7 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
 
     public void obtenerRoles() {
         try {
-            roles = (List<MarRoles>) genericDAOBean.loadAllForEntity(MarRoles.class, "rolNombre");            
+            roles = (List<MarRoles>) genericDAOBean.loadAllForEntity(MarRoles.class, "rolNombre");
         } catch (Exception e) {
             logger.error("Error obteniendo los roles disponibles, causado por :" + e, e);
         }
@@ -142,6 +144,7 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
             usuarioSel = usuarioSeleccion;
             personaSel = usuarioSel.getPerId();
             obtenerRolesDeUsuario();
+            obtenerNotarias();
         } catch (Exception e) {
             logger.error("Error cargando informacion del usuario / devolcuiones, error causado por " + e, e);
         }

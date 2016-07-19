@@ -393,7 +393,7 @@ public class RevisionManagedBean extends GenericManagedBean{
                 //String contextPath = servletContext.getContextPath();
                 //String urlRecibo = contextPath + "/static/fileDispatcher/" + radicacionPendienteSel.getArcIdReciboPago().getArcId() + "-" +  radicacionPendienteSel.getArcIdReciboPago().getArcHash() + "." + radicacionPendienteSel.getArcIdReciboPago().getArcExtension();
                 //RequestContext.getCurrentInstance().execute("window.open('" + urlRecibo + "');");
-
+                
                 CDFFileDispatcher dispatcher = CDFFileDispatcher.create();
                 dispatcher.findFile(radicacionPendienteSel.getArcIdReciboPago().getArcId());
                 File archivo = PDFUtils.agregarTexto(dispatcher.getFileContent(), "Turno: " + radicacionPendienteSel.getRadTurno() + " - " + radicacionPendienteSel.getRadNumero());

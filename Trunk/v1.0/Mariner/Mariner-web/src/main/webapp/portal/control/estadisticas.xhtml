@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/template-business.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="negocio">
+
+        <style type="text/css">
+            *.inputModalCalendar>input{
+                height: 23px !important;
+                font-weight: 600 !important;
+                color: black !important;
+                font-family: 'Open Sans', sans-serif !important;
+                width: 220px;
+            }
+
+            *.calendar>input{
+                height: 23px !important;
+                font-weight: 600 !important;
+                color: black !important;
+                font-family: 'Open Sans', sans-serif !important;
+                width: 220px !important;
+            }
+
+            *.calendar>button{
+                width: 24px !important;
+                height: 24px !important;
+            }
+        </style>
+
+        <script type="text/javascript" src="#{resource['js/primefaces.es.calendar.js']}"/>
+        <!-- Scripts FusionCharts-->
+        <script type="text/javascript" src="#{request.contextPath}/resources/fusioncharts/js/fusioncharts.js"/>
+        <script type="text/javascript" src="#{request.contextPath}/resources/fusioncharts/js/themes/fusioncharts.theme.zune.js"/>
+        <script type="text/javascript" src="#{request.contextPath}/resources/fusioncharts/js/fusioncharts.widgets.js"/>
+
+        <div id="paperMain">
+            <div class="tituloCont" align="center">
+                <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                <div style="display: inline-block">
+                    <h:outputLabel styleClass="titleMain" value="Estadísticas y gráficos" />
+                    <h:outputLabel styleClass="subtitleMain" value="Aplicación a nivel gerencial, gráficos y números concretos"/>
+                </div>
+            </div>
+            <div class="contenidoPrinc" align="center">
+                <div class="descripcion" align="center">
+                    <div class="descText">
+                        Seleccione el gráfico que desea observar y filtre por las fechas, automáticamente lo verá en pantalla
+                    </div>
+                </div>
+            </div>
+            <h:form id="formStatistics">
+                <h:panelGrid columns="2">
+                    <h:outputText value="Fecha Desde" styleClass="text" />
+                    <p:calendar showOn="button" value="#{estadisticasManagedBean.fechaDesde}" pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}" styleClass="calendar" locale="es">
+                        <p:ajax event="dateSelect" listener="#{estadisticasManagedBean.filtrarEstadisticas()}" update="panelEstadisticas" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();" />
+                    </p:calendar>
+                    <h:outputText value="Fecha Hasta" styleClass="text" />
+                    <p:calendar showOn="button" value="#{estadisticasManagedBean.fechaHasta}" style="width: 200px !important;" pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}" styleClass="calendar" locale="es">
+                        <p:ajax event="dateSelect" listener="#{estadisticasManagedBean.filtrarEstadisticas()}" update="panelEstadisticas" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();" />
+                    </p:calendar>
+
+                    <h:outputText value="Tipo de Reporte" styleClass="text" />
+                    <p:selectOneMenu value="#{estadisticasManagedBean.rolReporteSel}" styleClass="inputModal" style="width: 242px;" converter="MarRolesReportesConverter">
+                        <p:ajax listener="#{estadisticasManagedBean.obtenerParametrosDelReporte()}" update="panelEstadisticas formStatistics" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();"/>
+                        <f:selectItems value="#{estadisticasManagedBean.rolesReportes}" var="rRe" itemLabel="#{rRe.repId.repNombre}"/>
+                    </p:selectOneMenu>
+                    <c:forEach items="#{estadisticasManagedBean.reportesParametros}" var="repPa" varStatus="loop">
+                        <h:outputLabel styleClass="text" value="#{repPa.rpaNombre}" rendered="#{!(repPa.rpaTipo eq 'FECHAS')}"/>
+                        <p:inputText id="cmpTEXTO_#{repPa.rpaId}" rendered="#{repPa.rpaTipo eq 'TEXTO'}" required="false" style="width: 242px" />
+                        <p:selectOneMenu id="cmpLISTA_#{repPa.rpaId}" rendered="#{repPa.rpaTipo eq 'LISTA'}" style="width: 242px" >
+                            <f:selectItems value="#{estadisticasManagedBean.getListaActual(loop.index)}" var="obj" itemLabel="#{obj[0]}" itemValue="#{obj[1]}"  />
+                            <p:ajax listener="#{estadisticasManagedBean.cambio(obj)}" update="panelEstadisticas"/>
+                            <f:attribute name="validation" value="#{obj}" />
+                        </p:selectOneMenu>
+                    </c:forEach>
+                </h:panelGrid>
+                <hr>
+                    <h:panelGroup id="panelEstadisticas">
+                        <div class="panelGrafico" align="center" style="padding-top: 20px;padding-bottom: 22px;">
+                            <script type="text/javascript">
+                                FusionCharts.ready(function () {
+                                    var url = "#{request.contextPath}/graphics/ServletGraphicsStatistics?id=#{estadisticasManagedBean.rolReporteSel.repId.repId}&amp;fechaDesde=#{estadisticasManagedBean.fechaDesdeFormated}&amp;fechaHasta=#{estadisticasManagedBean.fechaHastaFormated}&amp;pars=#{estadisticasManagedBean.parametros}";
+                                            var generalReportChart = new FusionCharts({
+                                #{estadisticasManagedBean.reporteGraficoSel.rgrPropiedades}
+                                            });
+                                            generalReportChart.setXMLUrl(url);
+                                            generalReportChart.render("chartContainer");
+                                        });
+                            </script>
+                            <div id="chartContainer"/>
+                        </div>
+                    </h:panelGroup>
+                </hr>
+            </h:form>
+        </div>
+
+    </ui:define>
+
+</ui:composition>

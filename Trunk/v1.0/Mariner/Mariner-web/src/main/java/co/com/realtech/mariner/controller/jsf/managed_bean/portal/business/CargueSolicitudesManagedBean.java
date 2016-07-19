@@ -80,9 +80,12 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
     private MarPrioridades prioridadGobernacion;
     private MarPrioridades prioridadVencimiento;
     private MarPrioridades prioridadDiscapacidad;
+    
+    private boolean esPrioridad;
 
     @Override
     public void init() {
+        esPrioridad = false;
         fechaFiltroInic = new Date();
         fechaFiltroFin = new Date();
         obtenerNotarias();
@@ -155,6 +158,12 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
      */
     public void obtenerFasesEstadosDeRadicacion() {
         try {
+            //Valida si la radicación actual tiene prioridad.
+            if (radicacionSel.getPriId() != null && radicacionSel.getPriId().getPriCodigo().equals("DIS")) {
+                esPrioridad = true;
+            }else{
+                esPrioridad = false;
+            }
             radicacionesFasesEstados = (List<MarRadicacionesFasesEstados>) genericDAOBean.findAllByColumn(MarRadicacionesFasesEstados.class, "radId", radicacionSel, true, "rfeId");
             if (!radicacionesFasesEstados.isEmpty()) {
                 radicacionFaseEstProcesadaSel = radicacionesFasesEstados.get(radicacionesFasesEstados.size() - 1);
@@ -262,6 +271,20 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
         }
         return valor;
     }
+    
+    /**
+     * Retorna S si la radiación pertenece a la gobernación
+     * @return 
+     */
+    public String esGobernacion() {
+        String esGobernacion;
+        if (usuarioSesion.getNotId().getNotEsGobernacion().equals("S")) {
+            esGobernacion = "S";
+        } else {
+            esGobernacion = "N";
+        }
+        return esGobernacion;
+    }
 
     /**
      * Crea una nueva radicación vacía para el llenado de la información
@@ -269,22 +292,25 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
      */
     public void solicitarRadicacion() {
         try {
+            esPrioridad = false;
             String permiteCrear = ConstantesUtils.cargarConstante("VUR-CREAR-RADIC");
             if (permiteCrear.equals("N")) {
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación deshabilitada", "La plataforma no se encuentra disponible para crear más radicaciones, si desea más información puede comunicarse con la Gobernación para validar este proceso.", true, false);
                 return;
             }
+            if(usuarioSesion.getNotId() == null){
+                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notaría necesaria", "El usuario actual debe tener una notaría asociada antes de crear alguna radicación", true, false);
+                return;
+            }
+            String gobernacion = esGobernacion();
             String maximo;
-            String esGobernacion;
-            if(usuarioSesion.getNotId().getNotEsGobernacion().equals("S")){
+            if(gobernacion.equals("S")){
                 maximo = ConstantesUtils.cargarConstante("VUR-MAX-RAD-GOB");
-                esGobernacion = "S";
             }else{
                 maximo = ConstantesUtils.cargarConstante("VUR-MAX-RAD-NOT");
-                esGobernacion = "N";
             }
             Integer max = Integer.parseInt(maximo);
-            BigDecimal decCantidad = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_cantidad_radicaciones_hoy", esGobernacion);
+            BigDecimal decCantidad = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_cantidad_radicaciones_hoy", gobernacion);
             if(decCantidad.intValue() > max){
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Radicación deshabilitada", "Lo sentimos. La plataforma no se encuentra disponible para crear más radicaciones.", true, false);
                 return;
@@ -302,7 +328,7 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
             observacionesProceso = "";
             radicacionesFasesEstados = null;
             radicacionFaseEstProcesadaSel = null;
-            if (esGobernacion.equals("S")) {
+            if (gobernacion.equals("S")) {
                 radicacionSel.setPriId(prioridadGobernacion);
             }
             if (usuarioSesion.getNotId().getNotEsGobernacion().equals("S")) {
@@ -595,6 +621,30 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
         }
         PrimeFacesContext.execute("PF('dialogNuevaEscritura').hide()");
     }
+    
+    /**
+     * Ejecuta el modal de confirmación para colocar la radicación como prioridad.
+     */
+    public void confirmarPrioridad(){
+        if(esPrioridad){
+            esPrioridad = false;
+            PrimeFacesContext.execute("PF('dialogConfTurno').show()");
+        }else{
+            if (esGobernacion().equals("S")) {
+                radicacionSel.setPriId(prioridadGobernacion);
+            }else{
+                radicacionSel.setPriId(null);
+            }
+        }
+    }
+    
+    /**
+     * Coloca la prioridad para la radicación.
+     */
+    public void colocarPrioridad(){
+        esPrioridad = true;
+        radicacionSel.setPriId(prioridadDiscapacidad);
+    }
 
     public List<MarRadicaciones> getRadicaciones() {
         return radicaciones;
@@ -716,4 +766,13 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
         this.radicacionEscrituraSel = radicacionEscrituraSel;
     }
 
+    public boolean isEsPrioridad() {
+        return esPrioridad;
+    }
+
+    public void setEsPrioridad(boolean esPrioridad) {
+        this.esPrioridad = esPrioridad;
+    }
+
+    
 }

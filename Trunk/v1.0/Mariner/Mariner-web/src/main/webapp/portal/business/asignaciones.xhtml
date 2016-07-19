@@ -25,7 +25,7 @@
                 </div>
                 <h:form id="formAsignaciones">
                     <h:panelGroup rendered="#{asignacionesManagedBean.permiteAsignar}">
-                        <div align="center" style="width: 450px;display: inline-block; vertical-align: top">
+                        <div align="center" style="width: 500px;display: inline-block; vertical-align: top">
                             <p:dataTable id="tblAsignaciones" styleClass="tableMaterial" value="#{asignacionesManagedBean.radFasesEstadosDisponibles}" selection="#{asignacionesManagedBean.radFaseEstadosDisponiblesSelec}"
                                          var="disp" emptyMessage="No hay radicaciones en espera" rowKey="#{disp.rfeId}" paginator="true" rows="20" paginatorPosition="bottom" rowIndexVar="idx"
                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
@@ -33,19 +33,22 @@
                                 <f:facet name="header">
                                     Procesos Pendientes
                                 </f:facet>
-                                <p:column headerText="#" width="30" styleClass="colCenter">
+                                <p:column headerText="#" width="20" styleClass="colCenter">
                                     <h:outputText value="#{idx+1}" />
                                 </p:column>
-                                <p:column headerText="Radicación" width="70" filterBy="#{disp.radId.radNumero}" styleClass="colCenter">
+                                <p:column headerText="Radicación" width="60" filterBy="#{disp.radId.radNumero}" styleClass="colCenter">
                                     <h:outputLabel value="#{disp.radId.radNumero}"/>
                                 </p:column>
-                                <p:column headerText="Turno" width="50" filterBy="#{disp.radId.radTurno}" styleClass="colCenter">
+                                <p:column headerText="Turno" width="40" filterBy="#{disp.radId.radTurno}" styleClass="colCenter">
                                     <h:outputLabel value="#{disp.radId.radTurno}"/>
                                 </p:column>
                                 <p:column headerText="Escritura" width="65" filterBy="#{disp.radId.escId.escNumero}" styleClass="colCenter">
                                     <h:outputLabel value="#{disp.radId.escId.escNumero}"/>
                                 </p:column>
-                                <p:column headerText="Fecha" filterBy="#{disp.rfeFechaInicio}" styleClass="colCenter">
+                                <p:column headerText="Notaría" filterBy="#{disp.radId.notId.notNombre}" styleClass="colCenter">
+                                    <h:outputLabel value="#{disp.radId.notId.notNombre}"/>
+                                </p:column>
+                                <p:column headerText="Fecha" width="100" filterBy="#{disp.rfeFechaInicio}" styleClass="colCenter">
                                     <h:outputLabel value="#{disp.rfeFechaInicio}">
                                         <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
                                     </h:outputLabel>

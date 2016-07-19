@@ -25,7 +25,7 @@
                 </div>
                 <h:form id="formFiltroRadicaciones">
                     <div align="left" style="margin: 0px 5%;">
-                        <h:outputLabel value="Rechazados "/>
+                        <h:outputLabel value="Radicaciones "/>
                         <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" converter="MarRadicacionesConverter" value="#{cargueSolicitudesManagedBean.radicacionSel}" >
                             <f:selectItem itemLabel=" - " itemValue="" />
                             <f:selectItems value="#{cargueSolicitudesManagedBean.radicaciones}" var="radPend" itemLabel="#{(cargueSolicitudesManagedBean.esRechazo(radPend))} #{radPend.radTurno eq null ? '' : '- Turno'} #{radPend.radTurno}" itemValue="#{radPend}" />
@@ -40,9 +40,16 @@
                 <h:form id="formRadicacion">
                     <h:panelGroup rendered="#{cargueSolicitudesManagedBean.radicacionSel != null}" >
                         <div style="margin: 20px;padding: 20px 0px;display: inline-block;vertical-align: top; width: 50%;border: solid 1px #e0e0e0;">
-                            <h:panelGrid columns="2">
+                            <h:panelGrid columns="4">
                                 <h:outputLabel value="Radicación No" rendered="#{cargueSolicitudesManagedBean.radicacionSel.radNumero != null}" />
-                                <p:inputText value="#{cargueSolicitudesManagedBean.radicacionSel.radNumero}" readonly="true" rendered="#{cargueSolicitudesManagedBean.radicacionSel.radNumero != null}"/>
+                                <p:inputText value="#{cargueSolicitudesManagedBean.radicacionSel.radNumero}" readonly="true" rendered="#{cargueSolicitudesManagedBean.radicacionSel.radNumero != null}" style="width: 280px"/>
+
+                                <h:outputText value="(P)"/>
+                                <p:selectBooleanCheckbox value="#{cargueSolicitudesManagedBean.esPrioridad}" >
+                                    <p:ajax listener="#{cargueSolicitudesManagedBean.confirmarPrioridad}" />
+                                </p:selectBooleanCheckbox>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2">
 
                                 <h:outputLabel value="Notaria"/>
                                 <p:selectOneMenu value="#{cargueSolicitudesManagedBean.radicacionSel.notId}" converter="MarNotariasConverter" >
@@ -61,6 +68,7 @@
                                                 value="#{cargueSolicitudesManagedBean.radicacionSel.radTurno}" completeMethod="#{cargueSolicitudesManagedBean.completeTurnos}" />
                                 <h:outputText value="Observaciones"/>
                                 <p:inputTextarea value="#{cargueSolicitudesManagedBean.observacionesProceso}" style="width: 100%"/>
+                                
                             </h:panelGrid>
                             <div align="center" style="margin: 10px;">
                                 <p:commandButton value="Cargar Escritura" oncomplete="PF('fileUploadDialog').show()" rendered="#{(cargueSolicitudesManagedBean.radicacionSel.radId eq null || cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-P' || cargueSolicitudesManagedBean.radicacionFaseEstProcesadaSel.fesId.fesCodigo eq 'I-R')}"/>
@@ -214,6 +222,19 @@
                 <div style="margin: 20px;" align="center">
                     <p:commandButton value="Guardar" action="#{cargueSolicitudesManagedBean.guardarEscrituraAdicional()}" update=":formEscrituras"/>
                     <p:commandButton value="Cancelar" oncomplete="PF('dialogNuevaEscritura').hide()"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <!-- Modal para la confirmación de turno prioritario -->
+        <p:dialog id="modalConfTurno" widgetVar="dialogConfTurno" styleClass="modalTop" resizable="false" header="Confirmación de turno prioritario" modal="true" width="700" minHeight="350">
+            <h:form id="formConfAsig">
+                <div align="center" style="margin: 10px">
+                    <h:outputText value='¿Esta seguro de que desea marcar esta radicación como turno prioritario?, recuerde que el incorrecto uso de esta opción puede ocasionar problemas en su notaría'/>
+                </div>
+                <div align="center">
+                    <p:commandButton value="Si" action="#{cargueSolicitudesManagedBean.colocarPrioridad()}" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogConfTurno').hide()" update=":formRadicacion" />
+                    <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" oncomplete="PF('dialogConfTurno').hide();" update=":formRadicacion"/>
                 </div>
             </h:form>
         </p:dialog>
