@@ -12,7 +12,6 @@ import java.util.List;
 import javax.persistence.GeneratedValue;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -45,6 +44,24 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarReportes.findByAudFecha", query = "SELECT m FROM MarReportes m WHERE m.audFecha = :audFecha"),
     @NamedQuery(name = "MarReportes.findByAudUsuario", query = "SELECT m FROM MarReportes m WHERE m.audUsuario = :audUsuario")})
 public class MarReportes implements Serializable {
+
+    @OneToMany(mappedBy = "repId")
+    private List<MarRolesReportes> marRolesReportesList;
+
+    @JoinColumn(name = "ARC_ID_REPORTE", referencedColumnName = "ARC_ID")
+    @ManyToOne
+    private MarArchivos arcIdReporte;
+
+    @Size(max = 100)
+    @Column(name = "REP_JASPER_NOMBRE")
+    private String repJasperNombre;
+    @Size(max = 4000)
+    @Column(name = "REP_CONSULTA")
+    private String repConsulta;
+    @OneToMany(mappedBy = "repId")
+    private List<MarReportesParametros> marReportesParametrosList;
+    @OneToMany(mappedBy = "repId")
+    private List<MarReportesGraficos> marReportesGraficosList;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -66,25 +83,12 @@ public class MarReportes implements Serializable {
     @Size(max = 5)
     @Column(name = "REP_EXTENSION", length = 5)
     private String repExtension;
-    @Size(max = 100)
-    @Column(name = "REP_JASPER_NOMBRE", length = 100)
-    private String repJasperNombre;
-    @Size(max = 4000)
-    @Column(name = "REP_CONSULTA", length = 4000)
-    private String repConsulta;
     @Column(name = "AUD_FECHA")
     @Temporal(TemporalType.TIMESTAMP)
     private Date audFecha;
     @Size(max = 50)
     @Column(name = "AUD_USUARIO", length = 50)
     private String audUsuario;
-    @OneToMany(mappedBy = "repId")
-    private List<MarReportesGraficos> marReportesGraficosList;
-    @OneToMany(mappedBy = "repId")
-    private List<MarReportesParametros> marReportesParametrosList;
-    @JoinColumn(name = "ARC_ID_REPORTE", referencedColumnName = "ARC_ID")
-    @ManyToOne
-    private MarArchivos arcIdReporte;
     @JoinColumn(name = "RTI_ID", referencedColumnName = "RTI_ID")
     @ManyToOne
     private MarReportesTipos rtiId;
@@ -223,6 +227,14 @@ public class MarReportes implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarReportes[ repId=" + repId + " ]";
+    }
+
+    public List<MarRolesReportes> getMarRolesReportesList() {
+        return marRolesReportesList;
+    }
+
+    public void setMarRolesReportesList(List<MarRolesReportes> marRolesReportesList) {
+        this.marRolesReportesList = marRolesReportesList;
     }
     
 }

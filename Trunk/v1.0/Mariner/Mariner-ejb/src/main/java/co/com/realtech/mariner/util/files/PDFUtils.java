@@ -50,6 +50,16 @@ public class PDFUtils {
             myText.setFont(fuente);
             ct.setSimpleColumn(myText, 0, -1, document.right(), document.top(), -10, Element.ALIGN_RIGHT);
             ct.go();
+            
+            ColumnText ct2 = new ColumnText(cb);
+            Phrase myText2 = new Phrase(text);
+            Font fuente2 = new Font();
+            fuente2.setSize(6);
+            myText2.setFont(fuente);
+            ct2.setSimpleColumn(myText, 0, -1, document.right(), document.top(), 370, Element.ALIGN_RIGHT);
+            ct2.go();
+            
+            
             document.close();
         } catch (Exception e) {
             System.out.println("e = " + e);
