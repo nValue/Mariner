@@ -102,7 +102,7 @@
         </p:dialog>
         
         <!-- Modal que muestra todas las radicaciones pendientes de un usuario -->
-        <p:dialog id="modalRadicUsuario" widgetVar="dialogRadicUsuario" styleClass="modalTop" header="Radicaciones del usuario" modal="true" width="700" minHeight="600">
+        <p:dialog id="modalRadicUsuario" widgetVar="dialogRadicUsuario" styleClass="modalTop" header="Radicaciones del usuario" modal="true" width="1000" minHeight="600">
             <h:form id="formRadicUsuario">
                 <div class="descripcion" align="center">
                     <div class="descText">
@@ -115,21 +115,27 @@
                         <f:facet name="header">
                             Procesos pendientes del usuario
                         </f:facet>
-                        <p:column headerText="Radicación" width="100" class="colCenter">
+                        <p:column headerText="Radicación" width="90" class="colCenter">
                             <h:outputLabel value="#{asigUsu.radId.radNumero}"/>
                         </p:column>
-                        <p:column headerText="Turno" width="100" class="colCenter">
+                        <p:column headerText="Estado" class="colCenter" >
+                            <h:outputLabel value="#{asigUsu.fesId.fesNombre}" />
+                        </p:column>
+                        <p:column headerText="Turno" width="40" class="colCenter">
                             <h:outputLabel value="#{asigUsu.radId.radTurno}"/>
                         </p:column>
-                        <p:column headerText="Escritura" class="colCenter" >
+                        <p:column headerText="Notaría" class="colCenter">
+                            <h:outputLabel value="#{asigUsu.radId.notId.notNombre}"/>
+                        </p:column>
+                        <p:column headerText="Escritura" width="100" class="colCenter" >
                             <h:outputLabel value="#{asigUsu.radId.escId.escNumero}" />
                         </p:column>
-                        <p:column headerText="Fecha" class="colCenter">
+                        <p:column headerText="Fecha" width="100" class="colCenter">
                             <h:outputLabel value="#{asigUsu.rfeFechaInicio}" >
                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
                             </h:outputLabel>
                         </p:column>
-                        <p:column headerText="Tiempo(mins)" width="110" class="colCenter">
+                        <p:column headerText="Tiempo(mins)" width="100" class="colCenter">
                             <h:outputLabel value="#{asignacionesManagedBean.obtenerTiempoMins(asigUsu)}"/>
                         </p:column>
                     </p:dataTable>

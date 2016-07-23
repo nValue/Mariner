@@ -72,7 +72,7 @@ public class AsignacionesManagedBean extends GenericManagedBean{
             usuariosPendientes = "'I-R'";
         } else if (rol.equals("LIQ")) {
             codigosPendientes = "'I-P'";
-            usuariosPendientes = "'G-P'";
+            usuariosPendientes = "'G-P','R-R'";
             estadoAsignacion = "G-P";
         } else if (rol.equals("APR")) {
             codigosPendientes = "'G-A'";

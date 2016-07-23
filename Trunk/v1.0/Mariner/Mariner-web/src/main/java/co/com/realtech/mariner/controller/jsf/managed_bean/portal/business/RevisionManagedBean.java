@@ -251,6 +251,7 @@ public class RevisionManagedBean extends GenericManagedBean{
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazo incorrecto", "No se pudo anular la liquidación en SAP, causado por : " + det.getMensaje(), true, false);
                 return;
             }
+            
             //Se obtiene el usuario que hizo el proceso para enviarle de vuelta el proceso, el que la sube a SAP debe ser.
             List<MarRadicacionesFasesEstados> rfes = radicFasesEstadosDAOBean.obtenerRadicFaseEstDeRadyFase(radicacionPendienteSel, "G-P");
             MarUsuarios usuarioAsignado = rfes.get(rfes.size()-1).getUsuId();

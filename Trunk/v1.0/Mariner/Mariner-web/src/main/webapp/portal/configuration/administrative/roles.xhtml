@@ -66,34 +66,8 @@
                     </p:tab>
                     <p:tab title="Roles - Reportes">
                         <h:form id="formRolesReportes">
-                            <div>   
-                                <h:panelGrid columns="2">
-                                    <h:outputLabel value="Rol"/>
-                                    <p:selectOneMenu converter="MarRolesConverter" value="#{rolesManagedBean.rol}" style="width: 222px">
-                                        <p:ajax update="panelInformacionRol" listener="#{rolesManagedBean.filtrarRolesModulos()}" />
-                                        <f:selectItems value="#{rolesManagedBean.roles}" var="rol" itemLabel="#{rol.rolNombre}" itemValue="#{rol}" />
-                                    </p:selectOneMenu>
-                                </h:panelGrid>
-                                <hr/>
-                                <p:dataTable id="tablaReportes" var="reps" value="#{rolesReportesManagedBean.rolesReportes}" emptyMessage="No hay reportes asociados a ese rol" rowIndexVar="idxRep" rows="12" paginatorPosition="bottom" paginator="true">
-                                    <p:column headerText="#" width="40" styleClass="colCenter">
-                                        <h:outputText value="#{idxRep+1}" />
-                                    </p:column>
-                                    <p:column headerText="Reporte">
-                                        <h:outputText value="#{reps.repId.repNombre}" />
-                                    </p:column>
-                                    <p:column headerText="X" width="20">
-                                        <p:commandLink update="tablaReportes" title="Presione para eliminar el vinculo del reporte con el rol" action="#{rolesManagedBean.eliminarRolModulo()}">                                    
-                                            <f:setPropertyActionListener target="#{rolesManagedBean.rolModulo}" value="#{rolmodulo}" />
-                                            <img src="#{resource['/images/icons/delete-icon.png']}"/>
-                                            <p:confirm header="Confirmacion" message="Esta seguro de eliminar el vinculo con el reporte seleccionado?" icon="ui-icon-alert" />
-                                        </p:commandLink>
-                                    </p:column>
-                                </p:dataTable>
-                                <div align="right" style="padding-top: 4px;">
-                                    <p:commandButton value="Vincular Reporte" oncomplete="PF('dialogReportes').show();" update=":modalReportes"/>
-                                </div>
-                            </div>
+                            
+                            
                         </h:form>
                     </p:tab>
                 </p:tabView>
