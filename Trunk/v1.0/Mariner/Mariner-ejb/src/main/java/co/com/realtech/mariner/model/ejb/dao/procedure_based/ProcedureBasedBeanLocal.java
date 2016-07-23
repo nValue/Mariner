@@ -18,4 +18,17 @@ public interface ProcedureBasedBeanLocal {
     
     public void vincularArchivoSAP(BigDecimal radId) throws Exception;
     
+    /**
+     * Retorna el XML grafico de FusionChats para las estadisticas de la
+     * plataforma.
+     *
+     * @param id
+     * @param fechaDesde
+     * @param fechaHasta
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    public String cargarXMLGraficoEstadistica(String id, String fechaDesde, String fechaHasta, String params) throws Exception;
+    
 }

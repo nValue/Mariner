@@ -46,4 +46,32 @@ public class ProcedureBasedBean extends GenericDAOBean implements ProcedureBased
             throw e;
         }
     }
+    
+    /**
+     * Retorna el XML grafico de FusionChats para las estadisticas de la
+     * plataforma.
+     *
+     * @param id
+     * @param fechaDesde
+     * @param fechaHasta
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public String cargarXMLGraficoEstadistica(String id, String fechaDesde, String fechaHasta, String params) throws Exception {
+        String valor = "", valorTmp;
+        int tamBloque = 3700;
+
+        int contador = 1;
+        while (true) {
+            valorTmp = (String) callGenericFunction("PKG_VUR_GRAPHICS.FL_GENERAR_XML_ESTADISTICAS", id, fechaDesde, fechaHasta, contador, params);
+            valor = valor + valorTmp;
+            if (valorTmp.length() < tamBloque) {
+                break;
+            }
+            contador++;
+        }
+        return valor;
+    }
 }
