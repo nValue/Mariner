@@ -57,11 +57,11 @@
                                     <div align="right">
                                         <h:panelGrid columns="4">
                                             <h:outputLabel value="Fecha Inicial"/>
-                                            <p:calendar styleClass="calendarVUR" value="#{mesaControlManagedBean.fechaInicial}" showOn="button" locale="es" pattern="dd/MM/yyyy" >
+                                            <p:calendar styleClass="calendarVUR" value="#{mesaControlManagedBean.fechaInicial}" showOn="button" locale="es" pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}">
                                                 <p:ajax event="dateSelect" listener="#{mesaControlManagedBean.filtrarMesaControl()}" update="panelMesaControl" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                                             </p:calendar>
                                             <h:outputLabel value="Fecha Final"/>
-                                            <p:calendar styleClass="calendarVUR" value="#{mesaControlManagedBean.fechaFinal}" showOn="button" locale="es" pattern="dd/MM/yyyy">
+                                            <p:calendar styleClass="calendarVUR" value="#{mesaControlManagedBean.fechaFinal}" showOn="button" locale="es" pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}">
                                                 <p:ajax event="dateSelect" listener="#{mesaControlManagedBean.filtrarMesaControl()}" update="panelMesaControl" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                                             </p:calendar>
                                         </h:panelGrid>
