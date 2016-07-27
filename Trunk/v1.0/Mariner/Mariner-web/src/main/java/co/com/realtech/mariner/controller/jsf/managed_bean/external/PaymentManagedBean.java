@@ -210,19 +210,17 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
      */
     public void buscarRadicacion() {
         try {
-            System.out.println("Buscando " + getCodigoBusqueda());
-            System.out.println("Tipo " + getTipoBusqueda());
             if (getTipoBusqueda().equals("L")) {
                 setCodigoBusqueda(BusinessStringUtils.convertNumeroLiquidacion(getCodigoBusqueda()));
                 List<MarRadicaciones> radiaciones = (List<MarRadicaciones>) genericDAOBean.findAllByColumn(MarRadicaciones.class, "radLiquidacion", getCodigoBusqueda(), true, "radId desc");
-                System.out.println("Evento....." + radiaciones);
+
                 if (!radiaciones.isEmpty()) {
                     setRadicacion(radiaciones.get(0));
                 }
             } else {
                 //Se reemplaza la consulta exacta con un LIKE
-                List<MarRadicaciones> radiaciones = (List<MarRadicaciones>) genericDAOBean.findAllByColumnLike(MarRadicaciones.class, "radNumero",true,"radId desc", getCodigoBusqueda());
-                //List<MarRadicaciones> radiaciones = (List<MarRadicaciones>) genericDAOBean.findAllByColumn(MarRadicaciones.class, "radNumero", getCodigoBusqueda(), true, "radId desc");
+                List<MarRadicaciones> radiaciones = (List<MarRadicaciones>) genericDAOBean.findAllByColumnLike(MarRadicaciones.class, "radNumero", true, "radId desc", getCodigoBusqueda());
+
                 if (!radiaciones.isEmpty()) {
                     setRadicacion(radiaciones.get(0));
                 }
@@ -231,8 +229,32 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
             if (getRadicacion() != null) {
                 MarRadicacionesFasesEstados estado = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(getRadicacion());
                 if (!estado.getFesId().getFesCodigo().equals("R-A")) {
-                    setRadicacion(null);
-                    PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", "Lo sentimos pero la radicacion seleccionada, no se encuentra en proceso de pago.", true, false);
+                    if (getRadicacion().getMarTransacciones().getTraCus() == null) {
+                        setRadicacion(null);
+                        PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", "Lo sentimos pero la radicacion seleccionada, no se encuentra en proceso de pago.", true, false);
+                    } else {
+                        // Verificamos la transaccion en la pasarela de pagos
+                        String codigoEmpresa = ConstantesUtils.cargarConstante("WS-PASARELA-CODIGO-EMPRESA");
+                        String cusPruebas = ConstantesUtils.cargarConstante("WS-PASARELA-CUS-PRUEBAS");
+                        String pasarelaModoPruebas = ConstantesUtils.cargarConstante("WS-PASARELA-MODO-PRUEBAS");
+                        Transaccion transaccionPasarela = pseWSConsumerBean.consultarTransaccion(pasarelaModoPruebas.equals("S") ? cusPruebas : getRadicacion().getMarTransacciones().getTraCus(), codigoEmpresa);
+                        
+                        try {
+                            if(transaccionPasarela.getEstado()!=null){
+                                String mensaje="En este momento su liquidacion </b>"+getCodigoBusqueda()+"</b> ha finalizado su proceso de pago y se encuentra en estado "+transaccionPasarela.getEstado()+" en su entidad financiera, si desea mayor informacion"
+                                        + " sobre el estado de su operacion puede comunicarse a nuestra linea de atencion al cliente 57 (1) 3004231 o enviar un correo electronico a soporte@realtechltda.com y preguntar por estado de la transaccion CUS "+transaccionPasarela.getCus();
+                                PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", mensaje, true, false);
+                                setRadicacion(null);
+                            }
+                            else{
+                                setRadicacion(null);
+                                PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", "Lo sentimos pero la radicacion seleccionada, no se encuentra en proceso de pago.", true, false);
+                            }
+                        } catch (Exception e) {
+                            setRadicacion(null);
+                            PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", "Lo sentimos pero la radicacion seleccionada, no se encuentra en proceso de pago.", true, false);
+                        }                         
+                    }
                 }
             } else {
                 PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", "No se han encontrado radicaciones vinculadas al filtro seleccionado.", true, false);
@@ -264,10 +286,10 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                     PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos esta radicacion ya tiene un proceso de pago en el sistema, si tiene dudas por favor contacte al administrador del sistema.", true, false);
                 }
             } else {
-                if(radicacion.getRaaId() != null){
+                if (radicacion.getRaaId() != null) {
                     BigDecimal BDsalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_verificar_impresion_masiva", radicacion.getRaaId().getRaaId());
                     Integer salida = BDsalida.intValue();
-                    if(salida == 0){
+                    if (salida == 0) {
                         PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Esta radicación hace parte de un grupo, debe esperar que todas se encuentren en estado de pago para poder descargarlas.", true, false);
                         return;
                     }
