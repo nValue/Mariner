@@ -137,9 +137,9 @@
 
                                 <p:dataTable value="#{mesaControlManagedBean.radicacionesFasesEstados}" emptyMessage="No hay fases-estados asociados al proceso actual" 
                                              disabledSelection="true" var="rfes">
-                                    <p:column headerText="Fecha Inicio" width="120">
+                                    <p:column headerText="Fecha Inicio" width="146">
                                         <h:outputText value="#{rfes.rfeFechaInicio}" styleClass="colCenter">
-                                            <f:convertDateTime pattern="dd/MM/yyyy hh:mm" timeZone="#{utilManagedBean.timeZone}"/>
+                                            <f:convertDateTime pattern="dd/MM/yyyy hh:mm a" timeZone="#{utilManagedBean.timeZone}"/>
                                         </h:outputText>
                                     </p:column>
                                     <p:column headerText="Fase">
