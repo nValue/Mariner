@@ -238,22 +238,37 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                         String cusPruebas = ConstantesUtils.cargarConstante("WS-PASARELA-CUS-PRUEBAS");
                         String pasarelaModoPruebas = ConstantesUtils.cargarConstante("WS-PASARELA-MODO-PRUEBAS");
                         Transaccion transaccionPasarela = pseWSConsumerBean.consultarTransaccion(pasarelaModoPruebas.equals("S") ? cusPruebas : getRadicacion().getMarTransacciones().getTraCus(), codigoEmpresa);
-                        
+
                         try {
-                            if(transaccionPasarela.getEstado()!=null){
-                                String mensaje="En este momento su liquidacion </b>"+getCodigoBusqueda()+"</b> ha finalizado su proceso de pago y se encuentra en estado "+transaccionPasarela.getEstado()+" en su entidad financiera, si desea mayor informacion"
-                                        + " sobre el estado de su operacion puede comunicarse a nuestra linea de atencion al cliente 57 (1) 3004231 o enviar un correo electronico a soporte@realtechltda.com y preguntar por estado de la transaccion CUS "+transaccionPasarela.getCus();
+                            if (transaccionPasarela.getEstado() != null) {
+                                String codigoEstado = "";
+                                switch (transaccionPasarela.getEstado()) {
+                                    case "OK":
+                                        codigoEstado = "APROBADO";
+                                        break;
+                                    case "PENDING":
+                                        codigoEstado = "PENDIENTE";
+                                        break;
+                                    case "FAILED":
+                                        codigoEstado = "FALLIDA";
+                                        break;
+                                    default:
+                                        codigoEstado = "NO AUTORIZADA";
+                                        break;
+                                }
+
+                                String mensaje = "En este momento su Liquidacion </b>" + getCodigoBusqueda() + "</b> ha finalizado su proceso de pago y cuya transaccion se encuentra en estado <b>" + codigoEstado + "</b> en su entidad financiera, si desea mayor informacion"
+                                        + " sobre el estado de su operacion puede comunicarse a nuestra linea de atencion al cliente 57 (1) 3004231 o enviar un correo electronico a soporte@realtechltda.com y preguntar por estado de la transaccion:<b>" + transaccionPasarela.getCus()+"</b>";
                                 PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", mensaje, true, false);
                                 setRadicacion(null);
-                            }
-                            else{
+                            } else {
                                 setRadicacion(null);
                                 PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", "Lo sentimos pero la radicacion seleccionada, no se encuentra en proceso de pago.", true, false);
                             }
                         } catch (Exception e) {
                             setRadicacion(null);
                             PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", "Lo sentimos pero la radicacion seleccionada, no se encuentra en proceso de pago.", true, false);
-                        }                         
+                        }
                     }
                 }
             } else {
