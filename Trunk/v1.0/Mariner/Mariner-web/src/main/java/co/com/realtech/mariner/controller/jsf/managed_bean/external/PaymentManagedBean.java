@@ -120,7 +120,7 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
             String cusPruebas = ConstantesUtils.cargarConstante("WS-PASARELA-CUS-PRUEBAS");
             String pasarelaModoPruebas = ConstantesUtils.cargarConstante("WS-PASARELA-MODO-PRUEBAS");
             Transaccion transaccionPasarela = pseWSConsumerBean.consultarTransaccion(pasarelaModoPruebas.equals("S") ? cusPruebas : cus, codigoEmpresa);
-
+            
             System.out.println("En pasarela " + transaccionPasarela.getEstado());
             // cargamos la informacion de la transaccion.
             String referencia = BusinessStringUtils.convertNumeroLiquidacion(transaccionPasarela.getReferencia());
@@ -166,7 +166,9 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                                     String fechaRecaudo = sdf.format(transaccionBD.getTraFechaFinalizacion());
                                     sdf = new SimpleDateFormat("HHmmss");
                                     String horaRecaudo = sdf.format(transaccionBD.getTraFechaFinalizacion());
-                                    DetallePago detallePagoSap = pagos.aplicarPagoSAP(transaccionBD.getRadId().getRadLiquidacion(), fechaRecaudo, horaRecaudo, new BigDecimal(transaccionPasarela.getValor()));
+                                    // Nuevo parametro para enviar la fecha real del ingreso del dinero.
+                                    String fechaValor = fechaRecaudo;
+                                    DetallePago detallePagoSap = pagos.aplicarPagoSAP(transaccionBD.getRadId().getRadLiquidacion(), fechaRecaudo, fechaValor, horaRecaudo, new BigDecimal(transaccionPasarela.getValor()));
                                     transaccionBD.setTraPagoSapEstado(detallePagoSap.getEstadoSalida());
                                     transaccionBD.setTraPagoSapMensaje(detallePagoSap.getMensajeSalida());
                                 } catch (Exception e) {
@@ -244,7 +246,7 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                                 String codigoEstado = "";
                                 switch (transaccionPasarela.getEstado()) {
                                     case "OK":
-                                        codigoEstado = "APROBADO";
+                                        codigoEstado = "APROBADA";
                                         break;
                                     case "PENDING":
                                         codigoEstado = "PENDIENTE";
@@ -257,8 +259,8 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                                         break;
                                 }
 
-                                String mensaje = "En este momento su Liquidacion </b>" + getCodigoBusqueda() + "</b> ha finalizado su proceso de pago y cuya transaccion se encuentra en estado <b>" + codigoEstado + "</b> en su entidad financiera, si desea mayor informacion"
-                                        + " sobre el estado de su operacion puede comunicarse a nuestra linea de atencion al cliente 57 (1) 3004231 o enviar un correo electronico a soporte@realtechltda.com y preguntar por estado de la transaccion:<b>" + transaccionPasarela.getCus()+"</b>";
+                                String mensaje = "En este momento su Liquidacion </b>" + getCodigoBusqueda() + "</b> ha finalizado su proceso de pago y cuya transaccion se encuentra <b>" + codigoEstado + "</b> en su entidad financiera, si desea mayor informacion"
+                                        + " sobre el estado de su operacion puede comunicarse a nuestra linea de atencion al cliente 57 (1) 3004231 o enviar un correo electronico a soporte@realtechltda.com y preguntar por estado de la transaccion:<b>" + transaccionPasarela.getCus() + "</b>";
                                 PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", mensaje, true, false);
                                 setRadicacion(null);
                             } else {

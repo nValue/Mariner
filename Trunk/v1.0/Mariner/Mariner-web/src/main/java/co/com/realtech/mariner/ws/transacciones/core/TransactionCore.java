@@ -97,7 +97,10 @@ public class TransactionCore implements Serializable {
                                         String fechaRecaudo = sdf.format(transaccionBD.getTraFechaFinalizacion());
                                         sdf = new SimpleDateFormat("HHmmss");
                                         String horaRecaudo = sdf.format(transaccionBD.getTraFechaFinalizacion());
-                                        DetallePago detallePagoSap = pagos.aplicarPagoSAP(transaccionBD.getRadId().getRadLiquidacion(), fechaRecaudo, horaRecaudo, new BigDecimal(valorPagado.toString()));
+                                        // Nuevo parametro para enviar la fecha real del ingreso del dinero.
+                                        String fechaValor=fechaRecaudo;
+                                        
+                                        DetallePago detallePagoSap = pagos.aplicarPagoSAP(transaccionBD.getRadId().getRadLiquidacion(), fechaRecaudo,fechaValor, horaRecaudo, new BigDecimal(valorPagado.toString()));
                                         transaccionBD.setTraPagoSapEstado(detallePagoSap.getEstadoSalida());
                                         transaccionBD.setTraPagoSapMensaje(detallePagoSap.getMensajeSalida());
                                     } catch (Exception e) {
