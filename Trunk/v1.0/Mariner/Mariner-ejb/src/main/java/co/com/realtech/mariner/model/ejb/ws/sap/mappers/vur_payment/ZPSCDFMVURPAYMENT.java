@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="I_CUENTA_BCO" type="{urn:sap-com:document:sap:rfc:functions}char17"/>
  *         &lt;element name="I_FECHA_RECAUDO" type="{urn:sap-com:document:sap:rfc:functions}char8"/>
+ *         &lt;element name="I_FECHA_VALOR" type="{urn:sap-com:document:sap:rfc:functions}char8"/>
  *         &lt;element name="I_HORA_RECAUDO" type="{urn:sap-com:document:sap:rfc:functions}char6"/>
  *         &lt;element name="I_NROLIQ" type="{urn:sap-com:document:sap:rfc:functions}char16"/>
  *         &lt;element name="I_VALOR" type="{urn:sap-com:document:sap:rfc:functions}char14"/>
@@ -35,6 +36,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "icuentabco",
     "ifecharecaudo",
+    "ifechavalor",
     "ihorarecaudo",
     "inroliq",
     "ivalor"
@@ -46,6 +48,8 @@ public class ZPSCDFMVURPAYMENT {
     protected String icuentabco;
     @XmlElement(name = "I_FECHA_RECAUDO", required = true)
     protected String ifecharecaudo;
+    @XmlElement(name = "I_FECHA_VALOR", required = true)
+    protected String ifechavalor;
     @XmlElement(name = "I_HORA_RECAUDO", required = true)
     protected String ihorarecaudo;
     @XmlElement(name = "I_NROLIQ", required = true)
@@ -99,6 +103,30 @@ public class ZPSCDFMVURPAYMENT {
      */
     public void setIFECHARECAUDO(String value) {
         this.ifecharecaudo = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad ifechavalor.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getIFECHAVALOR() {
+        return ifechavalor;
+    }
+
+    /**
+     * Define el valor de la propiedad ifechavalor.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setIFECHAVALOR(String value) {
+        this.ifechavalor = value;
     }
 
     /**

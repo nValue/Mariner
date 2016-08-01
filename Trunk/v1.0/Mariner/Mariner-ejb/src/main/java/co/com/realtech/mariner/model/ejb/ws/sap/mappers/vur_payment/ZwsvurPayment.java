@@ -23,6 +23,7 @@ public interface ZwsvurPayment {
      * 
      * @param iNROLIQ
      * @param eRETURN
+     * @param iFECHAVALOR
      * @param iVALOR
      * @param iHORARECAUDO
      * @param iFECHARECAUDO
@@ -37,6 +38,8 @@ public interface ZwsvurPayment {
         String iCUENTABCO,
         @WebParam(name = "I_FECHA_RECAUDO", targetNamespace = "")
         String iFECHARECAUDO,
+        @WebParam(name = "I_FECHA_VALOR", targetNamespace = "")
+        String iFECHAVALOR,
         @WebParam(name = "I_HORA_RECAUDO", targetNamespace = "")
         String iHORARECAUDO,
         @WebParam(name = "I_NROLIQ", targetNamespace = "")

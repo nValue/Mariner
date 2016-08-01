@@ -8,4 +8,5 @@
     <system systemId="http://190.144.140.19:8080/wstransaccionv2/WStransaccion?xsd=1" uri="wsdl/190.144.140.19_8080/wstransaccionv2/WStransaccion.xsd_1.xsd"/>
     <system systemId="http://lavoragine.elvalle.com:8000/sap/bc/srt/wsdl/bndg_20A5415773913812E1000000C0A8C847/wsdl11/allinone/standard/document?sap-client=710" uri="wsdl/lavoragine.elvalle.com_8000/sap/bc/srt/wsdl/bndg_20A5415773913812E1000000C0A8C847/wsdl11/allinone/standard/document.sap-client_710.wsdl"/>
     <system systemId="http://lavoragine.elvalle.com:8000/sap/bc/srt/wsdl/bndg_8DA5415773913812E1000000C0A8C847/wsdl11/allinone/standard/document?sap-client=710" uri="wsdl/lavoragine.elvalle.com_8000/sap/bc/srt/wsdl/bndg_8DA5415773913812E1000000C0A8C847/wsdl11/allinone/standard/document.sap-client_710.wsdl"/>
+    <system systemId="http://lavoragine.elvalle.com:8000/sap/bc/srt/wsdl/bndg_7EBD99575D077D7FE1000000C0A8C847/wsdl11/allinone/ws_policy/document?sap-client=710" uri="wsdl/lavoragine.elvalle.com_8000/sap/bc/srt/wsdl/bndg_7EBD99575D077D7FE1000000C0A8C847/wsdl11/allinone/ws_policy/document.sap-client_710.wsdl"/>
 </catalog>

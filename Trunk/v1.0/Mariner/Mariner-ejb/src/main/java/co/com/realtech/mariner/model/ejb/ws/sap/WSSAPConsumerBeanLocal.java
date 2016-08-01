@@ -18,11 +18,11 @@ import javax.ejb.Local;
 public interface WSSAPConsumerBeanLocal {
 
     public DetalleLiquidacion getDetail(String liquidacion) throws Exception;
-    
-    public DetallePago aplicarPagoSAP(String codigoLiquidacion, String fechaRecaudo, String horaRecaudo, BigDecimal valor) throws Exception;
-    
-    public List<DetalleLiquidacion> getListLiquidaciones(String fecha) throws Exception ;
-    
-    public DetalleCambioEstado actualizarEstadoLiquidacion(String liquidacion, String estado) throws Exception ;
-    
+
+    public DetallePago aplicarPagoSAP(String codigoLiquidacion, String fechaRecaudo, String fechaValor, String horaRecaudo, BigDecimal valor) throws Exception;
+
+    public List<DetalleLiquidacion> getListLiquidaciones(String fecha) throws Exception;
+
+    public DetalleCambioEstado actualizarEstadoLiquidacion(String liquidacion, String estado) throws Exception;
+
 }

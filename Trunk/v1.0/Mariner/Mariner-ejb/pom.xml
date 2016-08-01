@@ -168,6 +168,43 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.jvnet.jax-ws-commons</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <!--<goal>wsimport</goal>-->
+                        </goals>
+                        <configuration>
+                            <wsdlFiles>
+                                <wsdlFile>lavoragine.elvalle.com_8000/sap/bc/srt/wsdl/bndg_7EBD99575D077D7FE1000000C0A8C847/wsdl11/allinone/ws_policy/document.sap-client_710.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <packageName>co.com.realtech.mariner.model.ejb.ws.sap.mappers.vur_payment</packageName>
+                            <wsdlLocation>http://lavoragine.elvalle.com:8000/sap/bc/srt/wsdl/bndg_7EBD99575D077D7FE1000000C0A8C847/wsdl11/allinone/ws_policy/document?sap-client=710</wsdlLocation>
+                            <staleFile>${project.build.directory}/jaxws/stale/document.sap-client_710.stale</staleFile>
+                        </configuration>
+                        <id>wsimport-generate-document.sap-client_710</id>
+                        <phase>generate-sources</phase>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>javax.xml</groupId>
+                        <artifactId>webservices-api</artifactId>
+                        <version>2.0</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <sourceDestDir>${project.build.directory}/generated-sources/jaxws-wsimport</sourceDestDir>
+                    <xnocompile>true</xnocompile>
+                    <verbose>true</verbose>
+                    <extension>true</extension>
+                    <catalog>${basedir}/src/jax-ws-catalog.xml</catalog>
+                    <target>2.0</target>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <repositories>

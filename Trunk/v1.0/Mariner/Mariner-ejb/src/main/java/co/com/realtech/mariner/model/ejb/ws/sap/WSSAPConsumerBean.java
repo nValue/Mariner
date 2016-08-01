@@ -48,13 +48,14 @@ public class WSSAPConsumerBean implements WSSAPConsumerBeanLocal {
      *
      * @param codigoLiquidacion
      * @param fechaRecaudo
+     * @param fechaValor
      * @param horaRecaudo
      * @param valor
      * @return
      * @throws Exception
      */
     @Override
-    public DetallePago aplicarPagoSAP(String codigoLiquidacion, String fechaRecaudo, String horaRecaudo, BigDecimal valor) throws Exception {
+    public DetallePago aplicarPagoSAP(String codigoLiquidacion, String fechaRecaudo, String fechaValor, String horaRecaudo, BigDecimal valor) throws Exception {
         DetallePago detallePago = new DetallePago();
         try {
             detallePago = new DetallePago();
@@ -62,7 +63,7 @@ public class WSSAPConsumerBean implements WSSAPConsumerBeanLocal {
             Holder<String> eMESSAGE = new Holder<>();
             Holder<Integer> eRETURN = new Holder<>();
             SAPWSVURPaymentImplementation wsPayment = SAPWSVURPaymentImplementation.create();
-            wsPayment.vurPayment(codigoBanco, fechaRecaudo, horaRecaudo, codigoLiquidacion, valor.toString(), eMESSAGE, eRETURN);
+            wsPayment.vurPayment(codigoBanco, fechaRecaudo, fechaValor, horaRecaudo, codigoLiquidacion, valor.toString(), eMESSAGE, eRETURN);
 
             // Obtencion y mapeo de resultados.
             detallePago.setNumeroLiquidacion(codigoLiquidacion);

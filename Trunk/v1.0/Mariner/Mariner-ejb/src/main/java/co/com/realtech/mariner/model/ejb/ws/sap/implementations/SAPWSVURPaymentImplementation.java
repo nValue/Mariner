@@ -61,6 +61,7 @@ public class SAPWSVURPaymentImplementation implements Serializable {
      *
      * @param iCUENTABCO
      * @param iFECHARECAUDO
+     * @param I_FECHA_VALOR
      * @param iHORARECAUDO
      * @param iNROLIQ
      * @param iVALOR
@@ -68,9 +69,9 @@ public class SAPWSVURPaymentImplementation implements Serializable {
      * @param eRETURN
      * @throws Exception
      */
-    public void vurPayment(String iCUENTABCO, String iFECHARECAUDO, String iHORARECAUDO, String iNROLIQ, String iVALOR, Holder<String> eMESSAGE, Holder<Integer> eRETURN) throws Exception {
+    public void vurPayment(String iCUENTABCO, String iFECHARECAUDO,String I_FECHA_VALOR, String iHORARECAUDO, String iNROLIQ, String iVALOR, Holder<String> eMESSAGE, Holder<Integer> eRETURN) throws Exception {
         ZwsvurPayment portService = loadServiceDefinition();
-        portService.zpscdfmVURPAYMENT(iCUENTABCO, iFECHARECAUDO, iHORARECAUDO, iNROLIQ, iVALOR, eMESSAGE, eRETURN);
+        portService.zpscdfmVURPAYMENT(iCUENTABCO, iFECHARECAUDO,I_FECHA_VALOR, iHORARECAUDO, iNROLIQ, iVALOR, eMESSAGE, eRETURN);
     }
 
 }

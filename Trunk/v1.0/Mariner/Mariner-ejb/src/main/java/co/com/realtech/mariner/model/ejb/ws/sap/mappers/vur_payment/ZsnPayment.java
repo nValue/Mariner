@@ -16,7 +16,7 @@ import javax.xml.ws.WebServiceException;
  * Generated source version: 2.0
  * 
  */
-@WebServiceClient(name = "zsn_payment", targetNamespace = "urn:sap-com:document:sap:rfc:functions", wsdlLocation = "http://lavoragine.elvalle.com:8000/sap/bc/srt/wsdl/bndg_205A415773913812E1000000C0A8C847/wsdl11/allinone/standard/document?sap-client=710")
+@WebServiceClient(name = "zsn_payment", targetNamespace = "urn:sap-com:document:sap:rfc:functions", wsdlLocation = "http://lavoragine.elvalle.com:8000/sap/bc/srt/wsdl/bndg_7EBD99575D077D7FE1000000C0A8C847/wsdl11/allinone/ws_policy/document?sap-client=710")
 public class ZsnPayment
     extends Service
 {
@@ -29,7 +29,7 @@ public class ZsnPayment
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://lavoragine.elvalle.com:8000/sap/bc/srt/wsdl/bndg_205A415773913812E1000000C0A8C847/wsdl11/allinone/standard/document?sap-client=710");
+            url = new URL("http://lavoragine.elvalle.com:8000/sap/bc/srt/wsdl/bndg_7EBD99575D077D7FE1000000C0A8C847/wsdl11/allinone/ws_policy/document?sap-client=710");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

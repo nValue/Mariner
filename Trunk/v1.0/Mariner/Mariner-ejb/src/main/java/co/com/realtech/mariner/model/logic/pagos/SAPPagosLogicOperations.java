@@ -42,8 +42,8 @@ public class SAPPagosLogicOperations implements Serializable {
      * @return
      * @throws Exception
      */
-    public DetallePago aplicarPagoSAP(String codigoLiquidacion, String fechaRecaudo, String horaRecaudo, BigDecimal valor) throws Exception {
-        return wSSAPConsumerBean.aplicarPagoSAP(codigoLiquidacion, fechaRecaudo, horaRecaudo, valor);
+    public DetallePago aplicarPagoSAP(String codigoLiquidacion, String fechaRecaudo, String fechaValor, String horaRecaudo, BigDecimal valor) throws Exception {
+        return wSSAPConsumerBean.aplicarPagoSAP(codigoLiquidacion, fechaRecaudo, fechaValor, horaRecaudo, valor);
     }
 
 }
