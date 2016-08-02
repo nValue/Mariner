@@ -33,7 +33,7 @@ public interface RadicacionesDAOBeanLocal {
     
     public List<MarRadicaciones> obtenerRadicacionesFinalizacionPorFechasYParametro(String tipo, String campoBusqueda, Date fechaInicial, Date fechaFinal, MarUsuarios usuario) throws MarinerPersistanceException;
     
-    public List<MarRadicaciones> obtenerRadsAtendidasYFaseFinal(MarUsuarios usuario, String fasesAtendidas, String fasesFinales) throws MarinerPersistanceException;
+    public List<MarRadicaciones> obtenerRadsAtendidasNotYFaseFinal(MarUsuarios usuario, String fasesAtendidas, String fasesFinales) throws MarinerPersistanceException;
     
     
     /**

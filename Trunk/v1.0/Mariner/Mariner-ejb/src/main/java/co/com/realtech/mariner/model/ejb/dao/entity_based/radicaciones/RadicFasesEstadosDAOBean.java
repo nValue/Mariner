@@ -327,5 +327,39 @@ public class RadicFasesEstadosDAOBean extends GenericDAOBean implements RadicFas
         return radicacionesLibres;
     }
     
+    /**
+     * Obtiene la radicación siempre y cuando tenga un recibo de pago
+     * @param radNumero
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    @Override
+    public MarRadicacionesFasesEstados obtenerRadicConRecibo(String radNumero) throws MarinerPersistanceException{
+        MarRadicacionesFasesEstados radicacion = null;
+        try {
+            String sql = "SELECT DISTINCT rfe.* \n"
+                    + "FROM mar_radicaciones_fases_estados rfe \n"
+                    + "INNER JOIN mar_radicaciones r ON rfe.rad_id = r.rad_id \n"
+                    + "INNER JOIN mar_fases_estados fe ON rfe.fes_id = fe.fes_id\n"
+                    + "WHERE 1 = 1 \n"
+                    + " AND r.rad_numero = 'NUMERO' \n"
+                    + " AND fe.fes_codigo = 'R-A'";
+            sql = sql.replace("NUMERO", radNumero);
+            Query q = getEntityManager().createNativeQuery(sql, MarRadicacionesFasesEstados.class);
+            Object obj = q.getResultList();
+            //q.setMaxResults(1);
+            //Object obj = q.getSingleResult();
+            if(obj != null){
+                List<MarRadicacionesFasesEstados> rads = (List<MarRadicacionesFasesEstados>)obj;
+                if(!rads.isEmpty()){
+                    radicacion = rads.get(0);
+                }
+            }
+        } catch (Exception e) {
+            throw e;
+        }
+        return radicacion;
+    }
+    
 
 }

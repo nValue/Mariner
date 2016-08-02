@@ -26,7 +26,7 @@ public class RolesReportesDAOBean extends GenericDAOBean implements RolesReporte
                     + "INNER JOIN mar_reportes r ON rr.rep_id = r.rep_id\n"
                     + "INNER JOIN mar_reportes_tipos rt ON r.rti_id = rt.rti_id\n"
                     + "WHERE rt.rti_codigo = 'EST_01'\n"
-                    + "AND ur.usr_id = :usrId ";
+                    + "AND ur.usu_id = :usrId ";
             query = query.replace(":usrId", usuario.getUsuId().toString());
             Query q = getEntityManager().createNativeQuery(query,MarRolesReportes.class);
             reportes = (List<MarRolesReportes>) q.getResultList();

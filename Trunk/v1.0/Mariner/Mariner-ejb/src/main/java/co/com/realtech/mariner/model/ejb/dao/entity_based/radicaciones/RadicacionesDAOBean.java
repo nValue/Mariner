@@ -215,7 +215,7 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
      * @throws MarinerPersistanceException 
      */
     @Override
-    public List<MarRadicaciones> obtenerRadsAtendidasYFaseFinal(MarUsuarios usuario, String fasesAtendidas, String fasesFinales) throws MarinerPersistanceException{
+    public List<MarRadicaciones> obtenerRadsAtendidasNotYFaseFinal(MarUsuarios usuario, String fasesAtendidas, String fasesFinales) throws MarinerPersistanceException{
         List<MarRadicaciones> radicaciones = new ArrayList<>();
         try {
             String sql = "WITH delUsuario AS \n"
@@ -224,7 +224,7 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
                     + "  FROM mar_radicaciones r \n"
                     + "  INNER JOIN mar_radicaciones_fases_estados rfe ON r.rad_id = rfe.rad_id\n"
                     + "  INNER JOIN mar_fases_estados fe ON rfe.fes_id = fe.fes_id\n"
-                    + "  WHERE rfe.usu_id = %USUARIO%\n"
+                    + "  WHERE r.not_id = %NOTARIA%\n"
                     + "    AND fe.fes_codigo IN (%FASESATENDIDAS%)\n"
                     + "), maximos AS \n"
                     + "( \n"
@@ -235,9 +235,10 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
                     + "INNER JOIN mar_radicaciones_fases_estados rfe ON m.rfe_id = rfe.rfe_id\n"
                     + "INNER JOIN mar_fases_estados fe ON rfe.fes_id = fe.fes_id\n"
                     + "WHERE fe.fes_codigo IN (%FASESULTIMAS%)";
-            sql = sql.replace("%USUARIO%", usuario.getUsuId().toString());
+            sql = sql.replace("%NOTARIA%", usuario.getNotId().getNotId().toString());
             sql = sql.replace("%FASESATENDIDAS%", fasesAtendidas);
             sql = sql.replace("%FASESULTIMAS%", fasesFinales);
+            System.out.println("sql pago = " + sql);
             Query q = getEntityManager().createNativeQuery(sql, MarRadicaciones.class);
             radicaciones = q.getResultList();
         } catch (Exception e) {

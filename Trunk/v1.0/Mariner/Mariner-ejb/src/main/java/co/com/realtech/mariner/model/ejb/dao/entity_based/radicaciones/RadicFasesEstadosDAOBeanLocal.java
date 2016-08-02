@@ -83,4 +83,12 @@ public interface RadicFasesEstadosDAOBeanLocal {
      */
     public List<MarRadicacionesFasesEstados> obtenerRadicFasEstXFiltroValorFechas(String filtro, String valor, Date fechaIn, Date fechaFin) throws MarinerPersistanceException;
     
+    /**
+     * Obtiene la radicación siempre y cuando tenga un recibo de pago
+     * @param radNumero
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    public MarRadicacionesFasesEstados obtenerRadicConRecibo(String radNumero) throws MarinerPersistanceException; 
+    
 }
