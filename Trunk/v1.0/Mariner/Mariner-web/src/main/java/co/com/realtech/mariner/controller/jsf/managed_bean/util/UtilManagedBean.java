@@ -26,7 +26,7 @@ public class UtilManagedBean implements Serializable {
     public void init() { 
     }
 
-    public TimeZone getTimeZone() {
+    public TimeZone getTimeZone() { 
         return TimeZone.getTimeZone("GMT-5:00");
     }
 
