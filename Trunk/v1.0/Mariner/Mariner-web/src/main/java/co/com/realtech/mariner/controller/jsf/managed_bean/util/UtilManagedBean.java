@@ -23,12 +23,11 @@ public class UtilManagedBean implements Serializable {
     }
 
     @PostConstruct
-    public void init() {
-        setTimeZone(TimeZone.getDefault());
+    public void init() { 
     }
 
     public TimeZone getTimeZone() {
-        return timeZone;
+        return TimeZone.getTimeZone("GMT-5:00");
     }
 
     public void setTimeZone(TimeZone timeZone) {
