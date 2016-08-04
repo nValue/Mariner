@@ -269,7 +269,6 @@ public class RadicFasesEstadosDAOBean extends GenericDAOBean implements RadicFas
                 sql = sql.replace(":fechaFin", sdf.format(fechaFin));
                 sql = sql.replace("5 = 5", "fe.fes_codigo IN (" + faseEstado + ")");
             }
-            System.out.println("sql = " + sql);
             Query q = getEntityManager().createNativeQuery(sql, MarRadicacionesFasesEstados.class);
             radicacionesLibres = (List<MarRadicacionesFasesEstados>)q.getResultList();
         } catch (Exception e) {
@@ -302,7 +301,7 @@ public class RadicFasesEstadosDAOBean extends GenericDAOBean implements RadicFas
                     + " AND 3 = 3\n"
                     + "ORDER BY rfe.rfe_fecha_inicio DESC";
             if (filtro.equalsIgnoreCase("RAD-NUMERO")) {
-                sql = sql.replace("1 = 1", "r.rad_numero = '" + valor + "'");
+                sql = sql.replace("1 = 1", "r.rad_numero = '" + valor.toUpperCase() + "'");
             } else if (filtro.equalsIgnoreCase("RAD-LIQUIDACION")) {
                 sql = sql.replace("1 = 1", "r.rad_liquidacion = '" + valor + "'");
             } else if (filtro.equalsIgnoreCase("RAD-TURNO")) {
