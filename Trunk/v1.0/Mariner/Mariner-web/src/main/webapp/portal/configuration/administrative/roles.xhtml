@@ -68,13 +68,42 @@
                         <h:form id="formRolesReportes">
                             
                             
+                            <div style="padding: 14px;">  
+                                <h:panelGrid columns="2">
+                                    <h:outputLabel value="Rol"/>
+                                    <p:selectOneMenu converter="MarRolesConverter" value="#{rolesReportesManagedBean.rol}" style="width: 222px">
+                                        <p:ajax update="tablaReportes" listener="#{rolesReportesManagedBean.seleccionarRol()}" />
+                                        <f:selectItems value="#{rolesReportesManagedBean.roles}" var="rol" itemLabel="#{rol.rolNombre}" itemValue="#{rol}" />
+                                    </p:selectOneMenu>
+                                </h:panelGrid>
+                                <hr/>
+                                <p:dataTable id="tablaReportes" var="reps" value="#{rolesReportesManagedBean.rolesReportes}" emptyMessage="No hay reportes asociados a ese rol" rowIndexVar="idxRep" rows="12" paginatorPosition="bottom" paginator="true">
+                                    <p:column headerText="#" width="40" styleClass="colCenter">
+                                        <h:outputText value="#{idxRep+1}" />
+                                    </p:column>
+                                    <p:column headerText="Reporte">
+                                        <h:outputText value="#{reps.repId.repNombre}" />
+                                    </p:column>
+                                    <p:column headerText="X" width="20">
+                                        <p:commandLink update="tablaReportes" title="Presione para eliminar el vinculo del reporte con el rol" action="#{rolesReportesManagedBean.eliminarRolReporte()}">                                    
+                                            <f:setPropertyActionListener target="#{rolesManagedBean.rolModulo}" value="#{rolmodulo}" />
+                                            <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                            <p:confirm header="Confirmacion" message="Esta seguro de eliminar el vinculo con el reporte seleccionado?" icon="ui-icon-alert" />
+                                        </p:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                                <div align="right" style="padding-top: 4px;">
+                                    <p:commandButton value="Vincular Reporte" oncomplete="PF('dialogRolesReportes').show();" action="#{rolesReportesManagedBean.obtenerReportesDisponibles()}" update=":modalRolesReportes"/>
+                                </div>
+                            </div>
+                            
                         </h:form>
                     </p:tab>
                 </p:tabView>
             </div>
         </div>
 
-        <!-- Dialog de modificacion Pais -->        
+        <!-- Dialog de creación o modificación de roles -->        
         <p:dialog id="modalRol" widgetVar="dialogRol" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Rol" modal="true">
             <div>
                 <h:form id="formModalPais">
@@ -92,7 +121,7 @@
             </div>            
         </p:dialog>
 
-        <!-- Dialog de modificacion Pais -->        
+        <!-- Dialog de creación o modificación de módulos -->   
         <p:dialog id="modalModulos" widgetVar="dialogModulos" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Rol" modal="true">
             <div>
                 <h:form id="formModalModulos">
@@ -109,6 +138,26 @@
                 </h:form>
             </div>            
         </p:dialog>
+        
+        <!-- Dialog de creación o modificación de roles-reportes -->   
+        <p:dialog id="modalRolesReportes" styleClass="modalTop" widgetVar="dialogRolesReportes" closeOnEscape="true" draggable="true" resizable="false" header="Edición - Roles reportes" modal="true">
+            <div>
+                <h:form id="formModalRolesReportes">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Reporte"/>
+                        <p:selectOneMenu converter="MarReportesConverter" value="#{rolesReportesManagedBean.reporte}" style="width: 322px">
+                            <f:selectItems value="#{rolesReportesManagedBean.reportes}" var="repts" itemLabel="#{repts.repNombre}" itemValue="#{repts}"/>
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{rolesReportesManagedBean.asociarReporteRol()}" update="@form :tabContainerRoles:formRolesReportes"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogRolesReportes').hide();" immediate="true"/>
+                    </div>
+                </h:form>
+            </div>
+            
+        </p:dialog>
+        
     </ui:define>
 
 </ui:composition>

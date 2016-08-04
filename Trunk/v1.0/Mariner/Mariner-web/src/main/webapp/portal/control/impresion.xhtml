@@ -38,18 +38,22 @@
                                     <p:ajax update="formPayment" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" listener="#{impresionManagedBean.seleccionarTipo()}"/>
                                     <f:selectItem itemLabel="Pendientes" itemValue="P" />
                                     <f:selectItem itemLabel="Impresos" itemValue="I" />
+                                    <f:selectItem itemLabel="Radicación" itemValue="R" />
                                 </p:selectOneMenu>
                                 <h:outputLabel value="Radicaciones" /> 
-                                <p:selectOneMenu styleClass="inputModal" value="#{impresionManagedBean.radicacionEstadoSel}" converter="MarRadicacionesFasesEstadosConverter" style="width: 222px;" >
+                                <p:selectOneMenu styleClass="inputModal" rendered="#{impresionManagedBean.tipoBusqueda != 'R'}" value="#{impresionManagedBean.radicacionEstadoSel}" converter="MarRadicacionesFasesEstadosConverter" style="width: 160px;" >
                                     <f:selectItems value="#{impresionManagedBean.radicacionesEstados}" var="radicacion" itemLabel="#{radicacion.radId.radNumero} #{radicacion.radId.radTurno eq null ? '' : '- Turno'} #{radicacion.radId.radTurno}" itemValue="#{radicacion}"/>
                                     <p:ajax update="panelRadicacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                                 </p:selectOneMenu>
-                                <h:outputLabel value="Fecha Desde" />
-                                <p:calendar styleClass="calendarSmall" id="inputFecha1" value="#{impresionManagedBean.fechaInicial}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}" >
+                                <p:inputText style="width: 150px;margin: 0px 5px;text-transform: uppercase" placeholder="Filtro" value="#{impresionManagedBean.campoBusqueda}" rendered="#{impresionManagedBean.tipoBusqueda == 'R'}" />
+                                <p:commandButton style="vertical-align: top;" value="Buscar" action="#{impresionManagedBean.buscarRadicacion()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" update="formPayment" rendered="#{impresionManagedBean.tipoBusqueda == 'R'}"/>
+                                
+                                <h:outputLabel value="Fecha Desde" rendered="#{impresionManagedBean.tipoBusqueda != 'R'}"/>
+                                <p:calendar styleClass="calendarSmall" id="inputFecha1" value="#{impresionManagedBean.fechaInicial}" rendered="#{impresionManagedBean.tipoBusqueda != 'R'}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}" >
                                     <p:ajax event="dateSelect" listener="#{impresionManagedBean.seleccionarTipo()}" update="formPayment" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();"/>
                                 </p:calendar>
-                                <h:outputLabel value="Fecha Hasta" />
-                                <p:calendar styleClass="calendarSmall" id="inputFecha2" value="#{impresionManagedBean.fechaFinal}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}" >
+                                <h:outputLabel value="Fecha Hasta" rendered="#{impresionManagedBean.tipoBusqueda != 'R'}" />
+                                <p:calendar styleClass="calendarSmall" id="inputFecha2" value="#{impresionManagedBean.fechaFinal}" rendered="#{impresionManagedBean.tipoBusqueda != 'R'}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}" >
                                     <p:ajax event="dateSelect" listener="#{impresionManagedBean.seleccionarTipo()}" update="formPayment" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                                 </p:calendar>
                             </h:panelGrid>
@@ -92,7 +96,7 @@
                                         </div>
                                         <div>
                                             <div class="payment-methods">
-                                                <p:commandLink styleClass="payment-button" action="#{impresionManagedBean.descargarRecibo()}" title="Presione para realizar el pago mediante Consignacion en Ventanilla de Banco" >
+                                                <p:commandLink styleClass="payment-button" action="#{impresionManagedBean.descargarRecibo()}" title="Presione para realizar el pago mediante Consignacion en Ventanilla de Banco" ajax="false">
                                                     <img src="#{resource['images/icons/logo-codigo-barras.png']}" alt="Pago mediante consignacion en Ventanilla"/><br/>
                                                     <span>
                                                         Pago en Ventanilla

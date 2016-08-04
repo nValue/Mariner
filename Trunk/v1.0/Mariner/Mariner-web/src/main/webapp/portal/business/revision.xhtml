@@ -111,38 +111,38 @@
                 <div align="right" style="margin: 20px;">
                     <h:outputLabel value="Fecha Desde"/>
                     <p:calendar styleClass="calendarSmall" id="inputFecha1" value="#{revisionManagedBean.fechaFiltroInic}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
-                        <p:ajax event="dateSelect" listener="#{revisionManagedBean.obtenerRadicacionesProcesadas()}" update="formHistorial" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                        <p:ajax event="dateSelect" listener="#{revisionManagedBean.obtenerHistorialRadicaciones()}" update="formHistorial" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                     </p:calendar>
                     <h:outputLabel value="Fecha Hasta"/>
                     <p:calendar styleClass="calendarSmall" id="inputFecha2" value="#{revisionManagedBean.fechaFiltroFin}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
-                        <p:ajax event="dateSelect" listener="#{revisionManagedBean.obtenerRadicacionesProcesadas()}" update="formHistorial" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                        <p:ajax event="dateSelect" listener="#{revisionManagedBean.obtenerHistorialRadicaciones()}" update="formHistorial" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                     </p:calendar>
                 </div>
-                <p:dataTable style="margin: 20px;" value="#{revisionManagedBean.radicacionesHistorial}" 
+                <p:dataTable widgetVar="tablaHist" style="margin: 20px;" value="#{revisionManagedBean.radicacionesHistorial}" 
                              selection="#{revisionManagedBean.radicacionFaseEstadoSel}" var="radPro" selectionMode="single" rowKey="#{radPro.rfeId}" 
-                             paginator="true" rows="7" paginatorPosition="bottom"
+                             paginator="true" rows="7" paginatorPosition="bottom" filteredValue="#{revisionManagedBean.radicacionesFasesEstadosFiltros}"
                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" emptyMessage="No hay radicaciones">
-                    <p:column headerText="Número" width="100" >
+                    <p:column headerText="Número" width="100" filterBy="#{radPro.radId.radNumero}">
                         <h:outputLabel value="#{radPro.radId.radNumero}"/>
                     </p:column>
-                    <p:column headerText="Fecha" width="120">
+                    <p:column headerText="Fecha" width="120" filterBy="#{radPro.rfeFechaInicio}">
                         <h:outputLabel value="#{radPro.rfeFechaInicio}" >
                             <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="#{utilManagedBean.timeZone}"/>
                         </h:outputLabel>
                     </p:column>
-                    <p:column headerText="Escritura" width="100">
+                    <p:column headerText="Escritura" width="100" filterBy="#{radPro.radId.escId.escNumero}">
                         <h:outputLabel value="#{radPro.radId.escId.escNumero}"/>
                     </p:column>
-                    <p:column headerText="Estado">
+                    <p:column headerText="Estado" filterBy="#{radPro.fesId.fesNombre}">
                         <h:outputLabel value="#{radPro.fesId.fesNombre}" />
                     </p:column>
-                    <p:column headerText="Impreso" width="70">
+                    <p:column headerText="Impreso" width="70" filterBy="#{radPro.radId.radEsImpresion}">
                         <h:outputLabel value="#{radPro.radId.radEsImpresion}" />
                     </p:column>
-                    <p:column headerText="Turno" width="70">
+                    <p:column headerText="Turno" width="70" filterBy="#{radPro.radId.radTurno}">
                         <h:outputLabel value="#{radPro.radId.radTurno}" />
                     </p:column>
-                    <p:column headerText="Usuario" width="100">
+                    <p:column headerText="Usuario" width="100" filterBy="#{radPro.usuId.usuLogin}">
                         <h:outputLabel value="#{radPro.usuId.usuLogin}" />
                     </p:column>
                 </p:dataTable>

@@ -48,7 +48,7 @@
                                                 <f:selectItem itemLabel="Todos" itemValue="TODOS,TEXT" />
                                             </p:selectOneMenu>
                                             <h:outputLabel value="Valor"/>
-                                            <p:inputText value="#{mesaControlManagedBean.valorFiltro}" style="width: 222px !important;"/>
+                                            <p:inputText value="#{mesaControlManagedBean.valorFiltro}" style="width: 222px !important;text-transform: uppercase" />
                                             <p:commandButton value="Buscar" action="#{mesaControlManagedBean.filtrarMesaControl()}" update="panelMesaControl @form" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();"/>
                                         </h:panelGrid>
                                     </div>

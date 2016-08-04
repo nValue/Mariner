@@ -44,6 +44,11 @@ public class ServletGraphicsStatistics extends HttpServlet {
         String fechaHasta = request.getParameter("fechaHasta");
         String parametros = request.getParameter("pars");
 
+        System.out.println("tipoReporte = " + tipoReporte);
+        System.out.println("fechaDesde = " + fechaDesde);
+        System.out.println("fechaHasta = " + fechaHasta);
+        System.out.println("parametros = " + parametros);
+        
         if (SQLInjectionUtils.containsSQLInjection(tipoReporte) || SQLInjectionUtils.containsSQLInjection(fechaDesde) || SQLInjectionUtils.containsSQLInjection(fechaHasta)) {
             response.setContentType("application/txt");
             try (PrintWriter out = response.getWriter()) {
@@ -54,6 +59,7 @@ public class ServletGraphicsStatistics extends HttpServlet {
                 try (PrintWriter out = response.getWriter()) {
                     String xmlGeneratedData;
                     xmlGeneratedData = procedureBasedBeanLocal.cargarXMLGraficoEstadistica(tipoReporte, fechaDesde, fechaHasta,parametros);
+                    System.out.println("xmlGeneratedData = " + xmlGeneratedData);
                     out.println(xmlGeneratedData);                    
                 }
             } catch (Exception e) {

@@ -14,6 +14,7 @@ import co.com.realtech.mariner.model.logic.estados.SAPEstadosLogicOperations;
 import co.com.realtech.mariner.util.cdf.CDFFileDispatcher;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import co.com.realtech.mariner.util.files.PDFUtils;
+import co.com.realtech.mariner.util.jsf.file.FileDownloader;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
@@ -53,6 +54,7 @@ public class RevisionManagedBean extends GenericManagedBean{
     
     private List<MarRadicacionesFasesEstados> radicacionesFasesEstados;
     private MarRadicacionesFasesEstados radicacionFaseEstadoSel;
+    private List<MarRadicacionesFasesEstados> radicacionesFasesEstadosFiltros;
     
     private List<MarRadicacionesFasesEstados> radicacionesHistorial;
     private MarRadicacionesFasesEstados radicacionHistorialSel;
@@ -296,7 +298,8 @@ public class RevisionManagedBean extends GenericManagedBean{
      */
     public void obtenerHistorialRadicaciones(){
         try {
-            radicacionesHistorial = radicFasesEstadosDAOBean.obtenerRadicFasEstXUsuFasEstYFechasFase(usuarioSesion, "R-A",fechaFiltroInic, fechaFiltroFin);
+            PrimeFacesContext.execute("PF('tablaHist').clearFilters()");
+            radicacionesHistorial = radicFasesEstadosDAOBean.obtenerRadicFasEstXUsuFasEstYFechasFase(usuarioSesion, "'R-A','R-R'",fechaFiltroInic, fechaFiltroFin);
             if(!radicacionesHistorial.isEmpty()){
                 radicacionHistorialSel = radicacionesHistorial.get(0);
             }
@@ -400,7 +403,7 @@ public class RevisionManagedBean extends GenericManagedBean{
                 File archivo = PDFUtils.agregarTexto(dispatcher.getFileContent(), "Turno: " + radicacionPendienteSel.getRadTurno() + " - " + radicacionPendienteSel.getRadNumero());
                 if(archivo.exists()){
                     byte[] bytes = IOUtils.toByteArray(new FileInputStream(archivo));
-                    descargarArchivoFacesContext(FacesContext.getCurrentInstance(), bytes, archivo.getName() + ".pdf");
+                    new FileDownloader().descargarArchivoFacesContext(FacesContext.getCurrentInstance(), bytes, archivo.getName() + ".pdf");
                 }else{
                     PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "No se encuentra el archivo con la impresión de turno", true, false);
                 }
@@ -409,34 +412,7 @@ public class RevisionManagedBean extends GenericManagedBean{
         }
     }
     
-    /**
-     * Descargar archivo a través del FacesContext.
-     *
-     * @param context
-     * @param bytes
-     * @param nombreArchivo
-     */
-    private void descargarArchivoFacesContext(FacesContext context, byte[] bytes, String nombreArchivo) {
-        ExternalContext externalContext = context.getExternalContext();
-        HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-        try {
-            if (bytes == null) {
-                System.out.println("Bytes nulos en respuesta de PDF");
-            } else {
-                try (ServletOutputStream servletOutputStream = response.getOutputStream()) {
-                    response.addHeader("Content-Type", "application/pdf");
-                    response.addHeader("Content-Disposition", "attachment; filename=" + nombreArchivo + ".pdf");
-                    response.setContentLength(bytes.length);
-                    response.setContentType("application/pdf");
-                    servletOutputStream.write(bytes);
-                    servletOutputStream.flush();
-                    context.responseComplete();
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Error enviando archivo PDF, error causado por " + e);
-        }
-    }
+    
     
     /**
      * Obtiene los datos de la impresión.
@@ -535,6 +511,16 @@ public class RevisionManagedBean extends GenericManagedBean{
     public void setRadicacionesActos(List<MarRadicacionesActosSap> radicacionesActos) {
         this.radicacionesActos = radicacionesActos;
     }
+
+    public List<MarRadicacionesFasesEstados> getRadicacionesFasesEstadosFiltros() {
+        return radicacionesFasesEstadosFiltros;
+    }
+
+    public void setRadicacionesFasesEstadosFiltros(List<MarRadicacionesFasesEstados> radicacionesFasesEstadosFiltros) {
+        this.radicacionesFasesEstadosFiltros = radicacionesFasesEstadosFiltros;
+    }
+
+    
     
     
     

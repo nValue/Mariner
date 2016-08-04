@@ -55,18 +55,18 @@
                 </div>
             </div>
             <h:form id="formStatistics">
-                <h:panelGrid columns="2">
+                <h:panelGrid columns="2" >
                     <h:outputText value="Fecha Desde" styleClass="text" />
-                    <p:calendar showOn="button" value="#{estadisticasManagedBean.fechaDesde}" pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}" styleClass="calendar" locale="es">
+                    <p:calendar value="#{estadisticasManagedBean.fechaDesde}" pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}" styleClass="calendarSmall" locale="es">
                         <p:ajax event="dateSelect" listener="#{estadisticasManagedBean.filtrarEstadisticas()}" update="panelEstadisticas" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();" />
                     </p:calendar>
                     <h:outputText value="Fecha Hasta" styleClass="text" />
-                    <p:calendar showOn="button" value="#{estadisticasManagedBean.fechaHasta}" style="width: 200px !important;" pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}" styleClass="calendar" locale="es">
+                    <p:calendar value="#{estadisticasManagedBean.fechaHasta}" style="width: 150px !important;" pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}" styleClass="calendarSmall" locale="es">
                         <p:ajax event="dateSelect" listener="#{estadisticasManagedBean.filtrarEstadisticas()}" update="panelEstadisticas" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();" />
                     </p:calendar>
 
                     <h:outputText value="Tipo de Reporte" styleClass="text" />
-                    <p:selectOneMenu value="#{estadisticasManagedBean.rolReporteSel}" styleClass="inputModal" style="width: 242px;" converter="MarRolesReportesConverter">
+                    <p:selectOneMenu value="#{estadisticasManagedBean.rolReporteSel}" styleClass="inputModal" style="width: 250px;" converter="MarRolesReportesConverter">
                         <p:ajax listener="#{estadisticasManagedBean.obtenerParametrosDelReporte()}" update="panelEstadisticas formStatistics" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();"/>
                         <f:selectItems value="#{estadisticasManagedBean.rolesReportes}" var="rRe" itemLabel="#{rRe.repId.repNombre}"/>
                     </p:selectOneMenu>

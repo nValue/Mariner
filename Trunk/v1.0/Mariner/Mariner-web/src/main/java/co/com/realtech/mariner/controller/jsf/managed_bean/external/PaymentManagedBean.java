@@ -15,17 +15,23 @@ import co.com.realtech.mariner.model.logic.pagos.SAPPagosLogicOperations;
 import co.com.realtech.mariner.util.cdf.CDFFileDispatcher;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
+import co.com.realtech.mariner.util.files.PDFUtils;
+import co.com.realtech.mariner.util.jsf.file.FileDownloader;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import co.com.realtech.mariner.util.session.SessionUtils;
 import co.com.realtech.mariner.util.string.BusinessStringUtils;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -34,6 +40,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -77,7 +84,7 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                 setAutenticado(SessionUtils.obtenerValor("auth"));
                 setTiposDocumentos((List<MarTiposDocumentos>) genericDAOBean.loadAllForEntity(MarTiposDocumentos.class, "tdcNombre asc"));
                 if (getAutenticado().equals("S")) {
-                    setRadicaciones(radicacionesDAOBean.obtenerRadsAtendidasYFaseFinal(usuarioSesion, "'I-P'", "'R-A'"));
+                    setRadicaciones(radicacionesDAOBean.obtenerRadsAtendidasNotYFaseFinal(usuarioSesion, "'I-P'", "'R-A'"));
                     if (!getRadicaciones().isEmpty()) {
                         setRadicacion(getRadicaciones().get(0));
                     } else {
@@ -372,11 +379,23 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                         PrimeFacesPopup.lanzarDialog(Effects.Puff, "Error validacion", "Lo sentimos pero la Radicacion no tiene Archivo de Boleta Fiscal y Recibo, por favor contacte al administrador de la plataforma.", true, false);
                     } else {
                         // Redireccionar a la descarga.
+                        /*
                         ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
                         String contextPath = servletContext.getContextPath();
                         String urlRecibo = contextPath + "/static/fileDispatcher/" + getRadicacion().getArcIdReciboPago().getArcId() + "-" + getRadicacion().getArcIdReciboPago().getArcHash() + "." + getRadicacion().getArcIdReciboPago().getArcExtension();
                         RequestContext.getCurrentInstance().execute("window.open('" + urlRecibo + "');");
                         PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Se ha descargado el recibo de pago para realizar el pago en ventanilla de banco.", true, false);
+                        */
+                        CDFFileDispatcher dispatcher = CDFFileDispatcher.create();
+                        dispatcher.findFile(radicacion.getArcIdReciboPago().getArcId());
+                        File archivo = PDFUtils.agregarTexto(dispatcher.getFileContent(), radicacion.getRadNumero());
+                        if (archivo.exists()) {
+                            byte[] bytes = IOUtils.toByteArray(new FileInputStream(archivo));
+                            new FileDownloader().descargarArchivoFacesContext(FacesContext.getCurrentInstance(), bytes, archivo.getName() + ".pdf");
+                        } else {
+                            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "No se encuentra el archivo con la impresión de turno", true, false);
+                        }
+                        
                     }
                 }
             } else {
@@ -385,6 +404,10 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
         } catch (MarinerPersistanceException | IOException e) {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero ha ocurrido un error iniciando la transaccion, por favor intente nuevamente.", true, false);
             logger.error("Error realizando inicio de transaccion, causado por " + e);
+        } catch (Exception ex) {
+            String msj = "Ocurrió un error al descargar el archivo solicitado, causado por : " + ex;
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", msj, true, false);
+            logger.error(msj, ex);
         }
     }
 

@@ -55,6 +55,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
 
     private List<MarRadicacionesFasesEstados> radicacionesFasesEstProcesadas;
     private MarRadicacionesFasesEstados radicacionFaseEstProcesadaSel;
+    private List<MarRadicacionesFasesEstados> radicacionesFasEstProcFiltros;
 
     private List<MarRadicacionesFasesEstados> radicacionesFasesEstados;
 
@@ -131,6 +132,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
      */
     public void obtenerRadicacionesProcesadas() {
         try {
+            PrimeFacesContext.execute("PF('tablaHistorial').clearFilters()");
             radicacionesFasesEstProcesadas = radicFasesEstadosDAOBean.obtenerRadicFasEstXUsuFasEstYFechasFase(usuarioSesion, "G-S", fechaFiltroInic, fechaFiltroFin);
             if (!radicacionesFasesEstProcesadas.isEmpty()) {
                 radicacionFaseEstProcesadaSel = radicacionesFasesEstProcesadas.get(0);
@@ -432,10 +434,16 @@ public class GeneracionManagedBean extends GenericManagedBean {
                         PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
                         return;
                     }
-                    radicacionesAdicionales = new ArrayList<>();
-                    radicacionAdicionalSel = null;
+                    //Ajuste comentariado para limpiar las radicaciones adicionales.
+                    //radicacionesAdicionales = new ArrayList<>();
+                    //radicacionAdicionalSel = null;
                 }
                 obtenerRadicacionesPendientes();
+                //Ajuste realizado para limpiar las radicaciones adicionales.
+                radicacionesAdicionales = new ArrayList<>();
+                radicacionAdicionalSel = null;
+                //Ajuste realizado para limpiar las radicaciones adicionales.
+                
                 PrimeFacesContext.execute("PF('dialogLiquidacion').hide();");
                 PrimeFacesPopup.lanzarDialog(Effects.Slide, "Proceso finalizado", "Vinculación realizada correctamente y cambiada a validación por aprobador.", true, false);
 
@@ -736,6 +744,15 @@ public class GeneracionManagedBean extends GenericManagedBean {
     public void setRadicacionAdicionalSel(MarRadicaciones radicacionAdicionalSel) {
         this.radicacionAdicionalSel = radicacionAdicionalSel;
     }
+
+    public List<MarRadicacionesFasesEstados> getRadicacionesFasEstProcFiltros() {
+        return radicacionesFasEstProcFiltros;
+    }
+
+    public void setRadicacionesFasEstProcFiltros(List<MarRadicacionesFasesEstados> radicacionesFasEstProcFiltros) {
+        this.radicacionesFasEstProcFiltros = radicacionesFasEstProcFiltros;
+    }
+    
     
     
 

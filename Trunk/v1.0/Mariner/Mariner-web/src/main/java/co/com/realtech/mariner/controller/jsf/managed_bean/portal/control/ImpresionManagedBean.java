@@ -5,8 +5,13 @@ import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFase
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicacionesDAOBeanLocal;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarTransacciones;
+import co.com.realtech.mariner.util.cdf.CDFFileDispatcher;
+import co.com.realtech.mariner.util.files.PDFUtils;
+import co.com.realtech.mariner.util.jsf.file.FileDownloader;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -14,8 +19,7 @@ import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.servlet.ServletContext;
-import org.primefaces.context.RequestContext;
+import org.apache.commons.io.IOUtils;
 
 /**
  * ManagedBean encargado de la impresión de los recibos de caja.
@@ -40,6 +44,7 @@ public class ImpresionManagedBean extends GenericManagedBean implements Serializ
     private MarRadicacionesFasesEstados radicacionEstadoSel;
     private Date fechaInicial;
     private Date fechaFinal;
+    private String campoBusqueda;
 
     @Override
     public void init() {
@@ -53,9 +58,26 @@ public class ImpresionManagedBean extends GenericManagedBean implements Serializ
      * Selecciona el tipo de filtro para la impresión de los pagos.
      */
     public void seleccionarTipo(){
+        radicacionEstadoSel = null;
         radicacionesEstados = radicFasesEstadosDAOBean.obtenerUltimaFaseFechaImpreso("'R-A'", fechaInicial, fechaFinal, tipoBusqueda.equals("I"));
         if(!radicacionesEstados.isEmpty()){
             radicacionEstadoSel = radicacionesEstados.get(0);
+        }
+    }
+    
+    /**
+     * Busca la radicación, siempre y cuando haya quedado en estado pendiente de pago o más.
+     */
+    public void buscarRadicacion(){
+        try {
+            radicacionEstadoSel = radicFasesEstadosDAOBean.obtenerRadicConRecibo(campoBusqueda.toUpperCase());
+            if(radicacionEstadoSel == null){
+                PrimeFacesPopup.lanzarDialog(Effects.Explode, "Radicación no encontrada", "Esta radicación no existe, o no ha sido aprobada por un validador", true, false);
+            }
+        } catch (Exception e) {
+            String msj = "No se puede buscar la radicación, causado por " + e.getMessage();
+            PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", msj, true, false);
+            logger.error(msj,e);
         }
     }
     
@@ -65,10 +87,27 @@ public class ImpresionManagedBean extends GenericManagedBean implements Serializ
     public void descargarRecibo() {
         try {
             if (validarTransaccion()) {
+                /*
                 ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
                 String contextPath = servletContext.getContextPath();
                 String urlRecibo = contextPath + "/static/fileDispatcher/" + radicacionEstadoSel.getRadId().getArcIdReciboPago().getArcId() + "-" + radicacionEstadoSel.getRadId().getArcIdReciboPago().getArcHash() + "." + radicacionEstadoSel.getRadId().getArcIdReciboPago().getArcExtension();
                 RequestContext.getCurrentInstance().execute("window.open('" + urlRecibo + "');");
+                */
+                CDFFileDispatcher dispatcher = CDFFileDispatcher.create();
+                dispatcher.findFile(radicacionEstadoSel.getRadId().getArcIdReciboPago().getArcId());
+                String label = "";
+                if(radicacionEstadoSel.getRadId().getRadTurno() == null || radicacionEstadoSel.getRadId().getRadTurno().isEmpty()){
+                }else{
+                    label = "Turno: " + radicacionEstadoSel.getRadId().getRadTurno() + " - " ;
+                }
+                label = label + radicacionEstadoSel.getRadId().getRadNumero();
+                File archivo = PDFUtils.agregarTexto(dispatcher.getFileContent(), label);
+                if(archivo.exists()){
+                    byte[] bytes = IOUtils.toByteArray(new FileInputStream(archivo));
+                    new FileDownloader().descargarArchivoFacesContext(FacesContext.getCurrentInstance(), bytes, archivo.getName() + ".pdf");
+                }else{
+                    PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "No se encuentra el archivo con la impresión de turno", true, false);
+                }
             }
         } catch (Exception e) {
         }
@@ -181,6 +220,14 @@ public class ImpresionManagedBean extends GenericManagedBean implements Serializ
 
     public void setFechaFinal(Date fechaFinal) {
         this.fechaFinal = fechaFinal;
+    }
+
+    public String getCampoBusqueda() {
+        return campoBusqueda;
+    }
+
+    public void setCampoBusqueda(String campoBusqueda) {
+        this.campoBusqueda = campoBusqueda;
     }
     
     

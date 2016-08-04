@@ -61,7 +61,9 @@ public class EstadisticasManagedBean extends GenericManagedBean implements Seria
             setFechaHasta(cal.getTime());
             setFechaDesde(cal.getTime());
             obtenerReportes();
-            obtenerParametrosDelReporte();
+            if(!rolesReportes.isEmpty()){
+                obtenerParametrosDelReporte();
+            }
         } catch (Exception e) {
             logger.error("Error inicializando ManagedBean de estadísticas, causado por ", e);
         }
