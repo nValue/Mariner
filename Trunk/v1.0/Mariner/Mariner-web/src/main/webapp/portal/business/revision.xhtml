@@ -59,8 +59,10 @@
                                         <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"/>
                                     </p:outputLabel>
                                 </h:panelGrid>
-                                <h:outputLabel style="display: block" class="labelLittle" value="Observaciones" />
-                                <p:inputTextarea value="#{revisionManagedBean.observaciones}" rows="2" style="width: 77%;display: block"/>
+                                <h:outputLabel style="display: block;margin-top: 3px" class="labelLittle" value="Prioridad" />
+                                <p:inputTextarea value="#{revisionManagedBean.radicacionPendienteSel.priId.priNombre}" rows="1" style="width: 85%;display: block"/>
+                                <h:outputLabel style="display: block;margin-top: 5px" class="labelLittle" value="Observaciones" />
+                                <p:inputTextarea value="#{revisionManagedBean.observaciones}" rows="2" style="width: 85%;display: block"/>
                                 <p:button style="margin: 10px;" value="Descargar Escritura" target="_new" href="/static/fileDispatcher/#{revisionManagedBean.radicacionPendienteSel.escId.arcId.arcId}-#{revisionManagedBean.radicacionPendienteSel.escId.arcId.arcHash}.#{revisionManagedBean.radicacionPendienteSel.escId.arcId.arcExtension}"
                                           rendered="#{revisionManagedBean.radicacionPendienteSel.escId.arcId != null}"/>
                                 <p:commandButton value="Boleta Fiscal" action="#{revisionManagedBean.obtenerActosDeRadicacion()}" oncomplete="PF('dialogBoleta').show()" update=":formBoleta"/>

@@ -68,8 +68,8 @@ public class HistorialManagedBean extends GenericManagedBean {
         
         //Crea la lista con los filtros de búsqueda para el SelectOneMenu.
         filtrosBusqueda = new ArrayList<>();
-        filtrosBusqueda.add(new ClaveValor("ES", "Estado"));
         filtrosBusqueda.add(new ClaveValor("RA", "Radicación"));
+        filtrosBusqueda.add(new ClaveValor("ES", "Estado"));
         filtrosBusqueda.add(new ClaveValor("LI", "Liquidación"));
         //filtrosBusqueda.add(new ClaveValor("OT", "CC Otorgante"));
         //filtrosBusqueda.add(new ClaveValor("RE", "CC Receptor"));

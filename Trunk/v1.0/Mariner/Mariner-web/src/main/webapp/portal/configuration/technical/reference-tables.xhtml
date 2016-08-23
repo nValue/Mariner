@@ -22,6 +22,8 @@
             #modalCiudad{top: 40px !important;}
             
             #modalCausales{top: 40px !important;}
+            
+            #modalPrioridades{top: 40px !important;}
         </style>
 
         <div id="paperMain">
@@ -226,6 +228,39 @@
                                 </div>
                             </h:form>                            
                         </p:tab>
+                        <p:tab title="Prioridades">
+                            <h:form id="formPrioridades">
+                                <div>
+                                    <div style="padding: 12px;padding-top: 0px !important;">
+                                        <p:dataTable id="prioridades" var="prio" value="#{prioridadesManagedBean.prioridades}" selectionMode="single" selection="#{prioridadesManagedBean.prioridadSel}" rowKey="#{prio.priId}" emptyMessage="No se han encontrado prioridades configuradas" rowIndexVar="idx">
+                                            <p:ajax event="rowSelect" oncomplete="PF('dialogPrioridades').show();" update=":modalPrioridades"/>
+                                            <p:column headerText="#" width="40" styleClass="colCenter">
+                                                <h:outputText value="#{idx+1}" />
+                                            </p:column> 
+                                            <p:column headerText="Código" styleClass="colCenter" width="60">
+                                                <h:outputText value="#{prio.priCodigo}" />
+                                            </p:column>                 
+                                            <p:column headerText="Orden" styleClass="colCenter" width="60">
+                                                <h:outputText value="#{prio.priOrden}" />
+                                            </p:column>                 
+                                            <p:column headerText="Nombre" styleClass="colCenter">
+                                                <h:outputText value="#{prio.priNombre}" />
+                                            </p:column>                                            
+                                            <p:column headerText="X" width="20" styleClass="colCenter">
+                                                <p:commandLink update="prioridades" title="Presione para eliminar esta prioridad" action="#{prioridadesManagedBean.eliminarPrioridad()}">
+                                                    <f:setPropertyActionListener target="#{prioridadesManagedBean.prioridadSel}" value="#{prio}" />
+                                                    <img src="#{resource['/images/icons/delete-icon.png']}"/>
+                                                    <p:confirm header="Confirmacion" message="Esta seguro de eliminar la prioridad seleccionada?" icon="ui-icon-alert" />
+                                                </p:commandLink>
+                                            </p:column>
+                                        </p:dataTable>
+                                        <div align="right" style="padding-top: 4px;">
+                                            <p:commandButton value="Agregar" action="#{prioridadesManagedBean.agregarPrioridad()}" oncomplete="PF('dialogPrioridades').show();" update=":modalPrioridades"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:form>                            
+                        </p:tab>
                     </p:tabView>
                 </div>
             </div>
@@ -351,6 +386,27 @@
                 </h:form>
             </div>            
         </p:dialog>
+        
+        <!-- Dialog de modificacion de prioridad -->        
+        <p:dialog id="modalPrioridades" widgetVar="dialogPrioridades" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de prioridades" modal="true">
+            <div>
+                <h:form id="formModalPrioridades">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Código"/>
+                        <p:inputText value="#{prioridadesManagedBean.prioridadSel.priCodigo}" required="true" />                        
+                        <h:outputLabel value="Orden"/>
+                        <p:inputText value="#{prioridadesManagedBean.prioridadSel.priOrden}" required="true" />                        
+                        <h:outputLabel value="Nombre"/>
+                        <p:inputText value="#{prioridadesManagedBean.prioridadSel.priNombre}" required="true"/>                        
+                    </h:panelGrid>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{prioridadesManagedBean.guardarPrioridad()}" update="@form :tabContainer:formPrioridades"/>
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogPrioridades').hide();" immediate="true"/>
+                    </div>
+                </h:form>
+            </div>            
+        </p:dialog>
+        
     </ui:define>
 
 </ui:composition>

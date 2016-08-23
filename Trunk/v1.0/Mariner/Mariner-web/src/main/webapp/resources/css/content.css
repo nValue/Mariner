@@ -79,6 +79,10 @@
     width: 120px !important;
 }
 
+.calendarUsuario .ui-inputfield{
+    width: 200px !important;
+}
+
 .calendarSmall{
     margin: 0px 10px 0px 5px;
 }

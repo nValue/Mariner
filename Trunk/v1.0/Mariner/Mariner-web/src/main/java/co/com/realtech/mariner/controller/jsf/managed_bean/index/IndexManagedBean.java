@@ -8,10 +8,12 @@ import co.com.realtech.mariner.model.entity.MarModulos;
 import co.com.realtech.mariner.model.entity.MarPersonas;
 import co.com.realtech.mariner.model.entity.MarTiposDocumentos;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
+import co.com.realtech.mariner.model.entity.generic.ContrasenaEntidad;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
 import co.com.realtech.mariner.util.crypto.CryptoUtils;
 import co.com.realtech.mariner.util.html.DynamicHTMLMenuGenerator;
 import co.com.realtech.mariner.util.jsf.JSFUtils;
+import co.com.realtech.mariner.util.login.LoginUtils;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.session.AuditSessionUtils;
 import co.com.realtech.mariner.util.session.SessionUtils;
@@ -20,12 +22,14 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 
 /**
@@ -61,10 +65,14 @@ public class IndexManagedBean implements Serializable {
     private MarUsuarios usuario;
     private List<MarTiposDocumentos> tiposDocumento;
     private AuditSessionUtils auditSessionUtils;
+    
+    private ContrasenaEntidad contrasenaEntidad;
+    
+    private boolean logged;
 
     public IndexManagedBean() {
     }
-
+    
     @PostConstruct
     public void init() {
         setUsuario(new MarUsuarios());
@@ -72,6 +80,22 @@ public class IndexManagedBean implements Serializable {
         auditSessionUtils = AuditSessionUtils.create();
         limpiarCampos();
         traerCaptcha();
+        logged = false;
+        contrasenaEntidad = LoginUtils.obtenerEntidadDeConstante();
+    }
+    
+    /**
+     * Cierra la sesión en la base de datos para evitar la multisesión.
+     */
+    @PreDestroy
+    public void cerrarSesionDB(){
+        try {
+            usuario.setUsuLogueado("N");
+            genericDAOBean.merge(usuario);
+        } catch (Exception e) {
+            String msj = "No se puede cerrar la sesión del usuario en la base de datos, causado por :" + e.getMessage();
+            logger.error(msj,e);
+        }
     }
 
     /**
@@ -79,7 +103,8 @@ public class IndexManagedBean implements Serializable {
      */
     public void autenticar() {
         try {
-            boolean logged = false;
+            logged = false;
+            Date fechaActual = new Date();
             //Busca el usuario con el Login registrado
             System.out.println("Buscando usuario...");
             MarUsuarios usuarioALoguear = (MarUsuarios)genericDAOBean.findByColumn(MarUsuarios.class, "usuLogin", usuario.getUsuLogin());
@@ -88,10 +113,36 @@ public class IndexManagedBean implements Serializable {
                 System.out.println("Validando contraseña...");
                 String passDec = CryptoUtils.decrypt(usuarioALoguear.getUsuPassword());
                 if (passDec.equals(usuario.getUsuPassword())) {
-                    logged = true;
+                    //Verifica si el usuario está activo
+                    if (usuarioALoguear.getUsuEstado().equals("I")) {
+                        PrimeFacesPopup.lanzarDialog(Effects.Explode, "Usuario no válido", "El usuario no se encuentra activo.", true, false);
+                        return;
+                    }
+
+                    //Valida que el usuario tenga permisos de acceso por tiempo
+                    if(usuarioALoguear.getUsuFechaInicio().after(fechaActual) || usuarioALoguear.getUsuFechaFin().before(fechaActual)){
+                        PrimeFacesPopup.lanzarDialog(Effects.Explode, "Usuario no válido", "El usuario ha expirado.", true, false);
+                        return;
+                    }
                     usuario = usuarioALoguear;
+                    //Verifica que el usuario deba o no cambiar la contraseña
+                    if(usuarioALoguear.getUsuCambioClave().equals("S")){
+                        PrimeFacesContext.execute("PF('dialogContrasena').show()");
+                        PrimeFacesPopup.lanzarDialog(Effects.Explode, "Cambio de contraseña", "Debe cambiar su contraseña antes de ingresar a la plataforma", true, false);
+                        return;
+                    }
+                    
+                    //Verifica que el usuario no tenga otra sesión abierta
+                    if(usuarioALoguear.getUsuLogueado().equals("S")){
+                        PrimeFacesPopup.lanzarDialog(Effects.Explode, "Sesión en proceso", "El usuario ya tiene una sesión activa, debe cerrarla antes de ingresar con una nueva, o esperar a que la sesión expire automáticamente", true, false);
+                        return;
+                    }
+                    
+                    logged = true;
                     //Se guarda el ingreso a la aplicación
                     usuario.setUsuUltimoIngreso(new Date());
+                    usuario.setUsuIntentosFail(Short.parseShort("0"));
+                    usuario.setUsuLogueado("S");
                     genericDAOBean.merge(usuario);
                     //El usuario es correcto, se cargan las variables de sesión
                     System.out.println("Colocando variables...");
@@ -108,6 +159,16 @@ public class IndexManagedBean implements Serializable {
                     SessionUtils.asignarValor("marinerpaths", dynaHtml.getValidPaths());
                     redireccionar(null);
                     System.out.println("Usuario logueado...");
+                }else{
+                    String maximo = (ConstantesUtils.cargarConstante("MAX-INTENTOS-LOGIN"));
+                    int max = Integer.parseInt(maximo);
+                    Short veces = usuarioALoguear.getUsuIntentosFail();
+                    veces++;
+                    usuarioALoguear.setUsuIntentosFail(veces);
+                    if(veces >= max){
+                        usuarioALoguear.setUsuEstado("I");
+                    }
+                    genericDAOBean.merge(usuarioALoguear);
                 }
             }
             if(!logged){
@@ -187,17 +248,29 @@ public class IndexManagedBean implements Serializable {
     /**
      * Cerrado de session de usuario.
      */
-    public void salir() {
+    public void salir(boolean redirec) {
         SessionUtils.asignarValor("marineruser", null);
         SessionUtils.asignarValor("marinerperson", null);
         SessionUtils.asignarValor("auth", "N");
         // Terminamos session AS
         try {
             FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-            redireccionar(null);
+            if(redirec){
+                redireccionar(null);
+            }
         } catch (Exception e) {
             logger.error("Error interno Finalizando session, error causado por: ", e);
         }
+    }
+    
+    /**
+     * Obtiene la URL de la página actual.
+     * @return 
+     */
+    public String obtenerPaginaActual(){
+        HttpServletRequest origRequest = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String URL = origRequest.getRequestURL().toString();
+        return URL;
     }
 
     /**
@@ -255,10 +328,32 @@ public class IndexManagedBean implements Serializable {
                     PrimeFacesPopup.lanzarDialog(Effects.Bounce, "Claves iguales", "La clave nueva no puede ser igual a la anterior", true, false);
                     return;
                 }
+                contrasenaEntidad = LoginUtils.obtenerEntidadDeConstante();
+                if(!LoginUtils.validarPatronContrasena(claveNueva, contrasenaEntidad)){
+                    String msj = "La contraseña no cumple las reglas definidas, debe tener al menos: ";
+                    if(contrasenaEntidad.getLongitudMin() > 0 ){
+                        msj = msj + contrasenaEntidad.getLongitudMin() + " caracteres. ";
+                    }
+                    if(contrasenaEntidad.getMinusculasMin() > 0 ){
+                        msj = msj + contrasenaEntidad.getMinusculasMin() + " minúsculas. ";
+                    }
+                    if(contrasenaEntidad.getMayusculasMin() > 0 ){
+                        msj = msj + contrasenaEntidad.getMayusculasMin() + " mayúsculas. ";
+                    }
+                    if(contrasenaEntidad.getNumerosMin() > 0 ){
+                        msj = msj + contrasenaEntidad.getNumerosMin() + " números. ";
+                    }
+                    if(contrasenaEntidad.getSimbolosMin() > 0 ){
+                        msj = msj + contrasenaEntidad.getSimbolosMin() + " símbolos. ";
+                    }       
+                    PrimeFacesPopup.lanzarDialog(Effects.Clip, "Contraseña insegura", msj, true, false);
+                    return;
+                }
                 usuario.setUsuPassword(CryptoUtils.encrypt(claveNueva));
+                usuario.setUsuCambioClave("N");
                 auditSessionUtils.setAuditReflectedValues(usuario);
                 genericDAOBean.merge(usuario);
-                PrimeFacesPopup.lanzarDialog(Effects.Clip, "Cambio realizado", "Contraseña cambiada correctamente, debe cerrar su sesión para realizar los cambios", true, false);
+                PrimeFacesPopup.lanzarDialog(Effects.Clip, "Cambio realizado", "Contraseña cambiada correctamente", true, false);
                 PrimeFacesContext.execute("PF('dialogContrasena').hide();");
             } else {
                 PrimeFacesPopup.lanzarDialog(Effects.Bounce, "Clave inválida", "La contraseña antigua no coincide", true, false);
@@ -267,6 +362,15 @@ public class IndexManagedBean implements Serializable {
             logger.error("Error cambiado las claves, causado por: " + e);
         }
     }
+    
+    /**
+     * Cierra la sesión y notifica al usuario.
+     */
+    public void cerrarSesionTiempo(){
+        salir(false);
+        PrimeFacesContext.execute("PF('dialogExpirado').show()");
+    }
+    
 
     public String getHtmlMenu() {
         return htmlMenu;
@@ -322,6 +426,14 @@ public class IndexManagedBean implements Serializable {
 
     public void setTieneCaptcha(boolean tieneCaptcha) {
         this.tieneCaptcha = tieneCaptcha;
+    }
+
+    public ContrasenaEntidad getContrasenaEntidad() {
+        return contrasenaEntidad;
+    }
+
+    public void setContrasenaEntidad(ContrasenaEntidad contrasenaEntidad) {
+        this.contrasenaEntidad = contrasenaEntidad;
     }
     
     

@@ -5,6 +5,8 @@ import org.apache.poi.hssf.usermodel.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +21,11 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 
 public class ResultSetToExcel {
 
@@ -35,16 +41,15 @@ public class ResultSetToExcel {
     public ResultSetToExcel(FormatType[] formatTypes, String sheetName) {
         workbook = new SXSSFWorkbook();
         
-        //Color col = new Color(90, 156, 209);
-        //XSSFColor xColHead = new XSSFColor(col);
-        
         sheet = workbook.createSheet(sheetName);
         format = workbook.createDataFormat();
         
         headerStyle = workbook.createCellStyle();
         headerFont = workbook.createFont();
+        headerFont.setFontName("Helvetica");
         contentStyle = workbook.createCellStyle();
         contentFont = workbook.createFont();
+        contentFont.setFontName("Helvetica");
         headerStyle.setFillForegroundColor(IndexedColors.SEA_GREEN.getIndex());
         //headerStyle.setFillForegroundColor(xColHead.getIndexed());
         headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
@@ -85,6 +90,8 @@ public class ResultSetToExcel {
             return FormatType.FLOAT;
         } else if (_class == Timestamp.class || _class == java.sql.Date.class) {
             return FormatType.DATE;
+        } else if ( _class == BigDecimal.class || _class == BigInteger.class){
+            return FormatType.BIG;
         } else {
             return FormatType.TEXT;
         }
@@ -93,35 +100,29 @@ public class ResultSetToExcel {
     public void generate(final OutputStream outputStream, List<Object> informacion, List<String> colHeaders) throws Exception {
         try {
             final int numeroFilas = informacion.size();
-            //ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-            /**
-             * if (formatTypes != null && formatTypes.length !=
-             * resultSetMetaData.getColumnCount()) { throw new
-             * IllegalStateException("Number of types is not identical to number
-             * of resultset columns. " + "Number of types: " +
-             * formatTypes.length + ". Number of columns: " +
-             * resultSetMetaData.getColumnCount()); }*
-             */
             int currentRow = 0;
             Row row = sheet.createRow(currentRow);
-            Object[] valor1 = (Object[]) informacion.get(0);
+            Object[] valor1;
+            if(informacion.get(0).getClass().isArray()){
+                valor1 = (Object[]) informacion.get(0);
+            }else{
+                valor1 = new Object[1];
+                valor1[0] = informacion.get(0);
+            }
             System.out.println("colHeaders.size() = " + colHeaders.size());
             System.out.println("valor1 = " + valor1.length);
+            
             //Crea los headers de las columnas
             System.out.println("Numero de filas .. " + numeroFilas);
             boolean isAutoDecideFormatTypes;
             if (isAutoDecideFormatTypes = (formatTypes == null)) {
+                
                 formatTypes = new FormatType[colHeaders.size()];
             }
-            Cell cell;
+            //Cell cell;
             for (int i = 0; i < valor1.length; i++) {
                 String title = colHeaders.get(i);
-                //row.setRowStyle(headerStyle);
                 title = title.toUpperCase();
-                cell = row.createCell(i);
-                cell.setCellValue(title);
-                cell.setCellStyle(headerStyle);
-                //writeCell(row, i, title, FormatType.TEXT, boldFont);
                 if (isAutoDecideFormatTypes) {
                     Class _class;
                     if (valor1[i] == null) {
@@ -129,45 +130,31 @@ public class ResultSetToExcel {
                     } else {
                         _class = valor1[i].getClass();
                     }
+                    System.out.println("_class = " + _class);
                     formatTypes[i] = getFormatType(_class);
                 }
+                writeCell(row, i, title, FormatType.TEXT, headerStyle);
             }
             currentRow++;
             
             //Crea el contenido del excel
-            Cell cellContent;
             ArrayList<Class> clases = new ArrayList<>();
-            //Object columnas = informacion.get(0);
             for (Object objeto : informacion) {
-                //row.setRowStyle(contentStyle);
                 row = sheet.createRow(currentRow++);
-                Object[] cols = (Object[]) objeto;
+                Object[] cols;
+                if (objeto.getClass().isArray()) {
+                    cols = (Object[]) objeto;
+                } else {
+                    cols = new Object[1];
+                    cols[0] = objeto;
+                }
+
                 for (int i = 0; i < valor1.length; i++) {
                     Object value = cols[i];
                     if (value == null) {
                         value = "";
                     }
-                    cellContent = row.createCell(i);
-                    CharSequence cs = value.toString();
-                    try {
-                        if (StringUtils.isNumeric(cs)) {
-                            if (objeto.equals(informacion.get(0))) {
-                                System.out.println("Numero -> " + cs);
-                                clases.add(Integer.class);
-                            }
-                            cellContent.setCellValue(Integer.parseInt(value.toString()));
-                        } else {
-                            if (objeto.equals(informacion.get(0))) {
-                                System.out.println("String -> " + cs);
-                                clases.add(String.class);
-                            }
-                            cellContent.setCellValue(value.toString());
-                        }
-                    } catch (NumberFormatException e) {
-                        cellContent.setCellValue(value.toString());
-                    }
-                    cellContent.setCellStyle(contentStyle);
-                    //writeCell(row, i, value, formatTypes[i]);
+                    writeCell(row, i, value, formatTypes[i], null, contentStyle);
                 }
             }
             Cell cellEmpty;
@@ -188,16 +175,19 @@ public class ResultSetToExcel {
                     
                     String strFormula = "SUM("+toAlphabetic(z)+"2:"+toAlphabetic(z) +(numeroFilas + 1) + ")";
                     System.out.println("strFormula = " + strFormula);
-                    cellResume.setCellType(HSSFCell.CELL_TYPE_FORMULA);
+                    cellResume.setCellType(Cell.CELL_TYPE_FORMULA);
                     cellResume.setCellFormula(strFormula);
                     cellResume.setCellStyle(contentStyle);
                 }
                 z++;
             }
             // Autosize columns
+            //XSSFFormulaEvaluator.evaluateAllFormulaCells(workbook);
+            /*
             for (int i = 0; i < colHeaders.size(); i++) {
-                sheet.autoSizeColumn((short) i);
-            }
+                System.out.println("Ajustando columna " + i);
+                sheet.autoSizeColumn(i);
+            }*/
             workbook.write(outputStream);
             outputStream.close();
         } finally {
@@ -223,70 +213,103 @@ public class ResultSetToExcel {
         generate(new FileOutputStream(file), informacion, colHeaders);
     }
 
-    private void writeCell(HSSFRow row, int col, Object value, FormatType formatType) {
+    private void writeCell(Row row, int col, Object value, FormatType formatType) {
         writeCell(row, col, value, formatType, null, null);
     }
 
-    private void writeCell(HSSFRow row, int col, Object value, FormatType formatType, HSSFFont font) {
-        writeCell(row, col, value, formatType, null, font);
+    private void writeCell(Row row, int col, Object value, FormatType formatType, CellStyle style) {
+        writeCell(row, col, value, formatType, null, style);
     }
 
-    private void writeCell(HSSFRow row, int col, Object value, FormatType formatType,
-            Short bgColor, HSSFFont font) {
-        HSSFCell cell = HSSFCellUtil.createCell(row, col, null);
-        if (value == null) {
+    private void writeCell(Row row, int col, Object value, FormatType formatType,
+            Short bgColor, CellStyle style) {
+        Cell cell = row.createCell(col);
+        if (value == null || (value.getClass() == String.class && value.toString().isEmpty())) {
             return;
         }
-
-        if (font != null) {
-            CellStyle style = workbook.createCellStyle();
-            style.setFont(font);
-            cell.setCellStyle(style);
+        if (style == null) {
+            style = workbook.createCellStyle();
         }
-
-        switch (formatType) {
-            case TEXT:
-                cell.setCellValue(value.toString());
-                break;
-            case INTEGER:
-                cell.setCellValue(((Number) value).intValue());
-                CellUtil.setCellStyleProperty(cell, workbook, CellUtil.DATA_FORMAT,
-                        HSSFDataFormat.getBuiltinFormat(("#,##0")));
-                break;
-            case FLOAT:
-                cell.setCellValue(((Number) value).doubleValue());
-                CellUtil.setCellStyleProperty(cell, workbook, CellUtil.DATA_FORMAT,
-                        HSSFDataFormat.getBuiltinFormat(("#,##0.00")));
-                break;
-            case DATE:
-                cell.setCellValue((Timestamp) value);
-                CellUtil.setCellStyleProperty(cell, workbook, CellUtil.DATA_FORMAT,
-                        HSSFDataFormat.getBuiltinFormat(("m/d/yy")));
-                break;
-            case MONEY:
-                cell.setCellValue(((Number) value).intValue());
-                CellUtil.setCellStyleProperty(cell, workbook, CellUtil.DATA_FORMAT,
-                        format.getFormat("($#,##0.00);($#,##0.00)"));
-                break;
-            case PERCENTAGE:
-                cell.setCellValue(((Number) value).doubleValue());
-                CellUtil.setCellStyleProperty(cell, workbook, CellUtil.DATA_FORMAT,
-                        HSSFDataFormat.getBuiltinFormat("0.00%"));
+        DataFormat df = workbook.createDataFormat();
+        try {
+            switch (formatType) {
+                case TEXT:
+                    cell.setCellValue(value.toString());
+                    break;
+                case INTEGER:  
+                    style.setDataFormat(df.getFormat("#,##0"));
+                    cell.setCellValue((Integer.parseInt((String) value)));
+                    cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                    break;
+                case BIG:
+                    style.setDataFormat(df.getFormat("#,##0"));
+                    cell.setCellValue(getBigDecimal(value).intValue());
+                    cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                    //CellUtil.setCellStyleProperty(cell, workbook, CellUtil.DATA_FORMAT,
+                    //        HSSFDataFormat.getBuiltinFormat(("#,##0")));
+                    break;
+                case FLOAT:
+                    cell.setCellValue(((Number) value).doubleValue());
+                    CellUtil.setCellStyleProperty(cell, workbook, CellUtil.DATA_FORMAT,
+                            HSSFDataFormat.getBuiltinFormat(("#,##0.00")));
+                    break;
+                case DATE:
+                    cell.setCellValue((Timestamp) value);
+                    CellUtil.setCellStyleProperty(cell, workbook, CellUtil.DATA_FORMAT,
+                            HSSFDataFormat.getBuiltinFormat(("m/d/yy")));
+                    break;
+                case MONEY:
+                    cell.setCellValue(((Number) value).intValue());
+                    CellUtil.setCellStyleProperty(cell, workbook, CellUtil.DATA_FORMAT,
+                            format.getFormat("($#,##0.00);($#,##0.00)"));
+                    break;
+                case PERCENTAGE:
+                    cell.setCellValue(((Number) value).doubleValue());
+                    CellUtil.setCellStyleProperty(cell, workbook, CellUtil.DATA_FORMAT,
+                            HSSFDataFormat.getBuiltinFormat("0.00%"));
+            }
+        } catch (Exception e) {
+            System.out.println("Error al colocar el valor, causado por: " + e.getMessage());
+            cell.setCellValue(value.toString());
         }
-
+        cell.setCellStyle(style);
+        /*
         if (bgColor != null) {
             CellUtil.setCellStyleProperty(cell, workbook, CellUtil.FILL_FOREGROUND_COLOR, bgColor);
             CellUtil.setCellStyleProperty(cell, workbook, CellUtil.FILL_PATTERN, HSSFCellStyle.SOLID_FOREGROUND);
-        }
+        }*/
     }
 
     public enum FormatType {
-
         TEXT,
         INTEGER,
         FLOAT,
         DATE,
         MONEY,
-        PERCENTAGE
+        PERCENTAGE,
+        BIG
+    }
+    
+    /**
+     * Convierte un object de tipo BigDecimal o BigInteger a tipo BigDecimal
+     * @param value
+     * @return 
+     */
+    public BigDecimal getBigDecimal( Object value ) {
+        BigDecimal ret = null;
+        if( value != null ) {
+            if( value instanceof BigDecimal ) {
+                ret = (BigDecimal) value;
+            } else if( value instanceof String ) {
+                ret = new BigDecimal( (String) value );
+            } else if( value instanceof BigInteger ) {
+                ret = new BigDecimal( (BigInteger) value );
+            } else if( value instanceof Number ) {
+                ret = new BigDecimal( ((Number)value).doubleValue() );
+            } else {
+                throw new ClassCastException("No es posible convertir ["+value+"] de clase "+value.getClass()+" a BigDecimal.");
+            }
+        }
+        return ret;
     }
 }

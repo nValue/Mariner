@@ -74,7 +74,7 @@ public class EstadisticasManagedBean extends GenericManagedBean implements Seria
      */
     public void obtenerReportes() {
         try {
-            rolesReportes = rolesReportesDAOBean.obtenerReportesPorUsuario(usuarioSesion);
+            rolesReportes = rolesReportesDAOBean.obtenerReportesPorUsuarioYTipo(usuarioSesion,"GRAFICOS");
             if (!rolesReportes.isEmpty()) {
                 rolReporteSel = rolesReportes.get(0);
             }

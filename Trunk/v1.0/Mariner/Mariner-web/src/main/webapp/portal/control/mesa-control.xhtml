@@ -157,6 +157,9 @@
                                 <p:commandButton value="Devolver estado" action="#{mesaControlManagedBean.devolverRadicacion()}" update="formInformacionEstados">
                                     <p:confirm header="Confirmación" message="¿Está seguro de devolver esta radicación al aprobador? Una vez realizado, este proceso no podrá ser anulado." icon="ui-icon-alert" />
                                 </p:commandButton>
+                                <p:commandButton value="Liberar radicación" action="#{mesaControlManagedBean.liberarRadicacion()}" update="formInformacionEstados">
+                                    <p:confirm header="Confirmación" message="¿Está seguro de liberar esta radicación del liquidador actual? Una vez realizado, este proceso no podrá ser revertido." icon="ui-icon-alert" />
+                                </p:commandButton>
                             </div>
                         </h:form>
                         

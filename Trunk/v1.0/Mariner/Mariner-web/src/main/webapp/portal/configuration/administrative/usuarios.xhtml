@@ -21,7 +21,7 @@
                     <h:outputLabel styleClass="subtitleMain" value="Cambiar claves, asignar permisos, configurar usuario"/>
                 </div>
             </div>
-            <div class="contenidoPrinc" align="left">
+            <div class="contenidoPrinc" align="center">
                 <div class="descripcion" align="center">
                     <div class="descText">
                         Busque en el filtro principal alguna información que tenga del usuario, ya sea Nombre, Documento, Correo o Login.
@@ -94,17 +94,34 @@
                                     <f:selectItem itemValue="S" itemLabel="Si"/>
                                 </p:selectOneMenu>
                                 <h:outputLabel class="labelLittle" value="Es Calificador" /> 
-                                <h:inputHidden/>
+                                <h:outputLabel class="labelLittle" value="Debe cambiar clave" />
                                 <p:selectOneMenu value="#{usuariosManagedBean.usuarioSel.usuEsCalificador}" style="width: 200px">
                                     <f:selectItem itemValue="N" itemLabel="No"/>
                                     <f:selectItem itemValue="S" itemLabel="Si"/>
                                 </p:selectOneMenu>
-                                <h:inputHidden/>
+                                <p:selectOneMenu value="#{usuariosManagedBean.usuarioSel.usuCambioClave}" disabled="true" style="width: 200px">
+                                    <f:selectItem itemValue="S" itemLabel="Si"/>
+                                    <f:selectItem itemValue="N" itemLabel="No"/>
+                                </p:selectOneMenu>
+                                <h:outputLabel class="labelLittle" value="Válido desde" /> 
+                                <h:outputLabel class="labelLittle" value="Válido hasta" /> 
+                                <p:calendar value="#{usuariosManagedBean.usuarioSel.usuFechaInicio}" showOn="button" styleClass="calendarUsuario" style="width: 200px !important;" pattern="dd/MM/yyyy"  timeZone="#{utilManagedBean.timeZone}" locale="es" />
+                                <p:calendar value="#{usuariosManagedBean.usuarioSel.usuFechaFin}" showOn="button" styleClass="calendarUsuario" style="width: 200px !important;" pattern="dd/MM/yyyy"  timeZone="#{utilManagedBean.timeZone}" locale="es" />
                             </h:panelGrid>
                             <div id="rightDiv" style="padding: 20px;display: inline-block;width: 40%;vertical-align: top">
                                 <p:dataTable id="tableRolesUsuario" value="#{usuariosManagedBean.rolesUsuarios}" selection="#{usuariosManagedBean.rolUsuarioSel}" var="rUsu" emptyMessage="No se han encontrado Roles">
                                     <p:column headerText="Roles asignados" styleClass="colCenter">
                                         <h:outputLabel value="#{rUsu.rolId.rolNombre}"/>
+                                    </p:column>
+                                    <p:column headerText="Válido desde" width="70" styleClass="colCenter">
+                                        <h:outputText value="#{rUsu.rusFechaInicio}" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Válido desde" width="70" styleClass="colCenter">
+                                        <h:outputText value="#{rUsu.rusFechaFin}" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"/>
+                                        </h:outputText>
                                     </p:column>
                                     <p:column headerText="X" width="20">
                                         <p:commandLink update="tableRolesUsuario" title="Presione para eliminar este rol del usuario" action="#{usuariosManagedBean.eliminarRolDeUsuario()}">                                    
@@ -117,7 +134,7 @@
                                 <div align="center" style="margin: 20px;">
                                     <p:commandButton value="Asignar Rol" oncomplete="PF('modalRoles').show()" disabled="#{usuariosManagedBean.usuarioSel.usuId==null}"/>
                                     <p:commandButton value="Seguridad" oncomplete="PF('modalSeguridad').show()" update=":dialogSeguridad" disabled="#{usuariosManagedBean.usuarioSel.usuId==null}"/>
-                                    <p:commandButton value="Cambiar clave" oncomplete="PF('modalClave').show()"/>
+                                    <p:commandButton value="Cambiar clave" update=":dialogClave" oncomplete="PF('modalClave').show()" action="#{usuariosManagedBean.limpiarClaves()}"/>
                                 </div>
                             </div>
                             <div align="center" style="margin-bottom: 8px;">
@@ -139,9 +156,16 @@
         <p:dialog id="dialogRoles" widgetVar="modalRoles" modal="true" draggable="false" resizable="false" header="Asignar rol al usuario">
             <h:form id="formRoles">
                 <div style="margin: 20px;">
-                    <p:selectOneMenu value="#{usuariosManagedBean.rolSel}" converter="MarRolesConverter" style='width: 300px'>
-                        <f:selectItems value="#{usuariosManagedBean.roles}" var="rol" itemLabel="#{rol.rolNombre}" itemValue="#{rol}" />
-                    </p:selectOneMenu>
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Rol a Asignar"/>
+                        <p:selectOneMenu value="#{usuariosManagedBean.rolSel}" converter="MarRolesConverter" style='width: 280px'>
+                            <f:selectItems value="#{usuariosManagedBean.roles}" var="rol" itemLabel="#{rol.rolNombre}" itemValue="#{rol}" />
+                        </p:selectOneMenu>
+                        <h:outputLabel value="Válido desde:"/>
+                        <p:calendar value="#{usuariosManagedBean.fechaInicioRol}" showOn="button" style="width: 100px !important;" pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"  locale="es" />
+                        <h:outputLabel value="Válido hasta:"/>
+                        <p:calendar value="#{usuariosManagedBean.fechaFinRol}" showOn="button" style="width: 100px !important;" pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"  locale="es" />
+                    </h:panelGrid>
                 </div>
                 <div align="center" style="margin: 20px">
                     <p:commandButton value="Asignar Rol" action="#{usuariosManagedBean.asignarRol()}" update=":formUsuario :formUsuario:tableRolesUsuario"/>
@@ -154,8 +178,14 @@
         <p:dialog id="dialogClave" widgetVar="modalClave" modal="true" draggable="false" resizable="false" header="Cambiar clave del usuario">
             <h:form id="formClave">
                 <div style="margin: 20px;">
-                    <h:outputLabel value="Ingrese la Clave" />
-                    <p:password value="#{usuariosManagedBean.claveNueva}" style="width: 230px;margin: 0px 10px"/>
+                    <h:panelGrid columns="2">
+                        <h:outputLabel for="usuClaNueva1" value="Clave nueva: " />
+                        <p:password id="usuClaNueva1" value="#{usuariosManagedBean.claveNueva}" required="true" match="usuClaNueva2" validatorMessage="Ambas claves deben ser iguales" requiredMessage="Clave Nueva requerida" label="Clave nueva" size="30"/>
+                        <h:outputLabel for="usuClaNueva2" value="Repetir clave nueva: " />
+                        <p:password id="usuClaNueva2" value="#{usuariosManagedBean.claveNuevaRep}" required="true" requiredMessage="Debe repetir la clave nueva" 
+                                    label="Repetir Clave Nueva" size="30" />
+                    </h:panelGrid>
+                    <p:messages id="messages2" autoUpdate="true" closable="true" severity="error"/>
                 </div>
                 <div align="center" style="margin: 20px">
                     <p:commandButton value="Cambiar clave" action="#{usuariosManagedBean.cambiarClave()}" update=":formUsuario" />

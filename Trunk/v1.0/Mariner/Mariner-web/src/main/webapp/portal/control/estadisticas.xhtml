@@ -86,12 +86,12 @@
                             <script type="text/javascript">
                                 FusionCharts.ready(function () {
                                     var url = "#{request.contextPath}/graphics/ServletGraphicsStatistics?id=#{estadisticasManagedBean.rolReporteSel.repId.repId}&amp;fechaDesde=#{estadisticasManagedBean.fechaDesdeFormated}&amp;fechaHasta=#{estadisticasManagedBean.fechaHastaFormated}&amp;pars=#{estadisticasManagedBean.parametros}";
-                                            var generalReportChart = new FusionCharts({
-                                #{estadisticasManagedBean.reporteGraficoSel.rgrPropiedades}
-                                            });
-                                            generalReportChart.setXMLUrl(url);
-                                            generalReportChart.render("chartContainer");
-                                        });
+                                    var generalReportChart = new FusionCharts({
+                                        #{estadisticasManagedBean.reporteGraficoSel.rgrPropiedades}
+                                    });
+                                    generalReportChart.setXMLUrl(url);
+                                    generalReportChart.render("chartContainer");
+                                });
                             </script>
                             <div id="chartContainer"/>
                         </div>

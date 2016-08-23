@@ -38,7 +38,7 @@ public class ReportesParametrosManagedBean extends GenericManagedBean{
      */
     public void obtenerReportes(){
         try {
-            reportes = reportesDAOBeanLocal.obtenerReportesDeCodigosTipo("'ESPECIALES'");
+            reportes = reportesDAOBeanLocal.obtenerReportesDeCodigosTipo("'ESPECIFICOS'");
             if(!reportes.isEmpty()){
                 reporteSel = reportes.get(0);
                 obtenerParametrosReporte();

@@ -124,7 +124,6 @@ public class MesaControlManagedBean extends GenericManagedBean implements Serial
         }
     }
     
-    
     /**
      * Devuelve una radicación al estado de validación, solo es válido si el proceso ya pasó alguna vez por ahí.
      */
@@ -158,6 +157,34 @@ public class MesaControlManagedBean extends GenericManagedBean implements Serial
                 PrimeFacesPopup.lanzarDialog(Effects.Clip, "Proceso realizado", "La radicación ahora se encuentra en la mesa de aprobación del usuario " + radFaseEstado.getUsuId().getPerId().getPerNombres() + " " + radFaseEstado.getUsuId().getPerId().getPerApellidos(), true, false);
             }else{
                 PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", "Esta radicación todavía no puede ser devuelta puesto que no ha llegado al estado apropiado para ello", true, false);
+            }
+        } catch (Exception e) {
+            String msj = "No se pueden obtener las fases estados, causado por " + e;
+            PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", msj, true, false);
+            logger.error(msj,e);
+        }
+    }
+    
+    /**
+     * Agrega un nuevo estado con la radicación pendiente por asignar a un liquidador.
+     */
+    public void liberarRadicacion() {
+        try {
+            MarRadicacionesFasesEstados radFaseEstado = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radicacion.getRadId());
+            if (radFaseEstado.getFesId().getFesCodigo().equals("G-S")) {
+                String observaciones = "Proceso liberado desde mesa de control; Usuario: " + usuarioSesion.getUsuLogin();
+
+                BigDecimal BDsalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacion.getRadId(),
+                        "I-P", "A", radicacionesFasesEstados.get(0).getUsuId().getUsuId(), observaciones, null);
+                Integer salida = BDsalida.intValue();
+                if (salida == -999) {
+                    PrimeFacesPopup.lanzarDialog(Effects.Slide, "Liberación incorrecta", "No se puede liberar la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
+                    return;
+                }
+                obtenerFasesEstados();
+                PrimeFacesPopup.lanzarDialog(Effects.Clip, "Proceso realizado", "La radicación ahora se encuentra disponible para que otro liquidador pueda obtenerla ", true, false);
+            } else {
+                PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", "La radicación no se encuentra en el estado 'En proceso de liquidación en SAP', por lo que no puede ser liberada", true, false);
             }
         } catch (Exception e) {
             String msj = "No se pueden obtener las fases estados, causado por " + e;

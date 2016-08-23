@@ -1,6 +1,7 @@
 package co.com.realtech.mariner.controller.jsf.managed_bean.portal.configuration.technical.reportes;
 
 import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBean;
+import co.com.realtech.mariner.model.ejb.dao.entity_based.reportes.RolesReportesDAOBeanLocal;
 import co.com.realtech.mariner.model.entity.MarReportesParametros;
 import co.com.realtech.mariner.model.entity.MarRolesReportes;
 import co.com.realtech.mariner.util.jsf.file.FileDownloader;
@@ -17,7 +18,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import org.apache.log4j.Logger;
 import org.primefaces.component.selectonemenu.SelectOneMenu;
 
 /**
@@ -28,6 +28,8 @@ import org.primefaces.component.selectonemenu.SelectOneMenu;
 @ViewScoped
 public class ReportesManagedBean extends GenericManagedBean implements Serializable{
 
+    @EJB(beanName = "RolesReportesDAOBean")
+    private RolesReportesDAOBeanLocal rolesReportesDAOBean;
     
     private List<MarRolesReportes> rolesReportes;
     private MarRolesReportes rolReporteSel;
@@ -37,7 +39,7 @@ public class ReportesManagedBean extends GenericManagedBean implements Serializa
     
     private List<List<Object[]>> listaListas;
     private List<Object[]> listaListasObjetosSel;
-   
+    
     @PostConstruct
     public void init(){
         rolesReportes = new ArrayList<>();
@@ -50,16 +52,7 @@ public class ReportesManagedBean extends GenericManagedBean implements Serializa
      */
     public void obtenerReportes(){
         try {
-            String query = "SELECT DISTINCT rr.* \n"
-                    + "FROM mar_roles_reportes rr \n"
-                    + "INNER JOIN mar_roles ro ON rr.rol_id = ro.rol_id\n"
-                    + "INNER JOIN mar_roles_usuarios ur ON ro.rol_id = ur.rol_id\n"
-                    + "INNER JOIN mar_reportes r ON rr.rep_id = r.rep_id\n"
-                    + "INNER JOIN mar_reportes_tipos rt ON r.rit_id = rt.rti_id\n"
-                    + "WHERE rt.rti_codigo = 'ESPECIFICOS'\n"
-                    + "AND ur.usu_id = :usrId";
-            query = query.replace(":usrId", usuarioSesion.getUsuId().toString());
-            rolesReportes = (List<MarRolesReportes>)genericDAOBean.executeNativeQuery(query, MarRolesReportes.class, false);
+            rolesReportes = rolesReportes = rolesReportesDAOBean.obtenerReportesPorUsuarioYTipo(usuarioSesion,"ESPECIFICOS");
             if(!rolesReportes.isEmpty()){
                 rolReporteSel = rolesReportes.get(0);
             }
@@ -165,17 +158,6 @@ public class ReportesManagedBean extends GenericManagedBean implements Serializa
                     }else if(reporteParametro.getRpaTipo().equals("LISTA")){
                         SelectOneMenu som = (SelectOneMenu)input;
                         Object value = som.getSubmittedValue();
-                        /*
-                        System.out.println("som.getNamingContainer() = " + som.getNamingContainer());
-                        System.out.println("som.getTitle() = " + som.getTitle());
-                        System.out.println("som.getTabindex() = " + som.getTabindex());
-                        System.out.println("Get Label " + som.getLabel());
-                        System.out.println("som.getLabelTemplate() = " + som.getLabelTemplate());
-                        System.out.println("som.getValue() = " + som.getValue());
-                        System.out.println("som.getVar() = " + som.getVar());
-                        System.out.println("som.getLocalValue().getClass() = " + som.getLocalValue());
-                        System.out.println("value.getClass() = " + value);
-                        */
                         valor = value;
                     }
                     query = query.replaceAll(reporteParametro.getRpaAlias(), valor.toString());
@@ -193,7 +175,9 @@ public class ReportesManagedBean extends GenericManagedBean implements Serializa
             FileDownloader fd = new FileDownloader();
             fd.construirExcel(columnas, objeto, "Reporte_1", rolReporteSel.getRepId().getRepNombre(), FacesContext.getCurrentInstance(),true);
         } catch (Exception e) {
-            logger.error("El valor del campo no se puede acceder -> " + e, e);
+            String msj = "Ocurrió un error al generar el excel, causado por : " + e;
+            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", msj, true, false);
+            logger.error(msj,e);
         }
         
     }

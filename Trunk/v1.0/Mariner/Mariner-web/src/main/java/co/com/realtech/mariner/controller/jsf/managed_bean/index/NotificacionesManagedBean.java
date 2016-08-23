@@ -2,7 +2,10 @@ package co.com.realtech.mariner.controller.jsf.managed_bean.index;
 
 import co.com.realtech.mariner.controller.jsf.managed_bean.main.GenericManagedBean;
 import co.com.realtech.mariner.model.entity.MarNotificaciones;
+import co.com.realtech.mariner.model.entity.MarReportes;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -22,6 +25,10 @@ public class NotificacionesManagedBean extends GenericManagedBean implements Ser
     private MarNotificaciones notificacion;
     private List<MarNotificaciones> notificaciones;
     
+    private Date fechaSel;
+    private MarReportes reporteGeneral;
+    private String parametros;
+    
     @Override
     public void init() {
         refrescarNotificacionesUsuario();
@@ -37,9 +44,35 @@ public class NotificacionesManagedBean extends GenericManagedBean implements Ser
             getNotificaciones().stream().filter((not) -> (not.getNtfEstado().equals("P"))).forEach((_item) -> {
                 setCantidadPendientes(getCantidadPendientes() + 1);
             });
+            fechaSel = new Date();
+            obtenerReportePrincipal();
+            colocarParametrosGrafico();
         } catch (Exception e) {
             logger.error("Error inicializando NotificacionesManagedBean, causado por " + e);
         }
+    }
+    
+    /**
+     * Obtiene el reporte principal que se debe mostrar en la pantalla de inicio.
+     */
+    public void obtenerReportePrincipal(){
+        try {
+            reporteGeneral = (MarReportes)genericDAOBean.findByColumn(MarReportes.class, "repCodigo", "GEN_01");
+        } catch (Exception e) {
+            logger.error("No se puede cargar el reporte general, causado por: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Coloca el parámetro de la notaría para el gráfico si es que la persona lo tiene asociado, sino trae todo.
+     */
+    public void colocarParametrosGrafico(){
+        if(usuarioSesion.getNotId() == null){
+            parametros = "n.not_id";
+        }else{
+            parametros = usuarioSesion.getNotId().getNotId().toString();
+        }
+        parametros = parametros + "-";
     }
 
     /**
@@ -54,6 +87,18 @@ public class NotificacionesManagedBean extends GenericManagedBean implements Ser
         } catch (Exception e) {
             logger.error("Error actualizando estado de lectrua a notificacion, causado por " + e);
         }
+    }
+    
+    /**
+     * Retorna la fecha Formateada
+     *
+     * @return
+     */
+    public String getFechaSelFormateada() {
+        String salida;
+        SimpleDateFormat ds = new SimpleDateFormat("dd/MM/yyyy");
+        salida = ds.format(fechaSel);
+        return salida;
     }
     
     public MarNotificaciones getNotificacion() {
@@ -79,5 +124,33 @@ public class NotificacionesManagedBean extends GenericManagedBean implements Ser
     public void setCantidadPendientes(int cantidadPendientes) {
         this.cantidadPendientes = cantidadPendientes;
     }
+
+    public Date getFechaSel() {
+        return fechaSel;
+    }
+
+    public void setFechaSel(Date fechaSel) {
+        this.fechaSel = fechaSel;
+    }
+
+    public MarReportes getReporteGeneral() {
+        return reporteGeneral;
+    }
+
+    public void setReporteGeneral(MarReportes reporteGeneral) {
+        this.reporteGeneral = reporteGeneral;
+    }
+
+    public String getParametros() {
+        return parametros;
+    }
+
+    public void setParametros(String parametros) {
+        this.parametros = parametros;
+    }
+    
+    
+    
+    
     
 }

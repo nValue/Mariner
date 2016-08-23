@@ -105,7 +105,7 @@
                                     </td>
                                     <!-- panel de cerrado de usuario -->
                                     <td>
-                                        <p:commandLink action="#{indexManagedBean.salir()}" title="Presione aqui para cerrar la sesion de usuario" rendered="#{sessionScope.auth eq 'S'}">
+                                        <p:commandLink action="#{indexManagedBean.salir(true)}" title="Presione aqui para cerrar la sesion de usuario" rendered="#{sessionScope.auth eq 'S'}">
                                             <img class="element-animation" style="cursor: pointer;width: 24px;" src="#{resource['/images/icons/logout-icon.png']}"/>
                                             <p:confirm header="Confirmacion" message="Esta seguro de que desea cerrar su sesion?" icon="ui-icon-alert" />
                                         </p:commandLink>

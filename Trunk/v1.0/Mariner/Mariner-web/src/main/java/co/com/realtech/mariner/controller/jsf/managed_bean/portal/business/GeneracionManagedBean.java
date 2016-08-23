@@ -80,9 +80,15 @@ public class GeneracionManagedBean extends GenericManagedBean {
     private MarRadicaciones radicacionAdicionalSel;
     
     private MarRadicacionesAgrupamientos radicacionAgrupamiento;
+    
+    private int minutosRojo;
+    private int minutosAmarillo;
 
     @Override
     public void init() {
+        minutosRojo = 9999999;
+        minutosAmarillo = 9999999;
+        
         fechaFiltroInic = new Date();
         fechaFiltroFin = new Date();
         fechaLiquidaciones = new Date();
@@ -90,6 +96,7 @@ public class GeneracionManagedBean extends GenericManagedBean {
         obtenerRadicacionesPendientes();
         obtenerRechazos();
         radicacionesAdicionales = new ArrayList<>();
+        obtenerLimiteMinutos();
     }
 
     /**
@@ -105,6 +112,18 @@ public class GeneracionManagedBean extends GenericManagedBean {
             String msj = "No se pueden obtener los motivos del rechazo, causado por : " + e;
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Rechazos inválidos", msj, true, false);
             logger.error(msj, e);
+        }
+    }
+    
+    /**
+     * Obtiene los minutos límite para colocar los objetos de la lista en colores.
+     */
+    public void obtenerLimiteMinutos(){
+        try {
+            minutosRojo = Integer.parseInt(ConstantesUtils.cargarConstante("VUR-MINUTOS-ROJO"));
+            minutosAmarillo = Integer.parseInt(ConstantesUtils.cargarConstante("VUR-MINUTOS-AMARILLO"));
+        } catch (Exception e) {
+            logger.error("No se pueden traer los minutos de las constantes, causado por : " + e.getMessage());
         }
     }
 
@@ -316,10 +335,33 @@ public class GeneracionManagedBean extends GenericManagedBean {
                 valor = "(R) - " + valor;
             }else if(ultimo.getRadId().getPriId() != null && ultimo.getRadId().getPriId().getPriCodigo().equals("DIS")){
                 valor = "(I) - " + valor;
+            }else if(ultimo.getRadId().getPriId() != null && ultimo.getRadId().getPriId().getPriCodigo().equals("NOT")){
+                valor = "(U) - " + valor;
             }
         } catch (Exception e) {
         }
         return valor;
+    }
+    
+    /**
+     * Obtiene el tiempo en minutos desde que la radicación ha estado en el estado enviado.
+     */
+    public String obtenerTiempoMins(MarRadicaciones radic){
+        int minutos = 0;
+        try {
+            MarRadicacionesFasesEstados ultFase = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radic);
+            minutos = radicFasesEstadosDAOBean.obtenerMinutosActualesRadFase(ultFase);
+        } catch (Exception e) {
+            String msj = "No se puede obtener el tiempo de la radicación, debido a : " + e;
+            logger.error(msj,e);   
+        }
+        String color = "";
+        if(minutos > minutosRojo){
+            color = "red-background";
+        }else if(minutos > minutosAmarillo){
+            color = "yellow-background";
+        }
+        return color;
     }
 
     /**

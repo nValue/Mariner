@@ -15,6 +15,8 @@ import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 import javax.ejb.EJB;
@@ -46,12 +48,16 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
     private MarPersonas personaSel;
 
     private String claveNueva;
+    private String claveNuevaRep;
 
     private List<MarRoles> roles;
     private MarRoles rolSel;
 
     private List<MarNotarias> notarias;
     private List<MarOficinasRegistros> oficinas;
+    
+    private Date fechaInicioRol;
+    private Date fechaFinRol;
 
     @Override
     public void init() {
@@ -63,6 +69,10 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
         obtenerOficinas();
         //obtenerNotarias();
         claveNueva = "";
+        Calendar cal = Calendar.getInstance();
+        fechaInicioRol = cal.getTime();
+        cal.add(Calendar.YEAR, 2);
+        fechaFinRol = cal.getTime();
     }
 
     /**
@@ -161,13 +171,14 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
             logger.error("Error eliminando el rol al usuario, causado por " + e, e);
         }
     }
-
+    
+    
     /**
      * Asigna el rol al usuario seleccionado.
      */
     public void asignarRol() {
         try {
-            System.out.println("Nemths ROL:"+rolSel.getRolNombre());
+            //System.out.println("Nemths ROL:"+rolSel.getRolNombre());
             Predicate<MarRolesUsuarios> rolExistente = r -> r.getRolId().equals(rolSel);
             boolean existeRol = rolesUsuarios.stream().anyMatch(rolExistente);
             if (existeRol) {
@@ -176,6 +187,8 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
                 MarRolesUsuarios nuevoRolUsuario = new MarRolesUsuarios();
                 nuevoRolUsuario.setRolId(rolSel);
                 nuevoRolUsuario.setUsuId(usuarioSel);
+                nuevoRolUsuario.setRusFechaInicio(fechaInicioRol);
+                nuevoRolUsuario.setRusFechaFin(fechaFinRol);
                 auditSessionUtils.setAuditReflectedValues(nuevoRolUsuario);
                 genericDAOBean.save(nuevoRolUsuario);
                 PrimeFacesContext.execute("PF('modalRoles').hide()");
@@ -218,6 +231,9 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
                     PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error de Validacion", "Lo sentimos, pero la informacion ingresada ya se encuentra vinculada a otro usuario en la plataforma.", true, false);
                 }
             } else {
+                if (usuarioSel.getUsuEstado().equals("A")) {
+                    usuarioSel.setUsuIntentosFail(Short.parseShort("0"));
+                }
                 genericDAOBean.merge(personaSel);
                 genericDAOBean.merge(usuarioSel);
                 usuarioSeleccion = usuarioSel;
@@ -247,6 +263,14 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
             logger.error("Error eliminando usuario del usuario, causado por " + e, e);
         }
     }
+    
+    /**
+     * Limpia las claves para ser ingresadas de nuevo.
+     */
+    public void limpiarClaves(){
+        claveNueva = "";
+        claveNuevaRep = "";
+    }
 
     /**
      * Cambia la clave actual del usuario siempre y cuando no sea null.
@@ -256,6 +280,7 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
             if (!claveNueva.equals("")) {
                 usuarioSel.setUsuPassword(CryptoUtils.encrypt(claveNueva));
                 auditSessionUtils.setAuditReflectedValues(usuarioSel);
+                usuarioSel.setUsuCambioClave("S");
                 genericDAOBean.merge(usuarioSel);
                 PrimeFacesPopup.lanzarDialog(Effects.Fold, "Información guardada", "Clave cambiada correctamente", true, false);
             } else {
@@ -285,6 +310,11 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
         usuarioSel = new MarUsuarios();
         personaSel = new MarPersonas();
         PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Por favor ingrese la informacion del nuevo usuario", true, false);
+        usuarioSel.setUsuIntentosFail(Short.parseShort("0"));
+        Calendar cal = Calendar.getInstance();
+        usuarioSel.setUsuFechaInicio(cal.getTime());
+        cal.add(Calendar.YEAR, 2);
+        usuarioSel.setUsuFechaFin(cal.getTime());
     }
     
     public List<MarUsuarios> getUsuarios() {
@@ -382,5 +412,31 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
     public void setOficinas(List<MarOficinasRegistros> oficinas) {
         this.oficinas = oficinas;
     }
+
+    public Date getFechaInicioRol() {
+        return fechaInicioRol;
+    }
+
+    public void setFechaInicioRol(Date fechaInicioRol) {
+        this.fechaInicioRol = fechaInicioRol;
+    }
+
+    public Date getFechaFinRol() {
+        return fechaFinRol;
+    }
+
+    public void setFechaFinRol(Date fechaFinRol) {
+        this.fechaFinRol = fechaFinRol;
+    }
+
+    public String getClaveNuevaRep() {
+        return claveNuevaRep;
+    }
+
+    public void setClaveNuevaRep(String claveNuevaRep) {
+        this.claveNuevaRep = claveNuevaRep;
+    }
+    
+    
 
 }

@@ -80,6 +80,7 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
     private MarPrioridades prioridadGobernacion;
     private MarPrioridades prioridadVencimiento;
     private MarPrioridades prioridadDiscapacidad;
+    private MarPrioridades prioridadNotaria;
     
     private boolean esPrioridad;
 
@@ -105,6 +106,7 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
             prioridadGobernacion = (MarPrioridades)genericDAOBean.findByColumn(MarPrioridades.class, "priCodigo", "GOB");
             prioridadVencimiento = (MarPrioridades)genericDAOBean.findByColumn(MarPrioridades.class, "priCodigo", "VEN");
             prioridadDiscapacidad = (MarPrioridades)genericDAOBean.findByColumn(MarPrioridades.class, "priCodigo", "DIS");
+            prioridadNotaria = (MarPrioridades)genericDAOBean.findByColumn(MarPrioridades.class, "priCodigo", "NOT");
         } catch (Exception e) {
             String msj = "No se pueden obtener las prioridades del sistema para la asignación automática, sin embargo el sistema puede seguir funcionando";
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Prioridades requeridas", msj, true, false);
@@ -285,6 +287,15 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
         }
         return esGobernacion;
     }
+    
+    
+    /**
+     * Retorna si la notaría a la que está asociado el usuario debe tener prioridad.
+     * @return 
+     */
+    public boolean esPrioridadNotaria(){
+        return usuarioSesion.getNotId().getNotEsPrioridad().equals("S");
+    }
 
     /**
      * Crea una nueva radicación vacía para el llenado de la información
@@ -330,6 +341,8 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
             radicacionFaseEstProcesadaSel = null;
             if (gobernacion.equals("S")) {
                 radicacionSel.setPriId(prioridadGobernacion);
+            }else if(esPrioridadNotaria()){
+                radicacionSel.setPriId(prioridadNotaria);
             }
             if (usuarioSesion.getNotId().getNotEsGobernacion().equals("S")) {
                 BigDecimal dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_obtener_turno", usuarioSesion.getNotId());

@@ -35,7 +35,7 @@
                                 <f:selectItems value="#{historialManagedBean.estadosProcesos}" var="esP" itemLabel="#{esP.valor}" itemValue="#{esP}"/>
                                 <p:ajax onstart="PF('loadingDialog').show()" listener="#{historialManagedBean.seleccionarFiltroBusq()}" oncomplete="PF('loadingDialog').hide();PF('wvRadicaciones').clearFilters()" update="formHistorial"/>
                             </p:selectOneMenu>
-                            <p:inputText style="width: 130px;margin: 0px 5px" placeholder="Filtro" value="#{historialManagedBean.campoBusqueda}" rendered="#{!(historialManagedBean.filtroBusquedaSel.clave eq 'ES')}" />
+                            <p:inputText style="width: 130px;margin: 0px 5px;text-transform: uppercase" placeholder="Filtro" value="#{historialManagedBean.campoBusqueda}" rendered="#{!(historialManagedBean.filtroBusquedaSel.clave eq 'ES')}" />
                             <p:commandButton style="vertical-align: top;" value="Buscar" action="#{historialManagedBean.buscarRadicaciones()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('wvRadicaciones').clearFilters();" update="formHistorial"/>
                         </div>
                         <div align="right" style="margin-top: 20px;display: inline-block;width: 420px;vertical-align: top">

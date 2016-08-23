@@ -9,6 +9,35 @@
 
     <ui:define name="negocio">
         <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
+        <style type="text/css">
+            .ui-selectonemenu-item.ui-selectonemenu-row.ui-widget-content{
+                border-color: white !important;
+            };
+        </style>
+        <script>
+        $(document).ready(function() {
+            setearColores();
+        });
+        
+        function setearColores(){
+            $(".red-background").parent().parent().addClass('prioridadAlta');
+            $(".prioridadAlta:not(.ui-state-hover)").css( "background-color", "#FF787A" );
+            $(".yellow-background").parent().parent().addClass('prioridadMedia');
+            $(".prioridadMedia:not(.ui-state-hover)").css( "background-color", "#fff8a2" );
+            setSelectionColor();
+        };
+        
+        function setSelectionColor(){
+            //Coloca la selección del objeto con el fondo del color necesario
+            if($(".ui-state-highlight.prioridadAlta").size() > 0){
+                $(".ui-selectonemenu-label").css("background-color", "#FF787A");
+            }else if($(".ui-state-highlight.prioridadMedia").size() > 0){
+                $(".ui-selectonemenu-label").css("background-color", "#fff8a2");
+            }else{
+                $(".ui-selectonemenu-label").css( "background-color", "white" );
+            }
+        }
+    </script>
         <div id="paperMain">
             <div class="tituloCont" align="center">
                 <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
@@ -26,10 +55,13 @@
                 <h:form id="formTurnos">
                     <div align="left" style="margin: 0px 5%;">
                         <h:outputLabel value="Radicaciones Actuales: " />
-                        <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" converter="MarRadicacionesConverter" value="#{generacionManagedBean.radicacionUsuarioSel}">
-                            <p:ajax listener="#{generacionManagedBean.obtenerFasesEstadosDeRadicacion()}" update="formTurnos" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                        <p:selectOneMenu style="vertical-align: top;margin: 0px 20px 0px 10px;" var="radsS" effect="fade" converter="MarRadicacionesConverter" value="#{generacionManagedBean.radicacionUsuarioSel}">
+                            <p:ajax listener="#{generacionManagedBean.obtenerFasesEstadosDeRadicacion()}" update="formTurnos" onstart="PF('loadingDialog').show();setearColores();" oncomplete="PF('loadingDialog').hide();setearColores();"/>
                             <f:selectItem itemLabel=" - " itemValue="" />
                             <f:selectItems value="#{generacionManagedBean.radicacionesUsuario}" var="rads" itemLabel="#{(generacionManagedBean.esRechazo(rads))} #{rads.radTurno eq null ? '' : '- Turno'} #{rads.radTurno}" itemValue="#{rads}"/>
+                            <p:column>
+                                <h:outputText value="#{(generacionManagedBean.esRechazo(radsS))} #{radsS.radTurno eq null ? '' : '- Turno'} #{radsS.radTurno}" styleClass="#{generacionManagedBean.obtenerTiempoMins(radsS)}" />
+                            </p:column>
                         </p:selectOneMenu>
                         <p:commandButton style="vertical-align: top" value="Obtener Radicación" action="#{generacionManagedBean.asignarNuevaRadicacion()}" update="formTurnos" process="@this" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
                         <p:commandButton style="vertical-align: top" value="Ver Historial" action="#{generacionManagedBean.obtenerRadicacionesProcesadas()}" update="modalHistorial" process="@this" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('dialogHistorial').show();"/>
@@ -56,13 +88,14 @@
                                     <p:outputLabel class="labelText" value="#{generacionManagedBean.radicacionUsuarioSel.escId.escFecha}" >
                                         <f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}"/>
                                     </p:outputLabel>
-
                                 </h:panelGrid>
+                                <h:outputLabel style="display: block;margin-top: 3px" class="labelLittle" value="Prioridad" />
+                                <p:inputTextarea value="#{generacionManagedBean.radicacionUsuarioSel.priId.priNombre}" rows="1" style="width: 77%;display: block"/>
                                 <h:outputText value="Motivo Rechazo" style="display: block" class="labelLittle" rendered="#{generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'R-R'}"/>
                                 <p:inputTextarea readonly="true" value="#{generacionManagedBean.radFaseEstadoActual.rcaId.rcaNombres}" style="width: 77%"
                                                  rendered="#{generacionManagedBean.radFaseEstadoActual.fesId.fesCodigo eq 'R-R'}" rows="2"/>
 
-                                <h:outputLabel style="display: block" class="labelLittle" value="Observaciones" />
+                                <h:outputLabel style="display: block;margin-top: 5px" class="labelLittle" value="Observaciones" />
                                 <p:inputTextarea value="#{generacionManagedBean.observaciones}" rows="2" style="width: 77%;display: block"/>
                                 <p:button style="margin: 10px;" value="Descargar Escritura" target="_new" href="/static/fileDispatcher/#{generacionManagedBean.radicacionUsuarioSel.escId.arcId.arcId}-#{generacionManagedBean.radicacionUsuarioSel.escId.arcId.arcHash}.#{generacionManagedBean.radicacionUsuarioSel.escId.arcId.arcExtension}"
                                           rendered="#{generacionManagedBean.radicacionUsuarioSel.escId.arcId != null}"/>

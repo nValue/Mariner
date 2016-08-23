@@ -9,6 +9,7 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="content">
+        
         <!-- Panel que se muestra cuando el usuario no esta autenticado -->
         <h:panelGroup rendered="#{sessionScope.auth eq null or sessionScope.auth eq 'N'}">
             <h:form id="formLogin" style="margin-bottom: 0px;">
@@ -71,18 +72,23 @@
 
         <!-- Panel que se muestra cuando el usuario YA esta autenticado -->
         <h:panelGroup id="panelHome" rendered="#{sessionScope.auth eq 'S'}">
+            <h:form>
+                <p:idleMonitor timeout="1440000">
+                    <p:ajax event="idle" listener="#{indexManagedBean.cerrarSesionTiempo()}" />
+                </p:idleMonitor>
+            </h:form>
             <div id="backgroundDiv">
                 <h:form>
                     <div class="headerMain">
                         <div class="leftHeaderMain">
-                            <img id="menuicon" class="element-animation" style="margin: 10%;cursor: pointer" src="#{resource['/images/icons/menu-icon.png']}"/>                          
+                            <img id="menuicon" class="element-animation" style="margin: 10%;cursor: pointer" src="#{resource['/images/icons/menu-icon.png']}"/>
                         </div>
                         <div class="centerHeaderMain">
                             <a href="#{request.contextPath}">
                                 <img width="180px" style="display: inline-block;vertical-align: top;float: left" src="#{resource['/images/logoGobernacion.png']}"/>                                
                             </a>                            
                             <div class="mainTitle" style="">Plataforma de impuestos de Registro Valle del Cauca</div>
-                            <img class="imgValle" width="50px" src="#{resource['/images/valle.png']}"/>
+                            <img class="imgValle" width="90px" style="left:-8px" src="#{resource['/images/valleAzul.png']}"/>
                         </div>
                         <div class="rightHeaderMain">
                             <table class="notificaciones-panel">
@@ -159,7 +165,7 @@
                                     </td>
                                     <!-- panel de cerrado de usuario -->
                                     <td>
-                                        <p:commandLink action="#{indexManagedBean.salir()}" title="Presione aqui para cerrar la sesion de usuario">
+                                        <p:commandLink action="#{indexManagedBean.salir(true)}" title="Presione aqui para cerrar la sesion de usuario">
                                             <img class="element-animation" style="cursor: pointer;width: 24px;" src="#{resource['/images/icons/logout-icon.png']}"/>
                                             <p:confirm header="Confirmacion" message="Esta seguro de que desea cerrar su sesion?" icon="ui-icon-alert" />
                                         </p:commandLink>
@@ -172,7 +178,11 @@
                     <p:socket onMessage="handleMessage" channel="/estados/#{indexManagedBean.usuario.usuId}" /> 
                 </h:form>
 
-                
+                <h:form id="actPagina">
+                    <h:panelGroup rendered="#{!(indexManagedBean.obtenerPaginaActual().endsWith('/app/'))}" >
+                        <img class="element-animation" title="Presione para limpiar los campos de la pantalla" style="z-index: 1; position: absolute;right: 12%; top: 95px; cursor: pointer" onclick="location.reload()" src="#{resource['/images/clear.png']}" />
+                    </h:panelGroup>
+                </h:form>
                 <div class="contentMain" align="center">
                     <ui:insert name="negocio"/>
                 </div>
@@ -221,10 +231,57 @@
                         <p:password id="contNueva2" value="#{indexManagedBean.claveNuevaRep}" required="true" requiredMessage="Debe repetir la clave nueva" 
                                     label="Repetir Clave Nueva" size="30" />
                     </h:panelGrid>
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" severity="error"/>
+                    <p:messages id="messages" autoUpdate="true" closable="true" severity="error"/>
                     <div align="center" style="padding-top: 10px">                        
                         <p:commandButton value="Guardar" action="#{indexManagedBean.cambiarContrasena()}" />
                         <p:commandButton value="Cancelar" oncomplete="PF('dialogContrasena').hide()" process="@this"/>
+                    </div>
+                </h:form>
+            </div>
+        </p:dialog>
+        
+        <!-- Dialog para el cambio de contraseña al ingresar -->
+        <p:dialog id="modalContrasenaIng" widgetVar="dialogContrasenaIng" resizable="false" header="Cambio de contraseña" modal="true">
+            <div>
+                <div class="contenidoPrinc" align="center">
+                    <div class="descripcion" align="center">
+                        <div class="descText">
+                            Debe cambiar su contraseña y posteriormente ingresar de nuevo.
+                        </div>
+                    </div>
+                </div>
+                <h:form id="formCambioContrasenaIng">
+                    <h:panelGrid columns="2" style="margin: 10px">
+                        <h:outputLabel for="contAntiguaIng" value="Clave Actual: " />
+                        <p:password id="contAntiguaIng" value="#{indexManagedBean.claveAntigua}" required="true" requiredMessage="Clave actual requerida" 
+                                    label="Clave Actual" size="30" />
+                        <h:outputLabel for="contNueva1Ing" value="Clave nueva: " />
+                        <p:password id="contNueva1Ing" value="#{indexManagedBean.claveNueva}" required="true" match="contNueva2" validatorMessage="Ambas claves deben ser iguales" requiredMessage="Clave Nueva requerida" label="Clave nueva" size="30"/>
+                        <h:outputLabel for="contNueva2Ing" value="Repetir clave nueva: " />
+                        <p:password id="contNueva2Ing" value="#{indexManagedBean.claveNuevaRep}" required="true" requiredMessage="Debe repetir la clave nueva" 
+                                    label="Repetir Clave Nueva" size="30" />
+                    </h:panelGrid>
+                    <p:messages id="messages" autoUpdate="true" closable="true" severity="error"/>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Guardar" action="#{indexManagedBean.cambiarContrasena()}" />
+                        <p:commandButton value="Cancelar" oncomplete="PF('dialogContrasena').hide()" process="@this"/>
+                    </div>
+                </h:form>
+            </div>
+        </p:dialog>
+        
+        <!-- Dialog para la sesión expirada -->
+        <p:dialog id="modalExpirado" widgetVar="dialogExpirado" styleClass="modalTop" closable="false" resizable="false" header="Sesión terminada" modal="true">
+            <div>
+                <h:form id="formExpirado">
+                    <div align="center">
+                        <img class="element-animation" src="#{resource['/images/clock.png']}"/>
+                    </div>
+                    <div style="margin: 10px;">
+                        Por seguridad su sesión ha sido finalizada, presione Aceptar para autenticarse de nuevo.
+                    </div>
+                    <div align="center" style="padding-top: 10px">                        
+                        <p:commandButton value="Aceptar" action="#{indexManagedBean.redireccionar(null)}" />
                     </div>
                 </h:form>
             </div>

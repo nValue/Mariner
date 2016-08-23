@@ -11,40 +11,44 @@
         <div id="contenedorInicio">
             <div id="espacioIzq">
                 <div class="tituloContenedor" align="left">
-                    <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                    <i class="fa fa-pie-chart fa-2x titleIcon" aria-hidden="true"></i>
                     <div style="display: inline-block">
-                        <h:outputLabel styleClass="titleMain" value="Gráfico" />
-                        <h:outputLabel styleClass="subtitleMain" value="Transacciones realizadas"/>
+                        <h:outputLabel styleClass="titleMain" value="Procesos diarios" />
+                        <h:outputLabel styleClass="subtitleMain" value="Estado de las radicaciones por día"/>
                     </div>
                 </div>
                 <div>
                     <div>
-                        <div style="padding: 10px;">
-                            El Siguiente es el estado (% Avance) de las 10 ultimas radicaciones cargadas en el sistema
-                        </div>
-                        <script type="text/javascript" src="#{request.contextPath}/resources/fusioncharts/js/fusioncharts.js"/>
-                        <script type="text/javascript" src="#{request.contextPath}/resources/fusioncharts/js/themes/fusioncharts.theme.fint.js"/>
-                        
-                        <script type="text/javascript">
-                            FusionCharts.ready(function () {
-                                var generalReportChart = new FusionCharts({
-                                    type: "bar2d",
-                                    renderAt: "chartContainer",
-                                    width: "97%",
-                                    height: "320"
-                                });
-                                var url = "#{request.contextPath}/resources/fusioncharts/xml/inicio.xml";
-                                        generalReportChart.setXMLUrl(url);
-                                        generalReportChart.render("chartContainer");
+                        <h:form id="formGraficaGeneral">
+                            <div style="padding: 5px;">
+                                <h:panelGrid columns="2" style="padding: 5px;">
+                                    <p:outputLabel  value="Fecha"/>
+                                    <p:calendar value="#{notificacionesManagedBean.fechaSel}" showOn="button" style="width: 100px !important;" pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}" styleClass="calendarSmall" locale="es">
+                                        <p:ajax event="dateSelect" update="formGraficaGeneral" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();" />
+                                    </p:calendar>
+                                </h:panelGrid>
+                            </div>
+                            <script type="text/javascript" src="#{request.contextPath}/resources/fusioncharts/js/fusioncharts.js"/>
+                            <script type="text/javascript" src="#{request.contextPath}/resources/fusioncharts/js/themes/fusioncharts.theme.fint.js"/>
+
+                            <script type="text/javascript">
+                                FusionCharts.ready(function () {
+                                    var url = "#{request.contextPath}/graphics/ServletGraphicsStatistics?id=#{notificacionesManagedBean.reporteGeneral.repId}&amp;fechaDesde=#{notificacionesManagedBean.fechaSelFormateada}&amp;fechaHasta=#{notificacionesManagedBean.fechaSelFormateada}&amp;pars=#{notificacionesManagedBean.parametros}";
+                                    var generalReportChart = new FusionCharts({
+                                         type: "pie3d",renderAt: "chartContainerPie",width: "95%",height: "282",startingAngle: "-180"
                                     });
-                        </script>
-                        <div id="chartContainer"/>
+                                    generalReportChart.setXMLUrl(url);
+                                    generalReportChart.render("chartContenedor");
+                                });
+                            </script>
+                            <div id="chartContenedor"/>
+                        </h:form>
                     </div>
                 </div>
             </div>
             <div id="espacioDer">
                 <div class="tituloContenedor" align="left">
-                    <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                    <i class="fa fa-rss fa-2x titleIcon" aria-hidden="true"></i>
                     <div style="display: inline-block">
                         <h:outputLabel styleClass="titleMain" value="Notificaciones" />
                         <h:outputLabel styleClass="subtitleMain" value="Transacciones pendientes"/>
