@@ -36,10 +36,12 @@ public class ModulosDAOBean extends GenericDAOBean implements ModulosDAOBeanLoca
                             "   SELECT RP.MOD_ID\n" +
                             "   FROM mar_roles_usuarios UR\n" +
                             "   INNER JOIN mar_roles_modulos RP ON UR.ROL_ID=RP.ROL_ID\n" +
-                            "       WHERE UR.usu_id=:usuId)\n" +
+                            "       WHERE UR.usu_id=:usuId\n" +
+                            "           AND TRUNC(SYSDATE) BETWEEN TRUNC(ur.rus_fecha_inicio) AND TRUNC(ur.rus_fecha_fin))\n" +
                             "START WITH MOD_ID_PADRE IS NULL\n" +
                             "CONNECT BY PRIOR MOD_ID=MOD_ID_PADRE ORDER BY mod_orden";
             Query q = getEntityManager().createNativeQuery(query);
+            System.out.println("query = " + query);
             q.setParameter("usuId", usuario.getUsuId());
             List<String> paths = (List<String>) q.getResultList();
             paths.stream().map((path) -> path.split("-")).forEach((elements) -> {

@@ -36,6 +36,13 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarRolesUsuarios.findByAudUsuario", query = "SELECT m FROM MarRolesUsuarios m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarRolesUsuarios.findByAudFecha", query = "SELECT m FROM MarRolesUsuarios m WHERE m.audFecha = :audFecha")})
 public class MarRolesUsuarios implements Serializable {
+
+    @Column(name = "RUS_FECHA_INICIO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date rusFechaInicio;
+    @Column(name = "RUS_FECHA_FIN")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date rusFechaFin;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -128,6 +135,22 @@ public class MarRolesUsuarios implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarRolesUsuarios[ rusId=" + rusId + " ]";
+    }
+
+    public Date getRusFechaInicio() {
+        return rusFechaInicio;
+    }
+
+    public void setRusFechaInicio(Date rusFechaInicio) {
+        this.rusFechaInicio = rusFechaInicio;
+    }
+
+    public Date getRusFechaFin() {
+        return rusFechaFin;
+    }
+
+    public void setRusFechaFin(Date rusFechaFin) {
+        this.rusFechaFin = rusFechaFin;
     }
     
 }

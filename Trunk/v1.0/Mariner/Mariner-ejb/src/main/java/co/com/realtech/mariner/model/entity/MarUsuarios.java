@@ -51,6 +51,22 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarUsuarios.findByUsuEsAprobador", query = "SELECT m FROM MarUsuarios m WHERE m.usuEsAprobador = :usuEsAprobador"),
     @NamedQuery(name = "MarUsuarios.findByUsuEsCalificador", query = "SELECT m FROM MarUsuarios m WHERE m.usuEsCalificador = :usuEsCalificador")})
 public class MarUsuarios implements Serializable {
+
+    @Size(max = 1)
+    @Column(name = "USU_LOGUEADO")
+    private String usuLogueado;
+
+    @Column(name = "USU_FECHA_INICIO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date usuFechaInicio;
+    @Column(name = "USU_FECHA_FIN")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date usuFechaFin;
+    @Size(max = 1)
+    @Column(name = "USU_CAMBIO_CLAVE")
+    private String usuCambioClave;
+    @Column(name = "USU_INTENTOS_FAIL")
+    private Short usuIntentosFail;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -327,6 +343,46 @@ public class MarUsuarios implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarUsuarios[ usuId=" + usuId + " ]";
+    }
+
+    public Date getUsuFechaInicio() {
+        return usuFechaInicio;
+    }
+
+    public void setUsuFechaInicio(Date usuFechaInicio) {
+        this.usuFechaInicio = usuFechaInicio;
+    }
+
+    public Date getUsuFechaFin() {
+        return usuFechaFin;
+    }
+
+    public void setUsuFechaFin(Date usuFechaFin) {
+        this.usuFechaFin = usuFechaFin;
+    }
+
+    public String getUsuCambioClave() {
+        return usuCambioClave;
+    }
+
+    public void setUsuCambioClave(String usuCambioClave) {
+        this.usuCambioClave = usuCambioClave;
+    }
+
+    public Short getUsuIntentosFail() {
+        return usuIntentosFail;
+    }
+
+    public void setUsuIntentosFail(Short usuIntentosFail) {
+        this.usuIntentosFail = usuIntentosFail;
+    }
+
+    public String getUsuLogueado() {
+        return usuLogueado;
+    }
+
+    public void setUsuLogueado(String usuLogueado) {
+        this.usuLogueado = usuLogueado;
     }
     
 }

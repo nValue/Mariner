@@ -24,6 +24,6 @@ public interface RolesReportesDAOBeanLocal {
      * @return
      * @throws MarinerPersistanceException 
      */
-    public List<MarRolesReportes> obtenerReportesPorUsuario(MarUsuarios usuario) throws MarinerPersistanceException;
+    public List<MarRolesReportes> obtenerReportesPorUsuarioYTipo(MarUsuarios usuario, String tipo) throws MarinerPersistanceException;
     
 }

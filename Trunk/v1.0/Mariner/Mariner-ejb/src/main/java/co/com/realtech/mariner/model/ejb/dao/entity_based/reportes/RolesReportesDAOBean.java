@@ -16,7 +16,7 @@ import javax.persistence.Query;
 public class RolesReportesDAOBean extends GenericDAOBean implements RolesReportesDAOBeanLocal {
 
     @Override
-    public List<MarRolesReportes> obtenerReportesPorUsuario(MarUsuarios usuario) throws MarinerPersistanceException {
+    public List<MarRolesReportes> obtenerReportesPorUsuarioYTipo(MarUsuarios usuario, String tipo) throws MarinerPersistanceException {
         List<MarRolesReportes> reportes = null;
         try {
             String query = "SELECT DISTINCT rr.* \n"
@@ -25,8 +25,9 @@ public class RolesReportesDAOBean extends GenericDAOBean implements RolesReporte
                     + "INNER JOIN mar_roles_usuarios ur ON ro.rol_id = ur.rol_id\n"
                     + "INNER JOIN mar_reportes r ON rr.rep_id = r.rep_id\n"
                     + "INNER JOIN mar_reportes_tipos rt ON r.rti_id = rt.rti_id\n"
-                    + "WHERE rt.rti_codigo = 'GRAFICOS'\n"
+                    + "WHERE rt.rti_codigo = '%TIPO%'\n"
                     + "AND ur.usu_id = :usrId ";
+            query = query.replace("%TIPO%", tipo);
             query = query.replace(":usrId", usuario.getUsuId().toString());
             Query q = getEntityManager().createNativeQuery(query,MarRolesReportes.class);
             reportes = (List<MarRolesReportes>) q.getResultList();

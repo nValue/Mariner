@@ -183,7 +183,7 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
                 }
                 sql = sql.replace("1 = 1", " fe.fes_codigo = " + valor);
             }else if(tipo.equals("RA")){
-                sql = sql.replace("1 = 1", " r.rad_numero = '" + campoBusqueda + "'");
+                sql = sql.replace("1 = 1", " UPPER(r.rad_numero) = UPPER('" + campoBusqueda + "')");
             }else if(tipo.equals("LI")){
                 sql = sql.replace("1 = 1", " r.rad_liquidacion = '" + BusinessStringUtils.convertNumeroLiquidacion(campoBusqueda) + "'");
             }else if(tipo.equals("OT")){
