@@ -12,7 +12,6 @@ import java.util.List;
 import javax.persistence.GeneratedValue;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -42,6 +41,10 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarFasesEstados.findByAudUsuario", query = "SELECT m FROM MarFasesEstados m WHERE m.audUsuario = :audUsuario"),
     @NamedQuery(name = "MarFasesEstados.findByAudFecha", query = "SELECT m FROM MarFasesEstados m WHERE m.audFecha = :audFecha")})
 public class MarFasesEstados implements Serializable {
+
+    @Size(max = 10)
+    @Column(name = "FES_COLOR")
+    private String fesColor;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -165,6 +168,14 @@ public class MarFasesEstados implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarFasesEstados[ fesId=" + fesId + " ]";
+    }
+
+    public String getFesColor() {
+        return fesColor;
+    }
+
+    public void setFesColor(String fesColor) {
+        this.fesColor = fesColor;
     }
     
 }

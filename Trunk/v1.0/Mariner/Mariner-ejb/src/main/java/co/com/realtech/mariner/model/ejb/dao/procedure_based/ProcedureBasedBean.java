@@ -61,12 +61,16 @@ public class ProcedureBasedBean extends GenericDAOBean implements ProcedureBased
     @Override
     public String cargarXMLGraficoEstadistica(String id, String fechaDesde, String fechaHasta, String params) throws Exception {
         String valor = "", valorTmp;
-        int tamBloque = 3700;
+        int tamBloque = 3000;
 
         int contador = 1;
         while (true) {
             valorTmp = (String) callGenericFunction("PKG_VUR_GRAPHICS.FL_GENERAR_XML_ESTADISTICAS", id, fechaDesde, fechaHasta, contador, params);
-            valor = valor + valorTmp;
+            if(valorTmp == null){
+                valorTmp = "";
+            }
+            //System.out.println("valorTmp = " + valorTmp);
+            valor = valor.concat(valorTmp);
             if (valorTmp.length() < tamBloque) {
                 break;
             }
