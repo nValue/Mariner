@@ -59,7 +59,7 @@ public class ServletGraphicsStatistics extends HttpServlet {
                 try (PrintWriter out = response.getWriter()) {
                     String xmlGeneratedData;
                     xmlGeneratedData = procedureBasedBeanLocal.cargarXMLGraficoEstadistica(tipoReporte, fechaDesde, fechaHasta,parametros);
-                    System.out.println("xmlGeneratedData = " + xmlGeneratedData);
+                    //System.out.println("xmlGeneratedData = " + xmlGeneratedData);
                     out.println(xmlGeneratedData);                    
                 }
             } catch (Exception e) {

@@ -109,6 +109,9 @@
                             <p:column headerText="Orden" width="80" styleClass="colCenter">
                                 <h:outputText value="#{estado.fesOrden}" />
                             </p:column>                            
+                            <p:column headerText="Color" width="80" styleClass="colCenter">
+                                <h:outputText value="#{estado.fesColor}" />
+                            </p:column>  
                             <p:column headerText="X" width="20">
                                 <p:commandLink update="estados" title="Presione para eliminar este Estado" action="#{fasesEstadosManagedBean.eliminarEstadoFase()}">                                    
                                     <f:setPropertyActionListener target="#{fasesEstadosManagedBean.estado}" value="#{estado}" />
@@ -128,7 +131,7 @@
             </div>            
         </p:dialog>
 
-        <!-- Dialog de modificacion Fase -->        
+        <!-- Dialog de modificacion fase-estado -->        
         <p:dialog id="modalEstado" widgetVar="dialogEstado" closeOnEscape="true" draggable="true" resizable="false" header="Configuracion de Estado" modal="true">
             <div>
                 <h:form id="formModalEstado">
@@ -139,6 +142,8 @@
                         <p:inputText value="#{fasesEstadosManagedBean.estado.fesNombre}" required="true" size="30"/>
                         <h:outputLabel value="Orden"/>
                         <p:inputText value="#{fasesEstadosManagedBean.estado.fesOrden}" required="true" size="30"/>
+                        <h:outputLabel value="Color"/>
+                        <p:colorPicker value="#{fasesEstadosManagedBean.estado.fesColor}" />
                     </h:panelGrid>
                     <div align="center" style="padding-top: 10px">
                         <p:commandButton value="Guardar" action="#{fasesEstadosManagedBean.guardarEstadoFase()}" update="@form :formModalEstadosFases"/>

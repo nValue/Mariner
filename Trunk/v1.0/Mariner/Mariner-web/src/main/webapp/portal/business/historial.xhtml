@@ -39,15 +39,16 @@
                             <p:commandButton style="vertical-align: top;" value="Buscar" action="#{historialManagedBean.buscarRadicaciones()}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('wvRadicaciones').clearFilters();" update="formHistorial"/>
                         </div>
                         <div align="right" style="margin-top: 20px;display: inline-block;width: 420px;vertical-align: top">
-                            
-                            <h:outputLabel value="Fecha Desde"/>
-                            <p:calendar styleClass="calendarSmall" id="inputFecha1" value="#{historialManagedBean.fechaFiltroInic}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
-                                <p:ajax event="dateSelect" listener="#{historialManagedBean.buscarRadicaciones()}" update="formHistorial" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('wvRadicaciones').clearFilters()"/>
-                            </p:calendar>
-                            <h:outputLabel value="Fecha Hasta"/>
-                            <p:calendar styleClass="calendarSmall" id="inputFecha2" value="#{historialManagedBean.fechaFiltroFin}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
-                                <p:ajax event="dateSelect" listener="#{historialManagedBean.buscarRadicaciones()}" update="formHistorial" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('wvRadicaciones').clearFilters()"/>
-                            </p:calendar>
+                            <h:panelGroup rendered="#{historialManagedBean.filtroBusquedaSel.clave eq 'ES'}">
+                                <h:outputLabel value="Fecha Desde"/>
+                                <p:calendar styleClass="calendarSmall" id="inputFecha1" value="#{historialManagedBean.fechaFiltroInic}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
+                                    <p:ajax event="dateSelect" listener="#{historialManagedBean.buscarRadicaciones()}" update="formHistorial" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('wvRadicaciones').clearFilters()"/>
+                                </p:calendar>
+                                <h:outputLabel value="Fecha Hasta"/>
+                                <p:calendar styleClass="calendarSmall" id="inputFecha2" value="#{historialManagedBean.fechaFiltroFin}" locale="es" pattern="dd-MM-yyyy" timeZone="#{utilManagedBean.timeZone}">
+                                    <p:ajax event="dateSelect" listener="#{historialManagedBean.buscarRadicaciones()}" update="formHistorial" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide();PF('wvRadicaciones').clearFilters()"/>
+                                </p:calendar>
+                            </h:panelGroup>
                         </div>
                     </div>
                     <div align="center" style="margin-top: 20px">

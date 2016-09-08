@@ -94,7 +94,7 @@ public class IndexManagedBean implements Serializable {
             genericDAOBean.merge(usuario);
         } catch (Exception e) {
             String msj = "No se puede cerrar la sesión del usuario en la base de datos, causado por :" + e.getMessage();
-            logger.error(msj,e);
+            logger.warn("La sesión del usuario expiró, no se puede colocar en el log de la DB como 'N'");
         }
     }
 
@@ -126,14 +126,14 @@ public class IndexManagedBean implements Serializable {
                     }
                     usuario = usuarioALoguear;
                     //Verifica que el usuario deba o no cambiar la contraseña
-                    if(usuarioALoguear.getUsuCambioClave().equals("S")){
+                    if(usuarioALoguear.getUsuCambioClave() != null && usuarioALoguear.getUsuCambioClave().equals("S")){
                         PrimeFacesContext.execute("PF('dialogContrasena').show()");
                         PrimeFacesPopup.lanzarDialog(Effects.Explode, "Cambio de contraseña", "Debe cambiar su contraseña antes de ingresar a la plataforma", true, false);
                         return;
                     }
                     
                     //Verifica que el usuario no tenga otra sesión abierta
-                    if(usuarioALoguear.getUsuLogueado().equals("S")){
+                    if(usuarioALoguear.getUsuLogueado() != null && usuarioALoguear.getUsuLogueado().equals("S")){
                         PrimeFacesPopup.lanzarDialog(Effects.Explode, "Sesión en proceso", "El usuario ya tiene una sesión activa, debe cerrarla antes de ingresar con una nueva, o esperar a que la sesión expire automáticamente", true, false);
                         return;
                     }

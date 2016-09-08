@@ -280,11 +280,19 @@
                     <div style="margin: 10px;">
                         Por seguridad su sesión ha sido finalizada, presione Aceptar para autenticarse de nuevo.
                     </div>
-                    <div align="center" style="padding-top: 10px">                        
-                        <p:commandButton value="Aceptar" action="#{indexManagedBean.redireccionar(null)}" />
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Aceptar" oncomplete="recargarPagina()" />
                     </div>
                 </h:form>
             </div>
         </p:dialog>
+        
+        <script>
+        
+        function recargarPagina(){
+            location.reload();
+        };
+        </script>
+        
     </ui:define>
 </ui:composition>

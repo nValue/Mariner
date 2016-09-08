@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/template-business.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="negocio">
+        
+        <link rel="stylesheet" type="text/css" href="#{resource['css/content.css']}" />
+        
+        <style type="text/css">
+            *.inputModalCalendar>input{
+                height: 23px !important;
+                font-weight: 600 !important;
+                color: black !important;
+                font-family: 'Open Sans', sans-serif !important;
+                width: 220px;
+            }
+
+            *.calendar>input{
+                height: 23px !important;
+                font-weight: 600 !important;
+                color: black !important;
+                font-family: 'Open Sans', sans-serif !important;
+                width: 220px !important;
+            }
+
+            *.calendar>button{
+                width: 24px !important;
+                height: 24px !important;
+            }
+        </style>
+
+        <script type="text/javascript" src="#{resource['js/primefaces.es.calendar.js']}"/>
+        <!-- Scripts FusionCharts-->
+        <script type="text/javascript" src="#{request.contextPath}/resources/fusioncharts/js/fusioncharts.js"/>
+        <script type="text/javascript" src="#{request.contextPath}/resources/fusioncharts/js/themes/fusioncharts.theme.zune.js"/>
+        <script type="text/javascript" src="#{request.contextPath}/resources/fusioncharts/js/fusioncharts.widgets.js"/>
+
+        <div id="paperMain">
+            <div class="tituloCont" align="center">
+                <i class="fa fa-deaf fa-2x titleIcon" aria-hidden="true"></i>
+                <div style="display: inline-block">
+                    <h:outputLabel styleClass="titleMain" value="Panel de estados" />
+                    <h:outputLabel styleClass="subtitleMain" value="Panel principal de visualización de radicaciones"/>
+                </div>
+            </div>
+            <h:form id="formStatistics">
+                <h:panelGrid columns="2" >
+                    <h:outputText value="Fecha" styleClass="text" />
+                    <p:calendar value="#{panelEstadosManagedBean.fecha}" pattern="dd/MM/yyyy" timeZone="#{utilManagedBean.timeZone}" styleClass="calendarSmall" locale="es">
+                        <p:ajax event="dateSelect" listener="#{panelEstadosManagedBean.filtrarEstadisticas()}" update="panelEstadisticas" onstart="PF('loadingDialog').show();" oncomplete="PF('loadingDialog').hide();" />
+                    </p:calendar>
+                </h:panelGrid>
+                <h:panelGroup id="panelEstadisticas">
+                    <div class="panelGrafico" align="center" style="padding-bottom: 22px;">
+                        <p:poll interval="20" update="panelEstadisticas" />
+                        <script type="text/javascript">
+                            FusionCharts.ready(function () {
+                                var url = "#{request.contextPath}/graphics/ServletGraphicsStatistics?id=#{panelEstadosManagedBean.reporteSel.repId}&amp;fechaDesde=#{panelEstadosManagedBean.fechaFormated}&amp;fechaHasta=#{panelEstadosManagedBean.fechaFormated}";
+                                console.log(url);
+                                var generalReportChart = new FusionCharts({
+                                        #{panelEstadosManagedBean.obtenerPropiedades()}
+                                    });
+                                    generalReportChart.setXMLUrl(url);
+                                    generalReportChart.render("chartContainer");
+                                });
+                        </script>
+                        <div id="chartContainer"/>
+                    </div>
+                </h:panelGroup>
+            </h:form>
+        </div>
+
+    </ui:define>
+
+</ui:composition>

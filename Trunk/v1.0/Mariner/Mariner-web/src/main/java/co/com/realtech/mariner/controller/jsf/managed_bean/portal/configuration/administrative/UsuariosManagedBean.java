@@ -222,6 +222,9 @@ public class UsuariosManagedBean extends GenericManagedBean implements Serializa
                     if (usuarioSel.getUsuPassword() == null || usuarioSel.getUsuPassword().equals("")) {
                         usuarioSel.setUsuPassword(CryptoUtils.encrypt(claveNueva));
                     }
+                    usuarioSel.setUsuIntentosFail(Short.parseShort("0"));
+                    usuarioSel.setUsuCambioClave("S");
+                    usuarioSel.setUsuLogueado("N");
                     genericDAOBean.save(personaSel);
                     usuarioSel.setPerId(personaSel);
                     genericDAOBean.save(usuarioSel);
