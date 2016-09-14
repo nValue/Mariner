@@ -8,6 +8,16 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="negocio">
+        <!-- Verificar si es internet explorer -->        
+        <script type="text/javascript" src="#{resource['js/vur-utils.js']}"/>
+        <script type="text/javascript">
+            // jQuery validacion de navegador.
+            $(document).ready(function () {
+                console.log('Prueba.....');
+                checkVersion();
+            }
+        </script>
+
         <div id="contenedorInicio">
             <div id="espacioIzq">
                 <div class="tituloContenedor" align="left">
@@ -59,13 +69,13 @@
                         <h:panelGroup id="panelNotificaciones">
                             <div id="notificaciones-principal">
                                 <script type="text/javascript">
-                                    function fl_execute_button_index(idClass, status) {
-                                        if (status === 'P') {
+                                            function fl_execute_button_index(idClass, status) {
+                                            if (status === 'P') {
                                             var classes = document.getElementsByClassName(idClass);
-                                            var buttton = classes[0];
-                                            buttton.click();
-                                        }
-                                    }
+                                                    var buttton = classes[0];
+                                                    buttton.click();
+                                            }
+                                            }
                                 </script>
                                 <ui:repeat value="#{notificacionesManagedBean.notificaciones}" var="notificacion" varStatus="status">
                                     <p:commandLink styleClass="btnNotificacionIndex_#{notificacion.ntfId}" update="@this" action="#{notificacionesManagedBean.actualizarEstadoLecturaNotificacion(notificacion)}" onmouseover="fl_execute_button_index('btnNotificacionIndex_#{notificacion.ntfId}', '#{notificacion.ntfEstado}');">
@@ -97,7 +107,20 @@
                     </h:form>                                        
                 </div>
             </div>
-        </div>        
+        </div>  
+
+        <!-- Modal para indicar que la version del navegador no es compatible. -->
+        <p:dialog id="modalNavigator" widgetVar="loadingNavigator" modal="true" appendTo="@(body)" resizable="false" showHeader="false" styleClass="loadingDialog">  
+            <div style="margin: 25px;">
+                <div align="center">
+                    <img src="#{resource['/images/loading.gif']}"/>
+                </div> 
+                <div align="center">
+                    <h:outputText value="Lo sentimos pero la version de navegador que esta usando no es compatible" style="font-size: 16px;color: rgb(82, 82, 82);"/><br/>
+                    <h:outputText value=".! ......... !." style="font-size: 14px;color: rgb(77, 77, 77);"/><br/>
+                </div> 
+            </div>            
+        </p:dialog>
     </ui:define>
 
 </ui:composition>

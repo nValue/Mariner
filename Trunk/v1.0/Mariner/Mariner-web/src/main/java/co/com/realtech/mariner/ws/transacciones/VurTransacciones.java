@@ -5,6 +5,7 @@ import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.ws.pasarela.PSEWSConsumerBeanLocal;
 import co.com.realtech.mariner.model.entity.MarTransacciones;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
+import co.com.realtech.mariner.util.date.DateUtils;
 import co.com.realtech.mariner.util.string.BusinessStringUtils;
 import co.com.realtech.mariner.ws.sdo.transacciones.VURTransaccion;
 import co.com.realtech.mariner.ws.sdo.transacciones.VURTransaccionConfirmacion;
@@ -49,28 +50,34 @@ public class VurTransacciones {
 
             if (transaccionBD != null) {
                 if (transaccionBD.getTraEstado().equalsIgnoreCase("T")) {
-                    transaccion.setEstado("OK");
-                    transaccion.setLog(new VURTransaccionLogSDO("OK", "Transaccion con codigo " + codigoTransaccion + " encontrada en la plataforma VUR Valle del Cauca"));
-                    transaccion.setApellidos(transaccionBD.getTraApellidos());
-                    transaccion.setNombres(transaccionBD.getTraNombres());
-                    transaccion.setTipoDocumento(transaccionBD.getTdcId().getTdcSigla());
-                    transaccion.setNumeroDocumento(transaccionBD.getTraDocumento());
-                    transaccion.setTelefono(transaccionBD.getTraTelefono());
-                    transaccion.setCodigoTransaccion(codigoTransaccion);
-                    transaccion.setCus(transaccionBD.getTraCus());
-                    transaccion.setDescripcionTransaccion("Pago de Impuestos de Registro Valle del Cauca");
-                    transaccion.setReferencia(transaccionBD.getTraReferencia());
-                    transaccion.setTipoMedioPago(transaccionBD.getTraTipoPago());
-                    transaccion.setFechaTransaccion(transaccionBD.getTraFechaInicio());
-                    transaccion.setFechaVencimiento(extrarDateLimitFromTransaction(transaccionBD));
-                    long valorTransaccion;
-                    try {
-                        valorTransaccion = transaccionBD.getTraValor().longValue();
-                    } catch (Exception e) {
-                        valorTransaccion = 0;
+                    // verificar la fecha limite de pago es hoy y son mas de las 4 PM Cambio solicitado por el banco
+                    if (permitePagoHorarioAdicional(transaccionBD.getRadId().getMarRadicacionesDetallesSap().getRdeFechaLdp())) {
+                        transaccion.setEstado("OK");
+                        transaccion.setLog(new VURTransaccionLogSDO("OK", "Transaccion con codigo " + codigoTransaccion + " encontrada en la plataforma VUR Valle del Cauca"));
+                        transaccion.setApellidos(transaccionBD.getTraApellidos());
+                        transaccion.setNombres(transaccionBD.getTraNombres());
+                        transaccion.setTipoDocumento(transaccionBD.getTdcId().getTdcSigla());
+                        transaccion.setNumeroDocumento(transaccionBD.getTraDocumento());
+                        transaccion.setTelefono(transaccionBD.getTraTelefono());
+                        transaccion.setCodigoTransaccion(codigoTransaccion);
+                        transaccion.setCus(transaccionBD.getTraCus());
+                        transaccion.setDescripcionTransaccion("Pago de Impuestos de Registro Valle del Cauca");
+                        transaccion.setReferencia(transaccionBD.getTraReferencia());
+                        transaccion.setTipoMedioPago(transaccionBD.getTraTipoPago());
+                        transaccion.setFechaTransaccion(transaccionBD.getTraFechaInicio());
+                        transaccion.setFechaVencimiento(extrarDateLimitFromTransaction(transaccionBD));
+                        long valorTransaccion;
+                        try {
+                            valorTransaccion = transaccionBD.getTraValor().longValue();
+                        } catch (Exception e) {
+                            valorTransaccion = 0;
+                        }
+                        transaccion.setValorTransaccion(valorTransaccion);
+                        transaccion.setCodigoServicioACH(ConstantesUtils.cargarConstante("WS-PASARELA-ACH"));
+                    } else {
+                        transaccion.setEstado("ERROR");
+                        transaccion.setLog(new VURTransaccionLogSDO("ERROR", "La transaccion se vencio hoy y solo podia ser pagada antes de horario adicional."));
                     }
-                    transaccion.setValorTransaccion(valorTransaccion);
-                    transaccion.setCodigoServicioACH(ConstantesUtils.cargarConstante("WS-PASARELA-ACH"));
                 } else {
                     transaccion.setEstado("ERROR");
                     transaccion.setLog(new VURTransaccionLogSDO("ERROR", "La transaccion con codigo " + codigoTransaccion + " no se encuentra en un estado pendiente por pago"));
@@ -102,27 +109,34 @@ public class VurTransacciones {
 
             if (transaccionBD != null) {
                 if (transaccionBD.getTraEstado().equalsIgnoreCase("T")) {
-                    transaccion.setEstado("OK");
-                    transaccion.setLog(new VURTransaccionLogSDO("OK", "Transaccion con Referencia " + codigoLiquidacion + " encontrada en la plataforma VUR Valle del Cauca"));
-                    transaccion.setApellidos(transaccionBD.getTraApellidos());
-                    transaccion.setNombres(transaccionBD.getTraNombres());
-                    transaccion.setTipoDocumento(transaccionBD.getTdcId().getTdcSigla());
-                    transaccion.setNumeroDocumento(transaccionBD.getTraDocumento());
-                    transaccion.setTelefono(transaccionBD.getTraTelefono());
-                    transaccion.setCus(transaccionBD.getTraCus());
-                    transaccion.setDescripcionTransaccion("Pago de Impuestos de Registro Valle del Cauca");
-                    transaccion.setReferencia(transaccionBD.getTraReferencia());
-                    transaccion.setTipoMedioPago(transaccionBD.getTraTipoPago());
-                    transaccion.setFechaTransaccion(transaccionBD.getTraFechaInicio());
-                    transaccion.setFechaVencimiento(extrarDateLimitFromTransaction(transaccionBD));
-                    long valorTransaccion;
-                    try {
-                        valorTransaccion = transaccionBD.getTraValor().longValue();
-                    } catch (Exception e) {
-                        valorTransaccion = 0;
+                    // verificar la fecha limite de pago es hoy y son mas de las 4 PM Cambio solicitado por el banco
+                    if (permitePagoHorarioAdicional(transaccionBD.getRadId().getMarRadicacionesDetallesSap().getRdeFechaLdp())) {
+                        transaccion.setEstado("OK");
+                        transaccion.setLog(new VURTransaccionLogSDO("OK", "Transaccion con Referencia " + codigoLiquidacion + " encontrada en la plataforma VUR Valle del Cauca"));
+                        transaccion.setApellidos(transaccionBD.getTraApellidos());
+                        transaccion.setNombres(transaccionBD.getTraNombres());
+                        transaccion.setTipoDocumento(transaccionBD.getTdcId().getTdcSigla());
+                        transaccion.setNumeroDocumento(transaccionBD.getTraDocumento());
+                        transaccion.setTelefono(transaccionBD.getTraTelefono());
+                        transaccion.setCus(transaccionBD.getTraCus());
+                        transaccion.setDescripcionTransaccion("Pago de Impuestos de Registro Valle del Cauca");
+                        transaccion.setReferencia(transaccionBD.getTraReferencia());
+                        transaccion.setTipoMedioPago(transaccionBD.getTraTipoPago());
+                        transaccion.setFechaTransaccion(transaccionBD.getTraFechaInicio());
+                        transaccion.setFechaVencimiento(extrarDateLimitFromTransaction(transaccionBD));
+
+                        long valorTransaccion;
+                        try {
+                            valorTransaccion = transaccionBD.getTraValor().longValue();
+                        } catch (Exception e) {
+                            valorTransaccion = 0;
+                        }
+                        transaccion.setValorTransaccion(valorTransaccion);
+                        transaccion.setCodigoServicioACH(ConstantesUtils.cargarConstante("WS-PASARELA-ACH"));
+                    } else {
+                        transaccion.setEstado("ERROR");
+                        transaccion.setLog(new VURTransaccionLogSDO("ERROR", "La transaccion con referencia " + codigoLiquidacion + " se vencio hoy y solo podia ser pagada antes de horario adicional."));
                     }
-                    transaccion.setValorTransaccion(valorTransaccion);
-                    transaccion.setCodigoServicioACH(ConstantesUtils.cargarConstante("WS-PASARELA-ACH"));
                 } else {
                     transaccion.setEstado("ERROR");
                     transaccion.setLog(new VURTransaccionLogSDO("ERROR", "La transaccion con referencia " + codigoLiquidacion + " no se encuentra en un estado pendiente por pago"));
@@ -172,6 +186,32 @@ public class VurTransacciones {
             fecha = null;
         }
         return fecha;
+    }
+
+    /**
+     * Retorna true si se permite el pago, false si se vence el mismo dia y en
+     * horario adicional.
+     *
+     * @param transaccion
+     * @return
+     */
+    private static boolean permitePagoHorarioAdicional(String fechaVencimiento) {
+        boolean salida = true;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date fecha = sdf.parse(fechaVencimiento);
+            Date fechaActual = DateUtils.getZeroTimeDate(new Date());
+
+            if (fecha.equals(fechaActual)) {
+                Date horaActual = new Date();
+                if (horaActual.getHours() >= 16) {
+                    salida = false;
+                }
+            }
+        } catch (Exception e) {
+            salida = true;
+        }
+        return salida;
     }
 
 }
