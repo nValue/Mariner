@@ -51,7 +51,7 @@ public class VurTransacciones {
             if (transaccionBD != null) {
                 if (transaccionBD.getTraEstado().equalsIgnoreCase("T")) {
                     // verificar la fecha limite de pago es hoy y son mas de las 4 PM Cambio solicitado por el banco
-                    if (permitePagoHorarioAdicional(transaccionBD.getRadId().getMarRadicacionesDetallesSap().getRdeFechaLdp())) {
+                    if (DateUtils.permitePagoHorarioAdicional(transaccionBD.getRadId().getMarRadicacionesDetallesSap().getRdeFechaLdp())) {
                         transaccion.setEstado("OK");
                         transaccion.setLog(new VURTransaccionLogSDO("OK", "Transaccion con codigo " + codigoTransaccion + " encontrada en la plataforma VUR Valle del Cauca"));
                         transaccion.setApellidos(transaccionBD.getTraApellidos());
@@ -110,7 +110,7 @@ public class VurTransacciones {
             if (transaccionBD != null) {
                 if (transaccionBD.getTraEstado().equalsIgnoreCase("T")) {
                     // verificar la fecha limite de pago es hoy y son mas de las 4 PM Cambio solicitado por el banco
-                    if (permitePagoHorarioAdicional(transaccionBD.getRadId().getMarRadicacionesDetallesSap().getRdeFechaLdp())) {
+                    if (DateUtils.permitePagoHorarioAdicional(transaccionBD.getRadId().getMarRadicacionesDetallesSap().getRdeFechaLdp())) {
                         transaccion.setEstado("OK");
                         transaccion.setLog(new VURTransaccionLogSDO("OK", "Transaccion con Referencia " + codigoLiquidacion + " encontrada en la plataforma VUR Valle del Cauca"));
                         transaccion.setApellidos(transaccionBD.getTraApellidos());
@@ -186,32 +186,6 @@ public class VurTransacciones {
             fecha = null;
         }
         return fecha;
-    }
-
-    /**
-     * Retorna true si se permite el pago, false si se vence el mismo dia y en
-     * horario adicional.
-     *
-     * @param transaccion
-     * @return
-     */
-    private static boolean permitePagoHorarioAdicional(String fechaVencimiento) {
-        boolean salida = true;
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date fecha = sdf.parse(fechaVencimiento);
-            Date fechaActual = DateUtils.getZeroTimeDate(new Date());
-
-            if (fecha.equals(fechaActual)) {
-                Date horaActual = new Date();
-                if (horaActual.getHours() >= 16) {
-                    salida = false;
-                }
-            }
-        } catch (Exception e) {
-            salida = true;
-        }
-        return salida;
     }
 
 }

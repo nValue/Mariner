@@ -14,6 +14,7 @@ import co.com.realtech.mariner.model.entity.MarUsuarios;
 import co.com.realtech.mariner.model.logic.pagos.SAPPagosLogicOperations;
 import co.com.realtech.mariner.util.cdf.CDFFileDispatcher;
 import co.com.realtech.mariner.util.constantes.ConstantesUtils;
+import co.com.realtech.mariner.util.date.DateUtils;
 import co.com.realtech.mariner.util.exceptions.MarinerPersistanceException;
 import co.com.realtech.mariner.util.files.PDFUtils;
 import co.com.realtech.mariner.util.jsf.file.FileDownloader;
@@ -127,7 +128,7 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
             String cusPruebas = ConstantesUtils.cargarConstante("WS-PASARELA-CUS-PRUEBAS");
             String pasarelaModoPruebas = ConstantesUtils.cargarConstante("WS-PASARELA-MODO-PRUEBAS");
             Transaccion transaccionPasarela = pseWSConsumerBean.consultarTransaccion(pasarelaModoPruebas.equals("S") ? cusPruebas : cus, codigoEmpresa);
-            
+
             System.out.println("En pasarela " + transaccionPasarela.getEstado());
             // cargamos la informacion de la transaccion.
             String referencia = BusinessStringUtils.convertNumeroLiquidacion(transaccionPasarela.getReferencia());
@@ -362,30 +363,29 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                 }
 
                 if (getTipoPago().equals("PSE")) {
-                    // Logica para pagos en linea.
-                    String urlServletRedireccionPasarela = ConstantesUtils.cargarConstante("WS-URL-PASARELA-WEB");
-                    // nemthys pasarela
-                    urlServletRedireccionPasarela += "?CODIGO=" + getTransaccion().getTraId();
-                    // ponemos en session temporal
-                    SessionUtils.asignarValor("TRANSACCION_TEMPORAL", getTransaccion().getTraId());
-                    // Redireccionar a la pasarela de pagos.
-                    FacesContext.getCurrentInstance().getExternalContext().redirect(urlServletRedireccionPasarela);
-                    // Guardamos en session el ultimo ID de busqueda.
-                    SessionUtils.asignarValor("PSE-EN-PROGRESO", "S");
-                    SessionUtils.asignarValor("PSE-TIPO", getTipoBusqueda());
-                    SessionUtils.asignarValor("PSE-CODIGO", getCodigoBusqueda());
+                    // verificamos la fecha limite de pago para horario extendido.
+                    boolean validacionFecha = DateUtils.permitePagoHorarioAdicional(getTransaccion().getRadId().getMarRadicacionesDetallesSap().getRdeFechaLdp());
+
+                    if (validacionFecha) {
+                        // Logica para pagos en linea.
+                        String urlServletRedireccionPasarela = ConstantesUtils.cargarConstante("WS-URL-PASARELA-WEB");
+                        // nemthys pasarela
+                        urlServletRedireccionPasarela += "?CODIGO=" + getTransaccion().getTraId();
+                        // ponemos en session temporal
+                        SessionUtils.asignarValor("TRANSACCION_TEMPORAL", getTransaccion().getTraId());
+                        // Redireccionar a la pasarela de pagos.
+                        FacesContext.getCurrentInstance().getExternalContext().redirect(urlServletRedireccionPasarela);
+                        // Guardamos en session el ultimo ID de busqueda.
+                        SessionUtils.asignarValor("PSE-EN-PROGRESO", "S");
+                        SessionUtils.asignarValor("PSE-TIPO", getTipoBusqueda());
+                        SessionUtils.asignarValor("PSE-CODIGO", getCodigoBusqueda());
+                    } else {
+                        PrimeFacesPopup.lanzarDialog(Effects.Puff, "Error validacion", "La transaccion con referencia " + getTransaccion().getTraReferencia() + " se vencio hoy y solo podia ser pagada antes de horario adicional o corte ACH (4 PM)", true, false);
+                    }
                 } else {
                     if (getRadicacion().getArcIdReciboPago() == null || getRadicacion().getArcIdBoletaFiscal() == null) {
                         PrimeFacesPopup.lanzarDialog(Effects.Puff, "Error validacion", "Lo sentimos pero la Radicacion no tiene Archivo de Boleta Fiscal y Recibo, por favor contacte al administrador de la plataforma.", true, false);
                     } else {
-                        // Redireccionar a la descarga.
-                        /*
-                        ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-                        String contextPath = servletContext.getContextPath();
-                        String urlRecibo = contextPath + "/static/fileDispatcher/" + getRadicacion().getArcIdReciboPago().getArcId() + "-" + getRadicacion().getArcIdReciboPago().getArcHash() + "." + getRadicacion().getArcIdReciboPago().getArcExtension();
-                        RequestContext.getCurrentInstance().execute("window.open('" + urlRecibo + "');");
-                        PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Se ha descargado el recibo de pago para realizar el pago en ventanilla de banco.", true, false);
-                        */
                         CDFFileDispatcher dispatcher = CDFFileDispatcher.create();
                         dispatcher.findFile(radicacion.getArcIdReciboPago().getArcId());
                         File archivo = PDFUtils.agregarTexto(dispatcher.getFileContent(), radicacion.getRadNumero());
@@ -395,7 +395,7 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                         } else {
                             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "No se encuentra el archivo con la impresión de turno", true, false);
                         }
-                        
+
                     }
                 }
             } else {
