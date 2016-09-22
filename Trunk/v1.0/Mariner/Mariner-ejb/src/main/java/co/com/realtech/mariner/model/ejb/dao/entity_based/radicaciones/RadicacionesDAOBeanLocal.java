@@ -1,5 +1,6 @@
 package co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones;
 
+import co.com.realtech.mariner.model.entity.MarNotarias;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesAgrupamientos;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
@@ -51,5 +52,14 @@ public interface RadicacionesDAOBeanLocal {
      * @throws MarinerPersistanceException 
      */
     public List<MarRadicaciones> obtenerRadicacionesActivasPorAgrupacion(MarRadicacionesAgrupamientos radAgrup) throws MarinerPersistanceException;
+    
+    /**
+     * Obtiene la última radicación por la notaría, el número y la fecha
+     * @param número
+     * @param fecha
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    public MarRadicaciones obtenerRadicXNotNumyFecha(MarNotarias notaria, String numeroEscritura, Date fecha) throws MarinerPersistanceException;
     
 }

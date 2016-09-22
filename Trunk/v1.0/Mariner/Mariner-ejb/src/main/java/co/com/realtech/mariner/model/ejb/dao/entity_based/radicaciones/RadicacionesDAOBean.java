@@ -1,6 +1,7 @@
 package co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones;
 
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBean;
+import co.com.realtech.mariner.model.entity.MarNotarias;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesAgrupamientos;
 import co.com.realtech.mariner.model.entity.MarUsuarios;
@@ -277,6 +278,33 @@ public class RadicacionesDAOBean extends GenericDAOBean implements RadicacionesD
             throw e;
         }
         return radicaciones;
+    }
+    
+    
+    /**
+     * Obtiene la última radicación por la notaría, el número y la fecha
+     * @param número
+     * @param fecha
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    @Override
+    public MarRadicaciones obtenerRadicXNotNumyFecha(MarNotarias notaria, String numeroEscritura, Date fecha) throws MarinerPersistanceException{
+        MarRadicaciones radicacion = null;
+        try {
+            Query q = getEntityManager().createQuery("FROM MarRadicaciones r WHERE r.notId = :notId AND r.escId.escNumero = :numero AND r.escId.escFecha = :fecha ORDER BY r.radId DESC");
+            q.setParameter("notId", notaria);
+            q.setParameter("numero", numeroEscritura);
+            q.setParameter("fecha", fecha);
+            q.setMaxResults(1);
+            Object obj = q.getSingleResult();
+            if(obj != null){
+                radicacion = (MarRadicaciones)obj;
+            }
+        } catch (Exception e) {
+            throw e;
+        }
+        return radicacion;
     }
     
 }
