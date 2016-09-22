@@ -22,7 +22,9 @@ import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
@@ -405,6 +407,24 @@ public class CargueSolicitudesManagedBean extends GenericManagedBean {
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Documento faltante", "Necesita adjuntar la escritura para guardar el proceso", true, false);
             return;
         }
+        
+        try {
+            //Valida si ya se subió una escritura con el mismo número y fecha para el mismo año.
+            String repetida = ConstantesUtils.cargarConstante("VUR-MISMA-ESC");
+            if (repetida != null && repetida.equals("S")) {
+                MarRadicaciones radAnterior = radicacionesDAOBean.obtenerRadicXNotNumyFecha(radicacionSel.getNotId(), radicacionSel.getEscId().getEscNumero(), radicacionSel.getEscId().getEscFecha());
+                SimpleDateFormat sdf = new SimpleDateFormat("YYYY");
+                String anioRad = sdf.format(radAnterior.getRadFecha());
+                String anioActual = sdf.format(new Date());
+                if(anioRad.equals(anioActual)){
+                    PrimeFacesPopup.lanzarDialog(Effects.Slide, "Escritura en proceso", "La escritura que usted está intentando guardar ya tiene un proceso vigente con el número : " + radAnterior.getRadNumero() + ", si realmente desea crear otra comuníquese con la gobernación para solicitar el permiso", true, false);
+                    return;
+                }
+            }
+        } catch (Exception e) {
+            logger.error("No se puede validar que la escritura no se haya subido anteriormente, causado por : " + e.getMessage());
+        }
+        
         /* Validación de turno en pendiente mientras se valida el autocomplete de turnos
             if(radicacionSel.getRadTurno() == null){
             } else if(!radicacionesDAOBean.esTurnoValido(radicacionSel.getRadTurno())){
