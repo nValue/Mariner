@@ -123,7 +123,6 @@ public class MailUtils {
                 String pathSeparator = File.separator;
 
                 String templatePath = snrHome + "velocity" + pathSeparator + "templates" + pathSeparator;
-
                 // utilizamos plantilla velocity indicada
                 VelocityEngine ve = new VelocityEngine();
                 VelocityContext context = new VelocityContext();

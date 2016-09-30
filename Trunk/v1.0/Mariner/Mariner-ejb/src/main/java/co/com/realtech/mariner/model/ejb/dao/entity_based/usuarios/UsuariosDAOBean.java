@@ -149,5 +149,31 @@ public class UsuariosDAOBean extends GenericDAOBean implements UsuariosDAOBeanLo
         }
         return cant;
     }
+    
+    /**
+     * Obtiene el primer usuario que tenga asociado ese correo.
+     * @param email
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    @Override
+    public MarUsuarios obtenerUsuarioPorCorreo(String email) throws MarinerPersistanceException{
+        MarUsuarios usuario = null;
+        try {
+            String sql = "SELECT u.* \n" +
+                        "FROM mar_usuarios u\n" +
+                        "INNER JOIN mar_personas p ON u.per_id = p.per_id\n" +
+                        "WHERE p.per_email = '" + email + "'";
+            Query q = getEntityManager().createNativeQuery(sql,MarUsuarios.class);
+            q.setMaxResults(1);
+            List<MarUsuarios> usuarios = q.getResultList();
+            if(!usuarios.isEmpty()){
+                usuario = usuarios.get(0);
+            }
+        } catch (Exception e) {
+            throw e;
+        }
+        return usuario;
+    }
 
 }

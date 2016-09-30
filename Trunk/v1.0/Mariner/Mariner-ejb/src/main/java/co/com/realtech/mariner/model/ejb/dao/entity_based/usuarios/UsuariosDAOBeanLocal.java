@@ -29,4 +29,12 @@ public interface UsuariosDAOBeanLocal {
     
     public int obtenerCantPendientesDeUsuario(MarUsuarios usuario, String fase) throws MarinerPersistanceException;
     
+    /**
+     * Obtiene el primer usuario que tenga asociado ese correo.
+     * @param email
+     * @return
+     * @throws MarinerPersistanceException 
+     */
+    public MarUsuarios obtenerUsuarioPorCorreo(String email) throws MarinerPersistanceException;
+    
 }
