@@ -1,6 +1,7 @@
 package co.com.realtech.mariner.controller.jsf.managed_bean.index;
 
 import co.com.realtech.mariner.model.ejb.dao.entity_based.modulo.ModulosDAOBeanLocal;
+import co.com.realtech.mariner.model.ejb.dao.entity_based.usuarios.UsuariosDAOBeanLocal;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
@@ -14,12 +15,17 @@ import co.com.realtech.mariner.util.crypto.CryptoUtils;
 import co.com.realtech.mariner.util.html.DynamicHTMLMenuGenerator;
 import co.com.realtech.mariner.util.jsf.JSFUtils;
 import co.com.realtech.mariner.util.login.LoginUtils;
+import co.com.realtech.mariner.util.mail.MailSender;
+import co.com.realtech.mariner.util.mail.MailUtils;
 import co.com.realtech.mariner.util.primefaces.context.PrimeFacesContext;
 import co.com.realtech.mariner.util.session.AuditSessionUtils;
 import co.com.realtech.mariner.util.session.SessionUtils;
 import co.com.realtech.mariner.util.string.RandomStringGenerator;
 import java.io.Serializable;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -52,6 +58,9 @@ public class IndexManagedBean implements Serializable {
     
     @EJB(beanName = "ModulosDAOBean")
     private ModulosDAOBeanLocal modulosDAOBean;
+    
+    @EJB(beanName = "UsuariosDAOBean")
+    private UsuariosDAOBeanLocal usuariosDAOBean;
 
     private String htmlMenu;
     private String contextPath;
@@ -67,6 +76,8 @@ public class IndexManagedBean implements Serializable {
     private AuditSessionUtils auditSessionUtils;
     
     private ContrasenaEntidad contrasenaEntidad;
+    
+    private String correoRegistrado;
     
     private boolean logged;
 
@@ -209,7 +220,8 @@ public class IndexManagedBean implements Serializable {
             logger.error("Error activando el registro, causado por " + e, e);
         }
     }
-
+    
+    
     /**
      * Crea un usuario nuevo en la plataforma.
      */
@@ -353,8 +365,17 @@ public class IndexManagedBean implements Serializable {
                 usuario.setUsuCambioClave("N");
                 auditSessionUtils.setAuditReflectedValues(usuario);
                 genericDAOBean.merge(usuario);
+                
                 PrimeFacesPopup.lanzarDialog(Effects.Clip, "Cambio realizado", "Contraseña cambiada correctamente", true, false);
                 PrimeFacesContext.execute("PF('dialogContrasena').hide();");
+                
+                //Envia la nueva contraseña al correo registrado
+                HashMap<String,Object> hash = new HashMap<>();
+                hash.put("usuario", usuario.getPerId().getPerNombres());
+                hash.put("clave", claveNueva);
+                logger.info("Enviando cambio de contraseña a :" + usuario.getPerId().getPerEmail());
+                MailSender.sendMail(usuario.getPerId().getPerEmail(), null, null, "Detección de cambio de contraseña - Plataforma VUR", null, "cambioClave.vm", hash, true);
+                
             } else {
                 PrimeFacesPopup.lanzarDialog(Effects.Bounce, "Clave inválida", "La contraseña antigua no coincide", true, false);
             }
@@ -369,6 +390,32 @@ public class IndexManagedBean implements Serializable {
     public void cerrarSesionTiempo(){
         salir(false);
         PrimeFacesContext.execute("PF('dialogExpirado').show()");
+    }
+    
+    /**
+     * Genera una clave nueva y la reenvía al correo.
+     */
+    public void reenviarClave(){
+        try {
+            MarUsuarios usuarioCorreo = usuariosDAOBean.obtenerUsuarioPorCorreo(correoRegistrado);
+            SecureRandom random = new SecureRandom();
+            String clave = new BigInteger(15, random).toString(6);
+            HashMap<String,Object> hash = new HashMap<>();
+            hash.put("usuario", usuarioCorreo.getUsuLogin());
+            hash.put("clave", clave);
+            logger.info("Enviando clave a :" + correoRegistrado);
+            
+            MailSender.sendMail(correoRegistrado, null, null, "Reenvío de contraseña - Plataforma VUR", null, "reenvioClave.vm", hash, true);
+            usuarioCorreo.setUsuCambioClave("S");
+            usuarioCorreo.setUsuPassword(CryptoUtils.encrypt(clave));
+            genericDAOBean.merge(usuarioCorreo);
+            
+            
+        } catch (Exception e) {
+            logger.error("No se puede reenviar la clave, debido a: " + e.getMessage());
+        }
+        PrimeFacesPopup.lanzarDialog(Effects.Clip, "Envio completado", "Si tu correo es correcto, en los próximos minutos estarás recibio el mensaje con la nueva clave", true, false);
+        PrimeFacesContext.execute("PF('dialogReenvioClave').hide();");
     }
     
 
@@ -434,6 +481,14 @@ public class IndexManagedBean implements Serializable {
 
     public void setContrasenaEntidad(ContrasenaEntidad contrasenaEntidad) {
         this.contrasenaEntidad = contrasenaEntidad;
+    }
+
+    public String getCorreoRegistrado() {
+        return correoRegistrado;
+    }
+
+    public void setCorreoRegistrado(String correoRegistrado) {
+        this.correoRegistrado = correoRegistrado;
     }
     
     

@@ -40,7 +40,7 @@
                             <div align="center" style="padding: 12px;">
                                 <p:commandButton value="Entrar" action="#{indexManagedBean.autenticar()}" update="@this :panelHome" ajax="false"/>
                                 <p:commandButton value="Registrarme" action="#{indexManagedBean.activarRegistro()}" update=":modalRegistro" oncomplete="PF('dialogRegistro').show()" process="@this" rendered="false" />
-                                <p:commandButton value="Olvidé la clave" disabled="true" />
+                                <p:commandButton value="Olvidé la clave" oncomplete="PF('dialogReenvioClave').show()" />
                             </div>
                         </div> 
                         <div id="panelOpcionesExternas">
@@ -286,6 +286,27 @@
                 </h:form>
             </div>
         </p:dialog>
+        
+        <!-- Dialog para la sesión expirada -->
+        <p:dialog id="modalReenvioClave" widgetVar="dialogReenvioClave" position="top" closable="false" resizable="false" header="Reenvío de contraseña" modal="true">
+            <div>
+                <h:form id="formReenvioClave">
+                    <div align="center">
+                        <img class="element-animation" src="#{resource['/images/clave.png']}"/>
+                    </div>
+                    <div style="margin: 10px;">
+                        Escriba su correo registrado en VUR para reenviar su clave temporal
+                    </div>
+                    <div align="center">
+                        <p:inputText value="#{indexManagedBean.correoRegistrado}" style="width: 300px" required="true"/>
+                    </div>
+                    <div align="center" style="padding-top: 10px">
+                        <p:commandButton value="Enviar" action="#{indexManagedBean.reenviarClave()}" />
+                    </div>
+                </h:form>
+            </div>
+        </p:dialog>
+        
         
         <script>
         

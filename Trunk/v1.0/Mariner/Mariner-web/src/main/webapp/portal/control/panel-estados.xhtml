@@ -58,7 +58,7 @@
                 </h:panelGrid>
                 <h:panelGroup id="panelEstadisticas">
                     <div class="panelGrafico" align="center" style="padding-bottom: 22px;">
-                        <p:poll interval="20" update="panelEstadisticas" />
+                        <p:poll interval="45" update="panelEstadisticas" />
                         <script type="text/javascript">
                             FusionCharts.ready(function () {
                                 var url = "#{request.contextPath}/graphics/ServletGraphicsStatistics?id=#{panelEstadosManagedBean.reporteSel.repId}&amp;fechaDesde=#{panelEstadosManagedBean.fechaFormated}&amp;fechaHasta=#{panelEstadosManagedBean.fechaFormated}";
