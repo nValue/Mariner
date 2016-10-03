@@ -240,7 +240,6 @@ public class IndexManagedBean implements Serializable {
             claveTemporal = claveTemporal.substring(0, 5);
             getUsuario().setUsuPassword(CryptoUtils.encrypt(claveTemporal));
             getUsuario().setUsuEstado("A");
-            System.out.println("claveTemporal = " + claveTemporal);
             
             //Se colocan las auditorías manualmente puesto que el usuario todavía no está en sesión
             usuario.setAudFecha(new Date());
