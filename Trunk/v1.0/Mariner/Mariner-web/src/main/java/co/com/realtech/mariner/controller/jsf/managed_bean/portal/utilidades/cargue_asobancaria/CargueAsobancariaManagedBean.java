@@ -124,7 +124,7 @@ public class CargueAsobancariaManagedBean extends GenericManagedBean implements 
                 MarTransacciones transaccionBD = (MarTransacciones) genericDAOBean.findByColumn(MarTransacciones.class, "radId", radicacion);
 
                 if (transaccionBD != null) {
-                    confirmacion = core.confirmarTransaccion(claveConfConstante, sdf.format(new Date()), transaccionBD.getTraValor().longValue(), codigoLiquidacion);
+                    confirmacion = core.confirmarTransaccion(claveConfConstante, sdf.format(new Date()), transaccionBD.getTraValor().longValue(), codigoLiquidacion,null);
 
                     dcart.setCasLog(confirmacion.getLog().getMensaje());
                     if (confirmacion.getEstado().equals("OK")) {

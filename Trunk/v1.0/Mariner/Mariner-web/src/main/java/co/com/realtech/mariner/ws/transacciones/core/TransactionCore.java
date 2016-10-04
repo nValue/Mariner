@@ -51,15 +51,16 @@ public class TransactionCore implements Serializable {
     }
 
     /**
-     * Confirmacin de pago en la logica de negocio VUR.
+     * Confirmacion de pago en la logica de negocio VUR.
      *
      * @param claveConfirmacion
      * @param fechaPago
      * @param valorPagado
      * @param referenciaCodigoBarras
+     * @param horario
      * @return
      */
-    public VURTransaccionConfirmacion confirmarTransaccion(String claveConfirmacion, String fechaPago, Long valorPagado, String referenciaCodigoBarras) {
+    public VURTransaccionConfirmacion confirmarTransaccion(String claveConfirmacion, String fechaPago, Long valorPagado, String referenciaCodigoBarras, String horario) {
         VURTransaccionConfirmacion confirmacion = new VURTransaccionConfirmacion();
         try {
             MarUsuarios usuarioMariner = (MarUsuarios) genericDAOBean.findByColumn(MarUsuarios.class, "usuLogin", "MARINER");
@@ -98,9 +99,23 @@ public class TransactionCore implements Serializable {
                                         sdf = new SimpleDateFormat("HHmmss");
                                         String horaRecaudo = sdf.format(transaccionBD.getTraFechaFinalizacion());
                                         // Nuevo parametro para enviar la fecha real del ingreso del dinero.
-                                        String fechaValor=fechaRecaudo;
-                                        
-                                        DetallePago detallePagoSap = pagos.aplicarPagoSAP(transaccionBD.getRadId().getRadLiquidacion(), fechaRecaudo,fechaValor, horaRecaudo, new BigDecimal(valorPagado.toString()));
+                                        String fechaValor;
+                                        try {
+                                            if (horario != null) {
+                                                Date fechaDiaSiguiente = (Date) genericDAOBean.callGenericFunction("FL_CONSULTAR_DIA_HABIL", transaccionBD.getTraFechaFinalizacion(), horario);
+                                                sdf = new SimpleDateFormat("yyyyMMdd");
+                                                fechaValor=sdf.format(fechaDiaSiguiente);
+                                                transaccionBD.setTraFechaAplicaPago(fechaDiaSiguiente);
+                                            } else {
+                                                fechaValor = fechaRecaudo;
+                                                transaccionBD.setTraFechaAplicaPago(transaccionBD.getTraFechaFinalizacion());
+                                            }
+                                        } catch (Exception e) {
+                                            fechaValor = fechaRecaudo;
+                                            transaccionBD.setTraFechaAplicaPago(transaccionBD.getTraFechaFinalizacion());
+                                        }
+
+                                        DetallePago detallePagoSap = pagos.aplicarPagoSAP(transaccionBD.getRadId().getRadLiquidacion(), fechaRecaudo, fechaValor, horaRecaudo, new BigDecimal(valorPagado.toString()));
                                         transaccionBD.setTraPagoSapEstado(detallePagoSap.getEstadoSalida());
                                         transaccionBD.setTraPagoSapMensaje(detallePagoSap.getMensajeSalida());
                                     } catch (Exception e) {

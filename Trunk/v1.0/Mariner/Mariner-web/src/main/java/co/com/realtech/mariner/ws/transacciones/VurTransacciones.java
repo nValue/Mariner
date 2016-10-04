@@ -166,7 +166,15 @@ public class VurTransacciones {
     public VURTransaccionConfirmacion confirmarTransaccion(@WebParam(name = "claveConfirmacion") String claveConfirmacion, @WebParam(name = "fechaPago") String fechaPago, @WebParam(name = "valorPagado") Long valorPagado, @WebParam(name = "referenciaCodigoBarras") String referenciaCodigoBarras) {
         VURTransaccionConfirmacion confirmacion;
         TransactionCore core = TransactionCore.create();
-        confirmacion = core.confirmarTransaccion(claveConfirmacion, fechaPago, valorPagado, referenciaCodigoBarras);
+        confirmacion = core.confirmarTransaccion(claveConfirmacion, fechaPago, valorPagado, referenciaCodigoBarras, null);
+        return confirmacion;
+    }
+
+    @WebMethod(operationName = "confirmarTransaccion")
+    public VURTransaccionConfirmacion confirmarTransaccion(@WebParam(name = "claveConfirmacion") String claveConfirmacion, @WebParam(name = "fechaPago") String fechaPago, @WebParam(name = "valorPagado") Long valorPagado, @WebParam(name = "referenciaCodigoBarras") String referenciaCodigoBarras, @WebParam(name = "horario") String horario) {
+        VURTransaccionConfirmacion confirmacion;
+        TransactionCore core = TransactionCore.create();
+        confirmacion = core.confirmarTransaccion(claveConfirmacion, fechaPago, valorPagado, referenciaCodigoBarras, horario);
         return confirmacion;
     }
 
