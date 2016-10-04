@@ -77,7 +77,10 @@ public class MarTransacciones implements Serializable {
     private Date traFechaInicio;
     @Column(name = "TRA_FECHA_FINALIZACION")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date traFechaFinalizacion;
+    private Date traFechaFinalizacion;    
+    @Column(name = "TRA_FECHA_APLICA_PAGO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date traFechaAplicaPago;    
     @Size(max = 30)
     @Column(name = "TRA_CUS", length = 30)
     private String traCus;
@@ -358,6 +361,14 @@ public class MarTransacciones implements Serializable {
     @Override
     public String toString() {
         return "co.com.realtech.mariner.model.entity.MarTransacciones[ traId=" + traId + " ]";
+    }
+
+    public Date getTraFechaAplicaPago() {
+        return traFechaAplicaPago;
+    }
+
+    public void setTraFechaAplicaPago(Date traFechaAplicaPago) {
+        this.traFechaAplicaPago = traFechaAplicaPago;
     }
     
 }
