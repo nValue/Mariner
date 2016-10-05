@@ -153,8 +153,7 @@ public class VurTransacciones {
     }
 
     /**
-     * Metodo de confirmacion de transaccion proveniente de la pasarela de
-     * pagos.
+     * Metodo de confirmacion de transaccion proveniente de la pasarela de pagos
      *
      * @param claveConfirmacion
      * @param fechaPago
@@ -169,7 +168,16 @@ public class VurTransacciones {
         confirmacion = core.confirmarTransaccion(claveConfirmacion, fechaPago, valorPagado, referenciaCodigoBarras, null);
         return confirmacion;
     }
-
+    /**
+     * Metodo de confirmacion de transaccion proveniente de la pasarela de pagos
+     * 
+     * @param claveConfirmacion
+     * @param fechaPago
+     * @param valorPagado
+     * @param referenciaCodigoBarras
+     * @param horario
+     * @return 
+     */
     @WebMethod(operationName = "confirmarTransaccionExtendida")
     public VURTransaccionConfirmacion confirmarTransaccionExtendida(@WebParam(name = "claveConfirmacion") String claveConfirmacion, @WebParam(name = "fechaPago") String fechaPago, @WebParam(name = "valorPagado") Long valorPagado, @WebParam(name = "referenciaCodigoBarras") String referenciaCodigoBarras, @WebParam(name = "horario") String horario) {
         VURTransaccionConfirmacion confirmacion;
