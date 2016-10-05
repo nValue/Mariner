@@ -113,6 +113,7 @@ public class TransactionCore implements Serializable {
                                         } catch (Exception e) {
                                             fechaValor = fechaRecaudo;
                                             transaccionBD.setTraFechaAplicaPago(transaccionBD.getTraFechaFinalizacion());
+                                            logger.error("Error realizando logica de fecha de applicacion de pago cuasado por ", e);
                                         }
 
                                         DetallePago detallePagoSap = pagos.aplicarPagoSAP(transaccionBD.getRadId().getRadLiquidacion(), fechaRecaudo, fechaValor, horaRecaudo, new BigDecimal(valorPagado.toString()));
