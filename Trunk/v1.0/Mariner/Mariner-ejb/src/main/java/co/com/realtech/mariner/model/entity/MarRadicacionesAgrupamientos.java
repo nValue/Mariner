@@ -41,8 +41,8 @@ public class MarRadicacionesAgrupamientos implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @GeneratedValue(generator = "sq_radicaciones_agrupamientos")
-    @SequenceGenerator(name = "sq_radicaciones_agrupamientos", sequenceName = "sq_radicaciones_agrupamientos")
+    @GeneratedValue(generator = "sq_mar_radicaciones_agrupamien")
+    @SequenceGenerator(name = "sq_mar_radicaciones_agrupamien", sequenceName = "sq_mar_radicaciones_agrupamien")
     @Basic(optional = false)
     @NotNull
     @Column(name = "RAA_ID", nullable = false, precision = 0, scale = -127)
