@@ -32,7 +32,8 @@
                     </div>
                     <div align="left">
                         <h:form id="formPayment">
-                            <h:panelGrid columns="7">
+                            <h:panelGrid columns="10">
+                                <!--Opciones cuando el usuario no se encuentra autenticado-->
                                 <h:outputLabel value="Tipo de Busqueda" rendered="#{paymentManagedBean.autenticado != 'S'}"/>
                                 <p:selectOneMenu styleClass="inputModal" value="#{paymentManagedBean.tipoBusqueda}" style="width: 122px;" rendered="#{paymentManagedBean.autenticado != 'S'}">
                                     <f:selectItem itemLabel="Liquidacion" itemValue="L" />
@@ -41,13 +42,54 @@
                                 <h:outputLabel value="Numero" rendered="#{paymentManagedBean.autenticado != 'S'}"/>
                                 <p:inputText value="#{paymentManagedBean.codigoBusqueda}" required="true" style="width: 160px !important;" rendered="#{paymentManagedBean.autenticado != 'S'}"/>
                                 <p:commandButton value="Buscar" action="#{paymentManagedBean.buscarRadicacion()}" update="@form" rendered="#{paymentManagedBean.autenticado != 'S'}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
-                                <h:outputLabel value="Radicaciones pendientes de pago" rendered="#{paymentManagedBean.autenticado eq 'S'}"/>  
-                                <p:selectOneMenu styleClass="inputModal" value="#{paymentManagedBean.radicacion}" converter="MarRadicacionesConverter" style="width: 222px;" rendered="#{paymentManagedBean.autenticado eq 'S'}">
-                                    <f:selectItems value="#{paymentManagedBean.radicaciones}" var="radicacion" itemLabel="#{radicacion.radNumero} #{radicacion.radTurno eq null ? '' : '- Turno'} #{radicacion.radTurno} #{radicacion.raaId eq null ? '' : ' - (M)'}" itemValue="#{radicacion}"/>
-                                    <p:ajax update="panelRadicacion" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                                
+                                <!--Opciones cuando el usuario si está logueado-->
+                                <h:outputLabel value="Tipo de filtro" rendered="#{paymentManagedBean.autenticado eq 'S'}"/>
+                                <p:selectOneMenu styleClass="inputModal" value="#{paymentManagedBean.tipoFiltro}" style="width: 122px;" rendered="#{paymentManagedBean.autenticado eq 'S'}" >
+                                    <p:ajax update="@form" listener="#{paymentManagedBean.verFiltro()}"/>
+                                    <f:selectItem itemLabel="Pendientes" itemValue="P" />
+                                    <f:selectItem itemLabel="Número" itemValue="N" />
                                 </p:selectOneMenu>
+                                <h:panelGrid columns="5" rendered="#{paymentManagedBean.tipoFiltro eq 'N'}">
+                                    <h:outputLabel value="Buscar por: " />
+                                    <p:selectOneMenu styleClass="inputModal" value="#{paymentManagedBean.tipoBusqueda}" style="width: 122px;">
+                                        <p:ajax listener="#{paymentManagedBean.limpiarCampos()}" update="campoBusq" />
+                                        <f:selectItem itemLabel="Liquidacion" itemValue="L" />
+                                        <f:selectItem itemLabel="Radicacion" itemValue="R" />
+                                    </p:selectOneMenu>
+                                    <p:inputText id="campoBusq" value="#{paymentManagedBean.codigoBusqueda}" required="true" style="width: 160px !important;" />
+                                    <p:commandButton value="Buscar" action="#{paymentManagedBean.buscarRadicacion()}" update="@form" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                                </h:panelGrid>
                             </h:panelGrid>
                             <hr/>
+                            <p:dataTable id="tablaBusq" value="#{paymentManagedBean.radicaciones}" selection="#{paymentManagedBean.radicacion}" rowKey="#{tblB.radId}"
+                                         var="tblB" selectionMode="single" emptyMessage="No se encuentran radicaciones para el filtro seleccionado"
+                                         paginator="true" rows="10" paginatorPosition="bottom" rendered="#{paymentManagedBean.tipoFiltro != 'N'}"
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                                <p:ajax event="rowSelect" update="@form" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+                                <p:column headerText="Id" width="100">
+                                    <h:outputText value="#{tblB.radId}"/>
+                                </p:column> 
+                                <p:column headerText="Número" >
+                                    <h:outputText value="#{tblB.radNumero}"/>
+                                </p:column> 
+                                <p:column headerText="Liquidación" width="150">
+                                    <h:outputText value="#{tblB.radLiquidacion}"/>
+                                </p:column> 
+                                <p:column headerText="Fecha" width="180">
+                                    <h:outputText value="#{tblB.radFecha}"/>
+                                </p:column>
+                                <p:column headerText="Valor" width="120">
+                                    <h:outputText value="#{tblB.radValorLiq}"/>
+                                </p:column>
+                                <p:column headerText="Id Agrupación" width="120">
+                                    <h:outputText value="#{tblB.raaId.raaId}"/>
+                                </p:column> 
+                                <p:column headerText="Num Recibos" width="100">
+                                    <h:outputText value="#{paymentManagedBean.obtenerCantidadRecibos(tblB.raaId.raaId)}"/>
+                                </p:column>
+                            </p:dataTable> 
+                            
                             <!-- Panel de informacion de la radicacion seleccionada -->
                             <h:panelGroup id="panelRadicacion">
                                 <h:panelGroup rendered="#{paymentManagedBean.radicacion!=null}">

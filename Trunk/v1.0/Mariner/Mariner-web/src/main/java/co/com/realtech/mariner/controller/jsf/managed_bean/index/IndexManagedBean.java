@@ -101,8 +101,10 @@ public class IndexManagedBean implements Serializable {
     @PreDestroy
     public void cerrarSesionDB(){
         try {
-            usuario.setUsuLogueado("N");
-            genericDAOBean.merge(usuario);
+            logger.debug("Cerrando usuario...");
+            logger.debug("Finalizando sesión");
+            //usuario.setUsuLogueado("N");
+            //genericDAOBean.merge(usuario);
         } catch (Exception e) {
             String msj = "No se puede cerrar la sesión del usuario en la base de datos, causado por :" + e.getMessage();
             logger.warn("La sesión del usuario expiró, no se puede colocar en el log de la DB como 'N'");

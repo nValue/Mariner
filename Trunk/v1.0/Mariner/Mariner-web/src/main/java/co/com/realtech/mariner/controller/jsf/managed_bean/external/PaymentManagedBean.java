@@ -7,6 +7,7 @@ import co.com.realtech.mariner.model.ejb.ws.pasarela.PSEWSConsumerBeanLocal;
 import co.com.realtech.mariner.model.ejb.ws.pasarela.mappers.Transaccion;
 import co.com.realtech.mariner.model.ejb.ws.sap.mappers.sdo.payment.DetallePago;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
+import co.com.realtech.mariner.model.entity.MarRadicacionesAgrupamientos;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
 import co.com.realtech.mariner.model.entity.MarTiposDocumentos;
 import co.com.realtech.mariner.model.entity.MarTransacciones;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -73,6 +75,8 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
     private MarTransacciones transaccion;
     private List<MarTiposDocumentos> tiposDocumentos;
     private MarUsuarios usuarioTransaccionSistema;
+    
+    private String tipoFiltro;
 
     @Override
     public void init() {
@@ -85,12 +89,7 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                 setAutenticado(SessionUtils.obtenerValor("auth"));
                 setTiposDocumentos((List<MarTiposDocumentos>) genericDAOBean.loadAllForEntity(MarTiposDocumentos.class, "tdcNombre asc"));
                 if (getAutenticado().equals("S")) {
-                    setRadicaciones(radicacionesDAOBean.obtenerRadsAtendidasNotYFaseFinal(usuarioSesion, "'I-P'", "'R-A'"));
-                    if (!getRadicaciones().isEmpty()) {
-                        setRadicacion(getRadicaciones().get(0));
-                    } else {
-                        PrimeFacesPopup.lanzarDialog(Effects.Fold, "Notificacion", "No se han encontrado radicaciones pendientes por pago", true, false);
-                    }
+                    obtenerRadicacionesPendientes();
                 } else {
                     PrimeFacesPopup.lanzarDialog(Effects.Slide, "Notificacion", "Por favor ingrese el numero de la liquidacion de la cual desea realizar el pago.", true, false);
                 }
@@ -113,6 +112,23 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
             }
         } catch (Exception e) {
             logger.error("Error inicializando PaymentManagedBean, causado por " + e);
+        }
+    }
+    
+    /**
+     * Obtiene las radicaciones que tiene pendiente la notaría.
+     */
+    public void obtenerRadicacionesPendientes() {
+        try {
+            setRadicaciones(radicacionesDAOBean.obtenerRadsAtendidasNotYFaseFinal(usuarioSesion, "'I-P'", "'R-A'"));
+            if (!getRadicaciones().isEmpty()) {
+                setRadicacion(getRadicaciones().get(0));
+            } else {
+                PrimeFacesPopup.lanzarDialog(Effects.Fold, "Notificacion", "No se han encontrado radicaciones pendientes por pago", true, false);
+            }
+        } catch (Exception e) {
+            String msj = "Error obteniendo las radicaciones pendientes, causado por : " + e.getMessage();
+            logger.error(msj);
         }
     }
 
@@ -214,6 +230,13 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
             logger.error("Error realizando validacion de pasarela de pagos, causado por " + e);
         }
     }
+    
+    /**
+     * Limpia el campo de búsqueda de un número o liquidación.
+     */
+    public void limpiarCampos(){
+        codigoBusqueda = "";
+    }
 
     /**
      * Buscar radicacion segun filtro.
@@ -222,20 +245,19 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
         try {
             if (getTipoBusqueda().equals("L")) {
                 setCodigoBusqueda(BusinessStringUtils.convertNumeroLiquidacion(getCodigoBusqueda()));
-                List<MarRadicaciones> radiaciones = (List<MarRadicaciones>) genericDAOBean.findAllByColumn(MarRadicaciones.class, "radLiquidacion", getCodigoBusqueda(), true, "radId desc");
+                List<MarRadicaciones> radiaciones = (List<MarRadicaciones>) genericDAOBean.findAllByColumn(MarRadicaciones.class, "radLiquidacion", getCodigoBusqueda(), true, "raaId DESC, radId desc");
 
                 if (!radiaciones.isEmpty()) {
                     setRadicacion(radiaciones.get(0));
                 }
             } else {
                 //Se reemplaza la consulta exacta con un LIKE
-                List<MarRadicaciones> radiaciones = (List<MarRadicaciones>) genericDAOBean.findAllByColumnLike(MarRadicaciones.class, "radNumero", true, "radId desc", getCodigoBusqueda());
+                List<MarRadicaciones> radiaciones = (List<MarRadicaciones>) genericDAOBean.findAllByColumn(MarRadicaciones.class, "radNumero", getCodigoBusqueda(), true, "raaId DESC, radId desc");
 
                 if (!radiaciones.isEmpty()) {
                     setRadicacion(radiaciones.get(0));
                 }
             }
-
             if (getRadicacion() != null) {
                 MarRadicacionesFasesEstados estado = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(getRadicacion());
                 if (!estado.getFesId().getFesCodigo().equals("R-A")) {
@@ -466,6 +488,34 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
         SessionUtils.asignarValor("PSE-TIPO", null);
         SessionUtils.asignarValor("PSE-CODIGO", null);
     }
+    
+    public void verFiltro(){
+        if(tipoFiltro.equals("P")){
+            obtenerRadicacionesPendientes();
+        }else{
+            radicaciones = new ArrayList<>();
+            radicacion = null;
+        }
+        System.out.println("tipoFiltro = " + tipoFiltro);
+    }
+    
+    
+    /**
+     * Dado un id de agrupamiento obtiene el número de radicaciones asociadas.
+     * @return 
+     */
+    public int obtenerCantidadRecibos(BigDecimal raaId){
+        int cantidad = 1;
+        if(raaId != null){
+            try {
+                List<MarRadicaciones> radAg = (List<MarRadicaciones>)genericDAOBean.findAllByColumn(MarRadicaciones.class, "raaId.raaId", raaId);
+                cantidad = radAg.size();
+            } catch (Exception e) {
+                String msj = "No se pueden obtener los agrupamientos para verificar la cantidad de radicaciones, causado por " + e.getMessage();
+            }
+        }
+        return cantidad;
+    }
 
     public String getAutenticado() {
         return autenticado;
@@ -538,5 +588,15 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
     public void setUsuarioTransaccionSistema(MarUsuarios usuarioTransaccionSistema) {
         this.usuarioTransaccionSistema = usuarioTransaccionSistema;
     }
+
+    public String getTipoFiltro() {
+        return tipoFiltro;
+    }
+
+    public void setTipoFiltro(String tipoFiltro) {
+        this.tipoFiltro = tipoFiltro;
+    }
+    
+    
 
 }

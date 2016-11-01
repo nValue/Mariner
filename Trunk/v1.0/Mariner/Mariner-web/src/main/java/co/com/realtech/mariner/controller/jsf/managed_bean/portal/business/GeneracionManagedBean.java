@@ -469,13 +469,32 @@ public class GeneracionManagedBean extends GenericManagedBean {
                 for (MarRadicaciones radicacionAdicional : radicacionesAdicionales) {
                     BigDecimal dbSalida;
                     Integer salidaInt = -999;
-                    dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionAdicional.getRadId(),
-                            "G-A", "A", usuarioSesion.getUsuId(), observaciones, null);
-                    salidaInt = dbSalida.intValue();
-                    if (salidaInt == -999) {
-                        PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
-                        return;
+                    
+                    //Excepción colocada en caso de que algo falle ya que es un ajuste que se hace en producción
+                    try {
+                        MarRadicacionesFasesEstados rfeUlt = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radicacionAdicional);
+                        if (rfeUlt.getFesId().getFesCodigo().equals("G-S")) {
+                            dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionAdicional.getRadId(),
+                                    "G-A", "A", usuarioSesion.getUsuId(), observaciones, null);
+                            salidaInt = dbSalida.intValue();
+                            if (salidaInt == -999) {
+                                PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
+                                return;
+                            }
+                        }else{
+                            logger.warn("No se puede cambiar la radicación " + radicacionAdicional.getRadNumero() + " al estado 'Liquidada y vinculada' porque su último estado no es 'En proceso de liquidación en SAP', la radicación principal es: " + radicacionUsuarioSel.getRadNumero());
+                        }
+                    } catch (Exception e) {
+                        logger.error("Error al validar el último estado de una radicación agrupada, causado por : " + e.getMessage(), e);
+                        dbSalida = (BigDecimal) genericDAOBean.callGenericFunction("PKG_VUR_CORE.fn_ingresar_fase_estado", radicacionAdicional.getRadId(),
+                                "G-A", "A", usuarioSesion.getUsuId(), observaciones, null);
+                        salidaInt = dbSalida.intValue();
+                        if (salidaInt == -999) {
+                            PrimeFacesPopup.lanzarDialog(Effects.Slide, "Validación incorrecta", "No se puede crear el siguiente estado de la radicación, por favor verifique que la información este correcta e intente de nuevo", true, false);
+                            return;
+                        }
                     }
+
                     //Ajuste comentariado para limpiar las radicaciones adicionales.
                     //radicacionesAdicionales = new ArrayList<>();
                     //radicacionAdicionalSel = null;
