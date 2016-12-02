@@ -104,7 +104,7 @@ public class TransactionCore implements Serializable {
                                             if (horario != null) {
                                                 Date fechaDiaSiguiente = (Date) genericDAOBean.callGenericFunction("FL_CONSULTAR_DIA_HABIL", transaccionBD.getTraFechaFinalizacion(), horario);
                                                 sdf = new SimpleDateFormat("yyyyMMdd");
-                                                fechaValor=sdf.format(fechaDiaSiguiente);
+                                                fechaValor = sdf.format(fechaDiaSiguiente);
                                                 transaccionBD.setTraFechaAplicaPago(fechaDiaSiguiente);
                                             } else {
                                                 fechaValor = fechaRecaudo;
