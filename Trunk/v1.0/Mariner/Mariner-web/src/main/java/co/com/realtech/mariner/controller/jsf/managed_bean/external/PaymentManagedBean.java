@@ -270,7 +270,7 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                         String cusPruebas = ConstantesUtils.cargarConstante("WS-PASARELA-CUS-PRUEBAS");
                         String pasarelaModoPruebas = ConstantesUtils.cargarConstante("WS-PASARELA-MODO-PRUEBAS");
                         Transaccion transaccionPasarela = pseWSConsumerBean.consultarTransaccion(pasarelaModoPruebas.equals("S") ? cusPruebas : getRadicacion().getMarTransacciones().getTraCus(), codigoEmpresa);
-
+                        
                         try {
                             if (transaccionPasarela.getEstado() != null) {
                                 String codigoEstado = "";
@@ -307,12 +307,11 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                 PrimeFacesPopup.lanzarDialog(Effects.Clip, "Notificacion", "No se han encontrado radicaciones vinculadas al filtro seleccionado.", true, false);
             }
         } catch (Exception e) {
-            e.printStackTrace();
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero ha ocurrido un error buscando el registro, por favor intente nuevamente.", true, false);
             logger.error("Error buscando radicacion, causado por " + e);
         }
     }
-
+    
     /**
      * Realizar pago de radicacion seleccionada.
      *
@@ -323,7 +322,6 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
             // verificar que la transaccion no tenga una en curso.
             setTipoPago(ttPago);
             MarTransacciones transVerificacion = (MarTransacciones) genericDAOBean.findByColumn(MarTransacciones.class, "radId", getRadicacion());
-
             if (transVerificacion
                     != null) {
                 if (transVerificacion.getTraEstado().equals("T")) {
@@ -350,7 +348,6 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
                 getTransaccion().setTraFechaInicio(new Date());
                 getTransaccion().setTraEstado("T");
                 getTransaccion().setUsuId(getUsuarioTransaccionSistema());
-
                 if (getAutenticado().equals("S")) {
                     getTransaccion().setTraApellidos(usuarioSesion.getPerId().getPerApellidos());
                     getTransaccion().setTraNombres(usuarioSesion.getPerId().getPerNombres());
@@ -363,7 +360,7 @@ public class PaymentManagedBean extends GenericManagedBean implements Serializab
             }
         } catch (Exception e) {
             PrimeFacesPopup.lanzarDialog(Effects.Explode, "Error", "Lo sentimos pero ha ocurrido un error seleccionando el medio de pago.", true, false);
-            logger.error("Error realizando seleccion de medio de pago radicacion, causado por " + e);
+            logger.error("Error realizando seleccion de medio de pago radicacion, causado por " + e.getMessage());
         }
     }
 

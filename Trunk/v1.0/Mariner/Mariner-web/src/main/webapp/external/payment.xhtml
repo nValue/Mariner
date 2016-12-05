@@ -128,13 +128,13 @@
                                         </div>
                                         <div>
                                             <div class="payment-methods">
-                                                <p:commandLink styleClass="payment-button" action="#{paymentManagedBean.seleccionarMedioPago('PSE')}" title="Presione para realizar el pago mediante Pagos en Linea PSE" update=":modalTransaccion">
+                                                <p:commandLink styleClass="payment-button" process="@this" action="#{paymentManagedBean.seleccionarMedioPago('PSE')}" title="Presione para realizar el pago mediante Pagos en Linea PSE" update=":modalTransaccion">
                                                     <img src="#{resource['images/icons/logo-pse-nuevo.png']}" alt="Pagos mediante PSE"/><br/>
                                                     <span>
                                                         Pagos en Linea
                                                     </span>
                                                 </p:commandLink>
-                                                <p:commandLink styleClass="payment-button" action="#{paymentManagedBean.seleccionarMedioPago('RECIBO')}" title="Presione para realizar el pago mediante Consignacion en Ventanilla de Banco" update=":modalTransaccion">
+                                                <p:commandLink styleClass="payment-button" process="@this" action="#{paymentManagedBean.seleccionarMedioPago('RECIBO')}" title="Presione para realizar el pago mediante Consignacion en Ventanilla de Banco" update=":modalTransaccion">
                                                     <img src="#{resource['images/icons/logo-codigo-barras.png']}" alt="Pago mediante consignacion en Ventanilla"/><br/>
                                                     <span>
                                                         Pago en Ventanilla

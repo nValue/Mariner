@@ -5,6 +5,7 @@ import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFase
 import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicacionesDAOBeanLocal;
 import co.com.realtech.mariner.model.entity.MarRadicaciones;
 import co.com.realtech.mariner.model.entity.MarRadicacionesFasesEstados;
+import co.com.realtech.mariner.model.entity.MarVerificacionBusqLog;
 import co.com.realtech.mariner.model.entity.generic.ClaveValor;
 import co.com.realtech.mariner.util.primefaces.dialogos.Effects;
 import co.com.realtech.mariner.util.primefaces.dialogos.PrimeFacesPopup;
@@ -12,9 +13,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 /**
  * ManagedBean encargado de la validación y autorización de la pantalla de 
@@ -136,6 +139,76 @@ public class FinalizacionManagedBean extends GenericManagedBean{
         return null;
     }
     
+    public void test(){
+        System.out.println("Prueba!");
+    }
+    
+    /**
+     * Obtiene el último registro que un usuario consultó de la tabla MAR_VERIFICACION_BUSQ_LOG
+     * siempre y cuando ese registro sea la radicación que se ingresa por parámetro, luego de obtenerlo
+     * guarda la modificación que se hizo, BU=Busqueda Unica, DE=Detalle, BF=Boleta Fiscal, RP=Recibo de Pago, ES=Escritura
+     * @param rad
+     * @return 
+     */
+    public void guardarAccionRadic(MarRadicaciones rad, String tipoAccion){
+        MarVerificacionBusqLog ultVerif = null;
+        try {
+            //Obtiene los parámetros de la radicación por RemoteCommand
+            if (rad == null) {
+                FacesContext context = FacesContext.getCurrentInstance();
+                Map map = context.getExternalContext().getRequestParameterMap();
+                String radStr = (String) map.get("name1");
+                tipoAccion = (String) map.get("name2");
+                rad = (MarRadicaciones) genericDAOBean.findByColumn(MarRadicaciones.class, "radId", BigDecimal.valueOf(Double.parseDouble(radStr)));
+                System.out.println("rad = " + rad);
+                
+            }
+            
+            ultVerif = ((List<MarVerificacionBusqLog>)genericDAOBean.findAllByColumn(MarVerificacionBusqLog.class, "usuId", usuarioSesion, true, "vblId DESC", 1)).get(0);
+        } catch (Exception e) {
+            String msj = "No se puede obtener el último registro de la búsqueda de la radicación: " + radicacionSel.getRadNumero();
+            logger.warn(msj);
+        }
+        try {
+            if (ultVerif == null || !ultVerif.getRadId().getRadId().equals(rad.getRadId())) {
+                ultVerif = new MarVerificacionBusqLog();
+            }
+            switch (tipoAccion) {
+                case "BU":
+                    ultVerif.setVblBusqUnica("S");
+                    break;
+                case "DE":
+                    ultVerif.setVblDetalle("S");
+                    break;
+                case "BF":
+                    ultVerif.setVblBoletaFiscal("S");
+                    break;
+                case "RP":
+                    ultVerif.setVblReciboPago("S");
+                    break;
+                case "ES":
+                    ultVerif.setVblEscritura("S");
+                    break;
+                default:
+                    break;
+            }
+            ultVerif.setVblFecha(new Date());
+            ultVerif.setUsuId(usuarioSesion);
+            ultVerif.setRadId(rad);
+            auditSessionUtils.setAuditReflectedValues(ultVerif);
+            if (ultVerif.getVblId() == null) {
+                genericDAOBean.save(ultVerif);
+            } else {
+                genericDAOBean.merge(ultVerif);
+            }
+        } catch (Exception e) {
+            String msj = "No se puede guardar el registro de la búsqueda de la radicación: " + radicacionSel.getRadNumero();
+            logger.warn(msj);
+        }
+
+    }
+    
+    
     /**
      * Busca la radicacion con los filtros elegidos y por un rango de fechas.
      */
@@ -147,6 +220,9 @@ public class FinalizacionManagedBean extends GenericManagedBean{
             radicaciones = radicacionesDAOBean.obtenerRadicacionesFinalizacionPorFechasYParametro(filtroBusquedaSel.getClave(), campoBusqueda, fechaFiltroInic, fechaFiltroFin, null);    
             if(!radicaciones.isEmpty()){
                 radicacionSel = radicaciones.get(0);
+                if (radicaciones.size() == 1) {
+                    guardarAccionRadic(radicacionSel, "BU");
+                }
             }
         } catch (Exception e) {
             String mensaje = "No se pueden filtrar las radicaciones con los parámetros seleccionados, debido a: " + e.getMessage();
@@ -162,6 +238,7 @@ public class FinalizacionManagedBean extends GenericManagedBean{
         try {
             radFaseEstado = radicFasesEstadosDAOBean.obtenerUltimaFaseDeRadicacion(radicacionSel);
             radFasesEstados = (List<MarRadicacionesFasesEstados>)genericDAOBean.findAllByColumn(MarRadicacionesFasesEstados.class, "radId", radicacionSel, true, "rfeId");
+            guardarAccionRadic(radicacionSel, "DE");
         } catch (Exception e) {
             String mensaje = "No se puede obtener la última fase de la radicación actual, causado por: " + e.getMessage();
             PrimeFacesPopup.lanzarDialog(Effects.Slide, "Fase inválida", mensaje, true, false);

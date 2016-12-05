@@ -115,7 +115,7 @@ public class IndexManagedBean implements Serializable {
      * Autenticación de la aplicación.
      */
     public void autenticar() {
-        try {
+    try {
             logged = false;
             Date fechaActual = new Date();
             //Busca el usuario con el Login registrado

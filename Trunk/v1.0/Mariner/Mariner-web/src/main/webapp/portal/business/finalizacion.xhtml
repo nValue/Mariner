@@ -74,22 +74,30 @@
                             <p:column headerText="Notaría" style="text-align: center" filterBy="#{rads.notId.notNombre}" filterMatchMode="contains">
                                 <h:outputLabel value="#{rads.notId.notNombre}" />
                             </p:column>
-                            <p:column headerText="(BF)" styleClass="colCenter" width="25">
-                                <a title="Presione para descargar la boleta fiscal" target="_new" href="#{request.contextPath}/static/fileDispatcher/#{rads.arcIdBoletaFiscal.arcId}-#{rads.arcIdBoletaFiscal.arcHash}.#{rads.arcIdBoletaFiscal.arcExtension}">
-                                    <img src="#{resource['/images/icons/icon-pdf2.png']}"/>
+                            <p:column headerText="(BF)" styleClass="colCenter" width="25" >
+                                <a title="Presione para descargar la boleta fiscal" target="_new" onclick="guardarAccionJS(#{rads.radId},'BF')" href="#{request.contextPath}/static/fileDispatcher/#{rads.arcIdBoletaFiscal.arcId}-#{rads.arcIdBoletaFiscal.arcHash}.#{rads.arcIdBoletaFiscal.arcExtension}">
+                                    <img src="#{resource['/images/icons/icon-pdf2.png']}" />
                                 </a>
                             </p:column>
                             <p:column headerText="(RP)" styleClass="colCenter" width="25">
-                                <a title="Presione para descargar el recibo de pago" target="_new" href="#{request.contextPath}/static/fileDispatcher/#{rads.arcIdReciboPago.arcId}-#{rads.arcIdReciboPago.arcHash}.#{rads.arcIdReciboPago.arcExtension}">
+                                <a title="Presione para descargar el recibo de pago" target="_new" onclick="guardarAccionJS(#{rads.radId},'RP')" href="#{request.contextPath}/static/fileDispatcher/#{rads.arcIdReciboPago.arcId}-#{rads.arcIdReciboPago.arcHash}.#{rads.arcIdReciboPago.arcExtension}">
                                     <img src="#{resource['/images/icons/icon-bank-check.png']}"/>
                                 </a>
                             </p:column>
                             <p:column headerText="(ES)" styleClass="colCenter" width="25">
-                                <a title="Presione para descargar la escritura" target="_new" href="#{request.contextPath}/static/fileDispatcher/#{rads.escId.arcId.arcId}-#{rads.escId.arcId.arcHash}.#{rads.escId.arcId.arcExtension}">
+                                <a title="Presione para descargar la escritura" target="_new" onclick="guardarAccionJS(#{rads.radId},'ES')" href="#{request.contextPath}/static/fileDispatcher/#{rads.escId.arcId.arcId}-#{rads.escId.arcId.arcHash}.#{rads.escId.arcId.arcExtension}">
                                     <img src="#{resource['/images/icons/icon-more.png']}"/>
                                 </a>
                             </p:column>
+                            
                         </p:dataTable>
+                        
+                        <p:remoteCommand name="accionRC"  actionListener="#{finalizacionManagedBean.guardarAccionRadic(null, null)}" />
+                        <script type="text/javascript">
+                            function guardarAccionJS(rad, str) {
+                                accionRC([{name: 'name1', value: rad}, {name: 'name2', value: str}]);
+                            }
+                        </script>
                     </div>
                 </h:form>
             </div>
