@@ -52,6 +52,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "MarUsuarios.findByUsuEsCalificador", query = "SELECT m FROM MarUsuarios m WHERE m.usuEsCalificador = :usuEsCalificador")})
 public class MarUsuarios implements Serializable {
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuId")
+    private List<MarVerificacionBusqLog> marVerificacionBusqLogList;
+
     @Size(max = 1)
     @Column(name = "USU_LOGUEADO")
     private String usuLogueado;
@@ -383,6 +386,14 @@ public class MarUsuarios implements Serializable {
 
     public void setUsuLogueado(String usuLogueado) {
         this.usuLogueado = usuLogueado;
+    }
+
+    public List<MarVerificacionBusqLog> getMarVerificacionBusqLogList() {
+        return marVerificacionBusqLogList;
+    }
+
+    public void setMarVerificacionBusqLogList(List<MarVerificacionBusqLog> marVerificacionBusqLogList) {
+        this.marVerificacionBusqLogList = marVerificacionBusqLogList;
     }
     
 }

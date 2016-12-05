@@ -43,6 +43,7 @@ public class PDFUtils {
             document.setPageSize(reader.getPageSize(1));
             document.newPage();
             cb.addTemplate(page, 0, 0);
+            
             ColumnText ct = new ColumnText(cb);
             Phrase myText = new Phrase(text);
             Font fuente = new Font();
@@ -56,9 +57,16 @@ public class PDFUtils {
             Font fuente2 = new Font();
             fuente2.setSize(6);
             myText2.setFont(fuente);
-            ct2.setSimpleColumn(myText, 0, -1, document.right(), document.top(), 370, Element.ALIGN_RIGHT);
+            ct2.setSimpleColumn(myText, 0, -1, document.right(), document.top(), 248, Element.ALIGN_RIGHT);
             ct2.go();
             
+            ColumnText ct3 = new ColumnText(cb);
+            Phrase myText3 = new Phrase(text);
+            Font fuente3 = new Font();
+            fuente3.setSize(6);
+            myText3.setFont(fuente);
+            ct3.setSimpleColumn(myText, 0, -1, document.right(), document.top(), 505, Element.ALIGN_RIGHT);
+            ct3.go();
             
             document.close();
         } catch (Exception e) {
