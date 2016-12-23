@@ -1,6 +1,5 @@
 package co.com.realtech.mariner.ws.transacciones;
 
-import co.com.realtech.mariner.model.ejb.dao.entity_based.radicaciones.RadicFasesEstadosDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.dao.generic.GenericDAOBeanLocal;
 import co.com.realtech.mariner.model.ejb.ws.pasarela.PSEWSConsumerBeanLocal;
 import co.com.realtech.mariner.model.entity.MarTransacciones;
@@ -76,7 +75,7 @@ public class VurTransacciones {
                         transaccion.setCodigoServicioACH(ConstantesUtils.cargarConstante("WS-PASARELA-ACH"));
                     } else {
                         transaccion.setEstado("ERROR");
-                        transaccion.setLog(new VURTransaccionLogSDO("ERROR", "La transaccion se vencio hoy y solo podia ser pagada antes de horario adicional."));
+                        transaccion.setLog(new VURTransaccionLogSDO("ERROR", "La transaccion con codigo transaccion " + codigoTransaccion + " se vencio hoy y solo podia ser pagada antes de horario adicional o ya se encuentra vencida para pago"));
                     }
                 } else {
                     transaccion.setEstado("ERROR");
@@ -135,7 +134,7 @@ public class VurTransacciones {
                         transaccion.setCodigoServicioACH(ConstantesUtils.cargarConstante("WS-PASARELA-ACH"));
                     } else {
                         transaccion.setEstado("ERROR");
-                        transaccion.setLog(new VURTransaccionLogSDO("ERROR", "La transaccion con referencia " + codigoLiquidacion + " se vencio hoy y solo podia ser pagada antes de horario adicional."));
+                        transaccion.setLog(new VURTransaccionLogSDO("ERROR", "La transaccion con referencia " + codigoLiquidacion + " se vencio hoy y solo podia ser pagada antes de horario adicional o ya se encuentra vencida para pago"));
                     }
                 } else {
                     transaccion.setEstado("ERROR");
