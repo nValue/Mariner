@@ -48,6 +48,11 @@ public class DateUtils {
                     salida = false;
                 }
             }
+            else{
+                if(fecha.before(fechaActual)){
+                    salida=false;
+                }
+            }
         } catch (Exception e) {
             salida = true;
         }
