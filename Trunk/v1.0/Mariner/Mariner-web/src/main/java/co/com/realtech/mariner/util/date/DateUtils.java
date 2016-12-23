@@ -30,10 +30,12 @@ public class DateUtils {
         res = calendar.getTime();
         return res;
     }
+
     /**
      * Validacion para validar fecha con horario adicional Banco.
+     *
      * @param fechaVencimiento
-     * @return 
+     * @return
      */
     public static boolean permitePagoHorarioAdicional(String fechaVencimiento) {
         boolean salida = true;
@@ -47,10 +49,13 @@ public class DateUtils {
                 if (horaActual.getHours() >= 16) {
                     salida = false;
                 }
-            }
-            else{
-                if(fecha.before(fechaActual)){
-                    salida=false;
+            } else {
+                try {
+                    if (fecha.before(fechaActual)) {
+                        salida = false;
+                    }
+                } catch (Exception e) {
+                    salida = true;
                 }
             }
         } catch (Exception e) {
